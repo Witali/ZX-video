@@ -74,6 +74,9 @@ def verify(image,m,states):
     first=m['frame_start'];count=m['frames'];base=m['cell_codebook']['screen_base']
     dynamic=m['cell_codebook'].get('dynamic_rows',{}).get('enabled',False)
     def expected_screen(index):
+        if m.get('native_pixels'):
+            from native_cell_codebook import history
+            return history(states,index)
         if dynamic:
             from dynamic_row_dictionary import screen
             return screen(states,index)

@@ -46,8 +46,8 @@ class GuardedCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self,table,rows,initial,dictionary,*,front_reuse=False,fast_masks=False,partial_rows=False,inline_cells=False):
-        self.regions,self.labels,self.meta=machine.build(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks,partial_rows=partial_rows,inline_cells=inline_cells)
+    def __init__(self,table,rows,initial,dictionary,*,front_reuse=False,fast_masks=False,partial_rows=False,inline_cells=False,native_bitmap=False):
+        self.regions,self.labels,self.meta=machine.build(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks,partial_rows=partial_rows,inline_cells=inline_cells,native_bitmap=native_bitmap)
         self.c=GuardedCPU(b'',b'');self.c.guarding=False;self.c.port_7ffd=0x17
         self.c.state=self.labels['state'],self.labels['end'];self.rows=rows;self.table=table
         for at,data in self.regions+[(machine.ROWS,rows)]:self.install(at,data)
@@ -98,7 +98,7 @@ class Harness:
             target_high=target,minimum_sp=c.min_sp)
 
 
-def independent(h,payload,source,target,before,after,expected_t,interrupts=False,loading=False):
+def independent(h,payload,source,target,before,after,expected_t,interrupts=False,loading=False,entry_name='draw'):
     m=Z80Machine();m.memory[:]=b'\xa5'*65536
     for at,data in h.regions:m.set_memory_block(at,data)
     m.set_memory_block(machine.ROWS,h.rows)
@@ -108,7 +108,7 @@ def independent(h,payload,source,target,before,after,expected_t,interrupts=False
     m.set_memory_block(STACK-2,STOP.to_bytes(2,'little'));m.set_breakpoint(STOP)
     for name in ('af','bc','de','hl','alt_af','alt_bc','alt_de','alt_hl'):setattr(m,name,0x9797)
     m.ix,m.iy=0x1122,0x3344;m.a=target;m.hl=source;m.sp=STACK-2
-    entry=h.labels['load_book' if loading else 'draw'];m.pc=entry
+    entry=h.labels['load_book' if loading else entry_name];m.pc=entry
     irq=bytes.fromhex('f5 c5 d5 e5 d9 c5 d5 e5 08 f5 3e55 eeaa f1 08 e1 d1 c1 d9 e1 d1 c1 f1 fb ed4d')
     m.set_memory_block(0x38,irq)
     if interrupts:

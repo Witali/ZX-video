@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-14",
+  "checks_complete": true,
+  "release_qualified": false,
+  "reason": "Full pixels and AY pass; exact nominal 10-fps deadlines and one-field fallback fail.",
+  "frames": 300,
+  "nominal_seconds": 30,
+  "ay_ticks": 1500,
+  "active_resolution": [
+    256,
+    144
+  ],
+  "native_resolution": [
+    256,
+    192
+  ],
+  "disk": {
+    "file": "ZX-video-sea-foam-native-lineart_part01.trd",
+    "metadata": "ZX-video-sea-foam-native-lineart_part01.json",
+    "frames": 300,
+    "frame_start": 0,
+    "frame_end_exclusive": 300,
+    "used_sectors": 1488,
+    "free_sectors": 1056,
+    "sha256": "b42525283a578045a7279817350168d939d40640758ba2505c243538abd86031",
+    "states": "work/ZX-video-sea-foam-native-lineart_part01/states.npz",
+    "host_screens_exact": true,
+    "row_entries": 256
+  },
+  "independent_dirty_boot_exact": true,
+  "all_native_screen_bytes_exact": true,
+  "compared_bytes": 2073600,
+  "all_ay_records_exact": true,
+  "actual_ay_50hz": true,
+  "audio_underruns": 0,
+  "missed_nominal_frames": 165,
+  "fallback_one_field_met": false,
+  "maximum_deviation_tstates": 37084884,
+  "maximum_deviation_fields": 523,
+  "late_runs": [
+    {
+      "start": 135,
+      "end": 299,
+      "recovered_at": null
+    }
+  ],
+  "late_runs_recovered": false,
+  "actual_publication_span_seconds": 40.36,
+  "runtime_reads": 1443,
+  "rom_disk_irq_ula_read_service_tstates": 39943368,
+  "seek_service_tstates": 978583,
+  "native_path_tstates": {
+    "literal_before": 231,
+    "literal_after": 188,
+    "literal_delta": -43,
+    "partial_before": 93,
+    "partial_after": 53,
+    "partial_delta": -40,
+    "ordinary_packet_delta": -18
+  },
+  "accuracy": {
+    "previous_coarse_mse": 6522.985328776042,
+    "native_thin_mse": 5070.6590152994795,
+    "native_outlined_mse": 6054.531982421875
+  },
+  "preview": "Nominal host-reference cadence, not actual TRD timing.",
+  "continuation": "The native format/readability prototype is reviewable; sustained delivery remains an unresolved release requirement."
+}

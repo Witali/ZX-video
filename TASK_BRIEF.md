@@ -3,6 +3,47 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Native-pixel line drawing — experimental prototype checked; release timing unresolved (2026-10-14)
+
+The user requests the same current line-art style at true 256x192 native
+resolution, retaining the current 256x144 active area if desired. The prior
+open-ended accuracy goal stays paused; this is a separately authorized finite
+format task. Work in`.worktree/native-lineart`, branch`codex/native-lineart`,
+from`bd01d761`. Trace original256x144 RGB directly, with one-pixel native
+lines, source-close solid fills and current-source dark-region rollback.
+Introduce CB47 exact native8x8 bitmap cells, dictionary/front reuse and a
+one-row literal; do not approximate through the old128x96/five-level plane.
+Retain10 fps and unchanged50-Hz AY. First deliver a matched30-second native
+test disk, comparison and fully independent cold/full Fuse timing proof.
+Count native instruction paths against CB46 and actual disk allocation.
+Preserve old formats and defaults, failed attempts and unrelated changes.
+The current old-format progress was pushed as`bd01d761` to origin/main.
+Full archive checkout failed for lack of disk space; use a sparse source
+worktree and read existing authenticated inputs from main instead of copying
+its large historical audio archives. Do not restart the paused broad goal.
+
+The user additionally rejects extra outlines on thin strokes and reports
+unreadable native faces/title lettering. The selected source-coherent stroke
+core, bright-letter protection and grain filtering are preserved in the
+CB47 prototype. All 300 native frames / 2,073,600 screen bytes pass complete
+Fuse comparison, independent dirty cold boot and all 1500 original AY controls
+at 50 Hz. Six old renderer variants remain byte-identical; 26 tests pass.
+The final cell-only/minimum-5-match disk uses 1488 sectors, with 1056 free.
+It is NOT a release: 165 nominal misses from frame 135 through 299, maximum
+523 fields / 10.46 seconds of deviation, no recovery and failed one-field
+fallback. Actual first-to-last publication spans 40.36 seconds. MP4s use
+nominal host-reference timing, not measured TRD cadence. The raster attempt
+and unsafe old buffer are rejected; the final native packet lives at
+6200h..7760h, before retained 7800h helpers. Literal body 231 -> 188 T,
+single-row body 93 -> 53 T, ordinary row-control dispatch -18 T; full delivery
+remains data-dependent. Preserve all failed/partial attempts and the prior
+qualified coarse disk. Root experimental disk:
+`ZX-video-sea-foam-native-lineart-experimental.trd`.
+[Readability comparisons, complete results and reproducing scripts](toolkit/analysis/native_lineart/README.md).
+The format/readability experiment is reviewable. Sustained native 10-fps
+delivery remains unresolved; do not call this a qualified release or resume
+the stopped broad goal implicitly.
+
 ## Accuracy and compression of source-line drawings — dark-fill milestone complete (2026-10-14)
 
 The user explicitly chooses a contour drawing with source-close coloured

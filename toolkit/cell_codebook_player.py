@@ -17,11 +17,13 @@ import cell_codebook_z80 as native
 from probe_cell_codebook import history_state
 
 PACKET,INPUT,LENGTH=0xdc00,0x6400,0xba58
+NATIVE_INPUT=0x6200
 
 
-def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False):
+def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False,native_bitmap=False):
     a=MiniAssembler(PACKET);rows=[];e,n=helpers(a,rows,'cb41_packet')
     q,z=m['queue_labels'],m['decoder_labels']
+    packet_input=NATIVE_INPUT if native_bitmap else INPUT
     service=m['inplace_keepalive']['wrapper']
     def take(length,destination):
         n('LD DE,destination',0x11,destination,10)
@@ -31,8 +33,8 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False):
     n('LD A,(initialized)',0x3a,'initialized',13);e('OR A',[0xb7],4)
     n('JP NZ,body',0xc2,'body',10)
     # One-time book load is part of stream delivery, not a hidden host preload.
-    take(2056,INPUT)
-    n('LD HL,book',0x21,INPUT+8,10);n('CALL transpose book',0xcd,labels['load_book'],17)
+    take(2056,packet_input)
+    n('LD HL,book',0x21,packet_input+8,10);n('CALL transpose book',0xcd,labels['load_book'],17)
     e('LD A,1',[0x3e,1],7);n('LD (initialized),A',0x32,'initialized',13)
     a.label('body');take(2,LENGTH)
     n('LD HL,(length)',0x2a,LENGTH,16)
@@ -41,16 +43,16 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False):
         n('JP NZ,row_updates',0xc2,'row_updates',10)
     n('LD DE,minimum',0x11,144,10)
     e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15);n('JP C,fatal',0xda,z['fatal'],10)
-    n('LD DE,range',0x11,(3168 if front_reuse else 3096)-144+1,10);e('OR A',[0xb7],4)
+    n('LD DE,range',0x11,(5472 if native_bitmap else 3168 if front_reuse else 3096)-144+1,10);e('OR A',[0xb7],4)
     e('SBC HL,DE',[0xed,0x52],15);n('JP NC,fatal',0xd2,z['fatal'],10)
-    n('LD DE,packet',0x11,INPUT,10);n('LD BC,(length)',(0xed,0x4b),LENGTH,20)
+    n('LD DE,packet',0x11,packet_input,10);n('LD BC,(length)',(0xed,0x4b),LENGTH,20)
     n('CALL queue take',0xcd,q['take'],17)
     n('LD (payload_end),DE',(0xed,0x53),'payload_end',20)
     a.label('video_payload_ready');a.label('packet_ready');e('RET',[0xc9],10)
     a.label('draw_bridge');n('CALL audio and drive service',0xcd,service,17)
     # This code and the clock execute in bank 7, so both physical screens
     # are already addressable. The fixed kernel needs no frame paging.
-    n('LD A,(back screen)',0x3a,screen_base,13);n('LD HL,packet',0x21,INPUT,10)
+    n('LD A,(back screen)',0x3a,screen_base,13);n('LD HL,packet',0x21,packet_input,10)
     n('CALL native draw',0xcd,labels['draw'],17)
     n('LD DE,(payload_end)',(0xed,0x5b),'payload_end',20)
     e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15)
@@ -93,8 +95,10 @@ class Builder(PreviousBuilder):
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
         count,entries=struct.unpack_from('<HH',cell_raw,4)
-        self.front_reuse=cell_raw[:4] in (b'CB44',b'CB46')
-        self.partial_rows=cell_raw[:4]==b'CB46'
+        self.native_bitmap=cell_raw[:4]==b'CB47'
+        self.front_reuse=cell_raw[:4] in (b'CB44',b'CB46',b'CB47')
+        self.partial_rows=cell_raw[:4] in (b'CB46',b'CB47')
+        self.packet_capacity=5472 if self.native_bitmap else 3168 if self.front_reuse else 3096
         self.shared_audio=shared_audio
         self.four_slots=four_slots
         self.inline_cells=inline_cells
@@ -117,9 +121,9 @@ class Builder(PreviousBuilder):
         self.reference_frames=reference_frames
         self.fixed_cell_decoder=fixed_cell_decoder
         if fixed_cell_decoder and not self.front_reuse:raise ValueError('fixed cell decoder requires retired CB44/46 reconstruction')
-        if cell_raw[:4] not in (b'CB41',b'CB42',b'CB44',b'CB46') or entries!=256 or cell_start<0:
+        if cell_raw[:4] not in (b'CB41',b'CB42',b'CB44',b'CB46',b'CB47') or entries!=256 or cell_start<0:
             raise ValueError('this builder needs a 256-entry book and a nonnegative start')
-        if self.dynamic_rows and reference_frames is None:
+        if (self.dynamic_rows or self.native_bitmap) and reference_frames is None:
             raise ValueError('CB42 needs independent five-level reference frames')
         at=2056
         for _ in range(count):
@@ -129,7 +133,7 @@ class Builder(PreviousBuilder):
                 if not 1<=replacements<=256:raise ValueError('invalid CB42 row replacement count')
                 at+=2+3*replacements
                 length=struct.unpack_from('<H',cell_raw,at)[0]
-            if not 144<=length<=(3168 if self.front_reuse else 3096):raise ValueError('cell payload outside native contract')
+            if not 144<=length<=self.packet_capacity:raise ValueError('cell payload outside native contract')
             if self.front_reuse:
                 cells=sum(b.bit_count() for b in cell_raw[at+2:at+74])
                 modes=cell_raw[at+146:at+146+(cells+3)//4]
@@ -139,8 +143,8 @@ class Builder(PreviousBuilder):
                     mode=(modes[i//4]>>((i%4)*2))&3
                     if mode==3:
                         if not self.partial_rows:raise ValueError('native CB44 supports same-position front reuse only')
-                        if cursor+2>at+2+length or cell_raw[cursor]>=4:raise ValueError('invalid partial row selector')
-                    cursor+=(4,1,0,2)[mode]
+                        if cursor+2>at+2+length or cell_raw[cursor]>=(8 if self.native_bitmap else 4):raise ValueError('invalid partial row selector')
+                    cursor+=((8,1,0,2) if self.native_bitmap else (4,1,0,2))[mode]
                 attrs=sum(b.bit_count() for b in cell_raw[at+74:at+146])
                 if cursor+attrs!=at+2+length:raise ValueError('cell payload extent differs')
             at+=2+length
@@ -159,7 +163,7 @@ class Builder(PreviousBuilder):
         def put(at,data):
             if (at&16383)+len(data)>16384:raise ValueError('cross-bank CB41 install')
             banks[bank(at)][at&16383:(at&16383)+len(data)]=data
-        regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse,partial_rows=self.partial_rows,inline_cells=self.inline_cells)
+        regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse,partial_rows=self.partial_rows,inline_cells=self.inline_cells,native_bitmap=self.native_bitmap)
         origin=regions[0][0]
         if self.fixed_cell_decoder:
             from fixed_cell_decoder import install
@@ -167,6 +171,13 @@ class Builder(PreviousBuilder):
         if self.inline_cells and m['lzsa2']['layout']['core_end']>origin:
             raise ValueError('unrolled cell renderer overlaps the LZSA2 core')
         screen_base,saved_page=labels['end'],labels['end']+1
+        packet_input=NATIVE_INPUT if self.native_bitmap else INPUT
+        if self.native_bitmap:
+            # 7800h contains retained AY initialization/producer helpers.
+            # Native packets must end before it; the old6400h buffer would
+            # overlap these helpers at their5472-byte maximum. The6200h
+            # start follows the retained6100h..61FFh disk relay.
+            if packet_input+self.packet_capacity>0x7800:raise ValueError('native packet overlaps retained bank-5 helpers')
         retired=[];patches=[]
         obsolete=[]
         if self.front_reuse:
@@ -208,7 +219,7 @@ class Builder(PreviousBuilder):
         m['video_cadence']=dict(fields_per_frame=self.frame_fields,ay_hz=50,
             deadline_increment_pc=pc,previous_tstates=10,tstates=10,delta_tstates=0,
             schedule_origin_preserved=True)
-        code,p,rows=packet_code(m,labels,screen_base,dynamic_rows=self.dynamic_rows,front_reuse=self.front_reuse);put(PACKET,code)
+        code,p,rows=packet_code(m,labels,screen_base,dynamic_rows=self.dynamic_rows,front_reuse=self.front_reuse,native_bitmap=self.native_bitmap);put(PACKET,code)
         # The old clock was retired above; its progress target is a constant
         # from the unchanged progress component.
         import disk_progress_z80
@@ -226,7 +237,10 @@ class Builder(PreviousBuilder):
         # Cold boot stores the exact required histories, independently of
         # anything left in RAM by another disk. No compact frame survives.
         for b,frame in ((7,start-2),(5,start-1)):
-            if self.dynamic_rows:
+            if self.native_bitmap:
+                from native_cell_codebook import history
+                initial=history(self.reference_frames,frame)
+            elif self.dynamic_rows:
                 from dynamic_row_dictionary import screen
                 initial=screen(self.reference_frames,frame)
             else:
@@ -241,10 +255,10 @@ class Builder(PreviousBuilder):
             raw_bytes=len(self.cell_raw),native_labels=labels,screen_base=screen_base,saved_page=saved_page,
             native=layout,packet_listing=rows,clock_listing=crows,irq_patches=patches,retired=retired,
             header_bytes=2056,book_loaded_from_stream=True,initial_frames=[start-2,start-1],
-            compact_frame_removed=True,packet_ahead=False,packet_capacity=3168 if self.front_reuse else 3096,
+            compact_frame_removed=True,packet_ahead=False,packet_capacity=self.packet_capacity,
             memory=dict(screens=[5,7],video_slots=[0,1,3],audio=4,unused_legacy_huffman=6,
                 fixed_kernel=[origin,saved_page+1],rows=[0x9e00,0xa000],book=[0xa800,0xb000],
-                popcount=[0xb000,0xb100],packet=[INPUT,INPUT+(3168 if self.front_reuse else 3096)],stack_top=0x9df0,
+                popcount=[0xb000,0xb100],packet=[packet_input,packet_input+self.packet_capacity],stack_top=0x9df0,
                 disk_stack_top=disk.DISK_STACK),
             delivery_measured=False,release=False)
         if obsolete:
@@ -272,6 +286,23 @@ class Builder(PreviousBuilder):
         if self.partial_rows:
             m['cell_codebook']['partial_rows']=dict(enabled=True,mode=3,payload='row-pair 0..3, row-table index',
                 unchanged_pairs_remain_in_back_screen=True,pixel_changes=0)
+        if self.native_bitmap:
+            m['native_pixels']=True
+            reuse=m['cell_codebook']['front_reuse']
+            historical=('setup_delta_tstates','unchanged_cell_path_delta_tstates',
+                'extra_mode_byte_refill_tstates','no_refill_cell_tstates_before',
+                'no_refill_cell_tstates_after','renderer_delta_formula','renderer_delta_assumptions')
+            reuse['historical_cb41_to_cb44_counts']={key:reuse.pop(key) for key in historical}
+            reuse['cb46_to_cb47_copy_path_delta_tstates']=0
+            m['cell_codebook']['native_bitmap']=dict(enabled=True,literal_bytes=8,
+                partial_row_count=8,mutable_row_cache=False,host_frame_bytes=6912,
+                reserved_unused_row_table_bytes=512,
+                path_body_tstates=dict(literal_cb46=231,literal_cb47=188,literal_delta=-43,
+                    single_row_cb46=93,single_row_cb47=53,single_row_delta=-40),
+                ordinary_packet_delta_tstates=-18,
+                timing_scope='Body counts exclude unchanged mode dispatch, cell return, masks, paging, IRQ, ULA, ROM and disk.')
+            m['cell_codebook']['partial_rows'].update(payload='row0..7, actual native byte',
+                unchanged_pairs_remain_in_back_screen=False,unchanged_rows_remain_in_back_screen=True)
         retired_keys=('compiled_masks','hl_mask_reader','compact_cursor','cached_huffman_lookahead',
                       'inline_huffman_patches','inline_literals')
         m['cell_codebook']['retired_metadata']={key:m[key] for key in retired_keys if key in m}
@@ -306,7 +337,7 @@ class Builder(PreviousBuilder):
 
     def volume(self,start,end,part):
         image,m=super().volume(start,end,part)
-        if self.dynamic_rows:m['states_sha256']=sha(self.reference_frames.tobytes())
+        if self.dynamic_rows or self.native_bitmap:m['states_sha256']=sha(self.reference_frames.tobytes())
         m.update(frame_fields=self.frame_fields,fps='10' if self.frame_fields==5 else '25/3',
             duration_seconds=(end-start)*self.frame_fields/50,
             ay_ticks=(end-start)*self.frame_fields)

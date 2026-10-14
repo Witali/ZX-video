@@ -62,17 +62,18 @@ def rational(value, default=Fraction(0)):
         return default
 
 
-def decode_video(source, ffmpeg, directory, probe, picture, sound, fps=FPS):
+def decode_video(source, ffmpeg, directory, probe, picture, sound, fps=FPS, *, native_pixels=False):
     # Fit display aspect (including non-square source pixels); never crop/zoom.
     # EOF pass + upward rounding retains even a one-frame, sub-120 ms clip.
+    width,height = (256,144) if native_pixels else (128,72)
     filters = (f"setpts=PTS-STARTPTS,fps={fps}:start_time=0:round=up:eof_action=pass,"
-               "scale=w='max(1,round(min(128,72*dar)))':h='max(1,round(min(72,128/dar)))':flags=area,"
-               "setsar=1,pad=128:72:(ow-iw)/2:(oh-ih)/2:black")
+               f"scale=w='max(1,round(min({width},{height}*dar)))':h='max(1,round(min({height},{width}/dar)))':flags=area,"
+               f"setsar=1,pad={width}:{height}:(ow-iw)/2:(oh-ih)/2:black")
     path = directory/'frames.rgb'
     command = [ffmpeg, '-v', 'error', '-nostdin', '-y', '-i', str(source), '-map', f'0:{picture["index"]}',
                '-an', '-vf', filters, '-pix_fmt', 'rgb24', '-f', 'rawvideo', str(path)]
     run(command)
-    size = 128*72*3
+    size = width*height*3
     count, remainder = divmod(path.stat().st_size, size)
     if not count or remainder:
         raise ValueError('FFmpeg did not return complete video frames')
@@ -90,7 +91,7 @@ def decode_video(source, ffmpeg, directory, probe, picture, sound, fps=FPS):
             last = stream.read(size)
             for _ in range(wanted-count):
                 stream.write(last)
-    return np.memmap(path, dtype=np.uint8, mode='r', shape=(wanted, 72, 128, 3)), dict(
+    return np.memmap(path, dtype=np.uint8, mode='r', shape=(wanted, height, width, 3)), dict(
         video_stream=picture['index'], audio_stream=sound['index'] if sound else None,
         decoded_frames=count, encoded_frames=wanted, tail_repeated_frames=wanted-count,
         encoded_seconds=float(Fraction(wanted, 1)/fps), fit='contain', crop=False, command=command)
@@ -214,7 +215,7 @@ def main(argv=None):
     parser.add_argument('input', type=Path, help='local video file; format detected by FFmpeg')
     parser.add_argument('--output', type=Path, required=True, help='new or empty output directory')
     parser.add_argument('--prefix', default='ZX-video', help='safe basename of numbered TRD files')
-    parser.add_argument('--video-codec', choices=('fap3', 'cb41'), default='fap3',
+    parser.add_argument('--video-codec', choices=('fap3', 'cb41', 'cb47'), default='fap3',
         help='cb41: five brightness levels and the verified LZSA2 player; requires TR-DOS 5.03')
     parser.add_argument('--lzsa', help='LZSA executable for --video-codec cb41; defaults to PATH')
     parser.add_argument('--dynamic-rows',action='store_true',help='CB42 mutable row cache for the CB41 pipeline')
@@ -222,7 +223,7 @@ def main(argv=None):
     parser.add_argument('--guarded-cb46',action='store_true',help='experimental four-slot CB46 profile with automatic per-block compression/CPU guards; requires cb41')
     parser.add_argument('--audio-banks',type=int,choices=(1,2),default=1,help='CB41-family resident AY banks: 4 or 4+6')
     parser.add_argument('--fps', choices=('25/3', '10'), default='25/3',
-        help='video rate; 10 requires CB41, AY always remains 50 Hz')
+        help='video rate; 10 requires CB41 or CB47, AY always remains 50 Hz')
     parser.add_argument('--ay-profile', choices=('auto','music','legacy'), default='auto',
         help='shared sound engine: automatic tone/noise/mixed fitting, preceding music profile, or legacy')
     parser.add_argument('--ay-mixer-search',choices=('fast','full'),default='fast',
@@ -252,7 +253,7 @@ def main(argv=None):
     parser.add_argument('--verify', choices=('cpu', 'fuse', 'none'), default='cpu',
         help='cpu: every instruction and full images; fuse: also real disk timing; none: host roundtrip only')
     parser.add_argument('--colour-policy', choices=('stable', 'legacy', 'flat', 'lineart'), default='stable',
-        help='CB41 palette: stable seam smoothing, legacy, flat fills, or source lines with matched solid colours')
+        help='CB41 palette policy; CB47 uses native source lines with matched solid colours')
     parser.add_argument('--colour-dither', choices=('none', 'minimal'), default='none',
         help='Flat colour only: no dots, or at most one patterned 2x2 sample per 8x8 cell')
     parser.add_argument('--colour-contours', action='store_true',
@@ -267,7 +268,11 @@ def main(argv=None):
     parser.add_argument('--verification-timeout', type=float, default=1800, help='Fuse timeout in seconds per disk')
     parser.add_argument('--cached-huffman-byte', action='store_true', help='Cache current Huffman byte in B; requires --carry-huffman')
     args = parser.parse_args(argv)
-    if args.colour_policy in ('flat', 'lineart') and (args.video_codec != 'cb41' or args.monochrome):
+    if args.video_codec == 'cb47':
+        if args.colour_policy not in ('stable','lineart') or args.monochrome:
+            parser.error('CB47 currently requires native lineart without monochrome/flat policy')
+        args.colour_policy='lineart';args.guarded_cb46=True;args.lineart_dark_fills=True
+    if args.colour_policy in ('flat', 'lineart') and (args.video_codec not in ('cb41','cb47') or args.monochrome):
         parser.error('--colour-policy flat/lineart requires --video-codec cb41 without --monochrome')
     if (args.colour_dither != 'none' or args.colour_contours or args.colour_vision != 'none') and args.colour_policy != 'flat':
         parser.error('minimal dither, contours and vision require --colour-policy flat')
@@ -276,9 +281,9 @@ def main(argv=None):
     if not 0 <= args.ay_tuning_cents <= 100:
         parser.error('--ay-tuning-cents must be in 0..100')
     args.frame_fields = fields_for_fps(args.fps)
-    if args.fps == '10' and args.video_codec != 'cb41':
-        parser.error('--fps 10 requires --video-codec cb41')
-    if args.video_codec!='cb41' and (args.dynamic_rows or args.front_reuse or args.guarded_cb46 or args.audio_banks!=1):
+    if args.fps == '10' and args.video_codec not in ('cb41','cb47'):
+        parser.error('--fps 10 requires --video-codec cb41 or cb47')
+    if args.video_codec not in ('cb41','cb47') and (args.dynamic_rows or args.front_reuse or args.guarded_cb46 or args.audio_banks!=1):
         parser.error('dynamic rows, front reuse, guarded CB46 and resident audio banks require --video-codec cb41')
     if args.cached_huffman_byte and not args.carry_huffman: parser.error('--cached-huffman-byte requires --carry-huffman')
     try:
@@ -290,7 +295,7 @@ def main(argv=None):
         if args.output.exists() and (not args.output.is_dir() or any(args.output.iterdir())):
             raise ValueError('--output must be new or empty; existing files are never overwritten')
         executables = {name: executable(getattr(args, name), name) for name in ('ffmpeg', 'ffprobe', 'zx0')}
-        if args.video_codec == 'cb41':
+        if args.video_codec in ('cb41','cb47'):
             if any(getattr(args, name) for name in ('inline_matches', 'fast_noop_scan',
                     'static_cache_borders', 'carry_huffman', 'register_fragments',
                     'irq_safe_paging', 'startup_delta', 'cached_huffman_byte')):
@@ -328,14 +333,23 @@ def main(argv=None):
         monochrome=args.monochrome, colour_policy=args.colour_policy,
         colour_dither=args.colour_dither, colour_contours=args.colour_contours, colour_vision=args.colour_vision,
         lineart_dark_fills=args.lineart_dark_fills)
-    if args.video_codec == 'cb41':
+    if args.video_codec in ('cb41','cb47'):
         manifest.update(player_baseline='9885483', player_hot_path_changed=False,
                         player_hot_path_delta_tstates=0, brightness_levels=5)
     write_json(output/'conversion.json', manifest)
     try:
-        images, manifest['input'] = decode_video(source, executables['ffmpeg'], work, probe, picture, sound, Fraction(args.fps))
-        states, quality = convert_frames(images, work, monochrome=args.monochrome)
-        if args.video_codec == 'cb41':
+        images, manifest['input'] = decode_video(source, executables['ffmpeg'], work, probe, picture, sound, Fraction(args.fps),
+            **(dict(native_pixels=True) if args.video_codec=='cb47' else {}))
+        if args.video_codec=='cb47':
+            from native_video import scaffold_frames
+            states,quality=scaffold_frames(len(images),work)
+        else:states, quality = convert_frames(images, work, monochrome=args.monochrome)
+        if args.video_codec == 'cb47':
+            from native_video import prepare_frames,write_preview
+            five_states,quality=prepare_frames(images,work,dark_fills=args.lineart_dark_fills)
+            write_preview(images,five_states,output/'video-preview.png')
+            manifest.update(native_pixels=True,logical_resolution=[256,192],host_frame_bytes=6912)
+        elif args.video_codec == 'cb41':
             from generic_cell_codebook import prepare_frames, write_preview
             five_states, quality = prepare_frames(images, states, work,
                 colour_policy=args.colour_policy, monochrome=args.monochrome,
@@ -353,12 +367,12 @@ def main(argv=None):
                      runtime_ay_ticks=len(ay_frames))
         (work/'stream.raw').write_bytes(raw)
         write_json(output/'codec.json', codec)
-        if args.video_codec == 'cb41':
+        if args.video_codec in ('cb41','cb47'):
             from convert_cb41 import build
             records = build(five_states, ay_frames, raw, states, args, executables, output, manifest)
             manifest['complete'] = True
             write_json(output/'conversion.json', manifest)
-            print(f'Created {len(records)} five-level TRD(s) in {output}', flush=True)
+            print(f'Created {len(records)} {"native-pixel" if args.video_codec=="cb47" else "five-level"} TRD(s) in {output}', flush=True)
             print(f'Exact {args.fps} fps: '+('verified in Fuse' if manifest['timing_verified']
                                      else 'not verified; see timing.json'), flush=True)
             return

@@ -849,3 +849,20 @@ toolkit/generic_guarded_cb46_evidence/*.gz -text
 /toolkit/analysis/flat_colour/disk-dark-evidence/** -text -whitespace
 /toolkit/analysis/flat_colour/disk-dark-evidence/host-probe/*.raw filter=lfs diff=lfs merge=lfs -text
 /toolkit/analysis/flat_colour/disk-dark-evidence/host-probe/*.stream filter=lfs diff=lfs merge=lfs -text
+
+# Experimental native-pixel format: preserve exact measured inputs and traces.
+/toolkit/native_*.py text eol=lf
+/toolkit/test_native_cell_codebook.py text eol=lf
+/toolkit/analysis/native_lineart/*.py text eol=lf
+/toolkit/analysis/native_lineart/*.md text eol=lf
+/toolkit/analysis/native_lineart/evidence/** -text -whitespace
+/toolkit/analysis/native_lineart/evidence/**/*.rgb filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/native_lineart/evidence/**/*.npy filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/native_lineart/evidence/**/*.npz filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/native_lineart/evidence/**/*.raw filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/native_lineart/evidence/**/*.stream filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/native_lineart/evidence/**/*.mkv filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/native_lineart/evidence/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/native_lineart/evidence/**/*.png filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/native_lineart/evidence/**/*.wav filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/native_lineart/evidence/**/*.trace.txt filter=lfs diff=lfs merge=lfs -text
