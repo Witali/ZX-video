@@ -3,6 +3,18 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## ZX Compressors migration plan prepared 2026-10-14
+
+The user requests a plan for a separate `zx-compressors` repository consumed
+by ZX-video through Git subtree. [ZX_COMPRESSORS_PLAN.md](ZX_COMPRESSORS_PLAN.md)
+defines filtered history export, standalone test/package preparation, target
+creation, in-place `libraries/` registration using split/rejoin, pinned imports,
+CI/update workflow and rollback. Preserve independent `zx0`/`lzsa` packages,
+31 default profiles, resource/provenance hashes, application tests and timing.
+Planning snapshot main `93e93664`; freeze the latest source for implementation.
+The plan is this request's deliverable; creation/migration/publication follow
+only when implementation is requested. Existing movie/audio tasks stay intact.
+
 ## Source-line drawing full disk — complete (2026-10-14)
 
 Latest steering rejects flat fills because details are lost. Stop the1005-frame
