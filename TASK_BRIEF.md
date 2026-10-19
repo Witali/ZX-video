@@ -3,6 +3,24 @@
 Updated 2026-10-19. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Active codec goal — another approximately 10% per library (2026-10-19)
+
+The user requests roughly another 10% speed improvement for each library,
+preserving compatibility with existing compressed data. About 10% code growth
+is acceptable without penalty. Continue in `.worktree/codec-speed-pass3`,
+branch `codex/codec-speed-pass3`, from `f5a0362c`. The earlier item30 gain is
+already in this baseline and does not count toward this goal. Compare against
+current Fast resident/coroutine profiles with the same features and frozen
+real inputs; also track the strongest existing ZX0 Mega profile. Do not claim
+the goal from a weaker Standard baseline, omitted coroutine/input features,
+changed data or synthetic-only gains. Measure code/state/stack growth and every
+slower case, including relocation, IRQ, EOF, overlap and legal short word forms.
+Preserve old formats/profiles and all previous evidence. Complete and commit
+each experiment with its root changelog record, including rejected attempts.
+The full 10%-per-library objective remains active until verified; smaller
+intermediate gains do not complete it. Movie/player qualification and the
+repository migration remain separate tasks.
+
 ## Codec speed pass 3 — unconditional branches (2026-10-19)
 
 The user requests continued ZX0/LZSA optimization in a separate worktree.

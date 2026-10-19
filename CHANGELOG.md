@@ -1,5 +1,29 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Freeze the next ten-percent codec goal and full real token mix
+
+- **Request/baseline:** The user requests approximately another 10% speed
+  improvement for each library, with unchanged data compatibility; about
+  10% code growth has no penalty. Retain `.worktree/codec-speed-pass3`,
+  branch `codex/codec-speed-pass3`, starting at `f5a0362c`. Prior item30
+  savings do not count toward this goal. Compare feature-equivalent current
+  Fast profiles and track stronger existing optional profiles separately.
+- **Measurement/change:** Authenticate every package source against item30,
+  then profile every retained real block without recompression: LZSA2
+  21 blocks/323,940 bytes and ZX0 364 blocks/2,965,011 bytes. Independent host
+  decoding and literal+match byte totals cover complete outputs; save each
+  input hash and all length/offset histograms. This is a token-frequency
+  measurement, not a new native timing result or release qualification.
+- **Results/decision:** LZSA2 has 45,226 matches; 38,731 (85.64%) have length
+  2..8. ZX0 has 409,193 matches; 251,615 (61.49%) have length 1..2, including
+  102,429 legal one-byte repeated-offset matches. Long-copy-only expansion
+  cannot address most dispatches; prioritize frequent field/short-copy paths,
+  while retaining short forms and prior rejected-unroll evidence. Code and
+  instruction changes are 0 bytes/0 T at this profiling step. The full
+  ten-percent-per-library goal remains active and unachieved.
+  [Profiler/reproduction](libraries/tests/profile_copy_mix.py),
+  [complete frozen-input token mix](libraries/evidence/ten_percent_copy_mix.json).
+
 ## 2026-10-19 — Optional faster unconditional branches in reusable codecs
 
 - **Request/baseline:** Continue ZX0/LZSA speed work in a separate worktree.
