@@ -37,18 +37,20 @@ def execute(regions, labels, layout, payload, expected, interrupts=False, *, sou
     m.unmark_addrs(labels['state'],labels['end']-labels['state'],m.WRITE_MARK)
     for address in layout['patched_addresses']:
         m.unmark_addr(address,m.WRITE_MARK)
-    high=output
+    high=output;private_low=private_stack;caller_low=stack-2
     def read(address):
         assert output<=address<high,('invalid read',hex(address),hex(m.pc))
         return m.memory[address]
     def write(address,value):
-        nonlocal high
+        nonlocal high,private_low,caller_low
         if output<=address<output+len(expected):
             assert address==high,('nonsequential output',hex(address))
             high+=1
         else:
             assert (stack-128<=address<stack or
                     private_stack-128<=address<private_stack),('invalid write',hex(address),hex(m.pc))
+            if stack-128<=address<stack:caller_low=min(caller_low,address)
+            if private_stack-128<=address<private_stack:private_low=min(private_low,address)
         m.memory[address]=value
     m.set_read_callback(read);m.set_write_callback(write)
     slices=[];output_cursors=[];irqs=0;unavailable_irqs=0
@@ -85,4 +87,5 @@ def execute(regions, labels, layout, payload, expected, interrupts=False, *, sou
             setattr(m,name,0x9797)
     assert bytes(m.memory[output:high])==expected and high==output+len(expected)
     return dict(tstates=sum(slices),slices=slices,output_cursors=output_cursors,exact=True,injected_interrupts=irqs,
+                private_stack_bytes=private_stack-private_low,caller_stack_bytes=stack-caller_low,
                 unavailable_interrupt_events=unavailable_irqs)

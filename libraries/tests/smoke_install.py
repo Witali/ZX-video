@@ -113,12 +113,32 @@ if name=='zx0':
               '--output',str(destination/'tail-refill-cli')]
     runpy.run_module(name+'.__main__',run_name='__main__')
     assert json.loads((destination/'tail-refill-cli/metadata.json').read_text())['inline_tail_refill']
+combined_profiles=[]
+for is_resident in (True,False):
+    builder=importlib.import_module(name+'.'+('block' if is_resident else 'resumable')).build
+    options=(dict(branch_tuned=True,literal_prefix=True,inline_tail_refill=True) if name=='zx0' else
+             dict(branch_tuned=True,fast_jumps=True,nibble_prefill=True))
+    profile=builder(core=0x6000,core_limit=0x6400,**options)
+    at=destination/('combined-'+('block' if is_resident else 'coroutine'))
+    export(at,*profile)
+    rebuilt=[]
+    for line in (at/'decoder.asm').read_text().splitlines():
+        if line.startswith('org '):rebuilt.append((int(line[5:],16),bytearray()))
+        elif line.startswith('db '):rebuilt[-1][1].extend(int(x[1:],16) for x in line[3:].split(','))
+    assert [(address,bytes(data)) for address,data in rebuilt]==profile[0]
+    if name=='zx0':
+        cli=['--variant','fast-block' if is_resident else 'fast','--literal-prefix','--inline-tail-refill']
+    else:
+        cli=(['--profile','fast-block'] if is_resident else [])+['--fast-jumps','--nibble-prefill']
+    sys.argv=[name,'build',*cli,'--branch-tuned','--core','0x6000','--core-limit','0x6400','--output',str(at/'cli')]
+    runpy.run_module(name+'.__main__',run_name='__main__')
+    combined_profiles.append(dict(resident=is_resident,bytes=sum(len(data) for _,data in profile[0]),exact_export=True,options=options))
 assert not any(n.startswith(('toolkit','cv2','numpy')) for n in sys.modules)
 if encoder:
     assert package.decompress(package.compress(raw,executable=encoder),limit=len(raw))==raw
 report=dict(package=name,independent_wheel=True,custom_layout=True,cli_export=True,
             resources=True,exact_round_trip=True,external_encoder=bool(encoder),resident_profiles=resident,
             fast_jump_profiles=fast_jumps,branch_tuned_profiles=tuned,literal_prefix_profiles=literal_prefix,
-            inline_tail_refill_profiles=tail_refill)
+            inline_tail_refill_profiles=tail_refill,combined_profiles=combined_profiles)
 (destination/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report))

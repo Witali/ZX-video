@@ -8,11 +8,22 @@ Read it before calculating changed hot paths; it includes indexed operands,
 taken/not-taken branches, block-repeat termination and stack-transfer costs.
 Use plain CPU counts separately from Spectrum contention, IRQ and disk time.
 
-## Active codec goal — another approximately 10% per library (2026-10-19)
+## Active codec goal — speed/service-memory frontier (2026-10-19)
 
 The user requests roughly another 10% speed improvement for each library,
-preserving compatibility with existing compressed data. About 10% code growth
-is acceptable without penalty. Continue in `.worktree/codec-speed-pass3`,
+preserving compatibility with existing compressed data. The latest explicit
+scope has three directions: (1) maximum speed under a hard 10,000-byte service
+memory cap; (2) faster AND smaller; (3) useful intermediate speed/memory
+tradeoffs. Service memory means executable code, mutable variables, tables,
+alignment padding, required decoder/caller stack and scratch/internal buffers.
+The user explicitly excludes compressed input and output/history from that cap;
+report their requirements separately. Count all emitted wrappers/static regions
+and stack together without double-counting variables already in those regions.
+Use actual complete-path CPU counts and the full service-memory frontier, not
+code size alone. Keep slower blocks/slices explicit; do not claim a global
+optimum from the tested candidates. Earlier ten-percent code-growth preferences
+and size-based rejection are historical, superseded by these three directions.
+Continue in `.worktree/codec-speed-pass3`,
 branch `codex/codec-speed-pass3`, from `f5a0362c`. The earlier item30 gain is
 already in this baseline and does not count toward this goal. Compare against
 current Fast resident/coroutine profiles with the same features and frozen
@@ -25,6 +36,19 @@ each experiment with its root changelog record, including rejected attempts.
 The full 10%-per-library objective remains active until verified; smaller
 intermediate gains do not complete it. Movie/player qualification and the
 repository migration remain separate tasks.
+
+Current integrated compact checkpoint: [FRONTIER.md](libraries/FRONTIER.md)
+and [full authentication](libraries/evidence/compact_frontier_verification.json).
+Tuned+literal-prefix+tail ZX0 resident uses202 service bytes and gains2.073993%;
+ordinary coroutine437 service bytes/gain1.428663%. Tuned+nibble-prefill LZSA2
+resident228 service bytes/gain0.729487%; coroutine409/gain0.667769%. Counts
+include code/state and plain caller/private stack; the documented sample IRQ
+adds separately counted code/headroom. All real blocks improve, while directed
+blocks/slices can slow. 1,028 full comparisons/4,112 native runs, identical
+quota cursors,34+67 tests and both isolated wheels pass. Maximum-size profiles
+and stronger compact/intermediate candidates continue in the three explicitly
+authorized agent worktrees. Historical size-based rejection of the6998-byte
+LZSA2 raw prototype is superseded; service-cap/public-feature checks still apply.
 
 First implementation step: optional `branch_tuned=True` / `--branch-tuned`
 preserves data and coroutine features while improving Fast resident real CPU

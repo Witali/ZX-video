@@ -1,5 +1,45 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Clarify service-memory frontier and verify compact feature integration
+
+- **User scope:** Keep existing compressed-data compatibility while pursuing
+  three profiles: maximum speed under10,000 service bytes, faster AND smaller,
+  and useful intermediate tradeoffs. All executable code, variables, tables,
+  padding, required stacks and scratch/internal buffers count. The user
+  explicitly excludes compressed input and output/history from this cap;
+  report those separately. This supersedes the earlier free-growth preference
+  and its rejection of the measured large raw LZSA2 prototype; keep history.
+- **Baseline/change:** Continue from `ca861f97`, retaining `f5a0362c` as the
+  goal denominator. Integrate the independently committed compact flags;
+  observe coroutine caller/private stack high-water marks without changing
+  Z80 bytes. Add combined isolated API/CLI exports, complete native comparison
+  and [current frontier](libraries/FRONTIER.md). This accounting helper adds
+  0 decoder instructions/T-states and does not alter compressed payloads.
+- **Complete measured result:** Same364real ZX0 blocks: resident
+  156,012,520 ->152,776,831 T (2.073993%),198emitted+4stack=202service bytes;
+  256-byte-demand coroutine180,610,040 ->178,029,731 T (1.428663%),
+  421emitted+4caller+12private=437. Same21real LZSA2 blocks: resident
+  17,765,094 ->17,635,500 T (0.729487%),224+4=228service bytes;
+  coroutine19,407,004 ->19,277,410 T (0.667769%),391+4+14=409. Emitted
+  coroutine totals already include15state-array bytes and patched operands.
+  No extra internal buffers; corpus input/output maxima15878/15872 separately.
+- **Regressions/memory:** All real blocks improve versus the goal baseline.
+  Slower directed blocks: ZX0raw1/coroutine35, LZSA2seven per profile. Slower
+  slices: ZX0942(including145real), LZSA223. Preserve individual records and
+  prior two real prefix-only slowdowns rather than claiming universal speed.
+  Conservative service with the tested13-byte IM1 handler plus6bytes headroom
+  on each active stack is221/462/247/434bytes. Arbitrary application IRQ/NMI
+  code/stack remains separately accounted, not hidden in a code-only claim.
+- **Verification/decision:** 1,028complete profile comparisons/4,112native
+  runs check before/after,9103h relocation,IRQ and every quota-return cursor.
+  All34library+67toolkit tests pass(101),31default profiles/sixresources
+  exact; both independently installed wheels export all compact flags and
+  both combined profiles exactly, with converter-free imports. Preserve prior
+  guarded component proofs; this adds no physical delivery/movie claim.
+  Continue the three-direction goal: compact gains alone do not complete it.
+  [Native memory/CPU evidence](libraries/evidence/compact_frontier.json),
+  [source/test/wheel authentication](libraries/evidence/compact_frontier_verification.json).
+
 ## 2026-10-19 — Optional proven multi-byte Fast ZX0 literal prefix
 
 - **Request/baseline:** Continue the active roughly ten-percent codec goal;

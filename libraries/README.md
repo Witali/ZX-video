@@ -5,6 +5,11 @@ T-states, conditional/repeating costs and common optimization arithmetic close
 to the implementations. [Measured codec paths](TIMING.md) retain experiment
 totals and their input scope.
 
+The current [speed/service-memory frontier](FRONTIER.md) tracks three user
+targets: maximum speed under 10,000 service bytes, faster AND smaller, and
+intermediate tradeoffs. Count code, variables, tables, padding and required
+stacks/buffers together; compressed input/output are explicitly separate.
+
 These are two independently installable libraries extracted from ZX-video.
 Copy either directory to another project or install it from this checkout:
 
