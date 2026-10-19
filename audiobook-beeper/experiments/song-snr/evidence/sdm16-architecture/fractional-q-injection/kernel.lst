@@ -1,0 +1,32 @@
+                 	
+                 	; Fractional q-input correction only; this is not an integrated modulator.
+                 	; IX unsigned16 predictor, fraction is a9-bit accumulator in two fixed bytes.
+                 	; Add low10 predictor bits to fraction; return A=carry0/1/2 in q*8 units.
+                 	; Preserve IX/IY/BC/DE, alternate registers and AF'. Main HL/A/F are scratch.
+                 	; Processing high partial first preserves the carry from the low-byte add.
+8000              	 ORG 0x8000
+8000              	fraction: EQU 0xAF00
+                 	start:
+8000 21 01 AF     	 LD HL,fraction+1
+8003 DD 7C        	 LD A,IXH
+8005 E6 03        	 AND 3
+8007 86           	 ADD A,(HL)
+8008 77           	 LD (HL),A
+8009 2B           	 DEC HL
+800A DD 7D        	 LD A,IXL
+800C 86           	 ADD A,(HL)
+800D 77           	 LD (HL),A
+800E 23           	 INC HL
+800F 7E           	 LD A,(HL)
+8010 CE 00        	 ADC A,0
+8012 1F           	 RRA
+8013 36 00        	 LD (HL),0
+8015 CB 16        	 RL (HL)
+                 	fraction_complete:
+                 	 ; Three256-aligned maps translate old compact offset to an injected offset.
+8017 C6 A0        	 ADD A,0xA0
+8019 67           	 LD H,A
+801A 6B           	 LD L,E
+801B 5E           	 LD E,(HL)
+                 	complete:
+801C 00           	 NOP

@@ -92,6 +92,21 @@ Next: prove a feasible lower-bit-preserving player representation, then match
 the automatic IMA encoder to that implemented modulator and repeat complete
 source/artifact/clock/RAM checks. Frozen-IMA regressions are not an SNR ceiling.
 
+The bounded architecture audit is also complete (28 hashed files under
+`evidence/sdm16-architecture`). All2097152 B input/state cells are retained;
+closure18 but FIRST138/SECOND124 put current resident end atC240,576 bytes
+past fixed bank2 before worker.3006 records/5383 constant intervals suggest
+compression/selector work; naive full lookup7.08 MB or the measured3.85-MB
+8+8 format does not fit. Concrete30-T full16 first-order pulses plus decode
+need575/591 T; the11-pulse448-T probe has88kHz/unweighted148-T holds and no
+quality/paging proof. Residual spill/map138 extra T and24-state rows also
+cannot drop in. These are not impossibility bounds. Next safe work is a
+compact interval/dictionary representation with counted worst-case selector
+and full memory map, retaining the lower-bit witness and all existing audio
+contracts; only then adapt the joint encoder to the implemented modulator.
+Do not claim16 effective output bits, complete background acceptance, or
+full player proof from the C counterfactual or standalone arithmetic probes.
+
 Worktree `.worktree/audio-snr-research`, branch `codex/audio-snr-research`.
 The requested loading/playback interface is completed and separately
 delivered as the named best-measured song disk, nowb96763ca... . The user

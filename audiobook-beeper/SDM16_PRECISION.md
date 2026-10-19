@@ -102,6 +102,23 @@ More source RAM does not automatically enlarge fixed packet/decoder code
 space. Expanding the complete song to raw packed128-kHz pulses would require
 approximately1.44 MB and lose seamless residency on Pentagon1024.
 
+[The separate architecture audit](experiments/song-snr/evidence/sdm16-architecture/README.md)
+enumerates all65536 inputs and32 states forB (2097152 cases). Reachable
+closure stays18 states, but138 FIRST/124 SECOND patterns put the existing
+resident layout atC240,576 bytes past bank2 before the worker. The complete
+six-byte lookup would need approximately7.08 MB;3006 distinct records and
+5383 constant intervals indicate possible compression, without proving a
+fast enough selector. The arrays and their input axes are retained.
+
+Concrete native arithmetic probes measure30 T per pulse with a preserved
+C=16 mask. Sixteen pulses plus decoding need575/591 T per sample and do not
+fit the current period. An11-pulse first-order probe fits448-T packet spacing
+but changes the carrier to88 kHz and introduces a148-T unweighted decode
+hold; it has no paging/audio-quality proof. A literal residual-input spill
+and map costs138 extra T and reaches24 states (144 bytes per row, colliding
+with decoder data). These are measured concrete formats, not impossibility
+bounds for other representations. All28 architecture artifacts are hashed.
+
 The next step is a CPU/RAM-feasible representation that retains lower-bit
 influence, followed by reoptimization of the IMA encoder for that actual
 modulator and complete own-clock playback/artifact checks. Input precision,

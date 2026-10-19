@@ -1,0 +1,169 @@
+                 	
+                 	; Standalone counted precision feasibility kernel, not a release player.
+                 	; Unclipped IMA predictor IX is copied to mainDE after each table decode.
+                 	; mainHL is a16-bit modulo accumulator, mainC16 is preserved by EXX.
+                 	; ADD carry becomes only EAR bit4; MIC and border stay0. AF is scratch.
+                 	; DEC/INC source paging, IRQ, UI and real disk delays are not implemented.
+8000              	 ORG 0x8000
+                 	low_0:
+8000 D9           	EXX
+8001 1A           	 LD A,(DE)
+8002 E6 0F        	 AND 15
+8004 07           	 RLCA
+8005 07           	 RLCA
+8006 B5           	 OR L
+8007 6F           	 LD L,A
+8008 F9           	 LD SP,HL
+8009 C1           	 POP BC
+800A E1           	 POP HL
+800B DD 09        	 ADD IX,BC
+800D D9           	 EXX
+800E DD 54        	 LD D,IXH
+8010 DD 5D        	 LD E,IXL
+8012 19           	 ADD HL,DE
+8013 9F           	 SBC A,A
+8014 A1           	 AND C
+8015 D3 FE        	 OUT (254),A
+8017 19           	 ADD HL,DE
+8018 9F           	 SBC A,A
+8019 A1           	 AND C
+801A D3 FE        	 OUT (254),A
+801C 19           	 ADD HL,DE
+801D 9F           	 SBC A,A
+801E A1           	 AND C
+801F D3 FE        	 OUT (254),A
+8021 19           	 ADD HL,DE
+8022 9F           	 SBC A,A
+8023 A1           	 AND C
+8024 D3 FE        	 OUT (254),A
+8026 19           	 ADD HL,DE
+8027 9F           	 SBC A,A
+8028 A1           	 AND C
+8029 D3 FE        	 OUT (254),A
+802B 19           	 ADD HL,DE
+802C 9F           	 SBC A,A
+802D A1           	 AND C
+802E D3 FE        	 OUT (254),A
+8030 19           	 ADD HL,DE
+8031 9F           	 SBC A,A
+8032 A1           	 AND C
+8033 D3 FE        	 OUT (254),A
+8035 19           	 ADD HL,DE
+8036 9F           	 SBC A,A
+8037 A1           	 AND C
+8038 D3 FE        	 OUT (254),A
+803A 19           	 ADD HL,DE
+803B 9F           	 SBC A,A
+803C A1           	 AND C
+803D D3 FE        	 OUT (254),A
+803F 19           	 ADD HL,DE
+8040 9F           	 SBC A,A
+8041 A1           	 AND C
+8042 D3 FE        	 OUT (254),A
+8044 19           	 ADD HL,DE
+8045 9F           	 SBC A,A
+8046 A1           	 AND C
+8047 D3 FE        	 OUT (254),A
+8049 19           	 ADD HL,DE
+804A 9F           	 SBC A,A
+804B A1           	 AND C
+804C D3 FE        	 OUT (254),A
+804E 19           	 ADD HL,DE
+804F 9F           	 SBC A,A
+8050 A1           	 AND C
+8051 D3 FE        	 OUT (254),A
+8053 19           	 ADD HL,DE
+8054 9F           	 SBC A,A
+8055 A1           	 AND C
+8056 D3 FE        	 OUT (254),A
+8058 19           	 ADD HL,DE
+8059 9F           	 SBC A,A
+805A A1           	 AND C
+805B D3 FE        	 OUT (254),A
+805D 19           	 ADD HL,DE
+805E 9F           	 SBC A,A
+805F A1           	 AND C
+8060 D3 FE        	 OUT (254),A
+                 	low_complete_0:
+8062 D9           	EXX
+8063 1A           	 LD A,(DE)
+8064 E6 F0        	 AND 240
+8066 0F           	 RRCA
+8067 0F           	 RRCA
+8068 13           	 INC DE
+8069 B5           	 OR L
+806A 6F           	 LD L,A
+806B F9           	 LD SP,HL
+806C C1           	 POP BC
+806D E1           	 POP HL
+806E DD 09        	 ADD IX,BC
+8070 D9           	 EXX
+8071 DD 54        	 LD D,IXH
+8073 DD 5D        	 LD E,IXL
+8075 19           	 ADD HL,DE
+8076 9F           	 SBC A,A
+8077 A1           	 AND C
+8078 D3 FE        	 OUT (254),A
+807A 19           	 ADD HL,DE
+807B 9F           	 SBC A,A
+807C A1           	 AND C
+807D D3 FE        	 OUT (254),A
+807F 19           	 ADD HL,DE
+8080 9F           	 SBC A,A
+8081 A1           	 AND C
+8082 D3 FE        	 OUT (254),A
+8084 19           	 ADD HL,DE
+8085 9F           	 SBC A,A
+8086 A1           	 AND C
+8087 D3 FE        	 OUT (254),A
+8089 19           	 ADD HL,DE
+808A 9F           	 SBC A,A
+808B A1           	 AND C
+808C D3 FE        	 OUT (254),A
+808E 19           	 ADD HL,DE
+808F 9F           	 SBC A,A
+8090 A1           	 AND C
+8091 D3 FE        	 OUT (254),A
+8093 19           	 ADD HL,DE
+8094 9F           	 SBC A,A
+8095 A1           	 AND C
+8096 D3 FE        	 OUT (254),A
+8098 19           	 ADD HL,DE
+8099 9F           	 SBC A,A
+809A A1           	 AND C
+809B D3 FE        	 OUT (254),A
+809D 19           	 ADD HL,DE
+809E 9F           	 SBC A,A
+809F A1           	 AND C
+80A0 D3 FE        	 OUT (254),A
+80A2 19           	 ADD HL,DE
+80A3 9F           	 SBC A,A
+80A4 A1           	 AND C
+80A5 D3 FE        	 OUT (254),A
+80A7 19           	 ADD HL,DE
+80A8 9F           	 SBC A,A
+80A9 A1           	 AND C
+80AA D3 FE        	 OUT (254),A
+80AC 19           	 ADD HL,DE
+80AD 9F           	 SBC A,A
+80AE A1           	 AND C
+80AF D3 FE        	 OUT (254),A
+80B1 19           	 ADD HL,DE
+80B2 9F           	 SBC A,A
+80B3 A1           	 AND C
+80B4 D3 FE        	 OUT (254),A
+80B6 19           	 ADD HL,DE
+80B7 9F           	 SBC A,A
+80B8 A1           	 AND C
+80B9 D3 FE        	 OUT (254),A
+80BB 19           	 ADD HL,DE
+80BC 9F           	 SBC A,A
+80BD A1           	 AND C
+80BE D3 FE        	 OUT (254),A
+80C0 19           	 ADD HL,DE
+80C1 9F           	 SBC A,A
+80C2 A1           	 AND C
+80C3 D3 FE        	 OUT (254),A
+80C5 C3 C8 80     	 JP complete
+                 	complete:
+80C8 00           	 NOP

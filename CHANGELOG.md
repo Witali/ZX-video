@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Full-input SDM table and arithmetic feasibility measured
+
+- **Objective/scope:** Finish the CPU/RAM audit for the decoded16-bit precision
+  mechanism after96eadbed. Preserve all existing player/converter sources
+  and the completed quality experiment; generate only standalone probes and
+  source-independent lookup catalogues. Pin new experiment C files to LF so
+  their recorded producer identities survive subsequent checkouts.
+- **Complete dimensions:** Execute all2097152 fullPCM16/32-state cases of
+  counterfactual B in0.609193 s, preserving the complete arrays/input axes.
+  Closure from16 remains18 states.138 FIRST/124 SECOND patterns need13732
+  code bytes; the literal current layout ends atC240,576 bytes beyond bank2
+  before the worker. Full six-byte dispatch lookup needs7077888 bytes;
+  3006 distinct records/5383 constant intervals expose compression options.
+  Specific interval/8+8 formats are measured, not optimality bounds.
+- **Native timing/register proof:** Concrete33-T and30-T first-order pulses
+  require623/639 and575/591 T with the actual low/high IMA decoding context.
+  Main C=16 survives alternate-BC decode; its7-T setup is paid once. An
+  eleven-pulse probe executes1792 T over four packets with exact448-T first-
+  OUT spacing, but uses88-kHz decisions and unweighted[30x10,148] holds;
+  no source-quality or full paging/UI claim follows. A literal residual
+  spill/map is138 extra T per sample.524288 integer pairs and5120 native
+  vectors pass; its24-state/144-byte rows overlap the existing128-byte
+  decoder boundary. These are concrete costs, not impossibility proofs.
+- **Evidence/decision:**28 artifacts, assembly/listings, native vectors and
+  source snapshots are hashed. A separate root check reproduces all artifact
+  hashes and full-input closure/code/resident bounds from the saved arrays.
+  Retain the evidence; reject direct insertion into the current layout.
+  Seek a compact, counted selector/layout before a matched IMA reoptimization
+  or release claim. Original encoders, defaults and delivered b96763ca remain
+  unchanged, and the broader goal is active.
+  [Architecture proof and reproduction](audiobook-beeper/experiments/song-snr/evidence/sdm16-architecture/README.md),
+  [precision context](audiobook-beeper/SDM16_PRECISION.md).
+
 ## 2026-10-19 — Full reconstructedPCM16 SDM input and state precision isolated
 
 - **Objective/baseline:** Implement the user's proposal to preserve16-bit
