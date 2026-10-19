@@ -1,0 +1,242 @@
+{
+  "date": "2026-10-19",
+  "baseline_revision": "841bf955",
+  "complete": true,
+  "release": false,
+  "goal_achieved": false,
+  "scope": "Authenticate compact sync speed/size results and guarded producer invariants.",
+  "native_profile_comparisons": 388,
+  "native_report": {
+    "file": "evidence/compact_sync_native.json",
+    "sha256": "a69a006e82f05efa2af8c1379f4b25ce7666adf3e401b3dc0f19ff092c051b74"
+  },
+  "streaming": {
+    "call": {
+      "cases": 63,
+      "placements_per_case": 6,
+      "baseline_tstates": 29484761,
+      "candidate_tstates": 29452121,
+      "delta_tstates": -32640,
+      "producer_tstates": 2007656,
+      "sector_reads": 772,
+      "input_waits_and_producer_exact": true,
+      "slices": 2670,
+      "slower_slices": 0,
+      "injected_interrupts": 255,
+      "cold_code_delta_bytes": -3,
+      "core_bytes_unchanged": true
+    },
+    "direct": {
+      "cases": 63,
+      "placements_per_case": 6,
+      "baseline_tstates": 27268290,
+      "candidate_tstates": 27235650,
+      "delta_tstates": -32640,
+      "producer_tstates": 1997321,
+      "sector_reads": 772,
+      "input_waits_and_producer_exact": true,
+      "slices": 2670,
+      "slower_slices": 0,
+      "injected_interrupts": 235,
+      "cold_code_delta_bytes": -3,
+      "core_bytes_unchanged": true
+    }
+  },
+  "strongest_streaming_combinations": {
+    "call": {
+      "cases": 65,
+      "placements_per_case": 6,
+      "all_exact": true,
+      "slower_placements": 0,
+      "delta_tstates": -136378,
+      "injected_interrupts": 256
+    },
+    "direct": {
+      "cases": 65,
+      "placements_per_case": 6,
+      "all_exact": true,
+      "slower_placements": 0,
+      "delta_tstates": -136378,
+      "injected_interrupts": 235
+    }
+  },
+  "service_memory": {
+    "default": {
+      "decoder_code_and_state_bytes": 379,
+      "state_bytes_already_included": 15,
+      "configured_caller_stack_reservation_bytes": 128,
+      "configured_private_stack_reservation_bytes": 128,
+      "benchmark_irq_stub_bytes": 13,
+      "tables_padding_internal_buffers_bytes": 0,
+      "conservative_total_service_bytes": 648,
+      "observed_stack_peaks": {
+        "caller_stack_bytes": 4,
+        "private_stack_bytes": 14,
+        "irq_caller_stack_bytes": 10,
+        "irq_private_stack_bytes": 14
+      },
+      "input_output_history_excluded": true
+    },
+    "restored": {
+      "decoder_code_and_state_bytes": 379,
+      "state_bytes_already_included": 15,
+      "configured_caller_stack_reservation_bytes": 128,
+      "configured_private_stack_reservation_bytes": 128,
+      "benchmark_irq_stub_bytes": 13,
+      "tables_padding_internal_buffers_bytes": 0,
+      "conservative_total_service_bytes": 648,
+      "observed_stack_peaks": {
+        "caller_stack_bytes": 4,
+        "private_stack_bytes": 14,
+        "irq_caller_stack_bytes": 10,
+        "irq_private_stack_bytes": 14
+      },
+      "input_output_history_excluded": true
+    },
+    "tuned": {
+      "decoder_code_and_state_bytes": 386,
+      "state_bytes_already_included": 15,
+      "configured_caller_stack_reservation_bytes": 128,
+      "configured_private_stack_reservation_bytes": 128,
+      "benchmark_irq_stub_bytes": 13,
+      "tables_padding_internal_buffers_bytes": 0,
+      "conservative_total_service_bytes": 655,
+      "observed_stack_peaks": {
+        "caller_stack_bytes": 4,
+        "private_stack_bytes": 14,
+        "irq_caller_stack_bytes": 10,
+        "irq_private_stack_bytes": 20
+      },
+      "input_output_history_excluded": true
+    },
+    "combined": {
+      "decoder_code_and_state_bytes": 469,
+      "state_bytes_already_included": 15,
+      "configured_caller_stack_reservation_bytes": 128,
+      "configured_private_stack_reservation_bytes": 128,
+      "benchmark_irq_stub_bytes": 13,
+      "tables_padding_internal_buffers_bytes": 0,
+      "conservative_total_service_bytes": 738,
+      "observed_stack_peaks": {
+        "caller_stack_bytes": 4,
+        "private_stack_bytes": 14,
+        "irq_caller_stack_bytes": 10,
+        "irq_private_stack_bytes": 14
+      },
+      "input_output_history_excluded": true
+    },
+    "streaming-directFalse-extendedFalse": {
+      "decoder_code_and_state_bytes": 481,
+      "state_bytes_already_included": 19,
+      "configured_caller_stack_reservation_bytes": 128,
+      "configured_private_stack_reservation_bytes": 128,
+      "benchmark_irq_stub_bytes": 13,
+      "tables_padding_internal_buffers_bytes": 0,
+      "conservative_total_service_bytes": 750,
+      "static_caller_stack_bound_with_benchmark_irq_bytes": 10,
+      "static_private_stack_bound_with_benchmark_irq_bytes": 26,
+      "external_application_producer_not_part_of_decoder_budget": true,
+      "input_output_history_excluded": true
+    },
+    "streaming-directFalse-extendedTrue": {
+      "decoder_code_and_state_bytes": 564,
+      "state_bytes_already_included": 19,
+      "configured_caller_stack_reservation_bytes": 128,
+      "configured_private_stack_reservation_bytes": 128,
+      "benchmark_irq_stub_bytes": 13,
+      "tables_padding_internal_buffers_bytes": 0,
+      "conservative_total_service_bytes": 833,
+      "static_caller_stack_bound_with_benchmark_irq_bytes": 10,
+      "static_private_stack_bound_with_benchmark_irq_bytes": 26,
+      "external_application_producer_not_part_of_decoder_budget": true,
+      "input_output_history_excluded": true
+    },
+    "streaming-directTrue-extendedFalse": {
+      "decoder_code_and_state_bytes": 476,
+      "state_bytes_already_included": 19,
+      "configured_caller_stack_reservation_bytes": 128,
+      "configured_private_stack_reservation_bytes": 128,
+      "benchmark_irq_stub_bytes": 13,
+      "tables_padding_internal_buffers_bytes": 0,
+      "conservative_total_service_bytes": 745,
+      "static_caller_stack_bound_with_benchmark_irq_bytes": 10,
+      "static_private_stack_bound_with_benchmark_irq_bytes": 26,
+      "external_application_producer_not_part_of_decoder_budget": true,
+      "input_output_history_excluded": true
+    },
+    "streaming-directTrue-extendedTrue": {
+      "decoder_code_and_state_bytes": 559,
+      "state_bytes_already_included": 19,
+      "configured_caller_stack_reservation_bytes": 128,
+      "configured_private_stack_reservation_bytes": 128,
+      "benchmark_irq_stub_bytes": 13,
+      "tables_padding_internal_buffers_bytes": 0,
+      "conservative_total_service_bytes": 828,
+      "static_caller_stack_bound_with_benchmark_irq_bytes": 10,
+      "static_private_stack_bound_with_benchmark_irq_bytes": 26,
+      "external_application_producer_not_part_of_decoder_budget": true,
+      "input_output_history_excluded": true
+    }
+  },
+  "archives": [
+    {
+      "file": "evidence/compact_sync/compact-sync-call.json.gz",
+      "sha256": "ca4d1d3c2290b29c91d9d464e3431f57178fca604ce91467230436b8661b1888",
+      "decoded_sha256": "4ae23d5c03f513fc93d77229340644aa687d4e03f977ee3042ca9967a3198cd0"
+    },
+    {
+      "file": "evidence/compact_sync/compact-sync-direct.json.gz",
+      "sha256": "02cd4267a9577aa50361a7180dd3db99dfa5bb96b15f7a10fde4d034b7aadec1",
+      "decoded_sha256": "2156c9a98a2d4cac961b1136a933904794f7e83588803245a5a65dbaa97313d8"
+    },
+    {
+      "file": "evidence/compact_sync/compact-sync-combinations.json.gz",
+      "sha256": "7e87701862181f2aab45dfeb765567bb0ba020b8166b135252bde556077315f9",
+      "decoded_sha256": "4827d3a955f5070fc19c09820de85f7f4e9cd2998816c4b2d3c35f96be16040c"
+    },
+    {
+      "file": "evidence/compact_sync/compact-sync-library-tests.log.gz",
+      "sha256": "ca3dd5e2c360d2f4e752f6099909e80c8f6b92d3b2df3615abf17712276d487f",
+      "decoded_sha256": "f47ebf539c6d6c1e27fcc95edd87df9c1411d7cee4b7ed5acf2231a254a86f15"
+    }
+  ],
+  "superseded": {
+    "file": "evidence/compact_sync/superseded-four-register-moves.json.gz",
+    "sha256": "1a152ee345534b5d4ac9c1388f274ee7693b3862f860040f0f637be07bc86e6a",
+    "reason": "Direct BC quota stores remove two unnecessary register moves."
+  },
+  "source_sha256_lf": {
+    "libraries/lzsa/src/lzsa/author.py": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b",
+    "libraries/lzsa/src/lzsa/block.py": "6ec2823e9d882fb44618abedacf95a0bb7b6da1efa9fb06952973ae9737d31c0",
+    "libraries/lzsa/src/lzsa/budget.py": "5ae4458bf5bbc6c0f81d9daf064cc555b480a6e3dd6962d7b3b9689291afcf06",
+    "libraries/lzsa/src/lzsa/codec.py": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775",
+    "libraries/lzsa/src/lzsa/compact.py": "0d382910264a4341002c751845420e795ed1357c94989db10974514722cd6676",
+    "libraries/lzsa/src/lzsa/compressor.py": "524e91046757a255f418f4a5e4d64669ac51b704b8bb76d063e54e4e3e6db088",
+    "libraries/lzsa/src/lzsa/distances.py": "553ff5d6934d60a0bd5f71188b24d6f240e7b1624f38625682c326b58d5e6e95",
+    "libraries/lzsa/src/lzsa/distance_cost.py": "a5d4cc55fd9861229fa609d9609f06ceda660395715a49c178e99fd98eb70af6",
+    "libraries/lzsa/src/lzsa/export.py": "2ae56fcce4ba97ca46230eca987d4a4c113a38442555d9590d7c58bf41eff9ae",
+    "libraries/lzsa/src/lzsa/native.py": "7f8c6295c81fa4892ec099b6b9a2b38a74c1fbfadceac551ca397a8158e4f63d",
+    "libraries/lzsa/src/lzsa/oracle.py": "039654e7a86477f5c8cf34755a68a8cb474053c87108ce6a7e6cc29c75564c5b",
+    "libraries/lzsa/src/lzsa/resumable.py": "582d34751fd115b587e963b03ab44f991268cfd83adbbb5f2b6b4f4763395f4d",
+    "libraries/lzsa/src/lzsa/streaming.py": "8cdf842acc989b253c31bf7d0dc2e5e238afd6e975436f8a988002eb15c80aaa",
+    "libraries/lzsa/src/lzsa/_branch_tuning.py": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54",
+    "libraries/lzsa/src/lzsa/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/lzsa/src/lzsa/__init__.py": "dfad484c1a07ca2f6e3a759b5ac53763808b47e69d5997e645a152250fb20a9b",
+    "libraries/lzsa/src/lzsa/__main__.py": "392ebf021bd35bfea39225d5365587623d3c28e2faabb74259b6367954187cbc",
+    "toolkit/test_streaming_lzsa2.py": "268351989a1dd8ccc7b9aafb0d4c94a74873ff980c2be243db4a0a1b9255d23d",
+    "libraries/tests/measure_compact_sync.py": "51634919ea42b3a802c836cc6faff6cc2bc8f74a948a73bf1d71df7b87b9a478",
+    "libraries/tests/measure_compact_sync_streaming.py": "fd7367a699b5c37ccd1b759c7edc27547f67b9c7330304ba79d62c2969df4574",
+    "libraries/tests/test_compact_sync.py": "7a48325163c07bca23137c1eda92c54c59c14e79b5482de7da949e8920b202fc",
+    "libraries/tests/summarize_compact_sync.py": "c6a3e4de0c3dbefc0a1765141f17970c00ca0b735bb252b4907c2650dde6963e"
+  },
+  "default_profiles_exact": 31,
+  "upstream_resources_exact": 6,
+  "library_unit_tests": 33,
+  "standalone_sync_target_word_checks": 262144,
+  "payload_delta_bytes": 0,
+  "state_delta_bytes": 0,
+  "stack_delta_bytes": 0,
+  "default_instruction_delta_tstates": 0,
+  "physical_disk_rom_ula_publication_measured": false,
+  "isolated_wheels_not_retested": true
+}

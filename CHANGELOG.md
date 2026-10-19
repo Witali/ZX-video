@@ -93,6 +93,34 @@
   hardware qualification and no additional speed claim. Retain this reference
   for every following experiment; the ten-percent codec goal remains active.
 
+## 2026-10-19 — Make LZSA2 coroutine quota synchronization smaller and faster
+
+- Objective/baseline: pursue the user's faster-and-smaller direction from
+  `841bf955`, preserving raw-v2 data and all coroutine/input features.
+  New explicit `compact_sync` uses dead caller BC to patch quota operands;
+  ordinary requests reuse the real target returned in DE. Only equality of
+  the reversed subtraction is live. Saved decoder BC/AF' and EOF stay intact.
+- Default ordinary wrapper 384 ->379 bytes, begin -8 T / resume -28 T.
+  Same 21 real blocks: 19,412,006 ->19,376,978 T (-0.180445%). Against the
+  older restore_compare option: -3 bytes, begin -3 T / resume -23 T.
+  Streaming saves three bytes/16 T per call, or one byte/11 T versus restore.
+  Both guarded modes save 32,640 total T on 63 cases/six placements with
+  identical producer/waits/772 once-only sectors. No slower block/slice.
+- Verified 388 full native comparisons, relocation/IRQ, both tiny EOF forms,
+  65-case strongest guarded combinations and all 262,144 target/end/mode
+  sync checks. All 33 library tests pass; 31 defaults/six resources exact.
+  Plain caller/private peaks 4/14 bytes, IRQ 10/20, unchanged. Conservative
+  code/state + two 128-byte stacks + 13-byte test IRQ stub uses 648..833 bytes,
+  below the 10,000-byte service-memory cap; external input/output/history
+  excluded, no tables/padding/internal buffers added.
+- Retain the superseded four-copy candidate and measured +5-T begin penalty
+  against restore_compare; direct B/C quota stores remove that penalty and
+  another two bytes/eight T per sync. [Algorithm, reproduction and limits](libraries/COMPACT_SYNC.md),
+  [native results](libraries/evidence/compact_sync_native.json),
+  [authenticated guarded evidence](libraries/evidence/compact_sync_verification.json).
+  This component result leaves the broad speed/frontier goal active; no
+  player release, physical disk/ROM/ULA, external encoder or wheel rerun.
+
 ## 2026-10-19 — Pre-normalize the optional LZSA2 nibble cache
 
 - Objective: continue the user's approximately 10% speed goal without changing

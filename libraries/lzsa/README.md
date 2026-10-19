@@ -247,3 +247,19 @@ improves 19,356,394 ->19,277,410 T (0.408051%), 387 ->391 bytes. Unmatched
 final refills and some slices are 3 T slower, so the option stays explicit.
 [Native, guarded-input and compatibility evidence](../NIBBLE_PREFILL.md)
 records all cases. This smaller gain does not complete the active 10% goal.
+
+## Smaller and faster coroutine synchronization
+
+`compact_sync=True` / `--compact-sync` uses caller BC as temporary quota
+storage before restoring the saved decoder frame. Ordinary mode returns the
+real target in DE; final quota operands still become FFFFh so EOF is read.
+This saves five bytes, 8 T per begin and 28 T per ordinary resume versus the
+default wrapper. Streaming saves three bytes and 16 T per begin/resume.
+With restore_compare also enabled, compact_sync replaces its calculation:
+ordinary -3 bytes/-3 T per begin/-23 T per resume; streaming -1 byte/-11 T
+per call. Resident profiles have no wrapper and reject this CLI option.
+
+Default real ordinary CPU improves 19,412,006 ->19,376,978 T (0.180445%),
+384 ->379 code/state bytes. No block or slice slows across the measured
+real/directed/random profiles. [Timing, service memory and full compatibility
+checks](../COMPACT_SYNC.md) record the bounded result and its limitations.

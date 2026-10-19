@@ -13,7 +13,7 @@ PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
 def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,restore_compare=False,fast_jumps=False,
-          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,nibble_prefill=False,_one_shot=False,_assembler=None):
+          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,nibble_prefill=False,compact_sync=False,_one_shot=False,_assembler=None):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
     Configure input_pointer, block_end and slice_target, then call begin or
@@ -39,6 +39,10 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     nibble_prefill normalizes the cached low nibble while refilling: +3 T on
     refill, -7 T when consumed, +4 code bytes. An unmatched refill is slower.
     AF' carry still distinguishes refill/cache; suspension saves it intact.
+    compact_sync patches quota operands from dead BC before frame restore.
+    Ordinary input also returns the original target in DE for the caller
+    quota comparison. It replaces the
+    older restore_compare calculation when both options are selected.
     """
     if branch_tuned:
         from ._branch_tuning import tune
@@ -46,12 +50,12 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
             direct_header=direct_header,long_copy=long_copy,near_literals=near_literals,
             word_state_init=word_state_init,restore_compare=restore_compare,fast_jumps=fast_jumps,
             prefix=prefix,prefix_limit=prefix_limit,stack=stack,output_base=output_base,
-            nibble_prefill=nibble_prefill,_one_shot=_one_shot),'lzsa2')
+            nibble_prefill=nibble_prefill,compact_sync=compact_sync,_one_shot=_one_shot),'lzsa2')
     if direct_header and not streaming:raise ValueError('direct header requires streaming input')
     if near_literals and (not long_copy or streaming):
         raise ValueError('near literals require ordinary long-copy input')
     if word_state_init and not streaming:raise ValueError('word state init requires streaming input')
-    if _one_shot and (streaming or word_state_init or restore_compare):
+    if _one_shot and (streaming or word_state_init or restore_compare or compact_sync):
         raise ValueError('one-shot core has no streaming/state wrapper')
     if not (0<=core<core_limit<=65536 and 0<=prefix<prefix_limit<=65536):
         raise ValueError('invalid code reservations')
@@ -214,7 +218,8 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         cold.abs16(0x3a,'finished');cold.emit(0xb7,0xc0)
     cold.abs16(0xcd,'sync')
     if not streaming:
-        cold.abs16(0x2a,'slice_output');cold.abs16((0xed,0x5b),'slice_target')
+        cold.abs16(0x2a,'slice_output')
+        if not compact_sync:cold.abs16((0xed,0x5b),'slice_target')
         cold.emit(0xb7,0xed,0x52,0xd0)
     cold.abs16((0xed,0x73),'slice_caller_sp');cold.abs16((0xed,0x7b),'slice_decoder_sp')
     cold.emit(0xe1,0xd1,0xc1,8,0xf1,8,0xf1,0xc9)
@@ -235,15 +240,29 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     cold.abs16((0xed,0x53),'slice_output');cold.abs16((0xed,0x7b),'slice_caller_sp');cold.emit(0xc9)
     cold.label('slice_yield');cold.abs16((0xed,0x53),'slice_output');cold.emit(0xf5,8,0xf5,8,0xc5,0xd5,0xe5)
     cold.abs16((0xed,0x73),'slice_decoder_sp');cold.abs16((0xed,0x7b),'slice_caller_sp');cold.emit(0xc9)
-    cold.label('sync');cold.abs16(0x2a,'slice_target');cold.abs16((0xed,0x5b),'block_end');cold.emit(0xb7,0xed,0x52)
-    if restore_compare:
+    cold.label('sync')
+    if compact_sync:
+        # Before a decoder frame is restored, caller BC is scratch. Compare
+        # end-target using only Z, retain target in BC and return it in DE.
+        # Two 4-T moves replace sync's 16-T reload and the request's 20-T
+        # reload, saving 28 T/request and five bytes; begin saves 8 T. Quota
+        # patches read B/C directly; callers overwrite the dead HL difference.
+        # Streaming resumes directly into the saved frame, so it needs neither
+        # target copy: remove the old reload entirely (-16 T, -3 bytes).
+        cold.abs16(0x2a,'block_end');cold.abs16((0xed,0x4b),'slice_target')
+        cold.emit(0xb7,0xed,0x42)
+        if not streaming:cold.emit(0x50,0x59)
+    else:
+        cold.abs16(0x2a,'slice_target');cold.abs16((0xed,0x5b),'block_end');cold.emit(0xb7,0xed,0x52)
+    if restore_compare and not compact_sync:
         # (target-end)+end restores target modulo65536. ADD HL retains Z
         # from SBC and carries exactly when SBC borrowed. The following
         # branch consumes only Z; target operand stores consume HL/A.
         cold.emit(0x19)
-    else:cold.abs16(0x2a,'slice_target')
-    cold.rel8(0x20,'sync_target');cold.emit(0x21,0xff,0xff)
-    cold.label('sync_target');cold.emit(0x7c);cold.abs16(0x32,'high_operand');cold.emit(0x7d);cold.abs16(0x32,'low_operand');cold.emit(0xc9)
+    elif not compact_sync:cold.abs16(0x2a,'slice_target')
+    cold.rel8(0x20,'sync_target');cold.emit(0x01 if compact_sync else 0x21,0xff,0xff)
+    cold.label('sync_target');cold.emit(0x78 if compact_sync else 0x7c);cold.abs16(0x32,'high_operand')
+    cold.emit(0x79 if compact_sync else 0x7d);cold.abs16(0x32,'low_operand');cold.emit(0xc9)
     cold.label('fatal');cold.emit(0x76)
     if streaming:
         # A 32-byte token prefix covers <=17 literals, their <=2-byte header,
@@ -297,16 +316,17 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         0x19:('ADD HL,DE',1,11),0x09:('ADD HL,BC',1,11),0xbc:('CP H',1,4),
         0x38:('JR C,e',2,[7,12]),0x28:('JR Z,e',2,[7,12]),0x18:('JR e',2,12),0xc0:('RET NZ',1,[5,11]),
         0xc6:('ADD A,n',2,7),0xce:('ADC A,n',2,7),0x4f:('LD C,A',1,4),0x78:('LD A,B',1,4),
-        0x06:('LD B,n',2,7),0x23:('INC HL',1,6),0xfe:('CP n',2,7)}
+        0x06:('LD B,n',2,7),0x23:('INC HL',1,6),0xfe:('CP n',2,7),
+        0x79:('LD A,C',1,4),0x50:('LD D,B',1,4),0x59:('LD E,C',1,4)}
     for op,pair in ((0xc5,'BC'),(0xd5,'DE'),(0xe5,'HL'),(0xf5,'AF')):
         cold_ops[op]=('PUSH '+pair,1,11);cold_ops[op-4]=('POP '+pair,1,10)
     code=regions[0][1];pos=0
     while prefix+pos<labels['state']:
         if code[pos]==0xed:
             q=code[pos+1]
-            if q==0x52:name,size,t='SBC HL,DE',2,15
+            if q in (0x42,0x52):name,size,t=('SBC HL,BC' if q==0x42 else 'SBC HL,DE'),2,15
             else:
-                name={0x5b:'LD DE,(nn)',0x53:'LD (nn),DE',0x73:'LD (nn),SP',0x7b:'LD SP,(nn)'}[q]
+                name={0x4b:'LD BC,(nn)',0x5b:'LD DE,(nn)',0x53:'LD (nn),DE',0x73:'LD (nn),SP',0x7b:'LD SP,(nn)'}[q]
                 size,t=4,20
         else:name,size,t=cold_ops[code[pos]]
         rows.append(dict(address=prefix+pos,instruction=name,tstates=t));pos+=size
@@ -333,6 +353,13 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
                 begin_init_code_delta=-1) if word_state_init else {}),
         **(dict(restore_compare=True,sync_tstate_delta=-5,sync_code_delta=-2,
                 sync_regular_tstates_before=127,sync_regular_tstates_after=122,
-                sync_final_tstates_before=132,sync_final_tstates_after=127) if restore_compare else {}),
+                sync_final_tstates_before=132,sync_final_tstates_after=127) if restore_compare and not compact_sync else {}),
+        **(dict(compact_sync=True,compact_sync_scratch_pair='BC',
+                compact_sync_returns_target_in_de=not streaming,
+                compact_sync_code_delta=(-1 if restore_compare else -3) if streaming else (-3 if restore_compare else -5),
+                begin_delta_tstates=(-11 if restore_compare else -16) if streaming else (-3 if restore_compare else -8),
+                resume_delta_tstates=(-11 if restore_compare else -16) if streaming else (-23 if restore_compare else -28),
+                **(dict(restore_compare=True,restore_compare_superseded_by_compact_sync=True) if restore_compare else {}))
+            if compact_sync else {}),
         **jump_metadata(),**nibble_metadata(),timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         upstream_sha256=sha((Path(__file__).parent/'asm/unlzsa2_fast.asm').read_bytes()))

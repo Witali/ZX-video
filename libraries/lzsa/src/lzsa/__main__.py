@@ -21,6 +21,7 @@ def main():
     assembly.add_argument('--near-literals', action='store_true',
                           help='place the ordinary long-copy literal helper near its JR caller')
     assembly.add_argument('--word-state-init', action='store_true',help='clear adjacent streaming flags with a word store')
+    assembly.add_argument('--compact-sync', action='store_true',help='share the quota target through dead caller BC; smaller/faster cold wrapper')
     assembly.add_argument('--restore-compare', action='store_true',help='restore the compared target arithmetically')
     assembly.add_argument('--fast-jumps', action='store_true',
                           help='use 10-T JP for core unconditional JR; one extra byte per site')
@@ -42,7 +43,7 @@ def main():
     args = parser.parse_args()
     if args.command == 'build':
         if args.profile!='coroutine':
-            if args.streaming or args.direct_header or args.word_state_init or args.restore_compare:
+            if args.streaming or args.direct_header or args.word_state_init or args.restore_compare or args.compact_sync:
                 parser.error('resident-block profile has no streaming/state wrapper')
             from .block import build as block_build
             if args.profile=='small-block' and (args.long_copy or args.near_literals or args.fast_jumps or args.branch_tuned or args.nibble_prefill):
@@ -57,7 +58,7 @@ def main():
                 prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,
                 output_base=args.output_base,streaming=args.streaming,direct_header=args.direct_header,
                 long_copy=args.long_copy,near_literals=args.near_literals,word_state_init=args.word_state_init,
-                restore_compare=args.restore_compare,fast_jumps=args.fast_jumps,branch_tuned=args.branch_tuned,nibble_prefill=args.nibble_prefill)
+                restore_compare=args.restore_compare,compact_sync=args.compact_sync,fast_jumps=args.fast_jumps,branch_tuned=args.branch_tuned,nibble_prefill=args.nibble_prefill)
         export(args.output,regions,labels,metadata,namespace=args.namespace)
         print(args.output / 'decoder.asm')
     else:
