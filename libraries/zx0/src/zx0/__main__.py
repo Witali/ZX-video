@@ -19,6 +19,8 @@ def main():
                           help='use 10-T JP for unconditional JR; one extra byte per site')
     assembly.add_argument('--branch-tuned', action='store_true',
                           help='select measured conditional JR/JP forms in Fast profiles')
+    assembly.add_argument('--literal-prefix', action='store_true',
+                          help='save 5 T on multi-byte literals in Fast; coroutine may need a larger core')
     for name, default in (('core',0x8df2),('core-limit',0x8f09),('prefix',0x7c00),
                           ('prefix-limit',0x7d50),('stack',0x7be0),('output-base',0xc000)):
         assembly.add_argument('--'+name, type=lambda value:int(value,0), default=default)
@@ -35,11 +37,13 @@ def main():
     if args.command == 'build':
         if args.branch_tuned and args.variant not in ('fast','fast-block'):
             parser.error('--branch-tuned requires a Fast profile')
+        if args.literal_prefix and args.variant not in ('fast','fast-block'):
+            parser.error('--literal-prefix requires a Fast profile')
         if args.fast_jumps and args.variant in ('fast','turbo_tuned'):
             parser.error('--fast-jumps is supported by resident profiles')
         if args.variant=='fast-block':
             from .block import build as block_build
-            regions,labels,metadata=block_build(core=args.core,core_limit=args.core_limit,fast_jumps=args.fast_jumps,branch_tuned=args.branch_tuned)
+            regions,labels,metadata=block_build(core=args.core,core_limit=args.core_limit,fast_jumps=args.fast_jumps,branch_tuned=args.branch_tuned,literal_prefix=args.literal_prefix)
         elif args.variant in ('standard','turbo','mega'):
             a = MiniAssembler(args.core)
             entry=emit_decoder(a, args.variant,fast_jumps=args.fast_jumps)
@@ -55,7 +59,7 @@ def main():
                     patched_addresses=[a.labels['dzx0m_last_offset+1']+i for i in (0,1)])
         else:
             regions, labels, metadata = build(args.variant,core=args.core,core_limit=args.core_limit,
-                prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base,branch_tuned=args.branch_tuned)
+                prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base,branch_tuned=args.branch_tuned,literal_prefix=args.literal_prefix)
         export(args.output,regions,labels,metadata,namespace=args.namespace)
         print(args.output / 'decoder.asm')
     else:

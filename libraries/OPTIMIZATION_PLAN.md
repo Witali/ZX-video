@@ -288,3 +288,23 @@ For the guarded runs, use the same decompressed fixtures and `--noncanonical
 arguments as item30, with and without `--direct-header`; save to
 `.tmp/tuned-branch-call.json` / `.tmp/tuned-branch-direct.json`. Successful
 unit logs and both isolated smoke results are indexed by the summary.
+
+## Item32 — proven multi-byte Fast ZX0 literal prefix (2026-10-19)
+
+**Decision: optional resident gain; explicit coroutine request-cost tradeoff.**
+`literal_prefix=True` / `--literal-prefix` restores one safe upstream LDI before
+LDIR on BC>=2. Resident cost is +2 bytes and -5 T per multi-byte literal run;
+BC=1 bypasses the prefix. Deferred long/short coroutine checks share EX/LDIR,
+preserving quota-before-copy and every published output frontier, but add
+30 bytes and 26 T per target synchronization. All 417 blocks x four profiles
+pass complete before/after, relocation and IRQ (6,672 native runs).
+
+On 364 unchanged real blocks, resident saves 569,485 T with no slower case;
+256-byte-demand coroutine saves 268,301 T overall, but two real blocks slow
+617/17 T and 2,783 real slices slow at most 26 T. Preserve these regressions.
+An independent protected runner forces IRQ at 28 deferred-EX checkpoints and
+checks zero/repeated/single-byte demands before any output; all pass. 28 library
+tests, 31 exact default profiles, six exact upstream resources and isolated
+wheel/CLI exports pass. Leave flags off by default and choose hot reservations
+explicitly; no player/streaming default is promoted. This does not complete
+the active ten-percent goal. [Full arithmetic, evidence and reproduction](LITERAL_PREFIX.md).

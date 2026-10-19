@@ -149,3 +149,15 @@ Defaults are unchanged. Three directed cases per profile are 1..4 T slower;
 individual slices can also be slower. All real blocks improve in the retained
 corpus. This is an intermediate step toward the separate 10% goal, not its
 completion or a player-release claim. [Complete candidate counts](../evidence/ten_percent_tuned_branches.json).
+
+## Optional multi-byte literal prefix
+
+Fast resident/coroutine builds accept `literal_prefix=True` / `--literal-prefix`.
+One LDI before LDIR saves 5 T on proven BC>=2 runs; BC=1 bypasses it. Resident
+code grows two bytes, saving another 569,485 T on all real blocks with none
+slower. The coroutine checks quota before output and preserves every return
+cursor, but grows 30 bytes and spends 26 T extra per target synchronization.
+At 256-byte demands it saves 268,301 T overall while two real blocks and some
+slices slow; keep the option off for workloads where that cost dominates.
+Choose core reservations explicitly; the untuned coroutine exceeds its old
+default reservation. [Counts, limits and verification](../LITERAL_PREFIX.md).

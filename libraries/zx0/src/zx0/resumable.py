@@ -19,7 +19,7 @@ UPSTREAM = Path(__file__).parent/'asm/dzx0_fast.asm'
 
 
 def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
-          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,_assembler=None):
+          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,literal_prefix=False,_assembler=None):
     """Return (address/bytes regions, labels, metadata) for a private coroutine.
 
     Set input_pointer, block_end and slice_target before begin. Resume through
@@ -29,13 +29,18 @@ def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
     and fit below the private stack. Output history and source stay available.
     branch_tuned optionally selects measured JR/JP forms in Fast. Branch
     conditions stay exact; metadata reports fallbacks and synthetic slowdowns.
+    literal_prefix restores one LDI for proven multi-byte literals. Separate
+    short/long checks share the final AF restore and LDIR; quotas are checked
+    before either copy. Reserve the larger core explicitly when enabling it.
     """
     if branch_tuned:
         if variant!='fast':raise ValueError('branch tuning requires the Fast decoder')
         from ._branch_tuning import tune
         return tune(build,dict(variant=variant,core=core,core_limit=core_limit,
-            prefix=prefix,prefix_limit=prefix_limit,stack=stack,output_base=output_base),'zx0')
+            prefix=prefix,prefix_limit=prefix_limit,stack=stack,output_base=output_base,
+            literal_prefix=literal_prefix),'zx0')
     if variant not in ('fast','turbo_tuned'): raise ValueError('unknown decoder')
+    if literal_prefix and variant!='fast':raise ValueError('literal prefix requires the Fast decoder')
     if not (0<=core<core_limit<=65536 and 0<=prefix<prefix_limit<=65536):
         raise ValueError('invalid code reservations')
     if not (core_limit<=prefix or prefix_limit<=core):raise ValueError('code reservations overlap')
@@ -43,6 +48,7 @@ def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
     assembler=_assembler or MiniAssembler
     cold, hot = assembler(prefix), assembler(core)
     sites = ('match','match3','slice') if variant == 'fast' else ('match','slice')
+    if literal_prefix:sites += ('slice_long',)
     patches = []
 
     cold.label('slice_until')
@@ -79,7 +85,7 @@ def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
     cold.label('block_stored'); cold.emit(0)
     cold.label('end'); cold.labels['begin'] = cold.labels['slice_begin']
 
-    def boundary(a, site):
+    def boundary(a, site, *, deferred=False):
         a.label(site+'_check'); a.emit(0x08,0x7a)
         a.label(site+'_compare_high'); a.emit(0xfe,0)
         a.abs16(0xda,site+'_fast')  # Frequent taken JP is 10 T vs JR's 12.
@@ -88,10 +94,12 @@ def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
         a.abs16(0xda,site+'_fast')
         a.label(site+'_slow'); a.emit(0x08)
         a.abs16(0xcd,'slice_yield'); a.abs16(0xc3,site+'_check')
-        a.label(site+'_fast'); a.emit(0x08)
+        if not deferred:
+            a.label(site+'_fast'); a.emit(0x08)
         for part in ('high','low'):
             name=site+'_'+part+'_operand'; a.labels[name]=a.labels[site+'_compare_'+part]+1
             patches.append(name)
+        return True
 
     if variant=='turbo_tuned':
         def copy(a, site): boundary(a,site); a.emit(0xed,0xb0)
@@ -99,7 +107,7 @@ def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
             inline_match=lambda a:copy(a,'match'), inline_literal=lambda a:copy(a,'slice'))
         offset = 'dzx0t_last_offset'
     else:
-        emit_fast(hot,boundary)
+        emit_fast(hot,boundary,literal_prefix=literal_prefix)
         offset = 'PrevOffset'
     labels = cold.labels | hot.labels
     labels['last_offset_operand'] = labels[offset]+1
@@ -116,19 +124,29 @@ def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
         output_base=output_base,private_stack=stack,
         source_commit='ecde3a2ae05061fe06469ed46df81a33b7de7d86',
         upstream_sha256=sha(UPSTREAM.read_bytes()),patched_addresses=patched,
-        regions=[dict(address=at,code_hex=data.hex(),sha256=sha(data)) for at,data in regions])
+        regions=[dict(address=at,code_hex=data.hex(),sha256=sha(data)) for at,data in regions],
+        **(dict(literal_prefix=True,literal_prefix_bytes=1,literal_prefix_minimum=2,
+                literal_copy_delta_tstates=-5,additional_sync_tstates=26) if literal_prefix else {}))
     return regions,labels,report
 
 
-def emit_fast(a,boundary):
-    """Assemble the pinned upstream code with explicitly marked adaptations."""
+def emit_fast(a,boundary,*,literal_prefix=False):
+    """Assemble the pinned upstream code with explicitly marked adaptations.
+
+    boundary(assembler, site) normally emits a complete quota check. With
+    literal_prefix, its deferred=True form must omit the success label and
+    final EX AF,AF', returning True when it emitted a check. Both literal
+    sites then share the final AF restore; the long site first copies one
+    byte using scratch AF. A resident callback emits nothing and returns
+    False. This keeps the N=1 entry after LDI and checks quota before output.
+    """
     simple={'inc bc':(0x03,), 'inc c':(0x0c,), 'inc hl':(0x23,),
         'push hl':(0xe5,), 'pop hl':(0xe1,), 'add hl,de':(0x19,),
         'ldir':(0xed,0xb0), 'ldi':(0xed,0xa0), 'add a,a':(0x87,),
         'ld c,(hl)':(0x4e,), 'ld a,(hl)':(0x7e,), 'ld b,c':(0x41,),
         'rr c':(0xcb,0x19), 'rl c':(0xcb,0x11), 'rl b':(0xcb,0x10),
         'rla':(0x17,), 'ret z':(0xc8,), 'ret c':(0xd8,)}
-    last_label = None
+    last_label = None; long_deferred = False
     for original in UPSTREAM.read_text().splitlines():
         line=' '.join(original.split(';')[0].strip().lower().split()).replace(', ',',')
         if not line:continue
@@ -138,7 +156,24 @@ def emit_fast(a,boundary):
             'UsualMatch','LongerMatch','RunOfLiterals','LongerRun','CopyLiteral','CopyLiterals',
             'RepMatch','LongerRepMatch','ReloadReadGamma','ReadGammaAligned','ReadingLongGamma')}
         if line.endswith(':'):
-            last_label=names[line[:-1]]; a.label(last_label)
+            last_label=names[line[:-1]]
+            if literal_prefix and last_label=='CopyLiteral':
+                # Both check paths jump to this shared tail. The long path
+                # executes its guaranteed-safe LDI while AF' still holds the
+                # live reservoir; the short path skips it. No extra JP is
+                # paid on either available path, and no byte precedes quota
+                # validation. LDIR has at least one byte left on the long path.
+                start=a.pc; short_deferred=bool(boundary(a,'slice',deferred=True))
+                if short_deferred!=long_deferred:raise ValueError('inconsistent deferred literal checks')
+                if short_deferred:a.labels[last_label]=start
+                a.label('slice_long_fast');a.emit(0xed,0xa0)
+                a.label('slice_fast')
+                if short_deferred:a.emit(0x08)
+                else:a.label(last_label)
+                continue
+            a.label(last_label)
+            if literal_prefix and last_label=='CopyLiterals':
+                long_deferred=bool(boundary(a,'slice_long',deferred=True))
             if last_label in ('CopyMatch1','CopyMatch3','CopyLiteral'):
                 boundary(a,dict(CopyMatch1='match',CopyMatch3='match3',CopyLiteral='slice')[last_label])
             continue

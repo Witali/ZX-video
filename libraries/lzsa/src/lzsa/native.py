@@ -51,7 +51,7 @@ def execute(regions, labels, layout, payload, expected, interrupts=False, *, sou
                     private_stack-128<=address<private_stack),('invalid write',hex(address),hex(m.pc))
         m.memory[address]=value
     m.set_read_callback(read);m.set_write_callback(write)
-    slices=[];irqs=0;unavailable_irqs=0
+    slices=[];output_cursors=[];irqs=0;unavailable_irqs=0
     targets=([len(expected)] if slice_bytes is None else list(range(slice_bytes,len(expected),slice_bytes))+[len(expected)])
     for index,target in enumerate(targets):
         put_word(m,labels['slice_target'],output+target)
@@ -77,9 +77,12 @@ def execute(regions, labels, layout, payload, expected, interrupts=False, *, sou
                 irqs+=1
         assert m.sp==stack and high>=output+target
         slices.append(budget-m.ticks_to_stop)
+        # Expose each published output frontier so candidate checks can prove
+        # identical quota boundaries, beyond merely matching final output.
+        output_cursors.append(high-output)
         # The caller may overwrite every working register between demands.
         for name in ('af','bc','de','hl','alt_af','alt_bc','alt_de','alt_hl'):
             setattr(m,name,0x9797)
     assert bytes(m.memory[output:high])==expected and high==output+len(expected)
-    return dict(tstates=sum(slices),slices=slices,exact=True,injected_interrupts=irqs,
+    return dict(tstates=sum(slices),slices=slices,output_cursors=output_cursors,exact=True,injected_interrupts=irqs,
                 unavailable_interrupt_events=unavailable_irqs)

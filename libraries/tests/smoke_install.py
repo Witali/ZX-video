@@ -81,11 +81,29 @@ sys.argv=([name,'build','--profile','fast-block'] if name=='lzsa' else
           [name,'build','--variant','fast-block'])+['--branch-tuned','--output',str(destination/'branch-tuned-cli')]
 runpy.run_module(name+'.__main__',run_name='__main__')
 assert json.loads((destination/'branch-tuned-cli/metadata.json').read_text())['branch_tuned']
+literal_prefix=[]
+if name=='zx0':
+    for is_resident in (True,False):
+        builder=importlib.import_module('zx0.'+('block' if is_resident else 'resumable')).build
+        profile=builder(core=0x6000,core_limit=0x6400,literal_prefix=True,branch_tuned=True)
+        at=destination/('literal-prefix-'+('block' if is_resident else 'coroutine'))
+        export(at,*profile)
+        rebuilt=[]
+        for line in (at/'decoder.asm').read_text().splitlines():
+            if line.startswith('org '):rebuilt.append((int(line[5:],16),bytearray()))
+            elif line.startswith('db '):rebuilt[-1][1].extend(int(x[1:],16) for x in line[3:].split(','))
+        assert [(address,bytes(data)) for address,data in rebuilt]==profile[0]
+        sys.argv=['zx0','build','--variant','fast-block' if is_resident else 'fast',
+                  '--literal-prefix','--branch-tuned','--core','0x6000','--core-limit','0x6400',
+                  '--output',str(at/'cli')]
+        runpy.run_module('zx0.__main__',run_name='__main__')
+        assert json.loads((at/'cli/metadata.json').read_text())['literal_prefix']
+        literal_prefix.append(dict(resident=is_resident,bytes=sum(len(data) for _,data in profile[0]),exact_export=True))
 assert not any(n.startswith(('toolkit','cv2','numpy')) for n in sys.modules)
 if encoder:
     assert package.decompress(package.compress(raw,executable=encoder),limit=len(raw))==raw
 report=dict(package=name,independent_wheel=True,custom_layout=True,cli_export=True,
             resources=True,exact_round_trip=True,external_encoder=bool(encoder),resident_profiles=resident,
-            fast_jump_profiles=fast_jumps,branch_tuned_profiles=tuned)
+            fast_jump_profiles=fast_jumps,branch_tuned_profiles=tuned,literal_prefix_profiles=literal_prefix)
 (destination/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report))

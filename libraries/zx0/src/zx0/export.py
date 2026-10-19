@@ -53,6 +53,19 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
     if metadata.get('branch_tuned'):
         lines += ['; Optional measured conditional branches: JR 7/12 T versus JP 10 T.',
                   '; Conditions/flags are unchanged; some synthetic cases are slower.', '']
+    routines = dict(ROUTINES)
+    if metadata.get('literal_prefix'):
+        lines += ['; Optional literal prefix: BC>=2 takes LDI then LDIR, saving 5 T/run.',
+                  '; The BC=1 entry skips LDI. Coroutine checks quota before either copy.',
+                  '; Additional target synchronization: '+str(metadata['additional_sync_tstates'])+' T/request.', '']
+        routines.update(CopyLiterals='Proven BC>=2 literal run; validate quota before the prefix copy.',
+                        CopyLiteral='Single-byte literal entry skips the prefix LDI; share the final LDIR.',
+                        slice_long_fast='Quota accepted for BC>=2: LDI uses scratch AF before restoring the reservoir.',
+                        slice_fast='Restore the reservoir when suspended, then LDIR with nonzero remaining BC.')
+        if metadata.get('one_shot'):
+            routines.update(CopyLiterals='Proven BC>=2 resident literal run: one LDI then the shared LDIR.',
+                            slice_long_fast='Copy the first literal: HL source, DE output, BC>=2; no quota wrapper.',
+                            slice_fast='Shared resident literal LDIR with nonzero BC; no deferred AF restore.')
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')
@@ -60,13 +73,13 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
         lines += ['', f'org ${address:04x}', f'; Region {index}: {len(blob)} bytes.']
         points = {address, address + len(blob)}
         for name, target in labels.items():
-            if name in ROUTINES and address <= target < address + len(blob):
+            if name in routines and address <= target < address + len(blob):
                 points.add(target)
         ordered = sorted(points)
         for lo, hi in zip(ordered, ordered[1:]):
             for name, target in labels.items():
-                if target == lo and name in ROUTINES:
-                    description=ROUTINES[name]
+                if target == lo and name in routines:
+                    description=routines[name]
                     if metadata.get('one_shot') and name=='DecompressZX0':
                         description='Resident Fast ZX0 v2; bit/gamma decoder, writable offset, no boundaries, IX preserved.'
                     lines.append(f'; {namespace}_{name}: {description}')

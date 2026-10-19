@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Optional proven multi-byte Fast ZX0 literal prefix
+
+- **Request/baseline:** Continue the active roughly ten-percent codec goal;
+  use `674a1fc8` for this same-feature step and retain `f5a0362c` as the goal
+  baseline. All 417 complete inputs include 364 real blocks/2,965,011 bytes.
+- **Change/parameters:** Optional `literal_prefix=True` / `--literal-prefix`
+  restores LDI before LDIR only for proven BC>=2, saving 5 T/run for +2 raw
+  bytes. The one-byte entry bypasses LDI. Coroutine long/short checks share
+  deferred AF restore and LDIR, validating quota before output; +24 hot/+6
+  cold bytes, no new state/buffer/stack, +26 T per target synchronization.
+- **Measured result:** Real resident 156,012,520 ->155,443,035 T; tuned
+  153,706,279 ->153,136,794 T (-569,485 each). Code207 ->209 /193 ->195.
+  Real 256-byte-demand coroutine 180,610,040 ->180,341,739 T; tuned
+  178,657,995 ->178,389,694 (-268,301 each), total bytes401 ->431 /388 ->418.
+  Every case matches host-counted -5 per long literal plus 26 per coroutine
+  call. Tuned cumulative goal gains remain only 1.843266% /1.229359%.
+- **Regressions/decision:** No resident block slows. Each coroutine profile
+  has 55 slower blocks, including two real +617/+17 T; 3,731/12,542 slices
+  slow, 2,783 real, max+26 T. Keep the option workload-dependent/off by
+  default. Explicit reservations reject untuned overflow; no hidden resize.
+  Existing faster673-byte Mega is unchanged. The full goal stays active.
+- **Verification:** 1,668 full profile comparisons/6,672 native runs cover
+  before/after,9103h relocation and IRQ; every quota return cursor matches.
+  Independent protected replay checks 28 zero/repeated-demand and forced
+  deferred-EX IRQ cases, exact source EOF/output and caller-clobbered registers.
+  All 28 library tests,31 frozen profiles,six upstream resources and independent
+  ZX0/LZSA wheel/CLI/ORG-DB checks pass. Correct an initial test comparison
+  which included26-T IRQ setup only on one side; keep IRQ checks separate.
+  No new guarded-input/physical disk/movie publication qualification is claimed.
+  [Full result/reproduction](libraries/LITERAL_PREFIX.md),
+  [native cases](libraries/evidence/ten_percent_literal_prefix.json),
+  [authentication](libraries/evidence/literal_prefix_verification.json).
+
 ## 2026-10-19 — Persist a shared Z80 instruction timing desk reference
 
 - **Request/scope:** Keep instruction T-states close to the active codec work

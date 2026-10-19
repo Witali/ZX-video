@@ -1,0 +1,302 @@
+{
+  "date": "2026-10-19",
+  "complete": true,
+  "goal_achieved": false,
+  "release": false,
+  "baseline_revision": "674a1fc8",
+  "goal_baseline": "f5a0362c",
+  "default_profiles_exact": 31,
+  "upstream_resources_exact": 6,
+  "native_profile_comparisons": 1668,
+  "native_runs": 6672,
+  "native_scope": "417 complete blocks x four profiles; before/after, relocated, IRQ",
+  "independent_pre_copy_and_deferred_irq_cases": 28,
+  "library_tests": 28,
+  "wheels": {
+    "zx0": {
+      "wheel_sha256": "52ed26829e15424250333afea764b9912e88efafbfe2e65df976f4acffd6f242",
+      "source_and_resources_exact": [
+        "zx0/banked.py",
+        "zx0/bank_local.py",
+        "zx0/block.py",
+        "zx0/codec.py",
+        "zx0/compressor.py",
+        "zx0/export.py",
+        "zx0/incremental.py",
+        "zx0/inplace.py",
+        "zx0/LICENSE",
+        "zx0/resumable.py",
+        "zx0/selection.py",
+        "zx0/split_bank2.py",
+        "zx0/split_streaming.py",
+        "zx0/streaming.py",
+        "zx0/streaming_inline.py",
+        "zx0/tokens.py",
+        "zx0/_branch_tuning.py",
+        "zx0/_z80.py",
+        "zx0/__init__.py",
+        "zx0/__main__.py",
+        "zx0/asm/dzx0_fast.asm",
+        "zx0/asm/dzx0_mega.asm",
+        "zx0/asm/dzx0_standard.asm",
+        "zx0/asm/dzx0_turbo.asm"
+      ],
+      "smoke": {
+        "package": "zx0",
+        "independent_wheel": true,
+        "custom_layout": true,
+        "cli_export": true,
+        "resources": true,
+        "exact_round_trip": true,
+        "external_encoder": false,
+        "resident_profiles": [
+          {
+            "variant": "standard",
+            "bytes": 68,
+            "exact_export": true
+          },
+          {
+            "variant": "turbo",
+            "bytes": 126,
+            "exact_export": true
+          },
+          {
+            "variant": "fast",
+            "bytes": 207,
+            "exact_export": true
+          },
+          {
+            "variant": "mega",
+            "bytes": 673,
+            "exact_export": true
+          }
+        ],
+        "fast_jump_profiles": [
+          {
+            "variant": "standard",
+            "bytes": 70,
+            "exact_export": true
+          },
+          {
+            "variant": "turbo",
+            "bytes": 127,
+            "exact_export": true
+          },
+          {
+            "variant": "mega",
+            "bytes": 674,
+            "exact_export": true
+          },
+          {
+            "variant": "fast",
+            "bytes": 207,
+            "exact_export": true
+          }
+        ],
+        "branch_tuned_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 193,
+            "exact_export": true
+          }
+        ],
+        "literal_prefix_profiles": [
+          {
+            "resident": true,
+            "bytes": 195,
+            "exact_export": true
+          },
+          {
+            "resident": false,
+            "bytes": 418,
+            "exact_export": true
+          }
+        ]
+      }
+    },
+    "lzsa": {
+      "wheel_sha256": "d24770856735912f2bd2f37f3ba0035d00bfdabae474ff7189c2ce8183d750b2",
+      "source_and_resources_exact": [
+        "lzsa/author.py",
+        "lzsa/block.py",
+        "lzsa/budget.py",
+        "lzsa/codec.py",
+        "lzsa/compact.py",
+        "lzsa/compressor.py",
+        "lzsa/distances.py",
+        "lzsa/distance_cost.py",
+        "lzsa/export.py",
+        "lzsa/LICENSE",
+        "lzsa/native.py",
+        "lzsa/oracle.py",
+        "lzsa/resumable.py",
+        "lzsa/streaming.py",
+        "lzsa/_branch_tuning.py",
+        "lzsa/_z80.py",
+        "lzsa/__init__.py",
+        "lzsa/__main__.py",
+        "lzsa/asm/unlzsa2_fast.asm",
+        "lzsa/asm/unlzsa2_small.asm"
+      ],
+      "smoke": {
+        "package": "lzsa",
+        "independent_wheel": true,
+        "custom_layout": true,
+        "cli_export": true,
+        "resources": true,
+        "exact_round_trip": true,
+        "external_encoder": false,
+        "resident_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 218,
+            "exact_export": true
+          },
+          {
+            "variant": "small",
+            "bytes": 137,
+            "exact_export": true
+          }
+        ],
+        "fast_jump_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 219,
+            "exact_export": true
+          }
+        ],
+        "branch_tuned_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 219,
+            "exact_export": true
+          }
+        ],
+        "literal_prefix_profiles": []
+      }
+    }
+  },
+  "timing_policy": {
+    "long_literal_delta": -5,
+    "coroutine_sync_per_request": 26,
+    "payload_delta_bytes": 0
+  },
+  "summaries": {
+    "zx0-block": {
+      "cases": 417,
+      "real_blocks": 364,
+      "raw_bytes": 3204723,
+      "baseline_tstates": 161515003,
+      "candidate_tstates": 160941573,
+      "delta_tstates": -573430,
+      "real_baseline_tstates": 156012520,
+      "real_candidate_tstates": 155443035,
+      "real_delta_tstates": -569485,
+      "slower_blocks": 0,
+      "slower_slices": 0,
+      "injected_interrupts": 1391,
+      "real_slower_blocks": 0,
+      "real_slower_slices": 0,
+      "real_goal_baseline_tstates": 156012520
+    },
+    "zx0-coroutine": {
+      "cases": 417,
+      "real_blocks": 364,
+      "raw_bytes": 3204723,
+      "baseline_tstates": 186463469,
+      "candidate_tstates": 186216131,
+      "delta_tstates": -247338,
+      "real_baseline_tstates": 180610040,
+      "real_candidate_tstates": 180341739,
+      "real_delta_tstates": -268301,
+      "slower_blocks": 55,
+      "slower_slices": 3731,
+      "injected_interrupts": 1661,
+      "real_slower_blocks": 2,
+      "real_slower_slices": 2783,
+      "real_goal_baseline_tstates": 180610040
+    },
+    "zx0-block-tuned": {
+      "cases": 417,
+      "real_blocks": 364,
+      "raw_bytes": 3204723,
+      "baseline_tstates": 159203052,
+      "candidate_tstates": 158629622,
+      "delta_tstates": -573430,
+      "real_baseline_tstates": 153706279,
+      "real_candidate_tstates": 153136794,
+      "real_delta_tstates": -569485,
+      "slower_blocks": 0,
+      "slower_slices": 0,
+      "injected_interrupts": 1361,
+      "real_slower_blocks": 0,
+      "real_slower_slices": 0,
+      "real_goal_baseline_tstates": 156012520
+    },
+    "zx0-coroutine-tuned": {
+      "cases": 417,
+      "real_blocks": 364,
+      "raw_bytes": 3204723,
+      "baseline_tstates": 184504082,
+      "candidate_tstates": 184256744,
+      "delta_tstates": -247338,
+      "real_baseline_tstates": 178657995,
+      "real_candidate_tstates": 178389694,
+      "real_delta_tstates": -268301,
+      "slower_blocks": 55,
+      "slower_slices": 3731,
+      "injected_interrupts": 1643,
+      "real_slower_blocks": 2,
+      "real_slower_slices": 2783,
+      "real_goal_baseline_tstates": 180610040
+    }
+  },
+  "source_sha256_lf": {
+    "libraries/zx0/src/zx0/banked.py": "6535d8405b79fa8a1001ac39309e7198d4adfe40441fcfa9486a10a8657d381f",
+    "libraries/zx0/src/zx0/bank_local.py": "90b2b4f74d323b5b1c6883f957151c7bb2a3864cf3f7a473d388b685e5b0e102",
+    "libraries/zx0/src/zx0/block.py": "52cbb9d881f72f0480be02dac3cafb9ba04d1134a63848b321f9a82114125404",
+    "libraries/zx0/src/zx0/codec.py": "8199cd0fed07bbb72cec174f0c2f7708ddb13812a5a79a3d440d0dcf84136437",
+    "libraries/zx0/src/zx0/compressor.py": "80e11256c842bfaaa71ae30658355df99ba15601d33c915ad63ed8bcfa85e5d3",
+    "libraries/zx0/src/zx0/export.py": "05c85525be649f02781e629ca71f11471c45dcd94d4a0af20c31089d964a3346",
+    "libraries/zx0/src/zx0/incremental.py": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a",
+    "libraries/zx0/src/zx0/inplace.py": "57693ad1d72805bb251daac1a3ed8afec365fb64fd6403519c67c761a9ac72dc",
+    "libraries/zx0/src/zx0/resumable.py": "bccb8054c28c8885bdf063fc21212c1912902ce18382e0f4e3553cd8e9fb9108",
+    "libraries/zx0/src/zx0/selection.py": "027011ca7929f33a1d875350bf5f9e4ccd3282c0fbc311b3c58935a5472763e6",
+    "libraries/zx0/src/zx0/split_bank2.py": "0d8b24c3d4c4540b0111ad1dc77f34854e045897490423ef877f1d00a9852e07",
+    "libraries/zx0/src/zx0/split_streaming.py": "f01968bdf9f95d96b9b470dee8a3efb525313c8258b13a39fb48bc7af03c2527",
+    "libraries/zx0/src/zx0/streaming.py": "15b9659b03d27b57f989c1400a903ed5889bcfb7604438efe8defc91e1e1a234",
+    "libraries/zx0/src/zx0/streaming_inline.py": "e4d3b169b2e0075c7dce7565ab29e248f22f14a04444bdba20173c4f5dec4bd3",
+    "libraries/zx0/src/zx0/tokens.py": "48555eea40aa0d8fc4a9be67a5263a75c2cf6231b7879b17780afae803e46268",
+    "libraries/zx0/src/zx0/_branch_tuning.py": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54",
+    "libraries/zx0/src/zx0/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/zx0/src/zx0/__init__.py": "f1cac84d7bf6e4fca5dcb3abdf3170416c7760bc47655eab0aae86da927feef3",
+    "libraries/zx0/src/zx0/__main__.py": "9c601b20b2269251dbee479b36e62531c17847adace734cd2db24b87fb5d398d",
+    "libraries/lzsa/src/lzsa/author.py": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b",
+    "libraries/lzsa/src/lzsa/block.py": "acd8da40aca043c7eae8572624e9459996e1dd44c7684bfe93ae11077fc59022",
+    "libraries/lzsa/src/lzsa/budget.py": "5ae4458bf5bbc6c0f81d9daf064cc555b480a6e3dd6962d7b3b9689291afcf06",
+    "libraries/lzsa/src/lzsa/codec.py": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775",
+    "libraries/lzsa/src/lzsa/compact.py": "0d382910264a4341002c751845420e795ed1357c94989db10974514722cd6676",
+    "libraries/lzsa/src/lzsa/compressor.py": "524e91046757a255f418f4a5e4d64669ac51b704b8bb76d063e54e4e3e6db088",
+    "libraries/lzsa/src/lzsa/distances.py": "553ff5d6934d60a0bd5f71188b24d6f240e7b1624f38625682c326b58d5e6e95",
+    "libraries/lzsa/src/lzsa/distance_cost.py": "a5d4cc55fd9861229fa609d9609f06ceda660395715a49c178e99fd98eb70af6",
+    "libraries/lzsa/src/lzsa/export.py": "8e2cb93d5bf909e76f1066baf8184a21f21fda67a86a416f44247fb5cd57ec0e",
+    "libraries/lzsa/src/lzsa/native.py": "ef402844803ecde7c2e54117d34a03f5df758071d770b521b17563abca811715",
+    "libraries/lzsa/src/lzsa/oracle.py": "039654e7a86477f5c8cf34755a68a8cb474053c87108ce6a7e6cc29c75564c5b",
+    "libraries/lzsa/src/lzsa/resumable.py": "d896b3bd987644a930891ad7f934620f3f061365e9ccfa0524d139c019a72a46",
+    "libraries/lzsa/src/lzsa/streaming.py": "8cdf842acc989b253c31bf7d0dc2e5e238afd6e975436f8a988002eb15c80aaa",
+    "libraries/lzsa/src/lzsa/_branch_tuning.py": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54",
+    "libraries/lzsa/src/lzsa/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/lzsa/src/lzsa/__init__.py": "dfad484c1a07ca2f6e3a759b5ac53763808b47e69d5997e645a152250fb20a9b",
+    "libraries/lzsa/src/lzsa/__main__.py": "7378ddb59a03f59c3ef8b9fa9e05f81636aaa52fc65876d0859ae11ef9968ff9",
+    "libraries/tests/measure_literal_prefix.py": "0a4028e6c087a074219e25266fc7298a4b12e6720c2bec7c1f0dc45f94b97301",
+    "libraries/tests/review_literal_prefix.py": "941146470762e1e619bd8c5de759e521a5836ffe7e19332fab822b2312c78cb6",
+    "libraries/tests/test_literal_prefix.py": "dbc2a55673f3b24f5c26cc9f90338c5881026408910386c3235c1c05d1bd4745",
+    "libraries/tests/verify_literal_prefix.py": "77b61cc4b5a2e706a2e6c7d3c6882ce57cf3e1dea454c3a839af4aa03586b5be",
+    "libraries/tests/smoke_install.py": "b7e7454750d205f7e2b8d7bdbbc56d51fec6a303d8337526e53c9ecfdb92f730"
+  },
+  "evidence_sha256": {
+    "ten_percent_literal_prefix.json": "b444efe0053bc6e0af52b384afa2adc27ffe974bb80bf5c29f56ddb63eac9b35",
+    "literal_prefix_independent_review.json": "4a02fada6947953be0f2ed034b6d76cc1d184af3b07eb588e2769d1e250452bd",
+    "literal_prefix/library-tests.log.gz": "20c344774e59e835c23427cd57077d82c7c11b2dbab78cada80a8d02d36b8cbf"
+  }
+}

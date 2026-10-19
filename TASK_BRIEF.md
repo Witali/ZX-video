@@ -38,6 +38,20 @@ claim completion from these intermediate gains or count Standard's old gain.
 [Item31 and reproduction](libraries/OPTIMIZATION_PLAN.md#item31--measured-conditional-fast-branches-2026-10-19),
 [authenticated intermediate evidence](libraries/evidence/ten_percent_branch_verification.json).
 
+Next completed step: optional ZX0 `literal_prefix=True` / `--literal-prefix`
+saves 5 T per proven BC>=2 literal run (+2 resident bytes); raw real gain
+569,485 T with no slower block. Coroutine preserves all quota return cursors,
+but adds 30 bytes and 26 T/request: aggregate gain 268,301 T at 256-byte
+demands, with two real blocks +617/+17 T and 3,731/12,542 slower slices
+(2,783 real, maximum +26 T). Keep this flag workload-dependent and explicit.
+There are 1,668 full native comparisons, relocation/IRQ, 28 independently
+forced deferred-EX IRQ/pre-copy cases, 28 library tests and isolated wheels.
+Tuned cumulative gains versus the goal baseline are still only 1.843266%
+resident /1.229359% coroutine; existing Mega remains faster at greater size.
+[Full counts, limits and reproduction](libraries/LITERAL_PREFIX.md),
+[source/test/wheel authentication](libraries/evidence/literal_prefix_verification.json).
+The ten-percent-per-library goal is active and unachieved.
+
 ## Codec speed pass 3 — unconditional branches (2026-10-19)
 
 The user requests continued ZX0/LZSA optimization in a separate worktree.

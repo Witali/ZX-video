@@ -92,6 +92,13 @@ but small directed cases and slices can be slower; defaults remain unchanged.
 [evidence](evidence/ten_percent_branch_verification.json).
 This intermediate result does not complete the 10%-per-library goal.
 
+The optional Fast ZX0 `literal_prefix=True` / `--literal-prefix` saves another
+5 T per proven multi-byte literal run for two resident code bytes. Coroutine
+quotas remain exact, with a 30-byte code/26-T-per-request tradeoff; two real
+blocks and some slices slow despite the aggregate gain. See
+[full native counts and caller limits](LITERAL_PREFIX.md). The ten-percent
+goal remains active; defaults are unchanged.
+
 ## Verification and provenance
 
 [Verification](verification.json) records the extraction from `0085a116`.

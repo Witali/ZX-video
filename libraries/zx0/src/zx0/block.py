@@ -4,7 +4,7 @@ from .codec import emit_decoder
 from .resumable import emit_fast
 
 
-def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False,branch_tuned=False,_assembler=None):
+def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False,branch_tuned=False,literal_prefix=False,_assembler=None):
     """Call metadata entry with HL=input, DE=nonwrapping output, caller stack.
 
     Supply a complete valid block and resident input/history. AF/BC/DE/HL
@@ -14,15 +14,19 @@ def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False,branch
     Bounds, expected size and reentrancy are the caller's responsibility.
     fast_jumps changes only unconditional JR to JP in Standard/Turbo/Mega:
     12 -> 10 T per execution, one extra byte per site. Fast already uses JP.
+    literal_prefix adds one LDI before LDIR only when the literal count is
+    at least two: saves 5 T per such run for two extra code bytes in Fast.
     """
     if branch_tuned:
         if variant!='fast':raise ValueError('branch tuning requires the Fast decoder')
         from ._branch_tuning import tune
-        return tune(build,dict(variant=variant,core=core,core_limit=core_limit,fast_jumps=fast_jumps),'zx0')
+        return tune(build,dict(variant=variant,core=core,core_limit=core_limit,fast_jumps=fast_jumps,
+                               literal_prefix=literal_prefix),'zx0')
+    if literal_prefix and variant!='fast':raise ValueError('literal prefix requires the Fast decoder')
     if not 0<=core<core_limit<=65536:raise ValueError('invalid code reservation')
     a=(_assembler or MiniAssembler)(core)
     if variant=='fast':
-        emit_fast(a,lambda a,site:None);entry='DecompressZX0';offset='PrevOffset+1'
+        emit_fast(a,lambda a,site,**kwargs:False,literal_prefix=literal_prefix);entry='DecompressZX0';offset='PrevOffset+1'
     else:
         entry=emit_decoder(a,variant,fast_jumps=fast_jumps);offset=f'dzx0{variant[0]}_last_offset+1'
     patches=[] if variant=='standard' else [a.labels[offset]+i for i in (0,1)]
@@ -31,5 +35,7 @@ def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False,branch
         code_bytes=a.pc-core,core_end=a.pc,state_bytes=0,private_stack_bytes=0,
         patched_addresses=patches,source_commit='ecde3a2ae05061fe06469ed46df81a33b7de7d86',
         code_sha256=sha(a.resolve()),
+        **(dict(literal_prefix=True,literal_prefix_bytes=1,literal_prefix_minimum=2,
+                literal_copy_delta_tstates=-5,additional_sync_tstates=0) if literal_prefix else {}),
         **(dict(fast_jumps=True,fast_jump_sites={'fast':0,'standard':2,'turbo':1,'mega':1}[variant],
                 unconditional_jump_tstates_before=12,unconditional_jump_tstates_after=10) if fast_jumps else {}))

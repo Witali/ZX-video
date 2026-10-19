@@ -4,6 +4,14 @@ Use the local [Z80 timing desk reference](Z80_TIMINGS.md) for instruction
 costs and branch/block-repeat rules; the measurements below retain their own
 historical baselines, input scope and application assumptions.
 
+Latest optional literal-copy accounting is in [LITERAL_PREFIX.md](LITERAL_PREFIX.md):
+N>=2 `LDI; LDIR` is 21N-10 T versus 21N-5 T, exactly -5 T/run; the coroutine's
+fourth high/low target patch adds 26 T/request. On the same 364 real blocks,
+resident savings are 569,485 T, 256-byte-demand coroutine savings 268,301 T.
+Two real coroutine blocks slow by 617/17 T; maximum slower slice +26 T.
+These CPU-only intermediate results preserve data/defaults and do not qualify
+physical delivery or complete the goal.
+
 2026-10-13, baseline `0085a116`. Moving implementations and sharing the
 guard patcher preserves all default opcode bytes, addresses and label maps.
 The extraction adds **0 deterministic T-states** to any existing decoder or
