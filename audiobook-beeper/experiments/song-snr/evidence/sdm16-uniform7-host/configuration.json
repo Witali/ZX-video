@@ -1,0 +1,51 @@
+{
+  "producer_sha256": {
+    "experiments/song-snr/sdm16_uniform7_host.py": "01aa1ecab8d83a0f28a4c49bc7e26997d91608e53d3bfc60207f908f12442ec4",
+    "experiments/song-snr/sdm16_uniform7_host.c": "43f4eda40fef4521f4b9b0070f9259834f550eb997394e8ab6686c190082fc20",
+    "experiments/song-snr/sdm16_uniform7.py": "708d0029b83fcf71d82265e748ecaa9c5bf9d1a3889d66e86abcc3ebf53ada81",
+    "experiments/song-snr/artifact_diagnostics.py": "d068732d6ccbde5cd5435ab080d7484a8098e52d498038d437cc112cb511f100",
+    "experiments/song-snr/pacing448_spectrum.py": "0dbfa3ab63e03d5336bd878833143c9633ca421f08382a3b58fe1885954ae716",
+    "experiments/song-snr/study.py": "f6b55db44fd4e6a34ea6090f08819852f23d5efd0b90ace7413f19b0309e61ec",
+    "ima_codec.py": "263d52677e423e9f9f55636b84fe108aa3eed1751bf1c09ce751b65a22f3349b",
+    "probe_reconstruction_error.py": "87abd81d68978ca3d0d447e94f7fedad5723921bf3619566e5490b1c336a9422",
+    "convert_mulaw_audio.py": "15b59885520088e6db5657e8af4d2959e8239ebeee54d3fcb64be06b82378c94",
+    "assess_snr.py": "d4e76b7212a971176ed3d3550e7dec721a217599b9487ef3606a2f6e92de9bc8",
+    "build_pdm.py": "6d9fd77e2bd2f9eaf45f8c6c0ef502ed60c76520b9e90dbf7cadf9930a4cc018",
+    "waveform_kernel.py": "2272effc955fefff986b4de9665246acaf741948888e77077e524609bf4b0004"
+  },
+  "executable": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\uniform7-host-2c4cf356f5bb8131278a5dc8\\kernel.exe",
+  "executable_sha256": "3aa613ec45c86d6c2902c8de21b051038c2eb5c6aa13060dfb227b1d08b6c6cd",
+  "ffmpeg": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+  "ffmpeg_sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+  "initial_accumulator": 32767,
+  "pulses_per_source_sample": 7,
+  "uniform_hold_tstates": 64,
+  "ordinary_period_tstates": 448,
+  "physical_cpu_hz": 3584000,
+  "source_rate_hz": 8000,
+  "decision_rate_hz": 56000,
+  "modes": [
+    "floor6",
+    "full16"
+  ],
+  "source_specific_parameters": false,
+  "listening_filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+  "integration_rate_hz": 768000,
+  "edge_exclusion_seconds": 0.1,
+  "diagnostic_frequencies_hz": [
+    0.244140625,
+    2.0,
+    5.0,
+    10.0,
+    15.625,
+    25.0,
+    50.0,
+    62.5,
+    100.0,
+    125.0
+  ],
+  "gain_delay_clock_fit": false,
+  "bank_free_counterfactual": true,
+  "IMA_reoptimized": false,
+  "scope": "Only full16 has native ordinary-kernel parity; floor6 is a matched host precision control"
+}

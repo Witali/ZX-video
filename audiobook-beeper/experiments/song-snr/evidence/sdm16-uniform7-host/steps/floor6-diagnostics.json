@@ -1,0 +1,465 @@
+{
+  "source": "steps",
+  "variant": "floor6",
+  "waveform": {
+    "samples": 93140,
+    "measured_samples": 84320,
+    "rate_hz": 44100,
+    "edge_exclusion_seconds": 0.1,
+    "scope": "Original source clock; complete signal except fixed edges; no fitted gain/delay/clock",
+    "source_rms": 0.22453392588047721,
+    "error_rms": 0.2464348897290796,
+    "error_rms_dbfs": -12.165956113257746,
+    "error_peak": 1.6912140095057586,
+    "output_dc": -0.00025188988018273593,
+    "error_dc": 0.0004229953974764001,
+    "fixed_clock_snr_db": -0.8084044891288827,
+    "silence_reference": false,
+    "coherent_unfitted_error_components": [
+      {
+        "hz": 50.0,
+        "peak": 0.005833220397549474,
+        "cosine": -0.004344075881145962,
+        "sine": -0.0038930020479359083,
+        "peak_dbfs": -44.681832284767474
+      },
+      {
+        "hz": 100.0,
+        "peak": 0.0016973854743629825,
+        "cosine": 0.0007161945020780542,
+        "sine": 0.0015388901467523973,
+        "peak_dbfs": -55.404390373704516
+      },
+      {
+        "hz": 150.0,
+        "peak": 0.001607914826782547,
+        "cosine": -0.00045246288715957084,
+        "sine": -0.0015429411608776187,
+        "peak_dbfs": -55.874739201776705
+      },
+      {
+        "hz": 200.0,
+        "peak": 0.0010156759465572611,
+        "cosine": -0.0009628944198794544,
+        "sine": -0.0003231593485882733,
+        "peak_dbfs": -59.86489664951576
+      }
+    ],
+    "error_spectrum": {
+      "available": true,
+      "window_samples": 32768,
+      "windows": 5,
+      "bin_width_hz": 1.3458251953125,
+      "window": "Hann;50-percent overlap;one-sided density",
+      "bands": [
+        {
+          "low_hz": 0,
+          "high_hz": 20,
+          "rms": 0.01739786789283399,
+          "rms_dbfs": -35.190079424133074
+        },
+        {
+          "low_hz": 20,
+          "high_hz": 200,
+          "rms": 0.20145628469121546,
+          "rms_dbfs": -13.916383593643992
+        },
+        {
+          "low_hz": 200,
+          "high_hz": 1000,
+          "rms": 0.1420667328676019,
+          "rms_dbfs": -16.95015213933627
+        },
+        {
+          "low_hz": 1000,
+          "high_hz": 3500,
+          "rms": 0.05451760716756503,
+          "rms_dbfs": -25.269264280785407
+        },
+        {
+          "low_hz": 3500,
+          "high_hz": 4500,
+          "rms": 0.021145931149967816,
+          "rms_dbfs": -33.49546372333373
+        },
+        {
+          "low_hz": 4500,
+          "high_hz": 22050.0,
+          "rms": 0.031315783257179056,
+          "rms_dbfs": -30.08473442872387
+        }
+      ],
+      "every_error_sample_inside_a_window": true,
+      "spectral_total_error_rms": 0.25587159907454726,
+      "strongest_error_bins": [
+        {
+          "hz": 78.057861328125,
+          "density_per_hz": 0.004807270096516823,
+          "three_bin_error_power_fraction": 0.1510254759685645
+        },
+        {
+          "hz": 109.0118408203125,
+          "density_per_hz": 0.004288624342041327,
+          "three_bin_error_power_fraction": 0.15074605319741774
+        },
+        {
+          "hz": 141.3116455078125,
+          "density_per_hz": 0.0031648547769606615,
+          "three_bin_error_power_fraction": 0.12444626305599718
+        },
+        {
+          "hz": 172.265625,
+          "density_per_hz": 0.0028308545471276117,
+          "three_bin_error_power_fraction": 0.092978728873514
+        },
+        {
+          "hz": 139.9658203125,
+          "density_per_hz": 0.0027050635297986613,
+          "three_bin_error_power_fraction": 0.12225901128226527
+        },
+        {
+          "hz": 110.357666015625,
+          "density_per_hz": 0.002691683665918526,
+          "three_bin_error_power_fraction": 0.14425284817327783
+        },
+        {
+          "hz": 47.1038818359375,
+          "density_per_hz": 0.0023325634980610526,
+          "three_bin_error_power_fraction": 0.07385522981654274
+        },
+        {
+          "hz": 203.2196044921875,
+          "density_per_hz": 0.0021202387427008127,
+          "three_bin_error_power_fraction": 0.0664023083538575
+        }
+      ],
+      "caveat": "On non-silent sources these are error peaks, not independently identified background. Welch windows include the whole declared edge-cropped scope."
+    },
+    "modulation": [
+      {
+        "hz": 0.244140625,
+        "available": true,
+        "small_signal_applicable": false,
+        "fitted_constant_gain": 0.2536012707434918,
+        "unfitted_correlation": 0.1619731797874998,
+        "frequency_cycles_observed": 0.4668013038548753,
+        "periodic_estimate_well_observed": false,
+        "fitted_constant_linearized_delay_us": -6.232330214250281,
+        "am_peak_percent": 162.28790333838649,
+        "linearized_delay_peak_us": 110.22646064990194,
+        "linearized_speed_peak_percent": 0.016908527295358217,
+        "fitted_hum_peak": {
+          "50": 0.007195178547500993,
+          "100": 0.0031540860187333672
+        },
+        "fitted_residual_rms": 0.13080950264142224,
+        "diagnostic_error_power_reduction_db": 0.7099841684540635,
+        "condition": 28.232188454931073,
+        "fitted_diagnostic_only": true,
+        "caveat": "Linearized source-correlated indicators; not a pitch tracker, noise guarantee or fitted SNR"
+      },
+      {
+        "hz": 2.0,
+        "available": true,
+        "small_signal_applicable": false,
+        "fitted_constant_gain": 0.10427023684402179,
+        "unfitted_correlation": 0.1619731797874998,
+        "frequency_cycles_observed": 3.824036281179138,
+        "periodic_estimate_well_observed": true,
+        "fitted_constant_linearized_delay_us": 155.72821271626754,
+        "am_peak_percent": 45.473154886337475,
+        "linearized_delay_peak_us": 62.38227324304071,
+        "linearized_speed_peak_percent": 0.07839187653382713,
+        "fitted_hum_peak": {
+          "50": 0.005830337098430641,
+          "100": 0.0030506231742393934
+        },
+        "fitted_residual_rms": 0.1417112982598773,
+        "diagnostic_error_power_reduction_db": 0.014680521475207932,
+        "condition": 1.1832889040513093,
+        "fitted_diagnostic_only": true,
+        "caveat": "Linearized source-correlated indicators; not a pitch tracker, noise guarantee or fitted SNR"
+      },
+      {
+        "hz": 5.0,
+        "available": true,
+        "small_signal_applicable": false,
+        "fitted_constant_gain": 0.1039997330709222,
+        "unfitted_correlation": 0.1619731797874998,
+        "frequency_cycles_observed": 9.560090702947846,
+        "periodic_estimate_well_observed": true,
+        "fitted_constant_linearized_delay_us": 153.49819565281277,
+        "am_peak_percent": 27.918853067775533,
+        "linearized_delay_peak_us": 30.13564577451517,
+        "linearized_speed_peak_percent": 0.09467392337640114,
+        "fitted_hum_peak": {
+          "50": 0.00554947472393239,
+          "100": 0.003062573639290284
+        },
+        "fitted_residual_rms": 0.14186872854134205,
+        "diagnostic_error_power_reduction_db": 0.005036526399852645,
+        "condition": 1.1216502870752114,
+        "fitted_diagnostic_only": true,
+        "caveat": "Linearized source-correlated indicators; not a pitch tracker, noise guarantee or fitted SNR"
+      },
+      {
+        "hz": 10.0,
+        "available": true,
+        "small_signal_applicable": false,
+        "fitted_constant_gain": 0.10401108569984631,
+        "unfitted_correlation": 0.1619731797874998,
+        "frequency_cycles_observed": 19.120181405895693,
+        "periodic_estimate_well_observed": true,
+        "fitted_constant_linearized_delay_us": 152.39140832653342,
+        "am_peak_percent": 29.08614881698794,
+        "linearized_delay_peak_us": 41.858359732151804,
+        "linearized_speed_peak_percent": 0.2630038308516939,
+        "fitted_hum_peak": {
+          "50": 0.005697048377494323,
+          "100": 0.002897642102052072
+        },
+        "fitted_residual_rms": 0.14185487145996747,
+        "diagnostic_error_power_reduction_db": 0.0058849653708829466,
+        "condition": 1.0960137812365014,
+        "fitted_diagnostic_only": true,
+        "caveat": "Linearized source-correlated indicators; not a pitch tracker, noise guarantee or fitted SNR"
+      },
+      {
+        "hz": 15.625,
+        "available": true,
+        "small_signal_applicable": false,
+        "fitted_constant_gain": 0.10435090370833322,
+        "unfitted_correlation": 0.1619731797874998,
+        "frequency_cycles_observed": 29.875283446712018,
+        "periodic_estimate_well_observed": true,
+        "fitted_constant_linearized_delay_us": 152.46717210290416,
+        "am_peak_percent": 37.03248772995697,
+        "linearized_delay_peak_us": 968.9758128564366,
+        "linearized_speed_peak_percent": 9.512897797424936,
+        "fitted_hum_peak": {
+          "50": 0.005652591312683699,
+          "100": 0.002999269380864326
+        },
+        "fitted_residual_rms": 0.14187138471057714,
+        "diagnostic_error_power_reduction_db": 0.004873904396413383,
+        "condition": 6.844455584299693,
+        "fitted_diagnostic_only": true,
+        "caveat": "Linearized source-correlated indicators; not a pitch tracker, noise guarantee or fitted SNR"
+      },
+      {
+        "hz": 25.0,
+        "available": true,
+        "small_signal_applicable": false,
+        "fitted_constant_gain": 0.10443555175080019,
+        "unfitted_correlation": 0.1619731797874998,
+        "frequency_cycles_observed": 47.80045351473923,
+        "periodic_estimate_well_observed": true,
+        "fitted_constant_linearized_delay_us": 151.59649052808925,
+        "am_peak_percent": 40.50376530996144,
+        "linearized_delay_peak_us": 16.523008357632214,
+        "linearized_speed_peak_percent": 0.2595428083577006,
+        "fitted_hum_peak": {
+          "50": 0.0056625533463289975,
+          "100": 0.002996948284768158
+        },
+        "fitted_residual_rms": 0.14178943165088415,
+        "diagnostic_error_power_reduction_db": 0.009892822842264195,
+        "condition": 1.138708646711791,
+        "fitted_diagnostic_only": true,
+        "caveat": "Linearized source-correlated indicators; not a pitch tracker, noise guarantee or fitted SNR"
+      },
+      {
+        "hz": 50.0,
+        "available": true,
+        "small_signal_applicable": false,
+        "fitted_constant_gain": 0.10389958372771367,
+        "unfitted_correlation": 0.1619731797874998,
+        "frequency_cycles_observed": 95.60090702947846,
+        "periodic_estimate_well_observed": true,
+        "fitted_constant_linearized_delay_us": 153.9052935202034,
+        "am_peak_percent": 26.101734524588693,
+        "linearized_delay_peak_us": 59.37802823753279,
+        "linearized_speed_peak_percent": 1.865415772956803,
+        "fitted_hum_peak": {
+          "50": 0.00566823825527339,
+          "100": 0.003055709994560818
+        },
+        "fitted_residual_rms": 0.14185447678886393,
+        "diagnostic_error_power_reduction_db": 0.005909131438515317,
+        "condition": 1.0649959450242794,
+        "fitted_diagnostic_only": true,
+        "caveat": "Linearized source-correlated indicators; not a pitch tracker, noise guarantee or fitted SNR"
+      },
+      {
+        "hz": 62.5,
+        "available": true,
+        "small_signal_applicable": false,
+        "fitted_constant_gain": 0.5884510796627497,
+        "unfitted_correlation": 0.1619731797874998,
+        "frequency_cycles_observed": 119.50113378684807,
+        "periodic_estimate_well_observed": true,
+        "fitted_constant_linearized_delay_us": 2318.7529872774307,
+        "am_peak_percent": 107.97655036017156,
+        "linearized_delay_peak_us": 2330.5500864293895,
+        "linearized_speed_peak_percent": 91.52048787937034,
+        "fitted_hum_peak": {
+          "50": 0.0058734252397351205,
+          "100": 0.0032236550556242857
+        },
+        "fitted_residual_rms": 0.1350542867591645,
+        "diagnostic_error_power_reduction_db": 0.43260258286724557,
+        "condition": 25940.05229496128,
+        "fitted_diagnostic_only": true,
+        "caveat": "Linearized source-correlated indicators; not a pitch tracker, noise guarantee or fitted SNR"
+      },
+      {
+        "hz": 100.0,
+        "available": true,
+        "small_signal_applicable": false,
+        "fitted_constant_gain": 0.10415430629750379,
+        "unfitted_correlation": 0.1619731797874998,
+        "frequency_cycles_observed": 191.20181405895693,
+        "periodic_estimate_well_observed": true,
+        "fitted_constant_linearized_delay_us": 151.29914049580057,
+        "am_peak_percent": 35.421306912509905,
+        "linearized_delay_peak_us": 32.72423294077013,
+        "linearized_speed_peak_percent": 2.056124196021691,
+        "fitted_hum_peak": {
+          "50": 0.005664801561914576,
+          "100": 0.0030182633096638056
+        },
+        "fitted_residual_rms": 0.1418196745204202,
+        "diagnostic_error_power_reduction_db": 0.008040370135997298,
+        "condition": 1.1309231838418945,
+        "fitted_diagnostic_only": true,
+        "caveat": "Linearized source-correlated indicators; not a pitch tracker, noise guarantee or fitted SNR"
+      },
+      {
+        "hz": 125.0,
+        "available": true,
+        "small_signal_applicable": false,
+        "fitted_constant_gain": 0.1547906949885953,
+        "unfitted_correlation": 0.1619731797874998,
+        "frequency_cycles_observed": 239.00226757369614,
+        "periodic_estimate_well_observed": true,
+        "fitted_constant_linearized_delay_us": 3267.560150926357,
+        "am_peak_percent": 131.8931146310872,
+        "linearized_delay_peak_us": 3516.9998368661586,
+        "linearized_speed_peak_percent": 276.22452125438065,
+        "fitted_hum_peak": {
+          "50": 0.005879806447332888,
+          "100": 0.003219929987918601
+        },
+        "fitted_residual_rms": 0.1350180968085532,
+        "diagnostic_error_power_reduction_db": 0.43493041746288896,
+        "condition": 2274.4097006092356,
+        "fitted_diagnostic_only": true,
+        "caveat": "Linearized source-correlated indicators; not a pitch tracker, noise guarantee or fitted SNR"
+      }
+    ],
+    "limitations": "Fits are diagnostic only. Inapplicable/rank-deficient fits are inconclusive. Music error harmonics alone cannot distinguish added hum from changed source content. Silence absolute noise and generated tone controls are required."
+  },
+  "fullband_error_spectrum": {
+    "cropped_samples": 84320,
+    "bin_width_hz": 0.5230075901328273,
+    "filter_scope": "Complete output after the unchanged listening filter; fixed100ms edges; no fitted gain, delay or clock",
+    "error_power_fraction_above4000_hz": 0.018167519255657665,
+    "error_power_fraction_above4500_hz": 0.0154027191611253,
+    "strongest_bins": [
+      {
+        "hz": 109.30858633776093,
+        "total_power_fraction": 0.07881620002003699,
+        "three_bin_total_power_fraction": 0.13189106858412977
+      },
+      {
+        "hz": 140.68904174573058,
+        "total_power_fraction": 0.07103987800810799,
+        "three_bin_total_power_fraction": 0.11613494210100533
+      },
+      {
+        "hz": 77.92813092979128,
+        "total_power_fraction": 0.06837666954479903,
+        "three_bin_total_power_fraction": 0.12646024964429364
+      },
+      {
+        "hz": 172.0694971537002,
+        "total_power_fraction": 0.055698116118646446,
+        "three_bin_total_power_fraction": 0.09337976286580116
+      },
+      {
+        "hz": 78.4511385199241,
+        "total_power_fraction": 0.051586457349383816,
+        "three_bin_total_power_fraction": 0.12189455640746827
+      },
+      {
+        "hz": 109.83159392789375,
+        "total_power_fraction": 0.040744765841963036,
+        "three_bin_total_power_fraction": 0.12073006588197531
+      },
+      {
+        "hz": 203.44995256166985,
+        "total_power_fraction": 0.03948527658919171,
+        "three_bin_total_power_fraction": 0.07325236422832873
+      },
+      {
+        "hz": 47.070683111954466,
+        "total_power_fraction": 0.03305268494071224,
+        "three_bin_total_power_fraction": 0.061204532856072094
+      }
+    ]
+  },
+  "pdm_error_spectrum": {
+    "cropped_samples": 84320,
+    "bin_width_hz": 0.5230075901328273,
+    "filter_scope": "Complete output after the unchanged listening filter; fixed100ms edges; no fitted gain, delay or clock",
+    "error_power_fraction_above4000_hz": 0.6371556338707735,
+    "error_power_fraction_above4500_hz": 0.551985235627046,
+    "strongest_bins": [
+      {
+        "hz": 6118.142789373815,
+        "total_power_fraction": 0.005235612632796652,
+        "three_bin_total_power_fraction": 0.010169173501554184
+      },
+      {
+        "hz": 6138.017077798862,
+        "total_power_fraction": 0.004005398432124085,
+        "three_bin_total_power_fraction": 0.007663626684790916
+      },
+      {
+        "hz": 6992.611480075902,
+        "total_power_fraction": 0.0039868501761347866,
+        "three_bin_total_power_fraction": 0.009717968359946283
+      },
+      {
+        "hz": 6122.84985768501,
+        "total_power_fraction": 0.00361897689037982,
+        "three_bin_total_power_fraction": 0.008733601123955242
+      },
+      {
+        "hz": 3493.167694497154,
+        "total_power_fraction": 0.003481682921713439,
+        "three_bin_total_power_fraction": 0.005696977400694623
+      },
+      {
+        "hz": 3501.5358159392795,
+        "total_power_fraction": 0.0034735845093300088,
+        "three_bin_total_power_fraction": 0.0054849028472304644
+      },
+      {
+        "hz": 6141.155123339659,
+        "total_power_fraction": 0.003256970034636185,
+        "three_bin_total_power_fraction": 0.008892843090625706
+      },
+      {
+        "hz": 6118.665796963947,
+        "total_power_fraction": 0.0032080476358823692,
+        "three_bin_total_power_fraction": 0.009241238613691248
+      }
+    ]
+  },
+  "actual_float64_sha256": "a6eec1658a2f0bfd888c26163f21b35ccff2dff2788ed2ea7a9423178f4bc657",
+  "original_float64_sha256": "bb6a84fe7813ede104f0e78e3d18b290dc228476590da08af17561e2f2e60aef",
+  "decoded_float64_sha256": "47af97a99316e1e98ea1bc1e507a2145884e160faf2820e04e0dc388bcdd08d5",
+  "bank_free_uniform_clock_counterfactual": true,
+  "emulator_quality_verified": false
+}

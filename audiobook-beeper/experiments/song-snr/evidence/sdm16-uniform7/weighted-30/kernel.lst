@@ -1,0 +1,38 @@
+                 	
+                 	; Exact area-error inner pulse for h=30; product supplied externally.
+                 	; A:HL is signed24-bit q. C:DE is signed24-bit h*(U-32768).
+                 	; q stayswithin +/-74*65536; trueintermediate fits25 signed bits. The ADC
+                 	; overflow flag disambiguates the sign when its24-bit representation wraps.
+                 	; BC high is scratch/restored q high; IX/IY/alternate state/SP are unchanged.
+                 	; All four sign/overflow paths cost78 T and emit only EAR0/16.
+8000              	 ORG 0x8000
+                 	start:
+8000 19           	 ADD HL,DE
+8001 89           	 ADC A,C
+8002 EA 18 80     	 JP PE,overflow
+8005 FA 10 80     	 JP M,normal_negative
+8008 D6 0F        	 SUB 15
+800A 47           	 LD B,A
+800B 3E 10        	 LD A,16
+800D C3 2B 80     	 JP emit
+                 	normal_negative:
+8010 C6 0F        	 ADD A,15
+8012 47           	 LD B,A
+8013 3E 00        	 LD A,0
+8015 C3 2B 80     	 JP emit
+                 	overflow:
+8018 F2 23 80     	 JP P,overflow_negative
+801B D6 0F        	 SUB 15
+801D 47           	 LD B,A
+801E 3E 10        	 LD A,16
+8020 C3 2B 80     	 JP emit
+                 	overflow_negative:
+8023 C6 0F        	 ADD A,15
+8025 47           	 LD B,A
+8026 3E 00        	 LD A,0
+8028 C3 2B 80     	 JP emit
+                 	emit:
+802B D3 FE        	 OUT (254),A
+802D 78           	 LD A,B
+                 	complete:
+802E 00           	 NOP

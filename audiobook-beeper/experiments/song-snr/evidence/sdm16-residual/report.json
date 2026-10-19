@@ -1,0 +1,108 @@
+{
+  "complete": true,
+  "date": "2026-10-19",
+  "native": {
+    "native_cases": 63490,
+    "native_q64_endpoint_cases": 8184,
+    "absolute_tstates": 89,
+    "all1024_residuals": true,
+    "all15_unsigned_input_boundaries": true,
+    "initial_flag_bytes": [
+      0,
+      1,
+      254,
+      255
+    ],
+    "BC_D_IX_altregs_AFprime_IFF_preserved": true,
+    "only_two_residual_bytes_written": true,
+    "lowbit_witness": {
+      "constant_unsigned16": [
+        32768,
+        32769
+      ],
+      "seed_residual": 0,
+      "first_changed_bin_sample_zero_based": 1023,
+      "base_bin": 32,
+      "one_LSB_bin": 33,
+      "own_residual_carried_for1025_native_samples": true
+    },
+    "integer_all67108864_input_residual_pairs_verified": true
+  },
+  "instruction_table": [
+    [
+      "LD HL,R immediate",
+      10
+    ],
+    [
+      "LD SP,IX",
+      10
+    ],
+    [
+      "ADD HL,SP",
+      11
+    ],
+    [
+      "LD A,H",
+      4
+    ],
+    [
+      "RRA",
+      4
+    ],
+    [
+      "RRCA",
+      4
+    ],
+    [
+      "AND127",
+      7
+    ],
+    [
+      "LD IYL,A",
+      8
+    ],
+    [
+      "LD A,H",
+      4
+    ],
+    [
+      "AND3",
+      7
+    ],
+    [
+      "LD H,A",
+      4
+    ],
+    [
+      "LD(nn),HL",
+      16
+    ]
+  ],
+  "formula": "q=floor((u+R)/1024); Rnext=(u+R)%1024",
+  "residual_bits": 10,
+  "source_model": "Hypothetical sample-domain residual quantizer feeding packet PDM; not exact frozenB or second-order SDM",
+  "old_lookup_and_dispatch_tstates": 70,
+  "available_Pentagon_padding_tstates": 26,
+  "total_budget": 96,
+  "quantizer_only_tstates": 89,
+  "existing_bin_lookup_and_POPs_still_required_tstates": 70,
+  "concrete_unoptimized_combination_tstates": 159,
+  "over_budget_tstates": 63,
+  "extra_native_sample_cost_vs_original_lookup": 89,
+  "timing_assumptions": "89T is only the exact residual-prequantizer. The existing70T selector/POPs are still needed; q64 additionally requires an endpoint policy. No variable-time saturation or hidden paging is counted as free.",
+  "endpoint_policy": "The exact residual quantizer can return65 levels0..64. The current64-bin zero-origin packet model has no level64; clipping it changes this model and its bounded-error identity.",
+  "register_findings": {
+    "IX": "Exact IMA predictor must remain16-bit",
+    "IY": "NextSECOND pointer live until dispatch, then dead",
+    "AFprime": "Source phase and prefetched nibble live",
+    "alternateHL": "IMA row live",
+    "alternateDE": "Compressed cursor live",
+    "alternateBC": "Overwritten by next decoder POP, not stable persistent residual storage",
+    "BC": "Port-preserving10-bit residual encoding8002h+4R is theoretically possible, but current bank tail overwritesBC and its release OUT usesB as data; packing/update/restore costs are not free"
+  },
+  "decision": "Reject this concrete runtime residual mechanism for the96T budget. It preserves all16-bit input influence causally but does not fit the current constant449/448 clock.",
+  "no_source_stream_player_or_encoder_changed": true,
+  "no_audio_quality_sweep": true,
+  "physical_hardware_tested": false,
+  "release_accepted": false
+}

@@ -1,0 +1,199 @@
+                 	
+                 	; Standalone full16-bit first-order modulator with seven uniform64-T holds.
+                 	; A sample lasts448 T; IMA stays compressed and is decoded one sample ahead.
+                 	; MainHL=modulo16 accumulator, DE=current full16-bit biased sample, C=16.
+                 	; IX=next predictor, alternateHL=IMA row, alternateDE=source cursor,
+                 	; alternateBC=delta. AF' holds a prepared nibble only between gaps1 and2.
+                 	; MainB/IY are free; OUT(FE),A emits only EAR0/16, with MIC/border0.
+                 	; SP is dead after gap3 POPs, and reset before every future POP. No CALL/PUSH.
+                 	; Enter high_packet after priming the first LOW nibble; source cursor then
+                 	; points at that same byte. Page/bank handling and EOF are not implemented.
+                 	; IRQs must remain disabled, including while SP is a dead scratch pointer.
+8000              	 ORG 0x8000
+                 	low_packet:
+                 	low_pulse_0:
+8000 19           	 ADD HL,DE
+8001 9F           	 SBC A,A
+8002 A1           	 AND C
+8003 D3 FE        	 OUT (254),A
+                 	low_gap_0:
+                 	; Gap1,34 T: fetch/prepare the next code, then preserve it in AF'.
+8005 D9           	 EXX
+8006 1A           	 LD A,(DE)
+8007 E6 0F        	 AND 15
+8009 07           	 RLCA
+800A 07           	 RLCA
+800B 08           	 EX AF,AF'
+800C D9           	 EXX
+                 	low_pulse_1:
+800D 19           	 ADD HL,DE
+800E 9F           	 SBC A,A
+800F A1           	 AND C
+8010 D3 FE        	 OUT (254),A
+                 	low_gap_1:
+                 	; Gap2,26 useful+8 pad: restore code and select its four-byte IMA row.
+8012 D9           	 EXX
+8013 08           	 EX AF,AF'
+8014 B5           	 OR L
+8015 6F           	 LD L,A
+8016 F9           	 LD SP,HL
+8017 D9           	 EXX
+8018 00           	 NOP
+8019 00           	 NOP
+                 	low_pulse_2:
+801A 19           	 ADD HL,DE
+801B 9F           	 SBC A,A
+801C A1           	 AND C
+801D D3 FE        	 OUT (254),A
+                 	low_gap_2:
+                 	; Gap3,28 useful+6 pad: load delta/next row, then discard lookup SP.
+801F D9           	 EXX
+8020 C1           	 POP BC
+8021 E1           	 POP HL
+8022 D9           	 EXX
+8023 F9           	 LD SP,HL
+                 	low_pulse_3:
+8024 19           	 ADD HL,DE
+8025 9F           	 SBC A,A
+8026 A1           	 AND C
+8027 D3 FE        	 OUT (254),A
+                 	low_gap_3:
+                 	; Gap4,23 useful+11 pad: update next predictor, preserving current DE.
+8029 D9           	 EXX
+802A DD 09        	 ADD IX,BC
+802C D9           	 EXX
+802D 3E 00        	 LD A,0
+802F 00           	 NOP
+                 	low_pulse_4:
+8030 19           	 ADD HL,DE
+8031 9F           	 SBC A,A
+8032 A1           	 AND C
+8033 D3 FE        	 OUT (254),A
+                 	low_gap_4:
+                 	; Gap5,34 pad: source still points at its unconsumed high nibble.
+8035 ED 5F        	 LD A,R
+8037 ED 5F        	 LD A,R
+8039 00           	 NOP
+803A 00           	 NOP
+803B 00           	 NOP
+803C 00           	 NOP
+                 	low_pulse_5:
+803D 19           	 ADD HL,DE
+803E 9F           	 SBC A,A
+803F A1           	 AND C
+8040 D3 FE        	 OUT (254),A
+                 	low_gap_5:
+                 	; Gap6 is34 T available for future resident-descriptor/paging work.
+8042 ED 5F        	 LD A,R
+8044 ED 5F        	 LD A,R
+8046 00           	 NOP
+8047 00           	 NOP
+8048 00           	 NOP
+8049 00           	 NOP
+                 	low_pulse_6:
+804A 19           	 ADD HL,DE
+804B 9F           	 SBC A,A
+804C A1           	 AND C
+804D D3 FE        	 OUT (254),A
+                 	low_gap_6:
+                 	; Gap7: current output is finished; latch next predictor into DE.
+804F DD 54        	 LD D,IXH
+8051 DD 5D        	 LD E,IXL
+8053 ED 5F        	 LD A,R
+8055 ED 5F        	 LD A,R
+                 	high_packet:
+                 	high_pulse_0:
+8057 19           	 ADD HL,DE
+8058 9F           	 SBC A,A
+8059 A1           	 AND C
+805A D3 FE        	 OUT (254),A
+                 	high_gap_0:
+                 	; Gap1,34 T: fetch/prepare the next code, then preserve it in AF'.
+805C D9           	 EXX
+805D 1A           	 LD A,(DE)
+805E E6 F0        	 AND 240
+8060 0F           	 RRCA
+8061 0F           	 RRCA
+8062 08           	 EX AF,AF'
+8063 D9           	 EXX
+                 	high_pulse_1:
+8064 19           	 ADD HL,DE
+8065 9F           	 SBC A,A
+8066 A1           	 AND C
+8067 D3 FE        	 OUT (254),A
+                 	high_gap_1:
+                 	; Gap2,26 useful+8 pad: restore code and select its four-byte IMA row.
+8069 D9           	 EXX
+806A 08           	 EX AF,AF'
+806B B5           	 OR L
+806C 6F           	 LD L,A
+806D F9           	 LD SP,HL
+806E D9           	 EXX
+806F 00           	 NOP
+8070 00           	 NOP
+                 	high_pulse_2:
+8071 19           	 ADD HL,DE
+8072 9F           	 SBC A,A
+8073 A1           	 AND C
+8074 D3 FE        	 OUT (254),A
+                 	high_gap_2:
+                 	; Gap3,28 useful+6 pad: load delta/next row, then discard lookup SP.
+8076 D9           	 EXX
+8077 C1           	 POP BC
+8078 E1           	 POP HL
+8079 D9           	 EXX
+807A F9           	 LD SP,HL
+                 	high_pulse_3:
+807B 19           	 ADD HL,DE
+807C 9F           	 SBC A,A
+807D A1           	 AND C
+807E D3 FE        	 OUT (254),A
+                 	high_gap_3:
+                 	; Gap4,23 useful+11 pad: update next predictor, preserving current DE.
+8080 D9           	 EXX
+8081 DD 09        	 ADD IX,BC
+8083 D9           	 EXX
+8084 3E 00        	 LD A,0
+8086 00           	 NOP
+                 	high_pulse_4:
+8087 19           	 ADD HL,DE
+8088 9F           	 SBC A,A
+8089 A1           	 AND C
+808A D3 FE        	 OUT (254),A
+                 	high_gap_4:
+                 	; Gap5,14 useful+20 pad: both nibbles are consumed; advance source.
+808C D9           	 EXX
+808D 13           	 INC DE
+808E D9           	 EXX
+808F 00           	 NOP
+8090 00           	 NOP
+8091 00           	 NOP
+8092 00           	 NOP
+8093 00           	 NOP
+                 	high_pulse_5:
+8094 19           	 ADD HL,DE
+8095 9F           	 SBC A,A
+8096 A1           	 AND C
+8097 D3 FE        	 OUT (254),A
+                 	high_gap_5:
+                 	; Gap6 is34 T available for future resident-descriptor/paging work.
+8099 ED 5F        	 LD A,R
+809B ED 5F        	 LD A,R
+809D 00           	 NOP
+809E 00           	 NOP
+809F 00           	 NOP
+80A0 00           	 NOP
+                 	high_pulse_6:
+80A1 19           	 ADD HL,DE
+80A2 9F           	 SBC A,A
+80A3 A1           	 AND C
+80A4 D3 FE        	 OUT (254),A
+                 	high_gap_6:
+                 	; Gap7: current output is finished; latch next predictor into DE.
+80A6 DD 54        	 LD D,IXH
+80A8 DD 5D        	 LD E,IXL
+80AA 00           	 NOP
+80AB 00           	 NOP
+80AC C3 00 80     	 JP low_packet
+                 	kernel_end:
+80AF 00           	 NOP

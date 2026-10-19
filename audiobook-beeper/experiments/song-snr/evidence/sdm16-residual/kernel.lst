@@ -1,0 +1,28 @@
+                 	
+                 	; Full-input residual quantizer, standalone feasibility proof only.
+                 	; IX=u: exact biased signed IMA predictor in0..65535; it must remain unchanged.
+                 	; The self-modified immediate stores R in0..1023. HL,IY,A/F and SP are dead
+                 	; on entry after a hypothetical selector dispatch; no stack operations follow.
+                 	; BC port,D16,IX,alternate registers and AF' are preserved. Return IYL=q0..64,
+                 	; HL=Rnew,SP=IX, with only the two residual-immediate bytes changed in RAM.
+                 	; q=floor((u+R)/1024),Rnew=(u+R)mod1024. The17th carry is significant at
+                 	; positive fullscale: q64 is real and needs a65th level or an explicit clip.
+                 	; This PDM-prequantizer model differs from current modelA/B. No audio is scored.
+8000              	 ORG 0x8000
+8000 21 00 00     	residual: LD HL,0
+8003 DD F9        	 LD SP,IX
+8005 39           	 ADD HL,SP
+                 	 ; Extract sum bits16..10 before AND destroys the addition's carry. RRCA's
+                 	 ; unwanted wrapped bit9 is removed by AND127; all paths take identical time.
+8006 7C           	 LD A,H
+8007 1F           	 RRA
+8008 0F           	 RRCA
+8009 E6 7F        	 AND 127
+800B FD 6F        	 LD IYL,A
+                 	 ; Store the exact remainder for the next sample. This is self-modified data,
+                 	 ; not an ordinary stack or an input-dependent branch/paging operation.
+800D 7C           	 LD A,H
+800E E6 03        	 AND 3
+8010 67           	 LD H,A
+8011 22 01 80     	 LD (residual+1),HL
+8014 00           	complete: NOP

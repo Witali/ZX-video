@@ -1,5 +1,52 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Uniform PCM16 arithmetic proved; host quality run interrupted
+
+- **Objective/baseline:** Continue the reconstructed-PCM16 precision mechanism
+  after f009fb18 using standalone residual, pipeline and arithmetic probes.
+  Preserve original player/Python/C encoders, compressed sources and delivered
+  disk. The user then prioritized DHA from `C:/Work/z80-tester`; seal the
+  interrupted host comparison without launching another corpus run.
+- **Rejected residual and useful pipeline fragments:** Exact ten-bit residual
+  quantization passes all 67108864 integer input/state pairs and 63490 native
+  cases, constant 89 T. With the still-required 70-T lookup/POPs it costs
+  159 versus a 96-T budget, 63 over; level64 also needs a new endpoint policy.
+  Separate 11160 native pipeline cases prove dead-register scratch use and
+  cached-byte/full-word page advance: LOW/HIGH ordinary242->241, regular
+  page256->241, bank485->470 T. Derived packets are448 ordinary/page but677
+  bank, leaving229 T extra; changed pulse holds require a matched model.
+- **Native uniform mechanism:** A176-byte first-order kernel decodes IMA one
+  sample ahead and retains every PCM16 predictor bit. Seven30-T pulse bodies
+  with34-T gaps yield actual64-T holds and448-T samples, 8 kHz/56 kHz on
+  Pentagon3.584MHz. Versus the prior449-T packet the period changes-1 T;
+  versus optional448 it is unchanged, with a different output schedule.
+  LOW/HIGH useful work127/151 T leaves111/87 T distributed across gaps.
+  Native8190-sample/57330-bit predictor/index parity, seven extreme vectors
+  and a37/38 one-LSB pulse witness pass; all RAM/register guards pass. The
+  exact old30x10/148 weighted-area kernel passes917504 native cases, including
+  17713 true25-bit intermediates, but costs78 T/pulse or858 T before decode
+  and product formation, rejecting that concrete implementation. Final native
+  producer8.463501 s. Scope is one source bank; bank handoff/EOF remain absent.
+- **C host and interrupted measurements:** Exact C/native bit/64-T parity
+  passes. Seven source folders and111 hashed artifacts remain `complete:false`;
+  the nine-source/long-control run was interrupted by the user's DHA priority.
+  Frozen449-clock jointly optimized IMA was not reencoded for uniform448.
+  Song floor6/full16 PDM-only diagnostics are18.013015/18.141701 dB, a
+  +0.128686 change; source-relative totals are-3.003283/-3.002195 dB, with
+  decoded-IMA16 control-2.968504 dB on this changed clock. These are distinct
+  diagnostics, not a new quality ceiling or a five-dB acceptance. Coherent
+  lines can rise; inapplicable AM/FM fits and silence require separate care.
+- **Verification/decision:** Authenticate all148 immutable evidence files and
+  frozen producer identities without repeating the passed full executions.
+  Retain the counted mechanism and failed/partial evidence. No matched full
+  quality, all-clone clocks, resident bank transport, complete TRD/Fuse or new
+  release is accepted. Stop this milestone for the user's codec investigation.
+  [Mechanism, counts and partial scores](audiobook-beeper/SDM16_UNIFORM.md),
+  [native uniform proof](audiobook-beeper/experiments/song-snr/evidence/sdm16-uniform7/report.json),
+  [residual proof](audiobook-beeper/experiments/song-snr/evidence/sdm16-residual/report.json),
+  [pipeline fragments](audiobook-beeper/experiments/song-snr/evidence/sdm16-pipeline/README.md),
+  [host interruption](audiobook-beeper/experiments/song-snr/evidence/sdm16-uniform7-host/interrupted.json).
+
 ## 2026-10-19 — Exact compact PCM16 tables and native selector limits established
 
 - **Objective/baseline:** Finish the compact full-inputB representation and

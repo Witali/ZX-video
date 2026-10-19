@@ -1,0 +1,11140 @@
+; Standalone uncontended Pentagon CPU probe, not a release player.
+; At FIRST suffix, mainHL/AF are dead, BC supplies the ULA port, D=16,
+; E feedback is replaced by SECOND, IX exact predictor, IY current SECOND.
+; ALT HL row and DE source remain live. ALT BC delta dies after ADD IX,BC.
+; MainB is only a port-high byte until a bank tail explicitly saves its bit;
+; this probe's B scratch interpretation is Pentagon-only, with no ULA waits.
+; SP points at the three-word next-packet record and is not a call stack.
+ ORG 0x8000
+entry_baseline:
+ JP delay_baseline
+entry_cache_b:
+ JP delay_cache_b
+entry_cache_altc:
+ JP delay_cache_altc
+; Inline20T copy plus6T padding replaces the entire26T shared pacing delta.
+; A=IXH on entry. ALT BC keeps the next exact16-bit sample through SECOND,
+; but is overwritten by the following FIRST decoder POP BC.
+entry_inline_altbc:
+ EXX
+ LD B,A
+ LD C,IXL
+ EXX
+ INC HL
+ JP (IY)
+entry_prefetch_uniform:
+ JP delay_baseline
+delay_baseline:
+ NOP
+ NOP
+ NOP
+ NOP
+ JP (IY)
+delay_cache_b:
+ LD B,IXL
+ NOP
+ NOP
+ JP (IY)
+delay_cache_altc:
+ EXX
+ LD C,IXL
+ EXX
+ JP (IY)
+second_0_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_0_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_0_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_0_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_0_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_0_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_1_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_1_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_1_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_1_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_1_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_1_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_2_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_2_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_2_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_2_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_2_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_2_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_4_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_4_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_4_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_4_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_4_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_4_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_5_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_5_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_5_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_5_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_5_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_5_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_8_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_8_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_8_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_8_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_8_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_8_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_9_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_9_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_9_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_9_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_9_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_9_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_10_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_10_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_10_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_10_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_10_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_10_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_12_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_12_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_12_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_12_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_12_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_12_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_16_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_16_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_16_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_16_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_16_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_16_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_17_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_17_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_17_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_17_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_17_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_17_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_18_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_18_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_18_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_18_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_18_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_18_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_20_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_20_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_20_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_20_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_20_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_20_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_21_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_21_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_21_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_21_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_21_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_21_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_22_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_22_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_22_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_22_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_22_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_22_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_25_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_25_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_25_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_25_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_25_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_25_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_32_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_32_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_32_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_32_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_32_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_32_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_33_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_33_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_33_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_33_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_33_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_33_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_34_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_34_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_34_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_34_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_34_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_34_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_36_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_36_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_36_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_36_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_36_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_36_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_37_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_37_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_37_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_37_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_37_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_37_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_38_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_38_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_38_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_38_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_38_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_38_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_41_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_41_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_41_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_41_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_41_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_41_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_42_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_42_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_42_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_42_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_42_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_42_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_44_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_44_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_44_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_44_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_44_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_44_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_45_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_45_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_45_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_45_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_45_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_45_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_50_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_50_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_50_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_50_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_50_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_50_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_51_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_51_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_51_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_51_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_51_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_51_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_53_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_53_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_53_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_53_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_53_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_53_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_54_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_54_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_54_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_54_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_54_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_54_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_57_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_57_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_57_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_57_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_57_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_57_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_58_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_58_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_58_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_58_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_58_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_58_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_59_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_59_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_59_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_59_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_59_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_59_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_61_0:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_61_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_61_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_61_1:
+ DB 0xED,0x71
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_61_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_61_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_64_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_64_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_64_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_64_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_64_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_64_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_65_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_65_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_65_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_65_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_65_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_65_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_66_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_66_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_66_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_66_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_66_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_66_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_68_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_68_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_68_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_68_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_68_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_68_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_69_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_69_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_69_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_69_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_69_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_69_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_72_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_72_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_72_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_72_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_72_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_72_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_73_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_73_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_73_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_73_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_73_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_73_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_74_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_74_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_74_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_74_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_74_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_74_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_77_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_77_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_77_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_77_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_77_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_77_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_81_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_81_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_81_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_81_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_81_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_81_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_85_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_85_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_85_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_85_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_85_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_85_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_86_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_86_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_86_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_86_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_86_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_86_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_87_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_87_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_87_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_87_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_87_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_87_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_89_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_89_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_89_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_89_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_89_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_89_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_90_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_90_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_90_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_90_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_90_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_90_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_91_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_91_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_91_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_91_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_91_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_91_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_93_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_93_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_93_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_93_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_93_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_93_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_94_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_94_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_94_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_94_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_94_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_94_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_107_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_107_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_107_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_107_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_107_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_107_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_109_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_109_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_109_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_109_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_109_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_109_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_110_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_110_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_110_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_110_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_110_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_110_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_111_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_111_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_111_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_111_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_111_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_111_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_118_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_118_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_118_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_118_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_118_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_118_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_119_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_119_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_119_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_119_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_119_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_119_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_123_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_123_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_123_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_123_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_123_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_123_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_125_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_125_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_125_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_125_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_125_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_125_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_126_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_126_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_126_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_126_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_126_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_126_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_127_0:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_127_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_127_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_127_1:
+ DB 0xED,0x71
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_127_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_127_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_128_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_128_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_128_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_128_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_128_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_128_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_129_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_129_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_129_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_129_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_129_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_129_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_130_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_130_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_130_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_130_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_130_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_130_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_132_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_132_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_132_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_132_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_132_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_132_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_136_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_136_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_136_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_136_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_136_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_136_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_137_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_137_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_137_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_137_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_137_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_137_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_144_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_144_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_144_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_144_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_144_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_144_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_145_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_145_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_145_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_145_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_145_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_145_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_146_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_146_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_146_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_146_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_146_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_146_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_148_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_148_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_148_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_148_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_148_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_148_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_161_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_161_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_161_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_161_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_161_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_161_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_162_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_162_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_162_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_162_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_162_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_162_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_164_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_164_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_164_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_164_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_164_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_164_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_165_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_165_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_165_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_165_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_165_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_165_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_166_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_166_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_166_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_166_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_166_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_166_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_168_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_168_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_168_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_168_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_168_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_168_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_169_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_169_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_169_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_169_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_169_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_169_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_170_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_170_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_170_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_170_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_170_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_170_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_174_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_174_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_174_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_174_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_174_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_174_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_178_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_178_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_178_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_178_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_178_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_178_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_181_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_181_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_181_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_181_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_181_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_181_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_182_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_182_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_182_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_182_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_182_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_182_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_183_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_183_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_183_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_183_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_183_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_183_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_186_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_186_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_186_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_186_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_186_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_186_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_187_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_187_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_187_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_187_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_187_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_187_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_189_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_189_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_189_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_189_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_189_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_189_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_190_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_190_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_190_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_190_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_190_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_190_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_191_0:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_191_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_191_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_191_1:
+ OUT (C),D
+ POP HL
+ DB 0xED,0x71
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_191_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_191_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_194_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_194_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_194_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_194_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_194_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_194_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_196_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_196_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_196_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_196_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_196_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_196_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_197_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_197_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_197_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_197_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_197_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_197_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_198_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_198_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_198_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_198_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_198_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_198_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_201_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_201_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_201_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_201_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_201_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_201_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_202_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_202_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_202_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_202_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_202_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_202_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_204_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_204_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_204_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_204_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_204_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_204_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_205_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_205_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_205_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_205_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_205_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_205_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_210_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_210_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_210_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_210_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_210_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_210_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_211_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_211_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_211_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_211_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_211_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_211_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_213_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_213_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_213_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_213_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_213_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_213_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_214_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_214_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_214_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_214_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_214_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_214_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_217_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_217_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_217_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_217_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_217_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_217_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_218_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_218_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_218_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_218_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_218_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_218_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_219_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_219_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_219_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_219_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_219_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_219_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_221_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_221_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_221_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_221_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_221_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_221_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_222_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_222_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_222_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_222_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_222_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_222_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_223_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_223_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_223_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_223_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ DB 0xED,0x71
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_223_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_223_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_230_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_230_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_230_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_230_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_230_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_230_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_233_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_233_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_233_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_233_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_233_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_233_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_234_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_234_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_234_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_234_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_234_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_234_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_235_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_235_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_235_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_235_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_235_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_235_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_237_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_237_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_237_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_237_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_237_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_237_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_238_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_238_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_238_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_238_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_238_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_238_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_239_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_239_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_239_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_239_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ DB 0xED,0x71
+ EX AF,AF'
+ CCF
+ JP C,high_239_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_239_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_243_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_243_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_243_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_243_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_243_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_243_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_245_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_245_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_245_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_245_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_245_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_245_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_246_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_246_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_246_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_246_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_246_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_246_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_247_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_247_0
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_247_0:
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_247_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_247_1
+ DB 0xED,0x71
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_247_1:
+ DB 0xED,0x71
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_250_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_250_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_250_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_250_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_250_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_250_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_251_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_251_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_251_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_251_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_251_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ DB 0xED,0x71
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_251_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ DB 0xED,0x71
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_253_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_253_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_253_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_253_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_253_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ DB 0xED,0x71
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_253_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ DB 0xED,0x71
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_254_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_254_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_254_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_254_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_254_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ DB 0xED,0x71
+ JP (HL)
+high_254_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+second_255_0:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_255_0
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ JP $+3
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_255_0:
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC E
+ JP Z,page_1
+ EXX
+ OUT (C),D
+ JP (HL)
+second_255_1:
+ OUT (C),D
+ POP HL
+ OUT (C),D
+ POP IY
+ OUT (C),D
+ POP DE
+ OUT (C),D
+ EX AF,AF'
+ CCF
+ JP C,high_255_1
+ OUT (C),D
+ EX AF,AF'
+ EXX
+ LD A,(DE)
+ EXX
+ LD B,A
+ OUT (C),D
+ AND 15
+ RLCA
+ RLCA
+ OUT (C),D
+ RET C
+ NOP
+ NOP
+ NOP
+ OUT (C),D
+ JP (HL)
+high_255_1:
+ OUT (C),D
+ EX AF,AF'
+ LD A,B
+ OUT (C),D
+ AND 240
+ RRCA
+ RRCA
+ OUT (C),D
+ EXX
+ INC DE
+ INC D
+ DEC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+page_0:
+ INC D
+ JP Z,bank_0
+ EXX
+ DB 0xED,0x71
+ JP (HL)
+bank_0:
+ EX AF,AF'
+ EXX
+ LD B,0
+ EXX
+ JP bank_jump
+page_1:
+ INC D
+ JP Z,bank_1
+ EXX
+ OUT (C),D
+ JP (HL)
+bank_1:
+ EX AF,AF'
+ EXX
+ LD B,16
+ EXX
+ JP bank_jump
+bank_jump:
+ JP bank_tail
+; Unchanged legacy descriptor critical path. ALT HL must be preserved; AF'
+; protects the already-prefetched high nibble while paging changes A.
+bank_tail:
+ LD (saved_row),HL
+ LD HL,(next_record)
+ LD A,(HL)
+ OR A
+ JP Z,exhausted
+ LD (paging),A
+ INC HL
+ LD D,(HL)
+ LD E,0
+ INC HL
+ LD A,(HL)
+ INC HL
+ LD (next_record),HL
+ LD HL,(saved_row)
+ JP high_done
+ LD BC,0x1FFD
+ OUT (C),A
+high_done:
+ LD BC,0x7FFD
+ LD A,(paging)
+ OUT (C),A
+ EXX
+ SCF
+ EX AF,AF'
+ OUT (C),B
+ JP (HL)
+exhausted:
+ HALT
+complete:
+ NOP
+saved_row: EQU 0x6A10
+next_record: EQU 0x6A12
+paging: EQU 0x6A14
