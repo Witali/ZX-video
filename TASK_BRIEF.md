@@ -107,6 +107,34 @@ contracts; only then adapt the joint encoder to the implemented modulator.
 Do not claim16 effective output bits, complete background acceptance, or
 full player proof from the C counterfactual or standalone arithmetic probes.
 
+The next bounded precision component experiment is complete2026-10-19.
+`sdm16_patterns.py` proves shared SECOND high tails save2608 bytes with0T
+and identical native timestamps; maximum sharing saves6576 but adds20T
+before exchanging Pentagon padding26 ->6.18864 paired native component cases
+and actual unchanged-macro byte audit pass. The larger variant changes pulse
+positions inside packets and is not an audio-equivalent release.
+`sdm16_intervals.py` serializes all1179648 reachableB cells exactly:2558 word
+intervals,555 recent cutoffs,372 area parameters and arithmetic replacing2270
+qcode cuts. CompactC high4/high5 tables take16066/16642B before code/dispatch.
+Four tests pass; the failed initial root witness reader and19 partial files
+are preserved, with corrected successful29-file evidence.
+`sdm16_qphase.py` executes all2097152B cells: exact qcore36T (44/59 with seed
+extraction), two-byteC modulo works without clipping/negative flags. LoadingC
+and proposed-root extraction raises69T, leaving27 of the old70+26 lookup
+budget for word/recent/dispatch. The concrete high8 binary selector instead
+needs155T;19676 native cases pass but naive substitution gives508 ordinary
+T before table paging, so reject it for unchanged tempo. Its large flat
+per-state components are not a full banked player. Do not assign those
+timings to the distinct compact hybrid without integration.
+Root `sdm16_intervals_audit.py` verifies188 success/failure artifacts, all12
+serialized root/layout full-input combinations and every saved native qcode.
+Complete inherited UI/fixed-memory ledger still exceeds31728 available bytes
+by613 even for compactC/high4/max pattern sharing, before new selector code
+or alignment (high5 deficit1189). This is not an impossibility bound. Next:
+change register/lookup/dispatch allocation to meet both fixedRAM and constant
+source timing, before matched encoder or whole-source quality sweeps. No new
+quality/release/Fuse/physical claim; old encoders and b96763ca are unchanged.
+
 Worktree `.worktree/audio-snr-research`, branch `codex/audio-snr-research`.
 The requested loading/playback interface is completed and separately
 delivered as the named best-measured song disk, nowb96763ca... . The user

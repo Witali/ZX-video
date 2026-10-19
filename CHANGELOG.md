@@ -1,5 +1,47 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Exact compact PCM16 tables and native selector limits established
+
+- **Objective/baseline:** Finish the compact full-inputB representation and
+  counted selector experiment afterd72dd14d, preserving the complete2097152-
+  cell449-weight catalogue, compressed sources, original Python/C/player and
+  delivered disk. No source/gain/filter/clock changes or new audio sweep.
+- **Implemented representation:**2558 word intervals and555 recent cutoffs
+  replace5383 full-record intervals; exact q arithmetic replaces2270 cuts.
+  All1179648 reachable input/state cells and the one-LSB37/38 trajectory
+  remain exact. CompactC uses372 two-byte area constants: high4/5/6/8 tables
+  are16066/16642/17794/24706 bytes including32 state-map bytes, with at most
+  15/11/8/5 record visits. InlineC/high5 is17022 bytes. Four tests pass2.655 s.
+  Initial final witness reader failed through a shadowed dictionary;19
+  partial artifacts/traceback remain `complete:false`, with failed source
+  snapshot unavailable. Corrected full rerun retains29 hashed artifacts.
+- **Actual CPU components:** qphase executes all2097152B cells with per-cell
+  register/predictor/port guards. Exact signed difference[-6822,7910] and
+  qcode0..15 require neither clipping nor a negative-C marker. qcore36 T;
+  raw/root-state extraction makes44/59; POP constant plus root extraction
+  makes69 before word/recent/dispatch. Three1536-case guard/count tests pass.
+  The separate root/binary selector passes2097152 host cells and19676 native
+  vectors, constant155 T. Old lookup+POP70 excludesJP(IY)8; removing all26
+  pacing still gives508-T ordinary samples before additional paging. Reject
+  this implementation for tempo. Its9216 root/207437 handler/32298 local
+  record bytes are flat per-state components, not resident player memory.
+- **Independent audit/accounting:** Root validates188 success/failure files,
+  all12 complete serialized layout/root combinations, all2097152 saved
+  native qcodes and literal36/155/508 instruction counts. An inherited UI
+  ledger reserves TR-DOS/cache and charges decoder/startup/worker/dispatch;
+  compactC/high4 plus maximal pattern sharing still needs32341 versus31728
+  available fixed bytes,613 over before new selector/alignment; high5 is1189
+  over. Counts reject the literal layout, not every precision mechanism.
+- **Decision:** Retain exact reusable tables/arithmetic and rejected selector
+  evidence. Change register/lookup/dispatch allocation before matched encoding
+  and complete own-clock quality tests. No full player, new quality, Fuse,
+  artifact acceptance or goal-completion claim. This continuation makes
+  implementation progress; deliveredb96763ca and originals stay unchanged.
+  [Precision mechanism](audiobook-beeper/SDM16_PRECISION.md),
+  [interval representation](audiobook-beeper/experiments/song-snr/evidence/sdm16-intervals/README.md),
+  [native selector](audiobook-beeper/experiments/song-snr/evidence/sdm16-selector/README.md),
+  [independent audit](audiobook-beeper/experiments/song-snr/evidence/sdm16-intervals-audit/report.json).
+
 ## 2026-10-19 — Exact native PDM code sharing frees space for PCM16 selection
 
 - **Objective/input:** Continue the user's full reconstructed16-bit SDM

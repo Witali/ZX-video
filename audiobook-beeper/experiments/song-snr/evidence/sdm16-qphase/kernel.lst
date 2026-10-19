@@ -1,0 +1,64 @@
+                 	
+                 	; Exact q-successor component for a previously selected valid model-B word.
+                 	; Entry IX=unsigned biased IMA predictor, HL=C(word) modulo65536.
+                 	; E=old qcode0..15,D16; BC,IX,IY,SP,alternate registers and AF' are live.
+                 	; Return A=new qcode. Only A/F change in CORE36. No stack or paging operation.
+                 	; The admitted-cell certificate bounds the true subtraction within signed16
+                 	; and proves qcode already0..15. This routine must not be used with an arbitrary
+                 	; unrelated word or an unvalidated model; otherwise clipping/sign rules differ.
+8000              	 ORG 0x8000
+                 	core36:
+8000 DD 7D        	 LD A,IXL
+8002 95           	 SUB L
+8003 DD 7C        	 LD A,IXH
+8005 9C           	 SBC A,H
+8006 CB 2F        	 SRA A
+8008 83           	 ADD A,E
+8009 00           	core36_complete: NOP
+                 	; Original raw seed=2*qcode+recent can be consumed after word selection.
+                 	rawseed44:
+800A CB 3B        	 SRL E
+800C DD 7D        	 LD A,IXL
+800E 95           	 SUB L
+800F DD 7C        	 LD A,IXH
+8011 9C           	 SBC A,H
+8012 CB 2F        	 SRA A
+8014 83           	 ADD A,E
+8015 00           	rawseed44_complete: NOP
+                 	; Current selector prototype's root-page byte is40h+2*rawseed.
+                 	; Extract its qcode without changing BC,D,IX,alternates or AF'. E is consumed.
+                 	rootpage59:
+8016 7B           	 LD A,E
+8017 0F           	 RRCA
+8018 0F           	 RRCA
+8019 E6 0F        	 AND 15
+801B 5F           	 LD E,A
+801C DD 7D        	 LD A,IXL
+801E 95           	 SUB L
+801F DD 7C        	 LD A,IXH
+8021 9C           	 SBC A,H
+8022 CB 2F        	 SRA A
+8024 83           	 ADD A,E
+8025 00           	rootpage59_complete: NOP
+                 	; Batch driver for exhaustive real-cell execution. Six-byte fixture records
+                 	; contain C16,u16,qseed8,D16. These POPs/OUT/loop instructions are harness work,
+                 	; not part of the36-T component or a claimed integrated player schedule.
+                 	batch:
+8026 31 00 C0     	 LD SP,0xC000
+8029 FD 21 00 08  	 LD IY,2048
+                 	batch_loop:
+802D E1           	 POP HL
+802E DD E1        	 POP IX
+8030 D1           	 POP DE
+8031 DD 7D        	 LD A,IXL
+8033 95           	 SUB L
+8034 DD 7C        	 LD A,IXH
+8036 9C           	 SBC A,H
+8037 CB 2F        	 SRA A
+8039 83           	 ADD A,E
+803A D3 FD        	 OUT (0xFD),A
+803C FD 2B        	 DEC IY
+803E FD 7C        	 LD A,IYH
+8040 FD B5        	 OR IYL
+8042 C2 2D 80     	 JP NZ,batch_loop
+8045 00           	batch_complete: NOP

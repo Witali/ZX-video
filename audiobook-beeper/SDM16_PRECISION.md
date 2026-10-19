@@ -169,3 +169,91 @@ Reproduce with `python audiobook-beeper/experiments/song-snr/sdm16_patterns.py`
 and `python audiobook-beeper/experiments/song-snr/sdm16_patterns_audit.py`.
 No fullPCM16 selector, cold boot, UI, ULA/Fuse or complete-source quality proof
 is established by this code-sharing experiment. The delivered disk is unchanged.
+
+## Exact compact tables and successor arithmetic, 2026-10-19
+
+The [interval producer](experiments/song-snr/sdm16_intervals.py) now preserves
+all1179648 reachableB input/state cells in a serialized representation.
+Instead of5383 full word/successor intervals it stores2558 word intervals
+and555 recent-state cutoffs. The2270 remaining successor changes are computed
+from the selected word's weighted high-time area:
+
+```
+C = ceil(65536 * area(word) / 449 - 256)
+d = signed16((unsigned_PCM16 - (C mod 65536)) mod 65536)
+qcode = old_state // 2 + (d >> 9)
+next_state = 2 * qcode + recent
+```
+
+The reachable difference range is[-6822,7333], qcode1..15. All32 original
+states additionally pass the separate exhaustive check: difference[-6822,7910],
+qcode0..15. Neither clipping nor an exceptional negative-C marker is needed
+on these verified selected-word domains. Arbitrary unrelated input/word/state
+triples are outside this assertion.
+
+The compactC table has11342 interval bytes,3372 dictionary bytes for1124
+words,744 parameter bytes for372 weighted areas,32 state-map bytes and root
+pointers. High4/5/6/8 roots give16066/16642/17794/24706 total table bytes,
+requiring at most15/11/8/5 word-record visits. InlineC embeds each two-byte
+constant in a four-byte word record:17022 bytes with high5 roots. These are
+host table sizes, not cycle or complete-player memory claims.
+
+Four focused tests pass in2.655 s, including exact Fraction witnesses. A first
+run failed in its final witness reader through a shadowed Python dictionary;
+the model and complete-domain decoders had passed. Its19 artifacts/traceback
+are retained with `complete:false`; the exact failed producer was not saved
+before correction. The successful rerun freezes29 artifacts and its actual
+producer/test sources.
+
+The [qphase component](experiments/song-snr/sdm16_qphase.py) executes the exact
+arithmetic on all2097152 originalB cells, with per-cell predictor, port,
+register and lookup-SP guards. WithHL=C/E=old_qcode its literal sequence
+`LD A,IXL; SUB L; LD A,IXH; SBC A,H; SRA A; ADD A,E` costs36 T and clobbers
+onlyA/F. Extracting qcode from a raw-stateE makes44 T, or from the proposed
+root-pageE59 T. Three1536-case native component tests verify these counts and
+flags/IFF preservation. LoadingC throughPOP adds10 T: the root-page variant
+then costs69 T before word selection, recent calculation or pattern dispatch.
+It leaves only27 T of the historical70+26=96-T Pentagon lookup/padding budget;
+it does not establish a complete fast-enough lookup.
+
+## Executed selector rejected; complete memory remains open
+
+The [literal high8 selector](experiments/song-snr/evidence/sdm16-selector/README.md)
+executes all19676 boundary/high-byte/extreme/one-LSB native vectors for all18
+reachable states. Every2097152 host cell also matches. All native paths are
+padded to155 T: root42, low-byte load8, at most three CP/JP comparisons51,
+packet fetch44, continuationJP10. The old query plus POPs is70 T, excluding
+JP(IY)8. Even removing all26 Pentagon pacing T gives449-26-70+155=508 T per
+sample, before additional table-bank paging. This concrete implementation
+would slow playback and is rejected. Its roots9216/handlers207437/local
+records32298 bytes are per-state flat harness components, not a global RAM
+allocation. The compact hybrid is a distinct representation and has not been
+assigned that selector's timings.
+
+An [independent archive/traversal audit](experiments/song-snr/sdm16_intervals_audit.py)
+checks all188 saved successful/failed interval, qphase and selector artifacts;
+follows serialized roots for every input in all12 raw/compactC/inlineC and
+high4/5/6/8 combinations; and compares every saved native qcode with the
+authenticated original catalogue. It independently verifies the literal36-T
+qcore bytes and155/508-T selector counts.
+
+Its optimistic inherited-UI memory ledger reserves1024 TR-DOS bytes and16
+cache bytes from fixed32768 RAM, leaving31728. It charges5696 decoder bytes,
+832 startup bytes,1459 worker bytes,108 UI/padding bytes and1024 literal-to-
+pattern address bytes. Even compactC/high4 plus the7156-byte pattern variant
+needs32341 bytes:613 over, before any new selector instructions or alignment.
+High5 is1189 over. Rearranging cold/persistent code or changing the addressing
+ABI could change these costs; this is a literal-drop-in rejection, not an
+impossibility bound. Adding source RAM alone does not solve the fixed lookup
+layout or count the extra bank switches.
+
+[Exact interval results](experiments/song-snr/evidence/sdm16-intervals/report.json),
+[native qphase results](experiments/song-snr/evidence/sdm16-qphase/report.json),
+[independent full traversal and ledger](experiments/song-snr/evidence/sdm16-intervals-audit/report.json).
+Reproduce with the commands in the interval/selector evidence READMEs, then
+run `python audiobook-beeper/experiments/song-snr/sdm16_qphase.py` and
+`python audiobook-beeper/experiments/song-snr/sdm16_intervals_audit.py`.
+Original player, executable encoders and delivered disk remain unchanged.
+The next precision implementation needs a different counted register/lookup
+layout that fits both complete fixed RAM and the constant source schedule;
+only then should its IMA producer and full-source audio checks be matched.
