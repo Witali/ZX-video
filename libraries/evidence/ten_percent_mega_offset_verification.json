@@ -1,0 +1,174 @@
+{
+  "date": "2026-10-19",
+  "source_baseline": "6db73511",
+  "goal_baseline": "f5a0362c",
+  "complete": true,
+  "test_only": false,
+  "public_mega_tuned_matches_prototype": true,
+  "release": false,
+  "goal_achieved": false,
+  "coroutine_supported": false,
+  "native_candidate_comparisons": 1251,
+  "native_replays": 4170,
+  "default_profiles_exact": 31,
+  "upstream_resources_exact": [
+    {
+      "package": "zx0",
+      "file": "dzx0_fast.asm",
+      "sha256": "bb4c0d8f359091522958d7ffc12b841629412a91a81ebd7eb03f824877bf5fd4",
+      "exact": true
+    },
+    {
+      "package": "zx0",
+      "file": "dzx0_standard.asm",
+      "sha256": "95b5dde1cfb334cb09d8be566728662bd94eb867f8c2f5437c31d78f2f4647b0",
+      "exact": true
+    },
+    {
+      "package": "zx0",
+      "file": "dzx0_turbo.asm",
+      "sha256": "9de7ca474bf03bdb4fe773f0eb1327744fae5558c285d5e670388b8ba20bc39d",
+      "exact": true
+    },
+    {
+      "package": "lzsa",
+      "file": "unlzsa2_fast.asm",
+      "sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071",
+      "exact": true
+    },
+    {
+      "package": "zx0",
+      "file": "dzx0_mega.asm",
+      "sha256": "6a3774508bf8d0f7a6cf08851a22e836aaedccf56dc1ef119b3e04e0f79fb23a",
+      "source_commit": "ecde3a2ae05061fe06469ed46df81a33b7de7d86"
+    },
+    {
+      "package": "lzsa",
+      "file": "unlzsa2_small.asm",
+      "sha256": "862882a4ba95de2b7a9cf1246c5c070b6b70ced60be68cd91f4ea4d3a5d7450b",
+      "source_commit": "15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5"
+    }
+  ],
+  "library_tests": 28,
+  "workspace": {
+    "code_bytes": 670,
+    "embedded_offset_variable_bytes": 2,
+    "extra_state_bytes": 0,
+    "tables_bytes": 0,
+    "padding_bytes": 0,
+    "scratch_internal_buffers_bytes": 0,
+    "max_decoder_stack_including_call_return": 4,
+    "total_service_bytes": 674,
+    "example_irq_extra_stack_bytes": 6,
+    "example_irq_code_bytes": 13,
+    "total_with_example_irq": 693,
+    "input_output_history_counted_separately": true
+  },
+  "wheel": {
+    "name": "zxvideo_zx0-0.1.0-py3-none-any.whl",
+    "sha256": "ad8cd742a06a9755017e4bf4440ae5a4d10173eade7e93cc2eb3c9e81b1f539f",
+    "smoke": {
+      "package": "zx0",
+      "independent_wheel": true,
+      "custom_layout": true,
+      "cli_export": true,
+      "resources": true,
+      "exact_round_trip": true,
+      "external_encoder": false,
+      "resident_profiles": [
+        {
+          "variant": "standard",
+          "bytes": 68,
+          "exact_export": true
+        },
+        {
+          "variant": "turbo",
+          "bytes": 126,
+          "exact_export": true
+        },
+        {
+          "variant": "fast",
+          "bytes": 207,
+          "exact_export": true
+        },
+        {
+          "variant": "mega",
+          "bytes": 673,
+          "exact_export": true
+        }
+      ],
+      "fast_jump_profiles": [
+        {
+          "variant": "standard",
+          "bytes": 70,
+          "exact_export": true
+        },
+        {
+          "variant": "turbo",
+          "bytes": 127,
+          "exact_export": true
+        },
+        {
+          "variant": "mega",
+          "bytes": 674,
+          "exact_export": true
+        },
+        {
+          "variant": "fast",
+          "bytes": 207,
+          "exact_export": true
+        }
+      ],
+      "branch_tuned_profiles": [
+        {
+          "variant": "fast",
+          "bytes": 193,
+          "exact_export": true
+        }
+      ],
+      "inline_tail_refill_profiles": [
+        {
+          "resident": false,
+          "bytes": 391
+        },
+        {
+          "resident": true,
+          "bytes": 196
+        }
+      ],
+      "mega_tuned_profiles": [
+        {
+          "fast_jumps": false,
+          "bytes": 669
+        },
+        {
+          "fast_jumps": true,
+          "bytes": 670
+        }
+      ]
+    }
+  },
+  "source_sha256_lf": {
+    "tests/mega_offset_profile.py": "23da4ecc281e40048b4e8309ec59609677f5cca03f101706faa99703d1f5b548",
+    "tests/measure_mega_offset.py": "c67a456ec3c9e3b9b30b4edd8c92534f2d5099fbe41862cfa2f87f4d49214d16",
+    "tests/verify_mega_offset.py": "51330f8b7b55aa718a48013f5a51909caefbf11d78af4d584f5c6fa70425bd01",
+    "tests/test_mega_tuned.py": "553cc7bd9d673d2f971e3448555e715351f3386b6f63e9971c2f164da07a0e11",
+    "tests/smoke_install.py": "6dad5be99a0a5c48b615276c76fd69901be4b33eddcbdd69f9e9584fedbc88a9",
+    "zx0/src/zx0/codec.py": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91",
+    "zx0/src/zx0/block.py": "6741dd0c598d137fcfbce8ab60144e2366b72e2e194a473473d4674aa90376b2",
+    "zx0/src/zx0/__main__.py": "0a8d7830cfd2e91fe078b71c62d22ea086815446eafaff8464008784da5dfde3",
+    "zx0/src/zx0/export.py": "440b5dfda228be6341d794b6dca65db5ed719c49703f6374d66597483018f86c"
+  },
+  "evidence_sha256": "6dda0902753a4a67e1e1b2801e7ec306cda6794f5dedaf251d5cc2470210c320",
+  "library_tests_log": {
+    "file": "evidence/mega_offset/library-tests.log.gz",
+    "sha256": "88e09e9f1ac8f04acce552934bb97d98b5f3813acab3bef64e15faf0909eeac5"
+  },
+  "limitations": [
+    "Optional resident Mega API/CLI only; no coroutine equivalent.",
+    "Reuse-tail-only branch candidate slows 32 cases, including31real, maximum156T.",
+    "Combined complete blocks improve but individual untaken changed branches cost3T more.",
+    "CPU component result only; no physical delivery or movie/player qualification.",
+    "The historical Mega gain does not count as a new improvement."
+  ]
+}

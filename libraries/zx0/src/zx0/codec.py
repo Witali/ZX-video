@@ -63,9 +63,10 @@ def decompress(data: bytes, limit: int = 8192, *, on_match=None, on_literals=Non
         mode = 'offset' if bit() else 'literal'
 
 
-def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, source_page_wrap=None, label_prefix="", inline_match=None, inline_literal=None, fast_jumps=False):
+def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, source_page_wrap=None, label_prefix="", inline_match=None, inline_literal=None, fast_jumps=False, mega_tuned=False):
     if variant not in ("standard", "turbo", "mega"):
         raise ValueError(variant)
+    if mega_tuned and variant!='mega':raise ValueError('mega tuning requires the Mega decoder')
     if copy_hook and variant != 'turbo': raise ValueError('suspension requires turbo')
     if source_wrap and source_page_wrap:
         raise ValueError('choose one source wrap mode')
@@ -85,7 +86,7 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         'rl b': (0xCB,0x10), 'rl c': (0xCB,0x11), 'rla': (0x17,),
         'ret': (0xC9,), 'ret z': (0xC8,), 'ret nz': (0xC0,), 'ret c': (0xD8,),
     }
-    aliases = {}; copy_index=0; inline_delta=0; jump_delta=0
+    aliases = {}; copy_index=0; inline_delta=0; jump_delta=0; last_label=None; mega_delta=0
     for original in source.read_text().splitlines():
         line = ' '.join(original.split(';')[0].strip().split()).replace(', ', ',')
         if not line: continue
@@ -104,12 +105,20 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
             # to low byte zero and refill before the next input access.
             a.emit(0x2c);a.abs16(0xCC,source_page_wrap);continue
         if line.endswith(':'):
-            a.label(line[:-1]); continue
+            last_label=line[:-1];a.label(last_label); continue
+        if mega_tuned and line=='rl b' and last_label.startswith(label_prefix+'dzx0m_elias_offset'):
+            # Offset B is overwritten by LD B,C before use; the following
+            # ADD A,A replaces flags. Other gamma readers need word counts.
+            mega_delta-=2;continue
         if line in simple:
             a.emit(*simple[line]); continue
         instruction, operands = line.split(' ', 1)
         if instruction in ('call', 'jr', 'jp'):
             condition, label = operands.split(',',1) if ',' in operands else ('', operands)
+            if mega_tuned and instruction=='jr' and condition=='nc' and label.startswith(label_prefix+'dzx0m_literals'):
+                # Frequent reuse exits: JP=10 T versus JR=7/12 T. Individual
+                # untaken exits cost +3 T; complete combined cases improve.
+                instruction='jp';mega_delta+=1
             if fast_jumps and instruction == 'jr' and not condition:
                 # Unconditional JR always costs 12 T; JP costs 10 T and one
                 # extra byte. Flags/registers/stack are identical. Conditional
@@ -139,5 +148,5 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         else:
             raise ValueError(f'unsupported ZX0 instruction: {line}')
     for alias,(label,offset) in aliases.items(): a.labels[alias]=a.labels[label]+offset
-    assert a.pc-start == {'standard':68,'turbo':126,'mega':673}[variant]+(2 if copy_hook else 0)+(30 if source_wrap else 0)+(18 if source_page_wrap else 0)+inline_delta+jump_delta
+    assert a.pc-start == {'standard':68,'turbo':126,'mega':673}[variant]+(2 if copy_hook else 0)+(30 if source_wrap else 0)+(18 if source_page_wrap else 0)+inline_delta+jump_delta+mega_delta
     return f'{label_prefix}dzx0_{variant}'

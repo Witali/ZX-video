@@ -118,6 +118,44 @@
   result; the full 10%-per-library goal remains active. No player release,
   physical disk/ROM/ULA timing, external encoder or wheel reinstall is claimed.
 
+## 2026-10-19 — Optional smaller/faster Mega offset-register and reuse-tail profile
+
+- **Objective/baseline:** Independently inspect stronger existing ZX0 Mega
+  from `6db73511`, in `.worktree/codec-zx0-mega`, without counting its old gain
+  toward the active ten-percent goal. Baseline is the673-byte Mega with the
+  already existing one-byte startup fast jump:674bytes,146,421,546realT.
+- **Changed parameters:** Test-only builder removes four offset-Elias RL B
+  instructions whose B result is overwritten by LD B,C; ADD A,A replaces
+  flags before use. Preserve all literal/reuse/length word-count shifts.
+  Independently test four reuse-tail JR NC ->JP changes and their combination.
+  The user subsequently requests separate maximum-speed/smaller-fast/frontier
+  profiles and authorizes a public optional smaller/faster Mega enhancement:
+  `mega_tuned=True` / `--mega-tuned` promotes the combined candidate. Keep all
+  defaults/resources/data exact; the resident ABI has no coroutine equivalent.
+- **Measurements:** Offset-loop body34 ->26T or47 ->39T withrefill. Removing
+  shifts alone saves614,704realT,674 ->666bytes. Reuse exits alone save105,547T
+  at678bytes but slow32cases, including31real, maximum+156T. Combined real
+  CPU146,421,546 ->145,701,295T (-720,251,0.491902%),674 ->670bytes; all417
+  complete cases improve, with unchanged four-byte maximum plain caller stack.
+  Its individual untaken changed exit still costs+3T. No input/state/buffer or
+  table growth; no compressed-byte or required-sector changes. Full service
+  memory674bytes includes670code/embedded offset variable and4decoder stack
+  bytes including the caller return. The exampleIRQ adds6stack/13code bytes;
+  input/output/history is separate under the clarified10,000-byte service cap.
+- **Verification/decision:** Three complete417-case comparisons and native
+  relocation/IRQ replays (4,170runs including shared baselines). Protected
+  input/history/output/code and exactEOF/callerABI pass. Independently counted
+  executed shifts/branches predict every case delta. All31public defaults/six
+  upstream resources remain exact;28library tests and standaloneZX0wheel
+  API/CLI exports pass. Public code/labels match the independent prototype at
+  two origins, with/without startup fast jumps. Accept the optional resident
+  profile with explicit all-service-memory/IRQ accounting. The
+  old Mega advantage is not a new result and the10% goal remains incomplete.
+  No player/movie qualification is claimed.
+  [Audit and reproduction](libraries/MEGA_OFFSET_AUDIT.md),
+  [full native cases](libraries/evidence/ten_percent_mega_offset.json),
+  [source/test authentication](libraries/evidence/ten_percent_mega_offset_verification.json).
+
 ## 2026-10-19 — Optional ZX0 repeated-match gamma tail refill
 
 - **Objective/baseline:** Continue compatible ZX0 speed work on an isolated

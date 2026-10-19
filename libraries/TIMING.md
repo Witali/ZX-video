@@ -243,3 +243,27 @@ tests preserve default/resource hashes; isolated wheel/API/CLI/ORG-DB exports
 pass. Coroutine/guarded integration and movie timing remain separate work.
 [Public native evidence](evidence/wide_profiles.json),
 [service-memory/package authentication](evidence/wide_profiles_verification.json).
+
+## Optional Mega offset-register audit (2026-10-19)
+
+Four phase-specific offset-Elias `RL B` instructions write a dead B value:
+the offset consumer overwrites it with `LD B,C`, while the following ADD A,A
+replaces flags. Removing them costs -8 bytes and -8 T per loop iteration:
+nonrefilling body 34 ->26 T, refilling body 47 ->39 T. The frozen real corpus
+executes 76,838 iterations, saving 614,704 T, 674 ->666 bytes including the
+already existing startup fast jump. The necessary word shifts in other gamma
+readers remain. Four separate reuse-tail JR NC ->JP changes save another
+105,547 real T at +4 bytes; alone they slow 32 complete cases (31 real,
+maximum156T). Their individual untaken exit always costs +3 T.
+
+The combined `mega_tuned` candidate improves every complete retained case:
+real existing-Mega 146,421,546 ->145,701,295 T (-720,251,0.491902%), 674 ->670
+bytes, no larger stack or changed data. All417cases, relocation andIRQ pass;
+all per-case changes match independently observed instruction counts. This
+is an optional resident API/CLI profile with no coroutine equivalent. Public
+bytes/labels equal the independent measured prototype. Service memory674bytes
+includes670code/embedded offset and4maximum decoder stack (caller return
+included); exampleIRQ adds6stack/13handler code for693bytes. Input/output
+history is separate, as authorized by the user.
+Do not count the old Mega gain toward the new goal or claim movie/player
+qualification. [Full audit and reproduction](MEGA_OFFSET_AUDIT.md).

@@ -401,3 +401,29 @@ Reproduce with `tests/measure_wide_profiles.py --output evidence/wide_profiles.j
 then `tests/summarize_wide_profiles.py --directory ../.tmp --output
 evidence/wide_profiles_verification.json` from `libraries/` after the
 documented library tests and isolated wheel smoke run.
+
+## Optional Mega dead-offset shifts and reuse exits (2026-10-19)
+
+**Decision: accept optional `mega_tuned=True` / `--mega-tuned` as a smaller
+and faster resident profile under the user's revised three-profile objective.**
+Four offset-phase RL B results are dead before the
+consumer's LD B,C, and ADD A,A replaces their flags. Remove only these four
+instructions, preserving the high-count shifts in literal/reuse/length loops.
+This saves eight bytes and eight T per offset-gamma iteration. Separately
+measure four frequent reuse-exit JR NC ->JP changes, including their slower
+untaken paths and 32 slower blocks (31 real).
+
+The combined candidate saves 720,251 real T versus the existing Mega baseline
+(0.491902%), 674 ->670 bytes, with every417completecase improved. Each of three
+candidates also passes relocation/IRQ; executed instruction counts predict
+every measured delta. The baseline parser matches the public Mega exactly;
+31 public defaults/six resources remain exact;28library tests and the isolated
+ZX0 wheel/API/CLI exports pass. Public code/labels equal the independently
+measured prototype with and without startup fast jumps, at two origins.
+Service RAM674bytes includes code/embedded variables and maximum decoder
+stack; the providedIRQ adds6stack/13code bytes, while data is separate.
+No coroutine, disk/player qualification or ten-percent goal completion is
+claimed. Most of its advantage over Fast was already present
+in Mega and cannot count as a new gain. [Full audit](MEGA_OFFSET_AUDIT.md),
+[native evidence](evidence/ten_percent_mega_offset.json),
+[authentication](evidence/ten_percent_mega_offset_verification.json).

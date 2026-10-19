@@ -172,3 +172,16 @@ changing input bytes, quotas, IRQ requirements or caller ABI. It combines with
 `branch_tuned`. The complete real corpus saves another 359,963 T per profile;
 no block or slice slows in all 417 retained cases. Defaults remain exact.
 [Absolute counts, register contract and reproduction](../TAIL_REFILL.md).
+
+## Optional smaller and faster Mega
+
+`zx0.block.build('mega', mega_tuned=True)` / `--variant mega --mega-tuned`
+removes four dead offset-word shifts and tunes four reuse exits. Defaults and
+wire format stay exact. Real CPU146,421,546 ->145,701,295T (-0.491902%) with
+`fast_jumps=True`, code674 ->670bytes. Maximum decoder stack is4bytes including
+the caller return, so complete service memory is674bytes before caller IRQ
+code/headroom; there are no separate variables, tables or scratch buffers.
+Count resident input/output/history separately. This is the existing resident
+ABI with no coroutine equivalent. Individual changed untaken exits cost+3T,
+although every retained complete case improves. [Counts, IRQ memory contract,
+public/prototype equivalence and full tests](../MEGA_OFFSET_AUDIT.md).

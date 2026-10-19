@@ -57,6 +57,10 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
     if metadata.get('inline_tail_refill'):
         lines += ['; Optional Fast repeat-gamma tail refill: +3 bytes, save 18/5 T for stop bit 1/0.',
                   '; Exact input consumption, count, flags and copy continuation are unchanged.', '']
+    if metadata.get('mega_tuned'):
+        lines += ['; Optional resident Mega: remove four dead offset RL B instructions (-8 T/execution).',
+                  '; Four reuse exits use JP 10 T versus JR 7/12 T; total code -4 bytes.',
+                  '; Individual untaken exits cost +3 T; complete retained blocks improve. No coroutine ABI.', '']
     routines = dict(ROUTINES)
     if metadata.get('literal_prefix'):
         lines += ['; Optional literal prefix: BC>=2 takes LDI then LDIR, saving 5 T/run.',

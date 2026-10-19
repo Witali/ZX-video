@@ -153,11 +153,26 @@ if name=='lzsa':
         wide.append(dict(variant=variant,code_bytes=metadata['code_bytes'],
                          service_memory_bytes=metadata['service_memory_bytes'],exact_export=True))
 assert not any(n.startswith(('toolkit','cv2','numpy')) for n in sys.modules)
+mega_tuned=[]
+if name=='zx0':
+    for fast in (False,True):
+        regions,labels,metadata=block_build('mega',fast_jumps=fast,mega_tuned=True)
+        at=destination/('mega-tuned-'+str(fast))
+        export(at,regions,labels,metadata)
+        assert metadata['code_bytes']==669+fast and metadata['mega_tuned']
+        assert 'No coroutine ABI' in (at/'decoder.asm').read_text()
+        mega_tuned.append(dict(fast_jumps=fast,bytes=metadata['code_bytes']))
+    sys.argv=[name,'build','--variant','mega','--mega-tuned','--fast-jumps',
+              '--core','0x8000','--core-limit','0x8400','--output',str(destination/'mega-tuned-cli')]
+    runpy.run_module(name+'.__main__',run_name='__main__')
+    assert json.loads((destination/'mega-tuned-cli/metadata.json').read_text())['mega_tuned']
+assert not any(n.startswith(('toolkit','cv2','numpy')) for n in sys.modules)
 if encoder:
     assert package.decompress(package.compress(raw,executable=encoder),limit=len(raw))==raw
 report=dict(package=name,independent_wheel=True,custom_layout=True,cli_export=True,
             resources=True,exact_round_trip=True,external_encoder=bool(encoder),resident_profiles=resident,
             fast_jump_profiles=fast_jumps,branch_tuned_profiles=tuned,literal_prefix_profiles=literal_prefix,
-            inline_tail_refill_profiles=tail_refill,combined_profiles=combined_profiles,wide_profiles=wide)
+            inline_tail_refill_profiles=tail_refill,combined_profiles=combined_profiles,wide_profiles=wide,
+            mega_tuned_profiles=mega_tuned)
 (destination/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report))
