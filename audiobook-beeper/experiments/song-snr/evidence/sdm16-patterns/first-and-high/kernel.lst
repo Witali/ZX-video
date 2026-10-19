@@ -1,0 +1,6270 @@
+                 	
+                 	; Standalone literal-pattern compression proof. No decoder/table or source change.
+                 	; Main BC=00FE/10FE,D=16,E=feedback*6,HL dispatch,IX predictor,IY SECOND.
+                 	; Alternate HL=IMA row,BC delta,DE compressed cursor; AF' retains phase/code.
+                 	; SP is the live table pointer; no CALL/RET or ordinary stack use is permitted.
+                 	; All extra transfers below are fixed JP10, independent of pattern and phase.
+8000              	 ORG 0x8000
+8000              	pcm_high: EQU 0x5E00
+                 	page_tail_0:
+8000 14           	 INC D
+8001 CA 08 80     	 JP Z,bank_handoff_0
+8004 D9           	 EXX
+8005 71           	 DB 0xED,0x71
+8007 E9           	 JP (HL)
+                 	bank_handoff_0:
+8008 08           	 EX AF,AF'
+8009 D9           	 EXX
+800A 06 00        	 LD B,0
+800C D9           	 EXX
+800D C3 20 80     	 JP bank_jump
+                 	page_tail_1:
+8010 14           	 INC D
+8011 CA 18 80     	 JP Z,bank_handoff_1
+8014 D9           	 EXX
+8015 ED 51        	 OUT (C),D
+8017 E9           	 JP (HL)
+                 	bank_handoff_1:
+8018 08           	 EX AF,AF'
+8019 D9           	 EXX
+801A 06 10        	 LD B,16
+801C D9           	 EXX
+801D C3 20 80     	 JP bank_jump
+8020 C3 23 80     	bank_jump: JP stream_bank_tail
+                 	stream_bank_tail:
+8023 22 5B 80     	 LD (stream_tail_hl),HL
+8026 2A 5D 80     	 LD HL,(stream_next_record)
+8029 7E           	 LD A,(HL)
+802A B7           	 OR A
+802B CA 54 80     	 JP Z,exhausted
+802E 32 5F 80     	 LD (stream_paging),A
+8031 23           	 INC HL
+8032 56           	 LD D,(HL)
+8033 1E 00        	 LD E,0
+8035 23           	 INC HL
+8036 7E           	 LD A,(HL)
+8037 23           	 INC HL
+8038 22 5D 80     	 LD (stream_next_record),HL
+803B 2A 5B 80     	 LD HL,(stream_tail_hl)
+803E C3 46 80     	stream_high_switch: JP stream_high_done
+8041 01 FD 1F     	 LD BC,0x1FFD
+8044 ED 79        	 OUT (C),A
+                 	stream_high_done:
+8046 01 FD 7F     	 LD BC,0x7FFD
+8049 3A 5F 80     	 LD A,(stream_paging)
+804C ED 79        	stream_page_event: OUT (C),A
+804E D9           	 EXX
+804F 37           	 SCF
+8050 08           	 EX AF,AF'
+8051 ED 41        	 OUT (C),B
+8053 E9           	 JP (HL)
+8054 76           	exhausted: HALT
+8055 00           	hardware_delay: NOP
+8056 00           	 NOP
+8057 00           	 NOP
+8058 00           	 NOP
+8059 FD E9        	 JP (IY)
+805B 00 00        	stream_tail_hl: DEFW 0
+805D 60 80        	stream_next_record: DEFW descriptor
+805F 00           	stream_paging: DEFB 0
+8060 00           	descriptor: DEFB 25,192,0,0
+8064              	 DS 0x8340-$
+                 	first_begin:
+                 	; FIRST prefixes decode the next IMA nibble. A shared suffix retains the
+                 	; exact same predictor lookup work; its extra JP preserves all registers/F.
+                 	first_0:
+8340 71           	 DB 0xED,0x71
+8342 D9           	 EXX
+8343 B5           	 OR L
+8344 6F           	 LD L,A
+8345 F9           	 LD SP,HL
+8346 3E 00        	 LD A,0
+8348 D3 FE        	 OUT (0xFE),A
+834A C1           	 POP BC
+834B 3E 00        	 LD A,0
+834D D3 FE        	 OUT (0xFE),A
+834F E1           	 POP HL
+8350 3E 00        	 LD A,0
+8352 D3 FE        	 OUT (0xFE),A
+8354 DD 09        	 ADD IX,BC
+8356 D9           	 EXX
+8357 C3 44 91     	 JP first_suffix_0
+                 	first_1:
+835A 71           	 DB 0xED,0x71
+835C D9           	 EXX
+835D B5           	 OR L
+835E 6F           	 LD L,A
+835F F9           	 LD SP,HL
+8360 3E 00        	 LD A,0
+8362 D3 FE        	 OUT (0xFE),A
+8364 C1           	 POP BC
+8365 3E 00        	 LD A,0
+8367 D3 FE        	 OUT (0xFE),A
+8369 E1           	 POP HL
+836A 3E 00        	 LD A,0
+836C D3 FE        	 OUT (0xFE),A
+836E DD 09        	 ADD IX,BC
+8370 D9           	 EXX
+8371 C3 57 91     	 JP first_suffix_1
+                 	first_2:
+8374 71           	 DB 0xED,0x71
+8376 D9           	 EXX
+8377 B5           	 OR L
+8378 6F           	 LD L,A
+8379 F9           	 LD SP,HL
+837A 3E 00        	 LD A,0
+837C D3 FE        	 OUT (0xFE),A
+837E C1           	 POP BC
+837F 3E 00        	 LD A,0
+8381 D3 FE        	 OUT (0xFE),A
+8383 E1           	 POP HL
+8384 3E 00        	 LD A,0
+8386 D3 FE        	 OUT (0xFE),A
+8388 DD 09        	 ADD IX,BC
+838A D9           	 EXX
+838B C3 6A 91     	 JP first_suffix_2
+                 	first_4:
+838E 71           	 DB 0xED,0x71
+8390 D9           	 EXX
+8391 B5           	 OR L
+8392 6F           	 LD L,A
+8393 F9           	 LD SP,HL
+8394 3E 00        	 LD A,0
+8396 D3 FE        	 OUT (0xFE),A
+8398 C1           	 POP BC
+8399 3E 00        	 LD A,0
+839B D3 FE        	 OUT (0xFE),A
+839D E1           	 POP HL
+839E 3E 00        	 LD A,0
+83A0 D3 FE        	 OUT (0xFE),A
+83A2 DD 09        	 ADD IX,BC
+83A4 D9           	 EXX
+83A5 C3 90 91     	 JP first_suffix_4
+                 	first_8:
+83A8 71           	 DB 0xED,0x71
+83AA D9           	 EXX
+83AB B5           	 OR L
+83AC 6F           	 LD L,A
+83AD F9           	 LD SP,HL
+83AE 3E 00        	 LD A,0
+83B0 D3 FE        	 OUT (0xFE),A
+83B2 C1           	 POP BC
+83B3 3E 00        	 LD A,0
+83B5 D3 FE        	 OUT (0xFE),A
+83B7 E1           	 POP HL
+83B8 3E 00        	 LD A,0
+83BA D3 FE        	 OUT (0xFE),A
+83BC DD 09        	 ADD IX,BC
+83BE D9           	 EXX
+83BF C3 DC 91     	 JP first_suffix_8
+                 	first_9:
+83C2 71           	 DB 0xED,0x71
+83C4 D9           	 EXX
+83C5 B5           	 OR L
+83C6 6F           	 LD L,A
+83C7 F9           	 LD SP,HL
+83C8 3E 00        	 LD A,0
+83CA D3 FE        	 OUT (0xFE),A
+83CC C1           	 POP BC
+83CD 3E 00        	 LD A,0
+83CF D3 FE        	 OUT (0xFE),A
+83D1 E1           	 POP HL
+83D2 3E 00        	 LD A,0
+83D4 D3 FE        	 OUT (0xFE),A
+83D6 DD 09        	 ADD IX,BC
+83D8 D9           	 EXX
+83D9 C3 EF 91     	 JP first_suffix_9
+                 	first_10:
+83DC 71           	 DB 0xED,0x71
+83DE D9           	 EXX
+83DF B5           	 OR L
+83E0 6F           	 LD L,A
+83E1 F9           	 LD SP,HL
+83E2 3E 00        	 LD A,0
+83E4 D3 FE        	 OUT (0xFE),A
+83E6 C1           	 POP BC
+83E7 3E 00        	 LD A,0
+83E9 D3 FE        	 OUT (0xFE),A
+83EB E1           	 POP HL
+83EC 3E 00        	 LD A,0
+83EE D3 FE        	 OUT (0xFE),A
+83F0 DD 09        	 ADD IX,BC
+83F2 D9           	 EXX
+83F3 C3 02 92     	 JP first_suffix_10
+                 	first_16:
+83F6 71           	 DB 0xED,0x71
+83F8 D9           	 EXX
+83F9 B5           	 OR L
+83FA 6F           	 LD L,A
+83FB F9           	 LD SP,HL
+83FC 3E 00        	 LD A,0
+83FE D3 FE        	 OUT (0xFE),A
+8400 C1           	 POP BC
+8401 3E 00        	 LD A,0
+8403 D3 FE        	 OUT (0xFE),A
+8405 E1           	 POP HL
+8406 3E 10        	 LD A,16
+8408 D3 FE        	 OUT (0xFE),A
+840A DD 09        	 ADD IX,BC
+840C D9           	 EXX
+840D C3 44 91     	 JP first_suffix_0
+                 	first_17:
+8410 71           	 DB 0xED,0x71
+8412 D9           	 EXX
+8413 B5           	 OR L
+8414 6F           	 LD L,A
+8415 F9           	 LD SP,HL
+8416 3E 00        	 LD A,0
+8418 D3 FE        	 OUT (0xFE),A
+841A C1           	 POP BC
+841B 3E 00        	 LD A,0
+841D D3 FE        	 OUT (0xFE),A
+841F E1           	 POP HL
+8420 3E 10        	 LD A,16
+8422 D3 FE        	 OUT (0xFE),A
+8424 DD 09        	 ADD IX,BC
+8426 D9           	 EXX
+8427 C3 57 91     	 JP first_suffix_1
+                 	first_18:
+842A 71           	 DB 0xED,0x71
+842C D9           	 EXX
+842D B5           	 OR L
+842E 6F           	 LD L,A
+842F F9           	 LD SP,HL
+8430 3E 00        	 LD A,0
+8432 D3 FE        	 OUT (0xFE),A
+8434 C1           	 POP BC
+8435 3E 00        	 LD A,0
+8437 D3 FE        	 OUT (0xFE),A
+8439 E1           	 POP HL
+843A 3E 10        	 LD A,16
+843C D3 FE        	 OUT (0xFE),A
+843E DD 09        	 ADD IX,BC
+8440 D9           	 EXX
+8441 C3 6A 91     	 JP first_suffix_2
+                 	first_20:
+8444 71           	 DB 0xED,0x71
+8446 D9           	 EXX
+8447 B5           	 OR L
+8448 6F           	 LD L,A
+8449 F9           	 LD SP,HL
+844A 3E 00        	 LD A,0
+844C D3 FE        	 OUT (0xFE),A
+844E C1           	 POP BC
+844F 3E 00        	 LD A,0
+8451 D3 FE        	 OUT (0xFE),A
+8453 E1           	 POP HL
+8454 3E 10        	 LD A,16
+8456 D3 FE        	 OUT (0xFE),A
+8458 DD 09        	 ADD IX,BC
+845A D9           	 EXX
+845B C3 90 91     	 JP first_suffix_4
+                 	first_21:
+845E 71           	 DB 0xED,0x71
+8460 D9           	 EXX
+8461 B5           	 OR L
+8462 6F           	 LD L,A
+8463 F9           	 LD SP,HL
+8464 3E 00        	 LD A,0
+8466 D3 FE        	 OUT (0xFE),A
+8468 C1           	 POP BC
+8469 3E 00        	 LD A,0
+846B D3 FE        	 OUT (0xFE),A
+846D E1           	 POP HL
+846E 3E 10        	 LD A,16
+8470 D3 FE        	 OUT (0xFE),A
+8472 DD 09        	 ADD IX,BC
+8474 D9           	 EXX
+8475 C3 A3 91     	 JP first_suffix_5
+                 	first_32:
+8478 71           	 DB 0xED,0x71
+847A D9           	 EXX
+847B B5           	 OR L
+847C 6F           	 LD L,A
+847D F9           	 LD SP,HL
+847E 3E 00        	 LD A,0
+8480 D3 FE        	 OUT (0xFE),A
+8482 C1           	 POP BC
+8483 3E 10        	 LD A,16
+8485 D3 FE        	 OUT (0xFE),A
+8487 E1           	 POP HL
+8488 3E 00        	 LD A,0
+848A D3 FE        	 OUT (0xFE),A
+848C DD 09        	 ADD IX,BC
+848E D9           	 EXX
+848F C3 44 91     	 JP first_suffix_0
+                 	first_33:
+8492 71           	 DB 0xED,0x71
+8494 D9           	 EXX
+8495 B5           	 OR L
+8496 6F           	 LD L,A
+8497 F9           	 LD SP,HL
+8498 3E 00        	 LD A,0
+849A D3 FE        	 OUT (0xFE),A
+849C C1           	 POP BC
+849D 3E 10        	 LD A,16
+849F D3 FE        	 OUT (0xFE),A
+84A1 E1           	 POP HL
+84A2 3E 00        	 LD A,0
+84A4 D3 FE        	 OUT (0xFE),A
+84A6 DD 09        	 ADD IX,BC
+84A8 D9           	 EXX
+84A9 C3 57 91     	 JP first_suffix_1
+                 	first_34:
+84AC 71           	 DB 0xED,0x71
+84AE D9           	 EXX
+84AF B5           	 OR L
+84B0 6F           	 LD L,A
+84B1 F9           	 LD SP,HL
+84B2 3E 00        	 LD A,0
+84B4 D3 FE        	 OUT (0xFE),A
+84B6 C1           	 POP BC
+84B7 3E 10        	 LD A,16
+84B9 D3 FE        	 OUT (0xFE),A
+84BB E1           	 POP HL
+84BC 3E 00        	 LD A,0
+84BE D3 FE        	 OUT (0xFE),A
+84C0 DD 09        	 ADD IX,BC
+84C2 D9           	 EXX
+84C3 C3 6A 91     	 JP first_suffix_2
+                 	first_36:
+84C6 71           	 DB 0xED,0x71
+84C8 D9           	 EXX
+84C9 B5           	 OR L
+84CA 6F           	 LD L,A
+84CB F9           	 LD SP,HL
+84CC 3E 00        	 LD A,0
+84CE D3 FE        	 OUT (0xFE),A
+84D0 C1           	 POP BC
+84D1 3E 10        	 LD A,16
+84D3 D3 FE        	 OUT (0xFE),A
+84D5 E1           	 POP HL
+84D6 3E 00        	 LD A,0
+84D8 D3 FE        	 OUT (0xFE),A
+84DA DD 09        	 ADD IX,BC
+84DC D9           	 EXX
+84DD C3 90 91     	 JP first_suffix_4
+                 	first_37:
+84E0 71           	 DB 0xED,0x71
+84E2 D9           	 EXX
+84E3 B5           	 OR L
+84E4 6F           	 LD L,A
+84E5 F9           	 LD SP,HL
+84E6 3E 00        	 LD A,0
+84E8 D3 FE        	 OUT (0xFE),A
+84EA C1           	 POP BC
+84EB 3E 10        	 LD A,16
+84ED D3 FE        	 OUT (0xFE),A
+84EF E1           	 POP HL
+84F0 3E 00        	 LD A,0
+84F2 D3 FE        	 OUT (0xFE),A
+84F4 DD 09        	 ADD IX,BC
+84F6 D9           	 EXX
+84F7 C3 A3 91     	 JP first_suffix_5
+                 	first_38:
+84FA 71           	 DB 0xED,0x71
+84FC D9           	 EXX
+84FD B5           	 OR L
+84FE 6F           	 LD L,A
+84FF F9           	 LD SP,HL
+8500 3E 00        	 LD A,0
+8502 D3 FE        	 OUT (0xFE),A
+8504 C1           	 POP BC
+8505 3E 10        	 LD A,16
+8507 D3 FE        	 OUT (0xFE),A
+8509 E1           	 POP HL
+850A 3E 00        	 LD A,0
+850C D3 FE        	 OUT (0xFE),A
+850E DD 09        	 ADD IX,BC
+8510 D9           	 EXX
+8511 C3 B6 91     	 JP first_suffix_6
+                 	first_40:
+8514 71           	 DB 0xED,0x71
+8516 D9           	 EXX
+8517 B5           	 OR L
+8518 6F           	 LD L,A
+8519 F9           	 LD SP,HL
+851A 3E 00        	 LD A,0
+851C D3 FE        	 OUT (0xFE),A
+851E C1           	 POP BC
+851F 3E 10        	 LD A,16
+8521 D3 FE        	 OUT (0xFE),A
+8523 E1           	 POP HL
+8524 3E 00        	 LD A,0
+8526 D3 FE        	 OUT (0xFE),A
+8528 DD 09        	 ADD IX,BC
+852A D9           	 EXX
+852B C3 DC 91     	 JP first_suffix_8
+                 	first_41:
+852E 71           	 DB 0xED,0x71
+8530 D9           	 EXX
+8531 B5           	 OR L
+8532 6F           	 LD L,A
+8533 F9           	 LD SP,HL
+8534 3E 00        	 LD A,0
+8536 D3 FE        	 OUT (0xFE),A
+8538 C1           	 POP BC
+8539 3E 10        	 LD A,16
+853B D3 FE        	 OUT (0xFE),A
+853D E1           	 POP HL
+853E 3E 00        	 LD A,0
+8540 D3 FE        	 OUT (0xFE),A
+8542 DD 09        	 ADD IX,BC
+8544 D9           	 EXX
+8545 C3 EF 91     	 JP first_suffix_9
+                 	first_42:
+8548 71           	 DB 0xED,0x71
+854A D9           	 EXX
+854B B5           	 OR L
+854C 6F           	 LD L,A
+854D F9           	 LD SP,HL
+854E 3E 00        	 LD A,0
+8550 D3 FE        	 OUT (0xFE),A
+8552 C1           	 POP BC
+8553 3E 10        	 LD A,16
+8555 D3 FE        	 OUT (0xFE),A
+8557 E1           	 POP HL
+8558 3E 00        	 LD A,0
+855A D3 FE        	 OUT (0xFE),A
+855C DD 09        	 ADD IX,BC
+855E D9           	 EXX
+855F C3 02 92     	 JP first_suffix_10
+                 	first_43:
+8562 71           	 DB 0xED,0x71
+8564 D9           	 EXX
+8565 B5           	 OR L
+8566 6F           	 LD L,A
+8567 F9           	 LD SP,HL
+8568 3E 00        	 LD A,0
+856A D3 FE        	 OUT (0xFE),A
+856C C1           	 POP BC
+856D 3E 10        	 LD A,16
+856F D3 FE        	 OUT (0xFE),A
+8571 E1           	 POP HL
+8572 3E 00        	 LD A,0
+8574 D3 FE        	 OUT (0xFE),A
+8576 DD 09        	 ADD IX,BC
+8578 D9           	 EXX
+8579 C3 15 92     	 JP first_suffix_11
+                 	first_44:
+857C 71           	 DB 0xED,0x71
+857E D9           	 EXX
+857F B5           	 OR L
+8580 6F           	 LD L,A
+8581 F9           	 LD SP,HL
+8582 3E 00        	 LD A,0
+8584 D3 FE        	 OUT (0xFE),A
+8586 C1           	 POP BC
+8587 3E 10        	 LD A,16
+8589 D3 FE        	 OUT (0xFE),A
+858B E1           	 POP HL
+858C 3E 00        	 LD A,0
+858E D3 FE        	 OUT (0xFE),A
+8590 DD 09        	 ADD IX,BC
+8592 D9           	 EXX
+8593 C3 28 92     	 JP first_suffix_12
+                 	first_45:
+8596 71           	 DB 0xED,0x71
+8598 D9           	 EXX
+8599 B5           	 OR L
+859A 6F           	 LD L,A
+859B F9           	 LD SP,HL
+859C 3E 00        	 LD A,0
+859E D3 FE        	 OUT (0xFE),A
+85A0 C1           	 POP BC
+85A1 3E 10        	 LD A,16
+85A3 D3 FE        	 OUT (0xFE),A
+85A5 E1           	 POP HL
+85A6 3E 00        	 LD A,0
+85A8 D3 FE        	 OUT (0xFE),A
+85AA DD 09        	 ADD IX,BC
+85AC D9           	 EXX
+85AD C3 3B 92     	 JP first_suffix_13
+                 	first_50:
+85B0 71           	 DB 0xED,0x71
+85B2 D9           	 EXX
+85B3 B5           	 OR L
+85B4 6F           	 LD L,A
+85B5 F9           	 LD SP,HL
+85B6 3E 00        	 LD A,0
+85B8 D3 FE        	 OUT (0xFE),A
+85BA C1           	 POP BC
+85BB 3E 10        	 LD A,16
+85BD D3 FE        	 OUT (0xFE),A
+85BF E1           	 POP HL
+85C0 3E 10        	 LD A,16
+85C2 D3 FE        	 OUT (0xFE),A
+85C4 DD 09        	 ADD IX,BC
+85C6 D9           	 EXX
+85C7 C3 6A 91     	 JP first_suffix_2
+                 	first_51:
+85CA 71           	 DB 0xED,0x71
+85CC D9           	 EXX
+85CD B5           	 OR L
+85CE 6F           	 LD L,A
+85CF F9           	 LD SP,HL
+85D0 3E 00        	 LD A,0
+85D2 D3 FE        	 OUT (0xFE),A
+85D4 C1           	 POP BC
+85D5 3E 10        	 LD A,16
+85D7 D3 FE        	 OUT (0xFE),A
+85D9 E1           	 POP HL
+85DA 3E 10        	 LD A,16
+85DC D3 FE        	 OUT (0xFE),A
+85DE DD 09        	 ADD IX,BC
+85E0 D9           	 EXX
+85E1 C3 7D 91     	 JP first_suffix_3
+                 	first_52:
+85E4 71           	 DB 0xED,0x71
+85E6 D9           	 EXX
+85E7 B5           	 OR L
+85E8 6F           	 LD L,A
+85E9 F9           	 LD SP,HL
+85EA 3E 00        	 LD A,0
+85EC D3 FE        	 OUT (0xFE),A
+85EE C1           	 POP BC
+85EF 3E 10        	 LD A,16
+85F1 D3 FE        	 OUT (0xFE),A
+85F3 E1           	 POP HL
+85F4 3E 10        	 LD A,16
+85F6 D3 FE        	 OUT (0xFE),A
+85F8 DD 09        	 ADD IX,BC
+85FA D9           	 EXX
+85FB C3 90 91     	 JP first_suffix_4
+                 	first_53:
+85FE 71           	 DB 0xED,0x71
+8600 D9           	 EXX
+8601 B5           	 OR L
+8602 6F           	 LD L,A
+8603 F9           	 LD SP,HL
+8604 3E 00        	 LD A,0
+8606 D3 FE        	 OUT (0xFE),A
+8608 C1           	 POP BC
+8609 3E 10        	 LD A,16
+860B D3 FE        	 OUT (0xFE),A
+860D E1           	 POP HL
+860E 3E 10        	 LD A,16
+8610 D3 FE        	 OUT (0xFE),A
+8612 DD 09        	 ADD IX,BC
+8614 D9           	 EXX
+8615 C3 A3 91     	 JP first_suffix_5
+                 	first_54:
+8618 71           	 DB 0xED,0x71
+861A D9           	 EXX
+861B B5           	 OR L
+861C 6F           	 LD L,A
+861D F9           	 LD SP,HL
+861E 3E 00        	 LD A,0
+8620 D3 FE        	 OUT (0xFE),A
+8622 C1           	 POP BC
+8623 3E 10        	 LD A,16
+8625 D3 FE        	 OUT (0xFE),A
+8627 E1           	 POP HL
+8628 3E 10        	 LD A,16
+862A D3 FE        	 OUT (0xFE),A
+862C DD 09        	 ADD IX,BC
+862E D9           	 EXX
+862F C3 B6 91     	 JP first_suffix_6
+                 	first_64:
+8632 71           	 DB 0xED,0x71
+8634 D9           	 EXX
+8635 B5           	 OR L
+8636 6F           	 LD L,A
+8637 F9           	 LD SP,HL
+8638 3E 10        	 LD A,16
+863A D3 FE        	 OUT (0xFE),A
+863C C1           	 POP BC
+863D 3E 00        	 LD A,0
+863F D3 FE        	 OUT (0xFE),A
+8641 E1           	 POP HL
+8642 3E 00        	 LD A,0
+8644 D3 FE        	 OUT (0xFE),A
+8646 DD 09        	 ADD IX,BC
+8648 D9           	 EXX
+8649 C3 44 91     	 JP first_suffix_0
+                 	first_65:
+864C 71           	 DB 0xED,0x71
+864E D9           	 EXX
+864F B5           	 OR L
+8650 6F           	 LD L,A
+8651 F9           	 LD SP,HL
+8652 3E 10        	 LD A,16
+8654 D3 FE        	 OUT (0xFE),A
+8656 C1           	 POP BC
+8657 3E 00        	 LD A,0
+8659 D3 FE        	 OUT (0xFE),A
+865B E1           	 POP HL
+865C 3E 00        	 LD A,0
+865E D3 FE        	 OUT (0xFE),A
+8660 DD 09        	 ADD IX,BC
+8662 D9           	 EXX
+8663 C3 57 91     	 JP first_suffix_1
+                 	first_66:
+8666 71           	 DB 0xED,0x71
+8668 D9           	 EXX
+8669 B5           	 OR L
+866A 6F           	 LD L,A
+866B F9           	 LD SP,HL
+866C 3E 10        	 LD A,16
+866E D3 FE        	 OUT (0xFE),A
+8670 C1           	 POP BC
+8671 3E 00        	 LD A,0
+8673 D3 FE        	 OUT (0xFE),A
+8675 E1           	 POP HL
+8676 3E 00        	 LD A,0
+8678 D3 FE        	 OUT (0xFE),A
+867A DD 09        	 ADD IX,BC
+867C D9           	 EXX
+867D C3 6A 91     	 JP first_suffix_2
+                 	first_68:
+8680 71           	 DB 0xED,0x71
+8682 D9           	 EXX
+8683 B5           	 OR L
+8684 6F           	 LD L,A
+8685 F9           	 LD SP,HL
+8686 3E 10        	 LD A,16
+8688 D3 FE        	 OUT (0xFE),A
+868A C1           	 POP BC
+868B 3E 00        	 LD A,0
+868D D3 FE        	 OUT (0xFE),A
+868F E1           	 POP HL
+8690 3E 00        	 LD A,0
+8692 D3 FE        	 OUT (0xFE),A
+8694 DD 09        	 ADD IX,BC
+8696 D9           	 EXX
+8697 C3 90 91     	 JP first_suffix_4
+                 	first_72:
+869A 71           	 DB 0xED,0x71
+869C D9           	 EXX
+869D B5           	 OR L
+869E 6F           	 LD L,A
+869F F9           	 LD SP,HL
+86A0 3E 10        	 LD A,16
+86A2 D3 FE        	 OUT (0xFE),A
+86A4 C1           	 POP BC
+86A5 3E 00        	 LD A,0
+86A7 D3 FE        	 OUT (0xFE),A
+86A9 E1           	 POP HL
+86AA 3E 00        	 LD A,0
+86AC D3 FE        	 OUT (0xFE),A
+86AE DD 09        	 ADD IX,BC
+86B0 D9           	 EXX
+86B1 C3 DC 91     	 JP first_suffix_8
+                 	first_73:
+86B4 71           	 DB 0xED,0x71
+86B6 D9           	 EXX
+86B7 B5           	 OR L
+86B8 6F           	 LD L,A
+86B9 F9           	 LD SP,HL
+86BA 3E 10        	 LD A,16
+86BC D3 FE        	 OUT (0xFE),A
+86BE C1           	 POP BC
+86BF 3E 00        	 LD A,0
+86C1 D3 FE        	 OUT (0xFE),A
+86C3 E1           	 POP HL
+86C4 3E 00        	 LD A,0
+86C6 D3 FE        	 OUT (0xFE),A
+86C8 DD 09        	 ADD IX,BC
+86CA D9           	 EXX
+86CB C3 EF 91     	 JP first_suffix_9
+                 	first_74:
+86CE 71           	 DB 0xED,0x71
+86D0 D9           	 EXX
+86D1 B5           	 OR L
+86D2 6F           	 LD L,A
+86D3 F9           	 LD SP,HL
+86D4 3E 10        	 LD A,16
+86D6 D3 FE        	 OUT (0xFE),A
+86D8 C1           	 POP BC
+86D9 3E 00        	 LD A,0
+86DB D3 FE        	 OUT (0xFE),A
+86DD E1           	 POP HL
+86DE 3E 00        	 LD A,0
+86E0 D3 FE        	 OUT (0xFE),A
+86E2 DD 09        	 ADD IX,BC
+86E4 D9           	 EXX
+86E5 C3 02 92     	 JP first_suffix_10
+                 	first_76:
+86E8 71           	 DB 0xED,0x71
+86EA D9           	 EXX
+86EB B5           	 OR L
+86EC 6F           	 LD L,A
+86ED F9           	 LD SP,HL
+86EE 3E 10        	 LD A,16
+86F0 D3 FE        	 OUT (0xFE),A
+86F2 C1           	 POP BC
+86F3 3E 00        	 LD A,0
+86F5 D3 FE        	 OUT (0xFE),A
+86F7 E1           	 POP HL
+86F8 3E 00        	 LD A,0
+86FA D3 FE        	 OUT (0xFE),A
+86FC DD 09        	 ADD IX,BC
+86FE D9           	 EXX
+86FF C3 28 92     	 JP first_suffix_12
+                 	first_77:
+8702 71           	 DB 0xED,0x71
+8704 D9           	 EXX
+8705 B5           	 OR L
+8706 6F           	 LD L,A
+8707 F9           	 LD SP,HL
+8708 3E 10        	 LD A,16
+870A D3 FE        	 OUT (0xFE),A
+870C C1           	 POP BC
+870D 3E 00        	 LD A,0
+870F D3 FE        	 OUT (0xFE),A
+8711 E1           	 POP HL
+8712 3E 00        	 LD A,0
+8714 D3 FE        	 OUT (0xFE),A
+8716 DD 09        	 ADD IX,BC
+8718 D9           	 EXX
+8719 C3 3B 92     	 JP first_suffix_13
+                 	first_80:
+871C 71           	 DB 0xED,0x71
+871E D9           	 EXX
+871F B5           	 OR L
+8720 6F           	 LD L,A
+8721 F9           	 LD SP,HL
+8722 3E 10        	 LD A,16
+8724 D3 FE        	 OUT (0xFE),A
+8726 C1           	 POP BC
+8727 3E 00        	 LD A,0
+8729 D3 FE        	 OUT (0xFE),A
+872B E1           	 POP HL
+872C 3E 10        	 LD A,16
+872E D3 FE        	 OUT (0xFE),A
+8730 DD 09        	 ADD IX,BC
+8732 D9           	 EXX
+8733 C3 44 91     	 JP first_suffix_0
+                 	first_81:
+8736 71           	 DB 0xED,0x71
+8738 D9           	 EXX
+8739 B5           	 OR L
+873A 6F           	 LD L,A
+873B F9           	 LD SP,HL
+873C 3E 10        	 LD A,16
+873E D3 FE        	 OUT (0xFE),A
+8740 C1           	 POP BC
+8741 3E 00        	 LD A,0
+8743 D3 FE        	 OUT (0xFE),A
+8745 E1           	 POP HL
+8746 3E 10        	 LD A,16
+8748 D3 FE        	 OUT (0xFE),A
+874A DD 09        	 ADD IX,BC
+874C D9           	 EXX
+874D C3 57 91     	 JP first_suffix_1
+                 	first_82:
+8750 71           	 DB 0xED,0x71
+8752 D9           	 EXX
+8753 B5           	 OR L
+8754 6F           	 LD L,A
+8755 F9           	 LD SP,HL
+8756 3E 10        	 LD A,16
+8758 D3 FE        	 OUT (0xFE),A
+875A C1           	 POP BC
+875B 3E 00        	 LD A,0
+875D D3 FE        	 OUT (0xFE),A
+875F E1           	 POP HL
+8760 3E 10        	 LD A,16
+8762 D3 FE        	 OUT (0xFE),A
+8764 DD 09        	 ADD IX,BC
+8766 D9           	 EXX
+8767 C3 6A 91     	 JP first_suffix_2
+                 	first_83:
+876A 71           	 DB 0xED,0x71
+876C D9           	 EXX
+876D B5           	 OR L
+876E 6F           	 LD L,A
+876F F9           	 LD SP,HL
+8770 3E 10        	 LD A,16
+8772 D3 FE        	 OUT (0xFE),A
+8774 C1           	 POP BC
+8775 3E 00        	 LD A,0
+8777 D3 FE        	 OUT (0xFE),A
+8779 E1           	 POP HL
+877A 3E 10        	 LD A,16
+877C D3 FE        	 OUT (0xFE),A
+877E DD 09        	 ADD IX,BC
+8780 D9           	 EXX
+8781 C3 7D 91     	 JP first_suffix_3
+                 	first_84:
+8784 71           	 DB 0xED,0x71
+8786 D9           	 EXX
+8787 B5           	 OR L
+8788 6F           	 LD L,A
+8789 F9           	 LD SP,HL
+878A 3E 10        	 LD A,16
+878C D3 FE        	 OUT (0xFE),A
+878E C1           	 POP BC
+878F 3E 00        	 LD A,0
+8791 D3 FE        	 OUT (0xFE),A
+8793 E1           	 POP HL
+8794 3E 10        	 LD A,16
+8796 D3 FE        	 OUT (0xFE),A
+8798 DD 09        	 ADD IX,BC
+879A D9           	 EXX
+879B C3 90 91     	 JP first_suffix_4
+                 	first_85:
+879E 71           	 DB 0xED,0x71
+87A0 D9           	 EXX
+87A1 B5           	 OR L
+87A2 6F           	 LD L,A
+87A3 F9           	 LD SP,HL
+87A4 3E 10        	 LD A,16
+87A6 D3 FE        	 OUT (0xFE),A
+87A8 C1           	 POP BC
+87A9 3E 00        	 LD A,0
+87AB D3 FE        	 OUT (0xFE),A
+87AD E1           	 POP HL
+87AE 3E 10        	 LD A,16
+87B0 D3 FE        	 OUT (0xFE),A
+87B2 DD 09        	 ADD IX,BC
+87B4 D9           	 EXX
+87B5 C3 A3 91     	 JP first_suffix_5
+                 	first_86:
+87B8 71           	 DB 0xED,0x71
+87BA D9           	 EXX
+87BB B5           	 OR L
+87BC 6F           	 LD L,A
+87BD F9           	 LD SP,HL
+87BE 3E 10        	 LD A,16
+87C0 D3 FE        	 OUT (0xFE),A
+87C2 C1           	 POP BC
+87C3 3E 00        	 LD A,0
+87C5 D3 FE        	 OUT (0xFE),A
+87C7 E1           	 POP HL
+87C8 3E 10        	 LD A,16
+87CA D3 FE        	 OUT (0xFE),A
+87CC DD 09        	 ADD IX,BC
+87CE D9           	 EXX
+87CF C3 B6 91     	 JP first_suffix_6
+                 	first_87:
+87D2 71           	 DB 0xED,0x71
+87D4 D9           	 EXX
+87D5 B5           	 OR L
+87D6 6F           	 LD L,A
+87D7 F9           	 LD SP,HL
+87D8 3E 10        	 LD A,16
+87DA D3 FE        	 OUT (0xFE),A
+87DC C1           	 POP BC
+87DD 3E 00        	 LD A,0
+87DF D3 FE        	 OUT (0xFE),A
+87E1 E1           	 POP HL
+87E2 3E 10        	 LD A,16
+87E4 D3 FE        	 OUT (0xFE),A
+87E6 DD 09        	 ADD IX,BC
+87E8 D9           	 EXX
+87E9 C3 C9 91     	 JP first_suffix_7
+                 	first_89:
+87EC 71           	 DB 0xED,0x71
+87EE D9           	 EXX
+87EF B5           	 OR L
+87F0 6F           	 LD L,A
+87F1 F9           	 LD SP,HL
+87F2 3E 10        	 LD A,16
+87F4 D3 FE        	 OUT (0xFE),A
+87F6 C1           	 POP BC
+87F7 3E 00        	 LD A,0
+87F9 D3 FE        	 OUT (0xFE),A
+87FB E1           	 POP HL
+87FC 3E 10        	 LD A,16
+87FE D3 FE        	 OUT (0xFE),A
+8800 DD 09        	 ADD IX,BC
+8802 D9           	 EXX
+8803 C3 EF 91     	 JP first_suffix_9
+                 	first_90:
+8806 71           	 DB 0xED,0x71
+8808 D9           	 EXX
+8809 B5           	 OR L
+880A 6F           	 LD L,A
+880B F9           	 LD SP,HL
+880C 3E 10        	 LD A,16
+880E D3 FE        	 OUT (0xFE),A
+8810 C1           	 POP BC
+8811 3E 00        	 LD A,0
+8813 D3 FE        	 OUT (0xFE),A
+8815 E1           	 POP HL
+8816 3E 10        	 LD A,16
+8818 D3 FE        	 OUT (0xFE),A
+881A DD 09        	 ADD IX,BC
+881C D9           	 EXX
+881D C3 02 92     	 JP first_suffix_10
+                 	first_91:
+8820 71           	 DB 0xED,0x71
+8822 D9           	 EXX
+8823 B5           	 OR L
+8824 6F           	 LD L,A
+8825 F9           	 LD SP,HL
+8826 3E 10        	 LD A,16
+8828 D3 FE        	 OUT (0xFE),A
+882A C1           	 POP BC
+882B 3E 00        	 LD A,0
+882D D3 FE        	 OUT (0xFE),A
+882F E1           	 POP HL
+8830 3E 10        	 LD A,16
+8832 D3 FE        	 OUT (0xFE),A
+8834 DD 09        	 ADD IX,BC
+8836 D9           	 EXX
+8837 C3 15 92     	 JP first_suffix_11
+                 	first_93:
+883A 71           	 DB 0xED,0x71
+883C D9           	 EXX
+883D B5           	 OR L
+883E 6F           	 LD L,A
+883F F9           	 LD SP,HL
+8840 3E 10        	 LD A,16
+8842 D3 FE        	 OUT (0xFE),A
+8844 C1           	 POP BC
+8845 3E 00        	 LD A,0
+8847 D3 FE        	 OUT (0xFE),A
+8849 E1           	 POP HL
+884A 3E 10        	 LD A,16
+884C D3 FE        	 OUT (0xFE),A
+884E DD 09        	 ADD IX,BC
+8850 D9           	 EXX
+8851 C3 3B 92     	 JP first_suffix_13
+                 	first_94:
+8854 71           	 DB 0xED,0x71
+8856 D9           	 EXX
+8857 B5           	 OR L
+8858 6F           	 LD L,A
+8859 F9           	 LD SP,HL
+885A 3E 10        	 LD A,16
+885C D3 FE        	 OUT (0xFE),A
+885E C1           	 POP BC
+885F 3E 00        	 LD A,0
+8861 D3 FE        	 OUT (0xFE),A
+8863 E1           	 POP HL
+8864 3E 10        	 LD A,16
+8866 D3 FE        	 OUT (0xFE),A
+8868 DD 09        	 ADD IX,BC
+886A D9           	 EXX
+886B C3 4E 92     	 JP first_suffix_14
+                 	first_100:
+886E 71           	 DB 0xED,0x71
+8870 D9           	 EXX
+8871 B5           	 OR L
+8872 6F           	 LD L,A
+8873 F9           	 LD SP,HL
+8874 3E 10        	 LD A,16
+8876 D3 FE        	 OUT (0xFE),A
+8878 C1           	 POP BC
+8879 3E 10        	 LD A,16
+887B D3 FE        	 OUT (0xFE),A
+887D E1           	 POP HL
+887E 3E 00        	 LD A,0
+8880 D3 FE        	 OUT (0xFE),A
+8882 DD 09        	 ADD IX,BC
+8884 D9           	 EXX
+8885 C3 90 91     	 JP first_suffix_4
+                 	first_101:
+8888 71           	 DB 0xED,0x71
+888A D9           	 EXX
+888B B5           	 OR L
+888C 6F           	 LD L,A
+888D F9           	 LD SP,HL
+888E 3E 10        	 LD A,16
+8890 D3 FE        	 OUT (0xFE),A
+8892 C1           	 POP BC
+8893 3E 10        	 LD A,16
+8895 D3 FE        	 OUT (0xFE),A
+8897 E1           	 POP HL
+8898 3E 00        	 LD A,0
+889A D3 FE        	 OUT (0xFE),A
+889C DD 09        	 ADD IX,BC
+889E D9           	 EXX
+889F C3 A3 91     	 JP first_suffix_5
+                 	first_102:
+88A2 71           	 DB 0xED,0x71
+88A4 D9           	 EXX
+88A5 B5           	 OR L
+88A6 6F           	 LD L,A
+88A7 F9           	 LD SP,HL
+88A8 3E 10        	 LD A,16
+88AA D3 FE        	 OUT (0xFE),A
+88AC C1           	 POP BC
+88AD 3E 10        	 LD A,16
+88AF D3 FE        	 OUT (0xFE),A
+88B1 E1           	 POP HL
+88B2 3E 00        	 LD A,0
+88B4 D3 FE        	 OUT (0xFE),A
+88B6 DD 09        	 ADD IX,BC
+88B8 D9           	 EXX
+88B9 C3 B6 91     	 JP first_suffix_6
+                 	first_105:
+88BC 71           	 DB 0xED,0x71
+88BE D9           	 EXX
+88BF B5           	 OR L
+88C0 6F           	 LD L,A
+88C1 F9           	 LD SP,HL
+88C2 3E 10        	 LD A,16
+88C4 D3 FE        	 OUT (0xFE),A
+88C6 C1           	 POP BC
+88C7 3E 10        	 LD A,16
+88C9 D3 FE        	 OUT (0xFE),A
+88CB E1           	 POP HL
+88CC 3E 00        	 LD A,0
+88CE D3 FE        	 OUT (0xFE),A
+88D0 DD 09        	 ADD IX,BC
+88D2 D9           	 EXX
+88D3 C3 EF 91     	 JP first_suffix_9
+                 	first_106:
+88D6 71           	 DB 0xED,0x71
+88D8 D9           	 EXX
+88D9 B5           	 OR L
+88DA 6F           	 LD L,A
+88DB F9           	 LD SP,HL
+88DC 3E 10        	 LD A,16
+88DE D3 FE        	 OUT (0xFE),A
+88E0 C1           	 POP BC
+88E1 3E 10        	 LD A,16
+88E3 D3 FE        	 OUT (0xFE),A
+88E5 E1           	 POP HL
+88E6 3E 00        	 LD A,0
+88E8 D3 FE        	 OUT (0xFE),A
+88EA DD 09        	 ADD IX,BC
+88EC D9           	 EXX
+88ED C3 02 92     	 JP first_suffix_10
+                 	first_107:
+88F0 71           	 DB 0xED,0x71
+88F2 D9           	 EXX
+88F3 B5           	 OR L
+88F4 6F           	 LD L,A
+88F5 F9           	 LD SP,HL
+88F6 3E 10        	 LD A,16
+88F8 D3 FE        	 OUT (0xFE),A
+88FA C1           	 POP BC
+88FB 3E 10        	 LD A,16
+88FD D3 FE        	 OUT (0xFE),A
+88FF E1           	 POP HL
+8900 3E 00        	 LD A,0
+8902 D3 FE        	 OUT (0xFE),A
+8904 DD 09        	 ADD IX,BC
+8906 D9           	 EXX
+8907 C3 15 92     	 JP first_suffix_11
+                 	first_108:
+890A 71           	 DB 0xED,0x71
+890C D9           	 EXX
+890D B5           	 OR L
+890E 6F           	 LD L,A
+890F F9           	 LD SP,HL
+8910 3E 10        	 LD A,16
+8912 D3 FE        	 OUT (0xFE),A
+8914 C1           	 POP BC
+8915 3E 10        	 LD A,16
+8917 D3 FE        	 OUT (0xFE),A
+8919 E1           	 POP HL
+891A 3E 00        	 LD A,0
+891C D3 FE        	 OUT (0xFE),A
+891E DD 09        	 ADD IX,BC
+8920 D9           	 EXX
+8921 C3 28 92     	 JP first_suffix_12
+                 	first_109:
+8924 71           	 DB 0xED,0x71
+8926 D9           	 EXX
+8927 B5           	 OR L
+8928 6F           	 LD L,A
+8929 F9           	 LD SP,HL
+892A 3E 10        	 LD A,16
+892C D3 FE        	 OUT (0xFE),A
+892E C1           	 POP BC
+892F 3E 10        	 LD A,16
+8931 D3 FE        	 OUT (0xFE),A
+8933 E1           	 POP HL
+8934 3E 00        	 LD A,0
+8936 D3 FE        	 OUT (0xFE),A
+8938 DD 09        	 ADD IX,BC
+893A D9           	 EXX
+893B C3 3B 92     	 JP first_suffix_13
+                 	first_110:
+893E 71           	 DB 0xED,0x71
+8940 D9           	 EXX
+8941 B5           	 OR L
+8942 6F           	 LD L,A
+8943 F9           	 LD SP,HL
+8944 3E 10        	 LD A,16
+8946 D3 FE        	 OUT (0xFE),A
+8948 C1           	 POP BC
+8949 3E 10        	 LD A,16
+894B D3 FE        	 OUT (0xFE),A
+894D E1           	 POP HL
+894E 3E 00        	 LD A,0
+8950 D3 FE        	 OUT (0xFE),A
+8952 DD 09        	 ADD IX,BC
+8954 D9           	 EXX
+8955 C3 4E 92     	 JP first_suffix_14
+                 	first_111:
+8958 71           	 DB 0xED,0x71
+895A D9           	 EXX
+895B B5           	 OR L
+895C 6F           	 LD L,A
+895D F9           	 LD SP,HL
+895E 3E 10        	 LD A,16
+8960 D3 FE        	 OUT (0xFE),A
+8962 C1           	 POP BC
+8963 3E 10        	 LD A,16
+8965 D3 FE        	 OUT (0xFE),A
+8967 E1           	 POP HL
+8968 3E 00        	 LD A,0
+896A D3 FE        	 OUT (0xFE),A
+896C DD 09        	 ADD IX,BC
+896E D9           	 EXX
+896F C3 61 92     	 JP first_suffix_15
+                 	first_115:
+8972 71           	 DB 0xED,0x71
+8974 D9           	 EXX
+8975 B5           	 OR L
+8976 6F           	 LD L,A
+8977 F9           	 LD SP,HL
+8978 3E 10        	 LD A,16
+897A D3 FE        	 OUT (0xFE),A
+897C C1           	 POP BC
+897D 3E 10        	 LD A,16
+897F D3 FE        	 OUT (0xFE),A
+8981 E1           	 POP HL
+8982 3E 10        	 LD A,16
+8984 D3 FE        	 OUT (0xFE),A
+8986 DD 09        	 ADD IX,BC
+8988 D9           	 EXX
+8989 C3 7D 91     	 JP first_suffix_3
+                 	first_117:
+898C 71           	 DB 0xED,0x71
+898E D9           	 EXX
+898F B5           	 OR L
+8990 6F           	 LD L,A
+8991 F9           	 LD SP,HL
+8992 3E 10        	 LD A,16
+8994 D3 FE        	 OUT (0xFE),A
+8996 C1           	 POP BC
+8997 3E 10        	 LD A,16
+8999 D3 FE        	 OUT (0xFE),A
+899B E1           	 POP HL
+899C 3E 10        	 LD A,16
+899E D3 FE        	 OUT (0xFE),A
+89A0 DD 09        	 ADD IX,BC
+89A2 D9           	 EXX
+89A3 C3 A3 91     	 JP first_suffix_5
+                 	first_118:
+89A6 71           	 DB 0xED,0x71
+89A8 D9           	 EXX
+89A9 B5           	 OR L
+89AA 6F           	 LD L,A
+89AB F9           	 LD SP,HL
+89AC 3E 10        	 LD A,16
+89AE D3 FE        	 OUT (0xFE),A
+89B0 C1           	 POP BC
+89B1 3E 10        	 LD A,16
+89B3 D3 FE        	 OUT (0xFE),A
+89B5 E1           	 POP HL
+89B6 3E 10        	 LD A,16
+89B8 D3 FE        	 OUT (0xFE),A
+89BA DD 09        	 ADD IX,BC
+89BC D9           	 EXX
+89BD C3 B6 91     	 JP first_suffix_6
+                 	first_119:
+89C0 71           	 DB 0xED,0x71
+89C2 D9           	 EXX
+89C3 B5           	 OR L
+89C4 6F           	 LD L,A
+89C5 F9           	 LD SP,HL
+89C6 3E 10        	 LD A,16
+89C8 D3 FE        	 OUT (0xFE),A
+89CA C1           	 POP BC
+89CB 3E 10        	 LD A,16
+89CD D3 FE        	 OUT (0xFE),A
+89CF E1           	 POP HL
+89D0 3E 10        	 LD A,16
+89D2 D3 FE        	 OUT (0xFE),A
+89D4 DD 09        	 ADD IX,BC
+89D6 D9           	 EXX
+89D7 C3 C9 91     	 JP first_suffix_7
+                 	first_123:
+89DA 71           	 DB 0xED,0x71
+89DC D9           	 EXX
+89DD B5           	 OR L
+89DE 6F           	 LD L,A
+89DF F9           	 LD SP,HL
+89E0 3E 10        	 LD A,16
+89E2 D3 FE        	 OUT (0xFE),A
+89E4 C1           	 POP BC
+89E5 3E 10        	 LD A,16
+89E7 D3 FE        	 OUT (0xFE),A
+89E9 E1           	 POP HL
+89EA 3E 10        	 LD A,16
+89EC D3 FE        	 OUT (0xFE),A
+89EE DD 09        	 ADD IX,BC
+89F0 D9           	 EXX
+89F1 C3 15 92     	 JP first_suffix_11
+                 	first_125:
+89F4 71           	 DB 0xED,0x71
+89F6 D9           	 EXX
+89F7 B5           	 OR L
+89F8 6F           	 LD L,A
+89F9 F9           	 LD SP,HL
+89FA 3E 10        	 LD A,16
+89FC D3 FE        	 OUT (0xFE),A
+89FE C1           	 POP BC
+89FF 3E 10        	 LD A,16
+8A01 D3 FE        	 OUT (0xFE),A
+8A03 E1           	 POP HL
+8A04 3E 10        	 LD A,16
+8A06 D3 FE        	 OUT (0xFE),A
+8A08 DD 09        	 ADD IX,BC
+8A0A D9           	 EXX
+8A0B C3 3B 92     	 JP first_suffix_13
+                 	first_126:
+8A0E 71           	 DB 0xED,0x71
+8A10 D9           	 EXX
+8A11 B5           	 OR L
+8A12 6F           	 LD L,A
+8A13 F9           	 LD SP,HL
+8A14 3E 10        	 LD A,16
+8A16 D3 FE        	 OUT (0xFE),A
+8A18 C1           	 POP BC
+8A19 3E 10        	 LD A,16
+8A1B D3 FE        	 OUT (0xFE),A
+8A1D E1           	 POP HL
+8A1E 3E 10        	 LD A,16
+8A20 D3 FE        	 OUT (0xFE),A
+8A22 DD 09        	 ADD IX,BC
+8A24 D9           	 EXX
+8A25 C3 4E 92     	 JP first_suffix_14
+                 	first_127:
+8A28 71           	 DB 0xED,0x71
+8A2A D9           	 EXX
+8A2B B5           	 OR L
+8A2C 6F           	 LD L,A
+8A2D F9           	 LD SP,HL
+8A2E 3E 10        	 LD A,16
+8A30 D3 FE        	 OUT (0xFE),A
+8A32 C1           	 POP BC
+8A33 3E 10        	 LD A,16
+8A35 D3 FE        	 OUT (0xFE),A
+8A37 E1           	 POP HL
+8A38 3E 10        	 LD A,16
+8A3A D3 FE        	 OUT (0xFE),A
+8A3C DD 09        	 ADD IX,BC
+8A3E D9           	 EXX
+8A3F C3 61 92     	 JP first_suffix_15
+                 	first_128:
+8A42 ED 51        	 OUT (C),D
+8A44 D9           	 EXX
+8A45 B5           	 OR L
+8A46 6F           	 LD L,A
+8A47 F9           	 LD SP,HL
+8A48 3E 00        	 LD A,0
+8A4A D3 FE        	 OUT (0xFE),A
+8A4C C1           	 POP BC
+8A4D 3E 00        	 LD A,0
+8A4F D3 FE        	 OUT (0xFE),A
+8A51 E1           	 POP HL
+8A52 3E 00        	 LD A,0
+8A54 D3 FE        	 OUT (0xFE),A
+8A56 DD 09        	 ADD IX,BC
+8A58 D9           	 EXX
+8A59 C3 44 91     	 JP first_suffix_0
+                 	first_129:
+8A5C ED 51        	 OUT (C),D
+8A5E D9           	 EXX
+8A5F B5           	 OR L
+8A60 6F           	 LD L,A
+8A61 F9           	 LD SP,HL
+8A62 3E 00        	 LD A,0
+8A64 D3 FE        	 OUT (0xFE),A
+8A66 C1           	 POP BC
+8A67 3E 00        	 LD A,0
+8A69 D3 FE        	 OUT (0xFE),A
+8A6B E1           	 POP HL
+8A6C 3E 00        	 LD A,0
+8A6E D3 FE        	 OUT (0xFE),A
+8A70 DD 09        	 ADD IX,BC
+8A72 D9           	 EXX
+8A73 C3 57 91     	 JP first_suffix_1
+                 	first_130:
+8A76 ED 51        	 OUT (C),D
+8A78 D9           	 EXX
+8A79 B5           	 OR L
+8A7A 6F           	 LD L,A
+8A7B F9           	 LD SP,HL
+8A7C 3E 00        	 LD A,0
+8A7E D3 FE        	 OUT (0xFE),A
+8A80 C1           	 POP BC
+8A81 3E 00        	 LD A,0
+8A83 D3 FE        	 OUT (0xFE),A
+8A85 E1           	 POP HL
+8A86 3E 00        	 LD A,0
+8A88 D3 FE        	 OUT (0xFE),A
+8A8A DD 09        	 ADD IX,BC
+8A8C D9           	 EXX
+8A8D C3 6A 91     	 JP first_suffix_2
+                 	first_132:
+8A90 ED 51        	 OUT (C),D
+8A92 D9           	 EXX
+8A93 B5           	 OR L
+8A94 6F           	 LD L,A
+8A95 F9           	 LD SP,HL
+8A96 3E 00        	 LD A,0
+8A98 D3 FE        	 OUT (0xFE),A
+8A9A C1           	 POP BC
+8A9B 3E 00        	 LD A,0
+8A9D D3 FE        	 OUT (0xFE),A
+8A9F E1           	 POP HL
+8AA0 3E 00        	 LD A,0
+8AA2 D3 FE        	 OUT (0xFE),A
+8AA4 DD 09        	 ADD IX,BC
+8AA6 D9           	 EXX
+8AA7 C3 90 91     	 JP first_suffix_4
+                 	first_136:
+8AAA ED 51        	 OUT (C),D
+8AAC D9           	 EXX
+8AAD B5           	 OR L
+8AAE 6F           	 LD L,A
+8AAF F9           	 LD SP,HL
+8AB0 3E 00        	 LD A,0
+8AB2 D3 FE        	 OUT (0xFE),A
+8AB4 C1           	 POP BC
+8AB5 3E 00        	 LD A,0
+8AB7 D3 FE        	 OUT (0xFE),A
+8AB9 E1           	 POP HL
+8ABA 3E 00        	 LD A,0
+8ABC D3 FE        	 OUT (0xFE),A
+8ABE DD 09        	 ADD IX,BC
+8AC0 D9           	 EXX
+8AC1 C3 DC 91     	 JP first_suffix_8
+                 	first_137:
+8AC4 ED 51        	 OUT (C),D
+8AC6 D9           	 EXX
+8AC7 B5           	 OR L
+8AC8 6F           	 LD L,A
+8AC9 F9           	 LD SP,HL
+8ACA 3E 00        	 LD A,0
+8ACC D3 FE        	 OUT (0xFE),A
+8ACE C1           	 POP BC
+8ACF 3E 00        	 LD A,0
+8AD1 D3 FE        	 OUT (0xFE),A
+8AD3 E1           	 POP HL
+8AD4 3E 00        	 LD A,0
+8AD6 D3 FE        	 OUT (0xFE),A
+8AD8 DD 09        	 ADD IX,BC
+8ADA D9           	 EXX
+8ADB C3 EF 91     	 JP first_suffix_9
+                 	first_138:
+8ADE ED 51        	 OUT (C),D
+8AE0 D9           	 EXX
+8AE1 B5           	 OR L
+8AE2 6F           	 LD L,A
+8AE3 F9           	 LD SP,HL
+8AE4 3E 00        	 LD A,0
+8AE6 D3 FE        	 OUT (0xFE),A
+8AE8 C1           	 POP BC
+8AE9 3E 00        	 LD A,0
+8AEB D3 FE        	 OUT (0xFE),A
+8AED E1           	 POP HL
+8AEE 3E 00        	 LD A,0
+8AF0 D3 FE        	 OUT (0xFE),A
+8AF2 DD 09        	 ADD IX,BC
+8AF4 D9           	 EXX
+8AF5 C3 02 92     	 JP first_suffix_10
+                 	first_140:
+8AF8 ED 51        	 OUT (C),D
+8AFA D9           	 EXX
+8AFB B5           	 OR L
+8AFC 6F           	 LD L,A
+8AFD F9           	 LD SP,HL
+8AFE 3E 00        	 LD A,0
+8B00 D3 FE        	 OUT (0xFE),A
+8B02 C1           	 POP BC
+8B03 3E 00        	 LD A,0
+8B05 D3 FE        	 OUT (0xFE),A
+8B07 E1           	 POP HL
+8B08 3E 00        	 LD A,0
+8B0A D3 FE        	 OUT (0xFE),A
+8B0C DD 09        	 ADD IX,BC
+8B0E D9           	 EXX
+8B0F C3 28 92     	 JP first_suffix_12
+                 	first_144:
+8B12 ED 51        	 OUT (C),D
+8B14 D9           	 EXX
+8B15 B5           	 OR L
+8B16 6F           	 LD L,A
+8B17 F9           	 LD SP,HL
+8B18 3E 00        	 LD A,0
+8B1A D3 FE        	 OUT (0xFE),A
+8B1C C1           	 POP BC
+8B1D 3E 00        	 LD A,0
+8B1F D3 FE        	 OUT (0xFE),A
+8B21 E1           	 POP HL
+8B22 3E 10        	 LD A,16
+8B24 D3 FE        	 OUT (0xFE),A
+8B26 DD 09        	 ADD IX,BC
+8B28 D9           	 EXX
+8B29 C3 44 91     	 JP first_suffix_0
+                 	first_145:
+8B2C ED 51        	 OUT (C),D
+8B2E D9           	 EXX
+8B2F B5           	 OR L
+8B30 6F           	 LD L,A
+8B31 F9           	 LD SP,HL
+8B32 3E 00        	 LD A,0
+8B34 D3 FE        	 OUT (0xFE),A
+8B36 C1           	 POP BC
+8B37 3E 00        	 LD A,0
+8B39 D3 FE        	 OUT (0xFE),A
+8B3B E1           	 POP HL
+8B3C 3E 10        	 LD A,16
+8B3E D3 FE        	 OUT (0xFE),A
+8B40 DD 09        	 ADD IX,BC
+8B42 D9           	 EXX
+8B43 C3 57 91     	 JP first_suffix_1
+                 	first_146:
+8B46 ED 51        	 OUT (C),D
+8B48 D9           	 EXX
+8B49 B5           	 OR L
+8B4A 6F           	 LD L,A
+8B4B F9           	 LD SP,HL
+8B4C 3E 00        	 LD A,0
+8B4E D3 FE        	 OUT (0xFE),A
+8B50 C1           	 POP BC
+8B51 3E 00        	 LD A,0
+8B53 D3 FE        	 OUT (0xFE),A
+8B55 E1           	 POP HL
+8B56 3E 10        	 LD A,16
+8B58 D3 FE        	 OUT (0xFE),A
+8B5A DD 09        	 ADD IX,BC
+8B5C D9           	 EXX
+8B5D C3 6A 91     	 JP first_suffix_2
+                 	first_147:
+8B60 ED 51        	 OUT (C),D
+8B62 D9           	 EXX
+8B63 B5           	 OR L
+8B64 6F           	 LD L,A
+8B65 F9           	 LD SP,HL
+8B66 3E 00        	 LD A,0
+8B68 D3 FE        	 OUT (0xFE),A
+8B6A C1           	 POP BC
+8B6B 3E 00        	 LD A,0
+8B6D D3 FE        	 OUT (0xFE),A
+8B6F E1           	 POP HL
+8B70 3E 10        	 LD A,16
+8B72 D3 FE        	 OUT (0xFE),A
+8B74 DD 09        	 ADD IX,BC
+8B76 D9           	 EXX
+8B77 C3 7D 91     	 JP first_suffix_3
+                 	first_148:
+8B7A ED 51        	 OUT (C),D
+8B7C D9           	 EXX
+8B7D B5           	 OR L
+8B7E 6F           	 LD L,A
+8B7F F9           	 LD SP,HL
+8B80 3E 00        	 LD A,0
+8B82 D3 FE        	 OUT (0xFE),A
+8B84 C1           	 POP BC
+8B85 3E 00        	 LD A,0
+8B87 D3 FE        	 OUT (0xFE),A
+8B89 E1           	 POP HL
+8B8A 3E 10        	 LD A,16
+8B8C D3 FE        	 OUT (0xFE),A
+8B8E DD 09        	 ADD IX,BC
+8B90 D9           	 EXX
+8B91 C3 90 91     	 JP first_suffix_4
+                 	first_149:
+8B94 ED 51        	 OUT (C),D
+8B96 D9           	 EXX
+8B97 B5           	 OR L
+8B98 6F           	 LD L,A
+8B99 F9           	 LD SP,HL
+8B9A 3E 00        	 LD A,0
+8B9C D3 FE        	 OUT (0xFE),A
+8B9E C1           	 POP BC
+8B9F 3E 00        	 LD A,0
+8BA1 D3 FE        	 OUT (0xFE),A
+8BA3 E1           	 POP HL
+8BA4 3E 10        	 LD A,16
+8BA6 D3 FE        	 OUT (0xFE),A
+8BA8 DD 09        	 ADD IX,BC
+8BAA D9           	 EXX
+8BAB C3 A3 91     	 JP first_suffix_5
+                 	first_150:
+8BAE ED 51        	 OUT (C),D
+8BB0 D9           	 EXX
+8BB1 B5           	 OR L
+8BB2 6F           	 LD L,A
+8BB3 F9           	 LD SP,HL
+8BB4 3E 00        	 LD A,0
+8BB6 D3 FE        	 OUT (0xFE),A
+8BB8 C1           	 POP BC
+8BB9 3E 00        	 LD A,0
+8BBB D3 FE        	 OUT (0xFE),A
+8BBD E1           	 POP HL
+8BBE 3E 10        	 LD A,16
+8BC0 D3 FE        	 OUT (0xFE),A
+8BC2 DD 09        	 ADD IX,BC
+8BC4 D9           	 EXX
+8BC5 C3 B6 91     	 JP first_suffix_6
+                 	first_153:
+8BC8 ED 51        	 OUT (C),D
+8BCA D9           	 EXX
+8BCB B5           	 OR L
+8BCC 6F           	 LD L,A
+8BCD F9           	 LD SP,HL
+8BCE 3E 00        	 LD A,0
+8BD0 D3 FE        	 OUT (0xFE),A
+8BD2 C1           	 POP BC
+8BD3 3E 00        	 LD A,0
+8BD5 D3 FE        	 OUT (0xFE),A
+8BD7 E1           	 POP HL
+8BD8 3E 10        	 LD A,16
+8BDA D3 FE        	 OUT (0xFE),A
+8BDC DD 09        	 ADD IX,BC
+8BDE D9           	 EXX
+8BDF C3 EF 91     	 JP first_suffix_9
+                 	first_154:
+8BE2 ED 51        	 OUT (C),D
+8BE4 D9           	 EXX
+8BE5 B5           	 OR L
+8BE6 6F           	 LD L,A
+8BE7 F9           	 LD SP,HL
+8BE8 3E 00        	 LD A,0
+8BEA D3 FE        	 OUT (0xFE),A
+8BEC C1           	 POP BC
+8BED 3E 00        	 LD A,0
+8BEF D3 FE        	 OUT (0xFE),A
+8BF1 E1           	 POP HL
+8BF2 3E 10        	 LD A,16
+8BF4 D3 FE        	 OUT (0xFE),A
+8BF6 DD 09        	 ADD IX,BC
+8BF8 D9           	 EXX
+8BF9 C3 02 92     	 JP first_suffix_10
+                 	first_155:
+8BFC ED 51        	 OUT (C),D
+8BFE D9           	 EXX
+8BFF B5           	 OR L
+8C00 6F           	 LD L,A
+8C01 F9           	 LD SP,HL
+8C02 3E 00        	 LD A,0
+8C04 D3 FE        	 OUT (0xFE),A
+8C06 C1           	 POP BC
+8C07 3E 00        	 LD A,0
+8C09 D3 FE        	 OUT (0xFE),A
+8C0B E1           	 POP HL
+8C0C 3E 10        	 LD A,16
+8C0E D3 FE        	 OUT (0xFE),A
+8C10 DD 09        	 ADD IX,BC
+8C12 D9           	 EXX
+8C13 C3 15 92     	 JP first_suffix_11
+                 	first_161:
+8C16 ED 51        	 OUT (C),D
+8C18 D9           	 EXX
+8C19 B5           	 OR L
+8C1A 6F           	 LD L,A
+8C1B F9           	 LD SP,HL
+8C1C 3E 00        	 LD A,0
+8C1E D3 FE        	 OUT (0xFE),A
+8C20 C1           	 POP BC
+8C21 3E 10        	 LD A,16
+8C23 D3 FE        	 OUT (0xFE),A
+8C25 E1           	 POP HL
+8C26 3E 00        	 LD A,0
+8C28 D3 FE        	 OUT (0xFE),A
+8C2A DD 09        	 ADD IX,BC
+8C2C D9           	 EXX
+8C2D C3 57 91     	 JP first_suffix_1
+                 	first_162:
+8C30 ED 51        	 OUT (C),D
+8C32 D9           	 EXX
+8C33 B5           	 OR L
+8C34 6F           	 LD L,A
+8C35 F9           	 LD SP,HL
+8C36 3E 00        	 LD A,0
+8C38 D3 FE        	 OUT (0xFE),A
+8C3A C1           	 POP BC
+8C3B 3E 10        	 LD A,16
+8C3D D3 FE        	 OUT (0xFE),A
+8C3F E1           	 POP HL
+8C40 3E 00        	 LD A,0
+8C42 D3 FE        	 OUT (0xFE),A
+8C44 DD 09        	 ADD IX,BC
+8C46 D9           	 EXX
+8C47 C3 6A 91     	 JP first_suffix_2
+                 	first_164:
+8C4A ED 51        	 OUT (C),D
+8C4C D9           	 EXX
+8C4D B5           	 OR L
+8C4E 6F           	 LD L,A
+8C4F F9           	 LD SP,HL
+8C50 3E 00        	 LD A,0
+8C52 D3 FE        	 OUT (0xFE),A
+8C54 C1           	 POP BC
+8C55 3E 10        	 LD A,16
+8C57 D3 FE        	 OUT (0xFE),A
+8C59 E1           	 POP HL
+8C5A 3E 00        	 LD A,0
+8C5C D3 FE        	 OUT (0xFE),A
+8C5E DD 09        	 ADD IX,BC
+8C60 D9           	 EXX
+8C61 C3 90 91     	 JP first_suffix_4
+                 	first_165:
+8C64 ED 51        	 OUT (C),D
+8C66 D9           	 EXX
+8C67 B5           	 OR L
+8C68 6F           	 LD L,A
+8C69 F9           	 LD SP,HL
+8C6A 3E 00        	 LD A,0
+8C6C D3 FE        	 OUT (0xFE),A
+8C6E C1           	 POP BC
+8C6F 3E 10        	 LD A,16
+8C71 D3 FE        	 OUT (0xFE),A
+8C73 E1           	 POP HL
+8C74 3E 00        	 LD A,0
+8C76 D3 FE        	 OUT (0xFE),A
+8C78 DD 09        	 ADD IX,BC
+8C7A D9           	 EXX
+8C7B C3 A3 91     	 JP first_suffix_5
+                 	first_166:
+8C7E ED 51        	 OUT (C),D
+8C80 D9           	 EXX
+8C81 B5           	 OR L
+8C82 6F           	 LD L,A
+8C83 F9           	 LD SP,HL
+8C84 3E 00        	 LD A,0
+8C86 D3 FE        	 OUT (0xFE),A
+8C88 C1           	 POP BC
+8C89 3E 10        	 LD A,16
+8C8B D3 FE        	 OUT (0xFE),A
+8C8D E1           	 POP HL
+8C8E 3E 00        	 LD A,0
+8C90 D3 FE        	 OUT (0xFE),A
+8C92 DD 09        	 ADD IX,BC
+8C94 D9           	 EXX
+8C95 C3 B6 91     	 JP first_suffix_6
+                 	first_168:
+8C98 ED 51        	 OUT (C),D
+8C9A D9           	 EXX
+8C9B B5           	 OR L
+8C9C 6F           	 LD L,A
+8C9D F9           	 LD SP,HL
+8C9E 3E 00        	 LD A,0
+8CA0 D3 FE        	 OUT (0xFE),A
+8CA2 C1           	 POP BC
+8CA3 3E 10        	 LD A,16
+8CA5 D3 FE        	 OUT (0xFE),A
+8CA7 E1           	 POP HL
+8CA8 3E 00        	 LD A,0
+8CAA D3 FE        	 OUT (0xFE),A
+8CAC DD 09        	 ADD IX,BC
+8CAE D9           	 EXX
+8CAF C3 DC 91     	 JP first_suffix_8
+                 	first_169:
+8CB2 ED 51        	 OUT (C),D
+8CB4 D9           	 EXX
+8CB5 B5           	 OR L
+8CB6 6F           	 LD L,A
+8CB7 F9           	 LD SP,HL
+8CB8 3E 00        	 LD A,0
+8CBA D3 FE        	 OUT (0xFE),A
+8CBC C1           	 POP BC
+8CBD 3E 10        	 LD A,16
+8CBF D3 FE        	 OUT (0xFE),A
+8CC1 E1           	 POP HL
+8CC2 3E 00        	 LD A,0
+8CC4 D3 FE        	 OUT (0xFE),A
+8CC6 DD 09        	 ADD IX,BC
+8CC8 D9           	 EXX
+8CC9 C3 EF 91     	 JP first_suffix_9
+                 	first_170:
+8CCC ED 51        	 OUT (C),D
+8CCE D9           	 EXX
+8CCF B5           	 OR L
+8CD0 6F           	 LD L,A
+8CD1 F9           	 LD SP,HL
+8CD2 3E 00        	 LD A,0
+8CD4 D3 FE        	 OUT (0xFE),A
+8CD6 C1           	 POP BC
+8CD7 3E 10        	 LD A,16
+8CD9 D3 FE        	 OUT (0xFE),A
+8CDB E1           	 POP HL
+8CDC 3E 00        	 LD A,0
+8CDE D3 FE        	 OUT (0xFE),A
+8CE0 DD 09        	 ADD IX,BC
+8CE2 D9           	 EXX
+8CE3 C3 02 92     	 JP first_suffix_10
+                 	first_171:
+8CE6 ED 51        	 OUT (C),D
+8CE8 D9           	 EXX
+8CE9 B5           	 OR L
+8CEA 6F           	 LD L,A
+8CEB F9           	 LD SP,HL
+8CEC 3E 00        	 LD A,0
+8CEE D3 FE        	 OUT (0xFE),A
+8CF0 C1           	 POP BC
+8CF1 3E 10        	 LD A,16
+8CF3 D3 FE        	 OUT (0xFE),A
+8CF5 E1           	 POP HL
+8CF6 3E 00        	 LD A,0
+8CF8 D3 FE        	 OUT (0xFE),A
+8CFA DD 09        	 ADD IX,BC
+8CFC D9           	 EXX
+8CFD C3 15 92     	 JP first_suffix_11
+                 	first_172:
+8D00 ED 51        	 OUT (C),D
+8D02 D9           	 EXX
+8D03 B5           	 OR L
+8D04 6F           	 LD L,A
+8D05 F9           	 LD SP,HL
+8D06 3E 00        	 LD A,0
+8D08 D3 FE        	 OUT (0xFE),A
+8D0A C1           	 POP BC
+8D0B 3E 10        	 LD A,16
+8D0D D3 FE        	 OUT (0xFE),A
+8D0F E1           	 POP HL
+8D10 3E 00        	 LD A,0
+8D12 D3 FE        	 OUT (0xFE),A
+8D14 DD 09        	 ADD IX,BC
+8D16 D9           	 EXX
+8D17 C3 28 92     	 JP first_suffix_12
+                 	first_173:
+8D1A ED 51        	 OUT (C),D
+8D1C D9           	 EXX
+8D1D B5           	 OR L
+8D1E 6F           	 LD L,A
+8D1F F9           	 LD SP,HL
+8D20 3E 00        	 LD A,0
+8D22 D3 FE        	 OUT (0xFE),A
+8D24 C1           	 POP BC
+8D25 3E 10        	 LD A,16
+8D27 D3 FE        	 OUT (0xFE),A
+8D29 E1           	 POP HL
+8D2A 3E 00        	 LD A,0
+8D2C D3 FE        	 OUT (0xFE),A
+8D2E DD 09        	 ADD IX,BC
+8D30 D9           	 EXX
+8D31 C3 3B 92     	 JP first_suffix_13
+                 	first_174:
+8D34 ED 51        	 OUT (C),D
+8D36 D9           	 EXX
+8D37 B5           	 OR L
+8D38 6F           	 LD L,A
+8D39 F9           	 LD SP,HL
+8D3A 3E 00        	 LD A,0
+8D3C D3 FE        	 OUT (0xFE),A
+8D3E C1           	 POP BC
+8D3F 3E 10        	 LD A,16
+8D41 D3 FE        	 OUT (0xFE),A
+8D43 E1           	 POP HL
+8D44 3E 00        	 LD A,0
+8D46 D3 FE        	 OUT (0xFE),A
+8D48 DD 09        	 ADD IX,BC
+8D4A D9           	 EXX
+8D4B C3 4E 92     	 JP first_suffix_14
+                 	first_175:
+8D4E ED 51        	 OUT (C),D
+8D50 D9           	 EXX
+8D51 B5           	 OR L
+8D52 6F           	 LD L,A
+8D53 F9           	 LD SP,HL
+8D54 3E 00        	 LD A,0
+8D56 D3 FE        	 OUT (0xFE),A
+8D58 C1           	 POP BC
+8D59 3E 10        	 LD A,16
+8D5B D3 FE        	 OUT (0xFE),A
+8D5D E1           	 POP HL
+8D5E 3E 00        	 LD A,0
+8D60 D3 FE        	 OUT (0xFE),A
+8D62 DD 09        	 ADD IX,BC
+8D64 D9           	 EXX
+8D65 C3 61 92     	 JP first_suffix_15
+                 	first_178:
+8D68 ED 51        	 OUT (C),D
+8D6A D9           	 EXX
+8D6B B5           	 OR L
+8D6C 6F           	 LD L,A
+8D6D F9           	 LD SP,HL
+8D6E 3E 00        	 LD A,0
+8D70 D3 FE        	 OUT (0xFE),A
+8D72 C1           	 POP BC
+8D73 3E 10        	 LD A,16
+8D75 D3 FE        	 OUT (0xFE),A
+8D77 E1           	 POP HL
+8D78 3E 10        	 LD A,16
+8D7A D3 FE        	 OUT (0xFE),A
+8D7C DD 09        	 ADD IX,BC
+8D7E D9           	 EXX
+8D7F C3 6A 91     	 JP first_suffix_2
+                 	first_179:
+8D82 ED 51        	 OUT (C),D
+8D84 D9           	 EXX
+8D85 B5           	 OR L
+8D86 6F           	 LD L,A
+8D87 F9           	 LD SP,HL
+8D88 3E 00        	 LD A,0
+8D8A D3 FE        	 OUT (0xFE),A
+8D8C C1           	 POP BC
+8D8D 3E 10        	 LD A,16
+8D8F D3 FE        	 OUT (0xFE),A
+8D91 E1           	 POP HL
+8D92 3E 10        	 LD A,16
+8D94 D3 FE        	 OUT (0xFE),A
+8D96 DD 09        	 ADD IX,BC
+8D98 D9           	 EXX
+8D99 C3 7D 91     	 JP first_suffix_3
+                 	first_181:
+8D9C ED 51        	 OUT (C),D
+8D9E D9           	 EXX
+8D9F B5           	 OR L
+8DA0 6F           	 LD L,A
+8DA1 F9           	 LD SP,HL
+8DA2 3E 00        	 LD A,0
+8DA4 D3 FE        	 OUT (0xFE),A
+8DA6 C1           	 POP BC
+8DA7 3E 10        	 LD A,16
+8DA9 D3 FE        	 OUT (0xFE),A
+8DAB E1           	 POP HL
+8DAC 3E 10        	 LD A,16
+8DAE D3 FE        	 OUT (0xFE),A
+8DB0 DD 09        	 ADD IX,BC
+8DB2 D9           	 EXX
+8DB3 C3 A3 91     	 JP first_suffix_5
+                 	first_182:
+8DB6 ED 51        	 OUT (C),D
+8DB8 D9           	 EXX
+8DB9 B5           	 OR L
+8DBA 6F           	 LD L,A
+8DBB F9           	 LD SP,HL
+8DBC 3E 00        	 LD A,0
+8DBE D3 FE        	 OUT (0xFE),A
+8DC0 C1           	 POP BC
+8DC1 3E 10        	 LD A,16
+8DC3 D3 FE        	 OUT (0xFE),A
+8DC5 E1           	 POP HL
+8DC6 3E 10        	 LD A,16
+8DC8 D3 FE        	 OUT (0xFE),A
+8DCA DD 09        	 ADD IX,BC
+8DCC D9           	 EXX
+8DCD C3 B6 91     	 JP first_suffix_6
+                 	first_183:
+8DD0 ED 51        	 OUT (C),D
+8DD2 D9           	 EXX
+8DD3 B5           	 OR L
+8DD4 6F           	 LD L,A
+8DD5 F9           	 LD SP,HL
+8DD6 3E 00        	 LD A,0
+8DD8 D3 FE        	 OUT (0xFE),A
+8DDA C1           	 POP BC
+8DDB 3E 10        	 LD A,16
+8DDD D3 FE        	 OUT (0xFE),A
+8DDF E1           	 POP HL
+8DE0 3E 10        	 LD A,16
+8DE2 D3 FE        	 OUT (0xFE),A
+8DE4 DD 09        	 ADD IX,BC
+8DE6 D9           	 EXX
+8DE7 C3 C9 91     	 JP first_suffix_7
+                 	first_187:
+8DEA ED 51        	 OUT (C),D
+8DEC D9           	 EXX
+8DED B5           	 OR L
+8DEE 6F           	 LD L,A
+8DEF F9           	 LD SP,HL
+8DF0 3E 00        	 LD A,0
+8DF2 D3 FE        	 OUT (0xFE),A
+8DF4 C1           	 POP BC
+8DF5 3E 10        	 LD A,16
+8DF7 D3 FE        	 OUT (0xFE),A
+8DF9 E1           	 POP HL
+8DFA 3E 10        	 LD A,16
+8DFC D3 FE        	 OUT (0xFE),A
+8DFE DD 09        	 ADD IX,BC
+8E00 D9           	 EXX
+8E01 C3 15 92     	 JP first_suffix_11
+                 	first_189:
+8E04 ED 51        	 OUT (C),D
+8E06 D9           	 EXX
+8E07 B5           	 OR L
+8E08 6F           	 LD L,A
+8E09 F9           	 LD SP,HL
+8E0A 3E 00        	 LD A,0
+8E0C D3 FE        	 OUT (0xFE),A
+8E0E C1           	 POP BC
+8E0F 3E 10        	 LD A,16
+8E11 D3 FE        	 OUT (0xFE),A
+8E13 E1           	 POP HL
+8E14 3E 10        	 LD A,16
+8E16 D3 FE        	 OUT (0xFE),A
+8E18 DD 09        	 ADD IX,BC
+8E1A D9           	 EXX
+8E1B C3 3B 92     	 JP first_suffix_13
+                 	first_190:
+8E1E ED 51        	 OUT (C),D
+8E20 D9           	 EXX
+8E21 B5           	 OR L
+8E22 6F           	 LD L,A
+8E23 F9           	 LD SP,HL
+8E24 3E 00        	 LD A,0
+8E26 D3 FE        	 OUT (0xFE),A
+8E28 C1           	 POP BC
+8E29 3E 10        	 LD A,16
+8E2B D3 FE        	 OUT (0xFE),A
+8E2D E1           	 POP HL
+8E2E 3E 10        	 LD A,16
+8E30 D3 FE        	 OUT (0xFE),A
+8E32 DD 09        	 ADD IX,BC
+8E34 D9           	 EXX
+8E35 C3 4E 92     	 JP first_suffix_14
+                 	first_191:
+8E38 ED 51        	 OUT (C),D
+8E3A D9           	 EXX
+8E3B B5           	 OR L
+8E3C 6F           	 LD L,A
+8E3D F9           	 LD SP,HL
+8E3E 3E 00        	 LD A,0
+8E40 D3 FE        	 OUT (0xFE),A
+8E42 C1           	 POP BC
+8E43 3E 10        	 LD A,16
+8E45 D3 FE        	 OUT (0xFE),A
+8E47 E1           	 POP HL
+8E48 3E 10        	 LD A,16
+8E4A D3 FE        	 OUT (0xFE),A
+8E4C DD 09        	 ADD IX,BC
+8E4E D9           	 EXX
+8E4F C3 61 92     	 JP first_suffix_15
+                 	first_201:
+8E52 ED 51        	 OUT (C),D
+8E54 D9           	 EXX
+8E55 B5           	 OR L
+8E56 6F           	 LD L,A
+8E57 F9           	 LD SP,HL
+8E58 3E 10        	 LD A,16
+8E5A D3 FE        	 OUT (0xFE),A
+8E5C C1           	 POP BC
+8E5D 3E 00        	 LD A,0
+8E5F D3 FE        	 OUT (0xFE),A
+8E61 E1           	 POP HL
+8E62 3E 00        	 LD A,0
+8E64 D3 FE        	 OUT (0xFE),A
+8E66 DD 09        	 ADD IX,BC
+8E68 D9           	 EXX
+8E69 C3 EF 91     	 JP first_suffix_9
+                 	first_202:
+8E6C ED 51        	 OUT (C),D
+8E6E D9           	 EXX
+8E6F B5           	 OR L
+8E70 6F           	 LD L,A
+8E71 F9           	 LD SP,HL
+8E72 3E 10        	 LD A,16
+8E74 D3 FE        	 OUT (0xFE),A
+8E76 C1           	 POP BC
+8E77 3E 00        	 LD A,0
+8E79 D3 FE        	 OUT (0xFE),A
+8E7B E1           	 POP HL
+8E7C 3E 00        	 LD A,0
+8E7E D3 FE        	 OUT (0xFE),A
+8E80 DD 09        	 ADD IX,BC
+8E82 D9           	 EXX
+8E83 C3 02 92     	 JP first_suffix_10
+                 	first_203:
+8E86 ED 51        	 OUT (C),D
+8E88 D9           	 EXX
+8E89 B5           	 OR L
+8E8A 6F           	 LD L,A
+8E8B F9           	 LD SP,HL
+8E8C 3E 10        	 LD A,16
+8E8E D3 FE        	 OUT (0xFE),A
+8E90 C1           	 POP BC
+8E91 3E 00        	 LD A,0
+8E93 D3 FE        	 OUT (0xFE),A
+8E95 E1           	 POP HL
+8E96 3E 00        	 LD A,0
+8E98 D3 FE        	 OUT (0xFE),A
+8E9A DD 09        	 ADD IX,BC
+8E9C D9           	 EXX
+8E9D C3 15 92     	 JP first_suffix_11
+                 	first_204:
+8EA0 ED 51        	 OUT (C),D
+8EA2 D9           	 EXX
+8EA3 B5           	 OR L
+8EA4 6F           	 LD L,A
+8EA5 F9           	 LD SP,HL
+8EA6 3E 10        	 LD A,16
+8EA8 D3 FE        	 OUT (0xFE),A
+8EAA C1           	 POP BC
+8EAB 3E 00        	 LD A,0
+8EAD D3 FE        	 OUT (0xFE),A
+8EAF E1           	 POP HL
+8EB0 3E 00        	 LD A,0
+8EB2 D3 FE        	 OUT (0xFE),A
+8EB4 DD 09        	 ADD IX,BC
+8EB6 D9           	 EXX
+8EB7 C3 28 92     	 JP first_suffix_12
+                 	first_205:
+8EBA ED 51        	 OUT (C),D
+8EBC D9           	 EXX
+8EBD B5           	 OR L
+8EBE 6F           	 LD L,A
+8EBF F9           	 LD SP,HL
+8EC0 3E 10        	 LD A,16
+8EC2 D3 FE        	 OUT (0xFE),A
+8EC4 C1           	 POP BC
+8EC5 3E 00        	 LD A,0
+8EC7 D3 FE        	 OUT (0xFE),A
+8EC9 E1           	 POP HL
+8ECA 3E 00        	 LD A,0
+8ECC D3 FE        	 OUT (0xFE),A
+8ECE DD 09        	 ADD IX,BC
+8ED0 D9           	 EXX
+8ED1 C3 3B 92     	 JP first_suffix_13
+                 	first_210:
+8ED4 ED 51        	 OUT (C),D
+8ED6 D9           	 EXX
+8ED7 B5           	 OR L
+8ED8 6F           	 LD L,A
+8ED9 F9           	 LD SP,HL
+8EDA 3E 10        	 LD A,16
+8EDC D3 FE        	 OUT (0xFE),A
+8EDE C1           	 POP BC
+8EDF 3E 00        	 LD A,0
+8EE1 D3 FE        	 OUT (0xFE),A
+8EE3 E1           	 POP HL
+8EE4 3E 10        	 LD A,16
+8EE6 D3 FE        	 OUT (0xFE),A
+8EE8 DD 09        	 ADD IX,BC
+8EEA D9           	 EXX
+8EEB C3 6A 91     	 JP first_suffix_2
+                 	first_211:
+8EEE ED 51        	 OUT (C),D
+8EF0 D9           	 EXX
+8EF1 B5           	 OR L
+8EF2 6F           	 LD L,A
+8EF3 F9           	 LD SP,HL
+8EF4 3E 10        	 LD A,16
+8EF6 D3 FE        	 OUT (0xFE),A
+8EF8 C1           	 POP BC
+8EF9 3E 00        	 LD A,0
+8EFB D3 FE        	 OUT (0xFE),A
+8EFD E1           	 POP HL
+8EFE 3E 10        	 LD A,16
+8F00 D3 FE        	 OUT (0xFE),A
+8F02 DD 09        	 ADD IX,BC
+8F04 D9           	 EXX
+8F05 C3 7D 91     	 JP first_suffix_3
+                 	first_212:
+8F08 ED 51        	 OUT (C),D
+8F0A D9           	 EXX
+8F0B B5           	 OR L
+8F0C 6F           	 LD L,A
+8F0D F9           	 LD SP,HL
+8F0E 3E 10        	 LD A,16
+8F10 D3 FE        	 OUT (0xFE),A
+8F12 C1           	 POP BC
+8F13 3E 00        	 LD A,0
+8F15 D3 FE        	 OUT (0xFE),A
+8F17 E1           	 POP HL
+8F18 3E 10        	 LD A,16
+8F1A D3 FE        	 OUT (0xFE),A
+8F1C DD 09        	 ADD IX,BC
+8F1E D9           	 EXX
+8F1F C3 90 91     	 JP first_suffix_4
+                 	first_213:
+8F22 ED 51        	 OUT (C),D
+8F24 D9           	 EXX
+8F25 B5           	 OR L
+8F26 6F           	 LD L,A
+8F27 F9           	 LD SP,HL
+8F28 3E 10        	 LD A,16
+8F2A D3 FE        	 OUT (0xFE),A
+8F2C C1           	 POP BC
+8F2D 3E 00        	 LD A,0
+8F2F D3 FE        	 OUT (0xFE),A
+8F31 E1           	 POP HL
+8F32 3E 10        	 LD A,16
+8F34 D3 FE        	 OUT (0xFE),A
+8F36 DD 09        	 ADD IX,BC
+8F38 D9           	 EXX
+8F39 C3 A3 91     	 JP first_suffix_5
+                 	first_214:
+8F3C ED 51        	 OUT (C),D
+8F3E D9           	 EXX
+8F3F B5           	 OR L
+8F40 6F           	 LD L,A
+8F41 F9           	 LD SP,HL
+8F42 3E 10        	 LD A,16
+8F44 D3 FE        	 OUT (0xFE),A
+8F46 C1           	 POP BC
+8F47 3E 00        	 LD A,0
+8F49 D3 FE        	 OUT (0xFE),A
+8F4B E1           	 POP HL
+8F4C 3E 10        	 LD A,16
+8F4E D3 FE        	 OUT (0xFE),A
+8F50 DD 09        	 ADD IX,BC
+8F52 D9           	 EXX
+8F53 C3 B6 91     	 JP first_suffix_6
+                 	first_215:
+8F56 ED 51        	 OUT (C),D
+8F58 D9           	 EXX
+8F59 B5           	 OR L
+8F5A 6F           	 LD L,A
+8F5B F9           	 LD SP,HL
+8F5C 3E 10        	 LD A,16
+8F5E D3 FE        	 OUT (0xFE),A
+8F60 C1           	 POP BC
+8F61 3E 00        	 LD A,0
+8F63 D3 FE        	 OUT (0xFE),A
+8F65 E1           	 POP HL
+8F66 3E 10        	 LD A,16
+8F68 D3 FE        	 OUT (0xFE),A
+8F6A DD 09        	 ADD IX,BC
+8F6C D9           	 EXX
+8F6D C3 C9 91     	 JP first_suffix_7
+                 	first_217:
+8F70 ED 51        	 OUT (C),D
+8F72 D9           	 EXX
+8F73 B5           	 OR L
+8F74 6F           	 LD L,A
+8F75 F9           	 LD SP,HL
+8F76 3E 10        	 LD A,16
+8F78 D3 FE        	 OUT (0xFE),A
+8F7A C1           	 POP BC
+8F7B 3E 00        	 LD A,0
+8F7D D3 FE        	 OUT (0xFE),A
+8F7F E1           	 POP HL
+8F80 3E 10        	 LD A,16
+8F82 D3 FE        	 OUT (0xFE),A
+8F84 DD 09        	 ADD IX,BC
+8F86 D9           	 EXX
+8F87 C3 EF 91     	 JP first_suffix_9
+                 	first_218:
+8F8A ED 51        	 OUT (C),D
+8F8C D9           	 EXX
+8F8D B5           	 OR L
+8F8E 6F           	 LD L,A
+8F8F F9           	 LD SP,HL
+8F90 3E 10        	 LD A,16
+8F92 D3 FE        	 OUT (0xFE),A
+8F94 C1           	 POP BC
+8F95 3E 00        	 LD A,0
+8F97 D3 FE        	 OUT (0xFE),A
+8F99 E1           	 POP HL
+8F9A 3E 10        	 LD A,16
+8F9C D3 FE        	 OUT (0xFE),A
+8F9E DD 09        	 ADD IX,BC
+8FA0 D9           	 EXX
+8FA1 C3 02 92     	 JP first_suffix_10
+                 	first_219:
+8FA4 ED 51        	 OUT (C),D
+8FA6 D9           	 EXX
+8FA7 B5           	 OR L
+8FA8 6F           	 LD L,A
+8FA9 F9           	 LD SP,HL
+8FAA 3E 10        	 LD A,16
+8FAC D3 FE        	 OUT (0xFE),A
+8FAE C1           	 POP BC
+8FAF 3E 00        	 LD A,0
+8FB1 D3 FE        	 OUT (0xFE),A
+8FB3 E1           	 POP HL
+8FB4 3E 10        	 LD A,16
+8FB6 D3 FE        	 OUT (0xFE),A
+8FB8 DD 09        	 ADD IX,BC
+8FBA D9           	 EXX
+8FBB C3 15 92     	 JP first_suffix_11
+                 	first_221:
+8FBE ED 51        	 OUT (C),D
+8FC0 D9           	 EXX
+8FC1 B5           	 OR L
+8FC2 6F           	 LD L,A
+8FC3 F9           	 LD SP,HL
+8FC4 3E 10        	 LD A,16
+8FC6 D3 FE        	 OUT (0xFE),A
+8FC8 C1           	 POP BC
+8FC9 3E 00        	 LD A,0
+8FCB D3 FE        	 OUT (0xFE),A
+8FCD E1           	 POP HL
+8FCE 3E 10        	 LD A,16
+8FD0 D3 FE        	 OUT (0xFE),A
+8FD2 DD 09        	 ADD IX,BC
+8FD4 D9           	 EXX
+8FD5 C3 3B 92     	 JP first_suffix_13
+                 	first_222:
+8FD8 ED 51        	 OUT (C),D
+8FDA D9           	 EXX
+8FDB B5           	 OR L
+8FDC 6F           	 LD L,A
+8FDD F9           	 LD SP,HL
+8FDE 3E 10        	 LD A,16
+8FE0 D3 FE        	 OUT (0xFE),A
+8FE2 C1           	 POP BC
+8FE3 3E 00        	 LD A,0
+8FE5 D3 FE        	 OUT (0xFE),A
+8FE7 E1           	 POP HL
+8FE8 3E 10        	 LD A,16
+8FEA D3 FE        	 OUT (0xFE),A
+8FEC DD 09        	 ADD IX,BC
+8FEE D9           	 EXX
+8FEF C3 4E 92     	 JP first_suffix_14
+                 	first_223:
+8FF2 ED 51        	 OUT (C),D
+8FF4 D9           	 EXX
+8FF5 B5           	 OR L
+8FF6 6F           	 LD L,A
+8FF7 F9           	 LD SP,HL
+8FF8 3E 10        	 LD A,16
+8FFA D3 FE        	 OUT (0xFE),A
+8FFC C1           	 POP BC
+8FFD 3E 00        	 LD A,0
+8FFF D3 FE        	 OUT (0xFE),A
+9001 E1           	 POP HL
+9002 3E 10        	 LD A,16
+9004 D3 FE        	 OUT (0xFE),A
+9006 DD 09        	 ADD IX,BC
+9008 D9           	 EXX
+9009 C3 61 92     	 JP first_suffix_15
+                 	first_234:
+900C ED 51        	 OUT (C),D
+900E D9           	 EXX
+900F B5           	 OR L
+9010 6F           	 LD L,A
+9011 F9           	 LD SP,HL
+9012 3E 10        	 LD A,16
+9014 D3 FE        	 OUT (0xFE),A
+9016 C1           	 POP BC
+9017 3E 10        	 LD A,16
+9019 D3 FE        	 OUT (0xFE),A
+901B E1           	 POP HL
+901C 3E 00        	 LD A,0
+901E D3 FE        	 OUT (0xFE),A
+9020 DD 09        	 ADD IX,BC
+9022 D9           	 EXX
+9023 C3 02 92     	 JP first_suffix_10
+                 	first_235:
+9026 ED 51        	 OUT (C),D
+9028 D9           	 EXX
+9029 B5           	 OR L
+902A 6F           	 LD L,A
+902B F9           	 LD SP,HL
+902C 3E 10        	 LD A,16
+902E D3 FE        	 OUT (0xFE),A
+9030 C1           	 POP BC
+9031 3E 10        	 LD A,16
+9033 D3 FE        	 OUT (0xFE),A
+9035 E1           	 POP HL
+9036 3E 00        	 LD A,0
+9038 D3 FE        	 OUT (0xFE),A
+903A DD 09        	 ADD IX,BC
+903C D9           	 EXX
+903D C3 15 92     	 JP first_suffix_11
+                 	first_237:
+9040 ED 51        	 OUT (C),D
+9042 D9           	 EXX
+9043 B5           	 OR L
+9044 6F           	 LD L,A
+9045 F9           	 LD SP,HL
+9046 3E 10        	 LD A,16
+9048 D3 FE        	 OUT (0xFE),A
+904A C1           	 POP BC
+904B 3E 10        	 LD A,16
+904D D3 FE        	 OUT (0xFE),A
+904F E1           	 POP HL
+9050 3E 00        	 LD A,0
+9052 D3 FE        	 OUT (0xFE),A
+9054 DD 09        	 ADD IX,BC
+9056 D9           	 EXX
+9057 C3 3B 92     	 JP first_suffix_13
+                 	first_238:
+905A ED 51        	 OUT (C),D
+905C D9           	 EXX
+905D B5           	 OR L
+905E 6F           	 LD L,A
+905F F9           	 LD SP,HL
+9060 3E 10        	 LD A,16
+9062 D3 FE        	 OUT (0xFE),A
+9064 C1           	 POP BC
+9065 3E 10        	 LD A,16
+9067 D3 FE        	 OUT (0xFE),A
+9069 E1           	 POP HL
+906A 3E 00        	 LD A,0
+906C D3 FE        	 OUT (0xFE),A
+906E DD 09        	 ADD IX,BC
+9070 D9           	 EXX
+9071 C3 4E 92     	 JP first_suffix_14
+                 	first_239:
+9074 ED 51        	 OUT (C),D
+9076 D9           	 EXX
+9077 B5           	 OR L
+9078 6F           	 LD L,A
+9079 F9           	 LD SP,HL
+907A 3E 10        	 LD A,16
+907C D3 FE        	 OUT (0xFE),A
+907E C1           	 POP BC
+907F 3E 10        	 LD A,16
+9081 D3 FE        	 OUT (0xFE),A
+9083 E1           	 POP HL
+9084 3E 00        	 LD A,0
+9086 D3 FE        	 OUT (0xFE),A
+9088 DD 09        	 ADD IX,BC
+908A D9           	 EXX
+908B C3 61 92     	 JP first_suffix_15
+                 	first_245:
+908E ED 51        	 OUT (C),D
+9090 D9           	 EXX
+9091 B5           	 OR L
+9092 6F           	 LD L,A
+9093 F9           	 LD SP,HL
+9094 3E 10        	 LD A,16
+9096 D3 FE        	 OUT (0xFE),A
+9098 C1           	 POP BC
+9099 3E 10        	 LD A,16
+909B D3 FE        	 OUT (0xFE),A
+909D E1           	 POP HL
+909E 3E 10        	 LD A,16
+90A0 D3 FE        	 OUT (0xFE),A
+90A2 DD 09        	 ADD IX,BC
+90A4 D9           	 EXX
+90A5 C3 A3 91     	 JP first_suffix_5
+                 	first_246:
+90A8 ED 51        	 OUT (C),D
+90AA D9           	 EXX
+90AB B5           	 OR L
+90AC 6F           	 LD L,A
+90AD F9           	 LD SP,HL
+90AE 3E 10        	 LD A,16
+90B0 D3 FE        	 OUT (0xFE),A
+90B2 C1           	 POP BC
+90B3 3E 10        	 LD A,16
+90B5 D3 FE        	 OUT (0xFE),A
+90B7 E1           	 POP HL
+90B8 3E 10        	 LD A,16
+90BA D3 FE        	 OUT (0xFE),A
+90BC DD 09        	 ADD IX,BC
+90BE D9           	 EXX
+90BF C3 B6 91     	 JP first_suffix_6
+                 	first_247:
+90C2 ED 51        	 OUT (C),D
+90C4 D9           	 EXX
+90C5 B5           	 OR L
+90C6 6F           	 LD L,A
+90C7 F9           	 LD SP,HL
+90C8 3E 10        	 LD A,16
+90CA D3 FE        	 OUT (0xFE),A
+90CC C1           	 POP BC
+90CD 3E 10        	 LD A,16
+90CF D3 FE        	 OUT (0xFE),A
+90D1 E1           	 POP HL
+90D2 3E 10        	 LD A,16
+90D4 D3 FE        	 OUT (0xFE),A
+90D6 DD 09        	 ADD IX,BC
+90D8 D9           	 EXX
+90D9 C3 C9 91     	 JP first_suffix_7
+                 	first_251:
+90DC ED 51        	 OUT (C),D
+90DE D9           	 EXX
+90DF B5           	 OR L
+90E0 6F           	 LD L,A
+90E1 F9           	 LD SP,HL
+90E2 3E 10        	 LD A,16
+90E4 D3 FE        	 OUT (0xFE),A
+90E6 C1           	 POP BC
+90E7 3E 10        	 LD A,16
+90E9 D3 FE        	 OUT (0xFE),A
+90EB E1           	 POP HL
+90EC 3E 10        	 LD A,16
+90EE D3 FE        	 OUT (0xFE),A
+90F0 DD 09        	 ADD IX,BC
+90F2 D9           	 EXX
+90F3 C3 15 92     	 JP first_suffix_11
+                 	first_253:
+90F6 ED 51        	 OUT (C),D
+90F8 D9           	 EXX
+90F9 B5           	 OR L
+90FA 6F           	 LD L,A
+90FB F9           	 LD SP,HL
+90FC 3E 10        	 LD A,16
+90FE D3 FE        	 OUT (0xFE),A
+9100 C1           	 POP BC
+9101 3E 10        	 LD A,16
+9103 D3 FE        	 OUT (0xFE),A
+9105 E1           	 POP HL
+9106 3E 10        	 LD A,16
+9108 D3 FE        	 OUT (0xFE),A
+910A DD 09        	 ADD IX,BC
+910C D9           	 EXX
+910D C3 3B 92     	 JP first_suffix_13
+                 	first_254:
+9110 ED 51        	 OUT (C),D
+9112 D9           	 EXX
+9113 B5           	 OR L
+9114 6F           	 LD L,A
+9115 F9           	 LD SP,HL
+9116 3E 10        	 LD A,16
+9118 D3 FE        	 OUT (0xFE),A
+911A C1           	 POP BC
+911B 3E 10        	 LD A,16
+911D D3 FE        	 OUT (0xFE),A
+911F E1           	 POP HL
+9120 3E 10        	 LD A,16
+9122 D3 FE        	 OUT (0xFE),A
+9124 DD 09        	 ADD IX,BC
+9126 D9           	 EXX
+9127 C3 4E 92     	 JP first_suffix_14
+                 	first_255:
+912A ED 51        	 OUT (C),D
+912C D9           	 EXX
+912D B5           	 OR L
+912E 6F           	 LD L,A
+912F F9           	 LD SP,HL
+9130 3E 10        	 LD A,16
+9132 D3 FE        	 OUT (0xFE),A
+9134 C1           	 POP BC
+9135 3E 10        	 LD A,16
+9137 D3 FE        	 OUT (0xFE),A
+9139 E1           	 POP HL
+913A 3E 10        	 LD A,16
+913C D3 FE        	 OUT (0xFE),A
+913E DD 09        	 ADD IX,BC
+9140 D9           	 EXX
+9141 C3 61 92     	 JP first_suffix_15
+                 	first_suffix_0:
+9144 71           	 DB 0xED,0x71
+9146 DD 7C        	 LD A,IXH
+9148 6F           	 LD L,A
+9149 71           	 DB 0xED,0x71
+914B 26 5E        	 LD H,pcm_high >> 8
+914D 66           	 LD H,(HL)
+914E 71           	 DB 0xED,0x71
+9150 6B           	 LD L,E
+9151 F9           	 LD SP,HL
+9152 71           	 DB 0xED,0x71
+                 	first_dispatch_0:
+9154 FD E9        	 JP (IY)
+9156 00           	 DEFB 0
+                 	first_suffix_1:
+9157 71           	 DB 0xED,0x71
+9159 DD 7C        	 LD A,IXH
+915B 6F           	 LD L,A
+915C 71           	 DB 0xED,0x71
+915E 26 5E        	 LD H,pcm_high >> 8
+9160 66           	 LD H,(HL)
+9161 71           	 DB 0xED,0x71
+9163 6B           	 LD L,E
+9164 F9           	 LD SP,HL
+9165 ED 51        	 OUT (C),D
+                 	first_dispatch_1:
+9167 FD E9        	 JP (IY)
+9169 00           	 DEFB 0
+                 	first_suffix_2:
+916A 71           	 DB 0xED,0x71
+916C DD 7C        	 LD A,IXH
+916E 6F           	 LD L,A
+916F 71           	 DB 0xED,0x71
+9171 26 5E        	 LD H,pcm_high >> 8
+9173 66           	 LD H,(HL)
+9174 ED 51        	 OUT (C),D
+9176 6B           	 LD L,E
+9177 F9           	 LD SP,HL
+9178 71           	 DB 0xED,0x71
+                 	first_dispatch_2:
+917A FD E9        	 JP (IY)
+917C 00           	 DEFB 0
+                 	first_suffix_3:
+917D 71           	 DB 0xED,0x71
+917F DD 7C        	 LD A,IXH
+9181 6F           	 LD L,A
+9182 71           	 DB 0xED,0x71
+9184 26 5E        	 LD H,pcm_high >> 8
+9186 66           	 LD H,(HL)
+9187 ED 51        	 OUT (C),D
+9189 6B           	 LD L,E
+918A F9           	 LD SP,HL
+918B ED 51        	 OUT (C),D
+                 	first_dispatch_3:
+918D FD E9        	 JP (IY)
+918F 00           	 DEFB 0
+                 	first_suffix_4:
+9190 71           	 DB 0xED,0x71
+9192 DD 7C        	 LD A,IXH
+9194 6F           	 LD L,A
+9195 ED 51        	 OUT (C),D
+9197 26 5E        	 LD H,pcm_high >> 8
+9199 66           	 LD H,(HL)
+919A 71           	 DB 0xED,0x71
+919C 6B           	 LD L,E
+919D F9           	 LD SP,HL
+919E 71           	 DB 0xED,0x71
+                 	first_dispatch_4:
+91A0 FD E9        	 JP (IY)
+91A2 00           	 DEFB 0
+                 	first_suffix_5:
+91A3 71           	 DB 0xED,0x71
+91A5 DD 7C        	 LD A,IXH
+91A7 6F           	 LD L,A
+91A8 ED 51        	 OUT (C),D
+91AA 26 5E        	 LD H,pcm_high >> 8
+91AC 66           	 LD H,(HL)
+91AD 71           	 DB 0xED,0x71
+91AF 6B           	 LD L,E
+91B0 F9           	 LD SP,HL
+91B1 ED 51        	 OUT (C),D
+                 	first_dispatch_5:
+91B3 FD E9        	 JP (IY)
+91B5 00           	 DEFB 0
+                 	first_suffix_6:
+91B6 71           	 DB 0xED,0x71
+91B8 DD 7C        	 LD A,IXH
+91BA 6F           	 LD L,A
+91BB ED 51        	 OUT (C),D
+91BD 26 5E        	 LD H,pcm_high >> 8
+91BF 66           	 LD H,(HL)
+91C0 ED 51        	 OUT (C),D
+91C2 6B           	 LD L,E
+91C3 F9           	 LD SP,HL
+91C4 71           	 DB 0xED,0x71
+                 	first_dispatch_6:
+91C6 FD E9        	 JP (IY)
+91C8 00           	 DEFB 0
+                 	first_suffix_7:
+91C9 71           	 DB 0xED,0x71
+91CB DD 7C        	 LD A,IXH
+91CD 6F           	 LD L,A
+91CE ED 51        	 OUT (C),D
+91D0 26 5E        	 LD H,pcm_high >> 8
+91D2 66           	 LD H,(HL)
+91D3 ED 51        	 OUT (C),D
+91D5 6B           	 LD L,E
+91D6 F9           	 LD SP,HL
+91D7 ED 51        	 OUT (C),D
+                 	first_dispatch_7:
+91D9 FD E9        	 JP (IY)
+91DB 00           	 DEFB 0
+                 	first_suffix_8:
+91DC ED 51        	 OUT (C),D
+91DE DD 7C        	 LD A,IXH
+91E0 6F           	 LD L,A
+91E1 71           	 DB 0xED,0x71
+91E3 26 5E        	 LD H,pcm_high >> 8
+91E5 66           	 LD H,(HL)
+91E6 71           	 DB 0xED,0x71
+91E8 6B           	 LD L,E
+91E9 F9           	 LD SP,HL
+91EA 71           	 DB 0xED,0x71
+                 	first_dispatch_8:
+91EC FD E9        	 JP (IY)
+91EE 00           	 DEFB 0
+                 	first_suffix_9:
+91EF ED 51        	 OUT (C),D
+91F1 DD 7C        	 LD A,IXH
+91F3 6F           	 LD L,A
+91F4 71           	 DB 0xED,0x71
+91F6 26 5E        	 LD H,pcm_high >> 8
+91F8 66           	 LD H,(HL)
+91F9 71           	 DB 0xED,0x71
+91FB 6B           	 LD L,E
+91FC F9           	 LD SP,HL
+91FD ED 51        	 OUT (C),D
+                 	first_dispatch_9:
+91FF FD E9        	 JP (IY)
+9201 00           	 DEFB 0
+                 	first_suffix_10:
+9202 ED 51        	 OUT (C),D
+9204 DD 7C        	 LD A,IXH
+9206 6F           	 LD L,A
+9207 71           	 DB 0xED,0x71
+9209 26 5E        	 LD H,pcm_high >> 8
+920B 66           	 LD H,(HL)
+920C ED 51        	 OUT (C),D
+920E 6B           	 LD L,E
+920F F9           	 LD SP,HL
+9210 71           	 DB 0xED,0x71
+                 	first_dispatch_10:
+9212 FD E9        	 JP (IY)
+9214 00           	 DEFB 0
+                 	first_suffix_11:
+9215 ED 51        	 OUT (C),D
+9217 DD 7C        	 LD A,IXH
+9219 6F           	 LD L,A
+921A 71           	 DB 0xED,0x71
+921C 26 5E        	 LD H,pcm_high >> 8
+921E 66           	 LD H,(HL)
+921F ED 51        	 OUT (C),D
+9221 6B           	 LD L,E
+9222 F9           	 LD SP,HL
+9223 ED 51        	 OUT (C),D
+                 	first_dispatch_11:
+9225 FD E9        	 JP (IY)
+9227 00           	 DEFB 0
+                 	first_suffix_12:
+9228 ED 51        	 OUT (C),D
+922A DD 7C        	 LD A,IXH
+922C 6F           	 LD L,A
+922D ED 51        	 OUT (C),D
+922F 26 5E        	 LD H,pcm_high >> 8
+9231 66           	 LD H,(HL)
+9232 71           	 DB 0xED,0x71
+9234 6B           	 LD L,E
+9235 F9           	 LD SP,HL
+9236 71           	 DB 0xED,0x71
+                 	first_dispatch_12:
+9238 FD E9        	 JP (IY)
+923A 00           	 DEFB 0
+                 	first_suffix_13:
+923B ED 51        	 OUT (C),D
+923D DD 7C        	 LD A,IXH
+923F 6F           	 LD L,A
+9240 ED 51        	 OUT (C),D
+9242 26 5E        	 LD H,pcm_high >> 8
+9244 66           	 LD H,(HL)
+9245 71           	 DB 0xED,0x71
+9247 6B           	 LD L,E
+9248 F9           	 LD SP,HL
+9249 ED 51        	 OUT (C),D
+                 	first_dispatch_13:
+924B FD E9        	 JP (IY)
+924D 00           	 DEFB 0
+                 	first_suffix_14:
+924E ED 51        	 OUT (C),D
+9250 DD 7C        	 LD A,IXH
+9252 6F           	 LD L,A
+9253 ED 51        	 OUT (C),D
+9255 26 5E        	 LD H,pcm_high >> 8
+9257 66           	 LD H,(HL)
+9258 ED 51        	 OUT (C),D
+925A 6B           	 LD L,E
+925B F9           	 LD SP,HL
+925C 71           	 DB 0xED,0x71
+                 	first_dispatch_14:
+925E FD E9        	 JP (IY)
+9260 00           	 DEFB 0
+                 	first_suffix_15:
+9261 ED 51        	 OUT (C),D
+9263 DD 7C        	 LD A,IXH
+9265 6F           	 LD L,A
+9266 ED 51        	 OUT (C),D
+9268 26 5E        	 LD H,pcm_high >> 8
+926A 66           	 LD H,(HL)
+926B ED 51        	 OUT (C),D
+926D 6B           	 LD L,E
+926E F9           	 LD SP,HL
+926F ED 51        	 OUT (C),D
+                 	first_dispatch_15:
+9271 FD E9        	 JP (IY)
+9273 00           	 DEFB 0
+                 	first_end:
+                 	second_begin:
+                 	; SECOND's existing constant-time phase JP can directly reach one of sixteen
+                 	; shared high suffixes. This redirection costs no additional instruction.
+                 	second_0:
+9274 71           	 DB 0xED,0x71
+9276 E1           	 POP HL
+9277 71           	 DB 0xED,0x71
+9279 FD E1        	 POP IY
+927B 71           	 DB 0xED,0x71
+927D D1           	 POP DE
+927E 71           	 DB 0xED,0x71
+9280 08           	 EX AF,AF'
+9281 3F           	 CCF
+9282 DA D4 A5     	 JP C,high_suffix_0
+9285 71           	 DB 0xED,0x71
+9287 08           	 EX AF,AF'
+9288 D9           	 EXX
+9289 1A           	 LD A,(DE)
+928A D9           	 EXX
+928B 71           	 DB 0xED,0x71
+928D E6 0F        	 AND 15
+928F 07           	 RLCA
+9290 07           	 RLCA
+9291 71           	 DB 0xED,0x71
+9293 C3 96 92     	 JP $+3
+9296 00           	 NOP
+9297 00           	 NOP
+9298 00           	 NOP
+9299 71           	 DB 0xED,0x71
+929B E9           	 JP (HL)
+                 	second_1:
+929C 71           	 DB 0xED,0x71
+929E E1           	 POP HL
+929F 71           	 DB 0xED,0x71
+92A1 FD E1        	 POP IY
+92A3 71           	 DB 0xED,0x71
+92A5 D1           	 POP DE
+92A6 71           	 DB 0xED,0x71
+92A8 08           	 EX AF,AF'
+92A9 3F           	 CCF
+92AA DA EB A5     	 JP C,high_suffix_1
+92AD 71           	 DB 0xED,0x71
+92AF 08           	 EX AF,AF'
+92B0 D9           	 EXX
+92B1 1A           	 LD A,(DE)
+92B2 D9           	 EXX
+92B3 71           	 DB 0xED,0x71
+92B5 E6 0F        	 AND 15
+92B7 07           	 RLCA
+92B8 07           	 RLCA
+92B9 71           	 DB 0xED,0x71
+92BB C3 BE 92     	 JP $+3
+92BE 00           	 NOP
+92BF 00           	 NOP
+92C0 00           	 NOP
+92C1 ED 51        	 OUT (C),D
+92C3 E9           	 JP (HL)
+                 	second_2:
+92C4 71           	 DB 0xED,0x71
+92C6 E1           	 POP HL
+92C7 71           	 DB 0xED,0x71
+92C9 FD E1        	 POP IY
+92CB 71           	 DB 0xED,0x71
+92CD D1           	 POP DE
+92CE 71           	 DB 0xED,0x71
+92D0 08           	 EX AF,AF'
+92D1 3F           	 CCF
+92D2 DA 02 A6     	 JP C,high_suffix_2
+92D5 71           	 DB 0xED,0x71
+92D7 08           	 EX AF,AF'
+92D8 D9           	 EXX
+92D9 1A           	 LD A,(DE)
+92DA D9           	 EXX
+92DB 71           	 DB 0xED,0x71
+92DD E6 0F        	 AND 15
+92DF 07           	 RLCA
+92E0 07           	 RLCA
+92E1 ED 51        	 OUT (C),D
+92E3 C3 E6 92     	 JP $+3
+92E6 00           	 NOP
+92E7 00           	 NOP
+92E8 00           	 NOP
+92E9 71           	 DB 0xED,0x71
+92EB E9           	 JP (HL)
+                 	second_4:
+92EC 71           	 DB 0xED,0x71
+92EE E1           	 POP HL
+92EF 71           	 DB 0xED,0x71
+92F1 FD E1        	 POP IY
+92F3 71           	 DB 0xED,0x71
+92F5 D1           	 POP DE
+92F6 71           	 DB 0xED,0x71
+92F8 08           	 EX AF,AF'
+92F9 3F           	 CCF
+92FA DA 30 A6     	 JP C,high_suffix_4
+92FD 71           	 DB 0xED,0x71
+92FF 08           	 EX AF,AF'
+9300 D9           	 EXX
+9301 1A           	 LD A,(DE)
+9302 D9           	 EXX
+9303 ED 51        	 OUT (C),D
+9305 E6 0F        	 AND 15
+9307 07           	 RLCA
+9308 07           	 RLCA
+9309 71           	 DB 0xED,0x71
+930B C3 0E 93     	 JP $+3
+930E 00           	 NOP
+930F 00           	 NOP
+9310 00           	 NOP
+9311 71           	 DB 0xED,0x71
+9313 E9           	 JP (HL)
+                 	second_5:
+9314 71           	 DB 0xED,0x71
+9316 E1           	 POP HL
+9317 71           	 DB 0xED,0x71
+9319 FD E1        	 POP IY
+931B 71           	 DB 0xED,0x71
+931D D1           	 POP DE
+931E 71           	 DB 0xED,0x71
+9320 08           	 EX AF,AF'
+9321 3F           	 CCF
+9322 DA 47 A6     	 JP C,high_suffix_5
+9325 71           	 DB 0xED,0x71
+9327 08           	 EX AF,AF'
+9328 D9           	 EXX
+9329 1A           	 LD A,(DE)
+932A D9           	 EXX
+932B ED 51        	 OUT (C),D
+932D E6 0F        	 AND 15
+932F 07           	 RLCA
+9330 07           	 RLCA
+9331 71           	 DB 0xED,0x71
+9333 C3 36 93     	 JP $+3
+9336 00           	 NOP
+9337 00           	 NOP
+9338 00           	 NOP
+9339 ED 51        	 OUT (C),D
+933B E9           	 JP (HL)
+                 	second_8:
+933C 71           	 DB 0xED,0x71
+933E E1           	 POP HL
+933F 71           	 DB 0xED,0x71
+9341 FD E1        	 POP IY
+9343 71           	 DB 0xED,0x71
+9345 D1           	 POP DE
+9346 71           	 DB 0xED,0x71
+9348 08           	 EX AF,AF'
+9349 3F           	 CCF
+934A DA 8C A6     	 JP C,high_suffix_8
+934D ED 51        	 OUT (C),D
+934F 08           	 EX AF,AF'
+9350 D9           	 EXX
+9351 1A           	 LD A,(DE)
+9352 D9           	 EXX
+9353 71           	 DB 0xED,0x71
+9355 E6 0F        	 AND 15
+9357 07           	 RLCA
+9358 07           	 RLCA
+9359 71           	 DB 0xED,0x71
+935B C3 5E 93     	 JP $+3
+935E 00           	 NOP
+935F 00           	 NOP
+9360 00           	 NOP
+9361 71           	 DB 0xED,0x71
+9363 E9           	 JP (HL)
+                 	second_9:
+9364 71           	 DB 0xED,0x71
+9366 E1           	 POP HL
+9367 71           	 DB 0xED,0x71
+9369 FD E1        	 POP IY
+936B 71           	 DB 0xED,0x71
+936D D1           	 POP DE
+936E 71           	 DB 0xED,0x71
+9370 08           	 EX AF,AF'
+9371 3F           	 CCF
+9372 DA A3 A6     	 JP C,high_suffix_9
+9375 ED 51        	 OUT (C),D
+9377 08           	 EX AF,AF'
+9378 D9           	 EXX
+9379 1A           	 LD A,(DE)
+937A D9           	 EXX
+937B 71           	 DB 0xED,0x71
+937D E6 0F        	 AND 15
+937F 07           	 RLCA
+9380 07           	 RLCA
+9381 71           	 DB 0xED,0x71
+9383 C3 86 93     	 JP $+3
+9386 00           	 NOP
+9387 00           	 NOP
+9388 00           	 NOP
+9389 ED 51        	 OUT (C),D
+938B E9           	 JP (HL)
+                 	second_10:
+938C 71           	 DB 0xED,0x71
+938E E1           	 POP HL
+938F 71           	 DB 0xED,0x71
+9391 FD E1        	 POP IY
+9393 71           	 DB 0xED,0x71
+9395 D1           	 POP DE
+9396 71           	 DB 0xED,0x71
+9398 08           	 EX AF,AF'
+9399 3F           	 CCF
+939A DA BA A6     	 JP C,high_suffix_10
+939D ED 51        	 OUT (C),D
+939F 08           	 EX AF,AF'
+93A0 D9           	 EXX
+93A1 1A           	 LD A,(DE)
+93A2 D9           	 EXX
+93A3 71           	 DB 0xED,0x71
+93A5 E6 0F        	 AND 15
+93A7 07           	 RLCA
+93A8 07           	 RLCA
+93A9 ED 51        	 OUT (C),D
+93AB C3 AE 93     	 JP $+3
+93AE 00           	 NOP
+93AF 00           	 NOP
+93B0 00           	 NOP
+93B1 71           	 DB 0xED,0x71
+93B3 E9           	 JP (HL)
+                 	second_12:
+93B4 71           	 DB 0xED,0x71
+93B6 E1           	 POP HL
+93B7 71           	 DB 0xED,0x71
+93B9 FD E1        	 POP IY
+93BB 71           	 DB 0xED,0x71
+93BD D1           	 POP DE
+93BE 71           	 DB 0xED,0x71
+93C0 08           	 EX AF,AF'
+93C1 3F           	 CCF
+93C2 DA E8 A6     	 JP C,high_suffix_12
+93C5 ED 51        	 OUT (C),D
+93C7 08           	 EX AF,AF'
+93C8 D9           	 EXX
+93C9 1A           	 LD A,(DE)
+93CA D9           	 EXX
+93CB ED 51        	 OUT (C),D
+93CD E6 0F        	 AND 15
+93CF 07           	 RLCA
+93D0 07           	 RLCA
+93D1 71           	 DB 0xED,0x71
+93D3 C3 D6 93     	 JP $+3
+93D6 00           	 NOP
+93D7 00           	 NOP
+93D8 00           	 NOP
+93D9 71           	 DB 0xED,0x71
+93DB E9           	 JP (HL)
+                 	second_16:
+93DC 71           	 DB 0xED,0x71
+93DE E1           	 POP HL
+93DF 71           	 DB 0xED,0x71
+93E1 FD E1        	 POP IY
+93E3 71           	 DB 0xED,0x71
+93E5 D1           	 POP DE
+93E6 ED 51        	 OUT (C),D
+93E8 08           	 EX AF,AF'
+93E9 3F           	 CCF
+93EA DA D4 A5     	 JP C,high_suffix_0
+93ED 71           	 DB 0xED,0x71
+93EF 08           	 EX AF,AF'
+93F0 D9           	 EXX
+93F1 1A           	 LD A,(DE)
+93F2 D9           	 EXX
+93F3 71           	 DB 0xED,0x71
+93F5 E6 0F        	 AND 15
+93F7 07           	 RLCA
+93F8 07           	 RLCA
+93F9 71           	 DB 0xED,0x71
+93FB C3 FE 93     	 JP $+3
+93FE 00           	 NOP
+93FF 00           	 NOP
+9400 00           	 NOP
+9401 71           	 DB 0xED,0x71
+9403 E9           	 JP (HL)
+                 	second_17:
+9404 71           	 DB 0xED,0x71
+9406 E1           	 POP HL
+9407 71           	 DB 0xED,0x71
+9409 FD E1        	 POP IY
+940B 71           	 DB 0xED,0x71
+940D D1           	 POP DE
+940E ED 51        	 OUT (C),D
+9410 08           	 EX AF,AF'
+9411 3F           	 CCF
+9412 DA EB A5     	 JP C,high_suffix_1
+9415 71           	 DB 0xED,0x71
+9417 08           	 EX AF,AF'
+9418 D9           	 EXX
+9419 1A           	 LD A,(DE)
+941A D9           	 EXX
+941B 71           	 DB 0xED,0x71
+941D E6 0F        	 AND 15
+941F 07           	 RLCA
+9420 07           	 RLCA
+9421 71           	 DB 0xED,0x71
+9423 C3 26 94     	 JP $+3
+9426 00           	 NOP
+9427 00           	 NOP
+9428 00           	 NOP
+9429 ED 51        	 OUT (C),D
+942B E9           	 JP (HL)
+                 	second_18:
+942C 71           	 DB 0xED,0x71
+942E E1           	 POP HL
+942F 71           	 DB 0xED,0x71
+9431 FD E1        	 POP IY
+9433 71           	 DB 0xED,0x71
+9435 D1           	 POP DE
+9436 ED 51        	 OUT (C),D
+9438 08           	 EX AF,AF'
+9439 3F           	 CCF
+943A DA 02 A6     	 JP C,high_suffix_2
+943D 71           	 DB 0xED,0x71
+943F 08           	 EX AF,AF'
+9440 D9           	 EXX
+9441 1A           	 LD A,(DE)
+9442 D9           	 EXX
+9443 71           	 DB 0xED,0x71
+9445 E6 0F        	 AND 15
+9447 07           	 RLCA
+9448 07           	 RLCA
+9449 ED 51        	 OUT (C),D
+944B C3 4E 94     	 JP $+3
+944E 00           	 NOP
+944F 00           	 NOP
+9450 00           	 NOP
+9451 71           	 DB 0xED,0x71
+9453 E9           	 JP (HL)
+                 	second_20:
+9454 71           	 DB 0xED,0x71
+9456 E1           	 POP HL
+9457 71           	 DB 0xED,0x71
+9459 FD E1        	 POP IY
+945B 71           	 DB 0xED,0x71
+945D D1           	 POP DE
+945E ED 51        	 OUT (C),D
+9460 08           	 EX AF,AF'
+9461 3F           	 CCF
+9462 DA 30 A6     	 JP C,high_suffix_4
+9465 71           	 DB 0xED,0x71
+9467 08           	 EX AF,AF'
+9468 D9           	 EXX
+9469 1A           	 LD A,(DE)
+946A D9           	 EXX
+946B ED 51        	 OUT (C),D
+946D E6 0F        	 AND 15
+946F 07           	 RLCA
+9470 07           	 RLCA
+9471 71           	 DB 0xED,0x71
+9473 C3 76 94     	 JP $+3
+9476 00           	 NOP
+9477 00           	 NOP
+9478 00           	 NOP
+9479 71           	 DB 0xED,0x71
+947B E9           	 JP (HL)
+                 	second_21:
+947C 71           	 DB 0xED,0x71
+947E E1           	 POP HL
+947F 71           	 DB 0xED,0x71
+9481 FD E1        	 POP IY
+9483 71           	 DB 0xED,0x71
+9485 D1           	 POP DE
+9486 ED 51        	 OUT (C),D
+9488 08           	 EX AF,AF'
+9489 3F           	 CCF
+948A DA 47 A6     	 JP C,high_suffix_5
+948D 71           	 DB 0xED,0x71
+948F 08           	 EX AF,AF'
+9490 D9           	 EXX
+9491 1A           	 LD A,(DE)
+9492 D9           	 EXX
+9493 ED 51        	 OUT (C),D
+9495 E6 0F        	 AND 15
+9497 07           	 RLCA
+9498 07           	 RLCA
+9499 71           	 DB 0xED,0x71
+949B C3 9E 94     	 JP $+3
+949E 00           	 NOP
+949F 00           	 NOP
+94A0 00           	 NOP
+94A1 ED 51        	 OUT (C),D
+94A3 E9           	 JP (HL)
+                 	second_22:
+94A4 71           	 DB 0xED,0x71
+94A6 E1           	 POP HL
+94A7 71           	 DB 0xED,0x71
+94A9 FD E1        	 POP IY
+94AB 71           	 DB 0xED,0x71
+94AD D1           	 POP DE
+94AE ED 51        	 OUT (C),D
+94B0 08           	 EX AF,AF'
+94B1 3F           	 CCF
+94B2 DA 5E A6     	 JP C,high_suffix_6
+94B5 71           	 DB 0xED,0x71
+94B7 08           	 EX AF,AF'
+94B8 D9           	 EXX
+94B9 1A           	 LD A,(DE)
+94BA D9           	 EXX
+94BB ED 51        	 OUT (C),D
+94BD E6 0F        	 AND 15
+94BF 07           	 RLCA
+94C0 07           	 RLCA
+94C1 ED 51        	 OUT (C),D
+94C3 C3 C6 94     	 JP $+3
+94C6 00           	 NOP
+94C7 00           	 NOP
+94C8 00           	 NOP
+94C9 71           	 DB 0xED,0x71
+94CB E9           	 JP (HL)
+                 	second_25:
+94CC 71           	 DB 0xED,0x71
+94CE E1           	 POP HL
+94CF 71           	 DB 0xED,0x71
+94D1 FD E1        	 POP IY
+94D3 71           	 DB 0xED,0x71
+94D5 D1           	 POP DE
+94D6 ED 51        	 OUT (C),D
+94D8 08           	 EX AF,AF'
+94D9 3F           	 CCF
+94DA DA A3 A6     	 JP C,high_suffix_9
+94DD ED 51        	 OUT (C),D
+94DF 08           	 EX AF,AF'
+94E0 D9           	 EXX
+94E1 1A           	 LD A,(DE)
+94E2 D9           	 EXX
+94E3 71           	 DB 0xED,0x71
+94E5 E6 0F        	 AND 15
+94E7 07           	 RLCA
+94E8 07           	 RLCA
+94E9 71           	 DB 0xED,0x71
+94EB C3 EE 94     	 JP $+3
+94EE 00           	 NOP
+94EF 00           	 NOP
+94F0 00           	 NOP
+94F1 ED 51        	 OUT (C),D
+94F3 E9           	 JP (HL)
+                 	second_32:
+94F4 71           	 DB 0xED,0x71
+94F6 E1           	 POP HL
+94F7 71           	 DB 0xED,0x71
+94F9 FD E1        	 POP IY
+94FB ED 51        	 OUT (C),D
+94FD D1           	 POP DE
+94FE 71           	 DB 0xED,0x71
+9500 08           	 EX AF,AF'
+9501 3F           	 CCF
+9502 DA D4 A5     	 JP C,high_suffix_0
+9505 71           	 DB 0xED,0x71
+9507 08           	 EX AF,AF'
+9508 D9           	 EXX
+9509 1A           	 LD A,(DE)
+950A D9           	 EXX
+950B 71           	 DB 0xED,0x71
+950D E6 0F        	 AND 15
+950F 07           	 RLCA
+9510 07           	 RLCA
+9511 71           	 DB 0xED,0x71
+9513 C3 16 95     	 JP $+3
+9516 00           	 NOP
+9517 00           	 NOP
+9518 00           	 NOP
+9519 71           	 DB 0xED,0x71
+951B E9           	 JP (HL)
+                 	second_33:
+951C 71           	 DB 0xED,0x71
+951E E1           	 POP HL
+951F 71           	 DB 0xED,0x71
+9521 FD E1        	 POP IY
+9523 ED 51        	 OUT (C),D
+9525 D1           	 POP DE
+9526 71           	 DB 0xED,0x71
+9528 08           	 EX AF,AF'
+9529 3F           	 CCF
+952A DA EB A5     	 JP C,high_suffix_1
+952D 71           	 DB 0xED,0x71
+952F 08           	 EX AF,AF'
+9530 D9           	 EXX
+9531 1A           	 LD A,(DE)
+9532 D9           	 EXX
+9533 71           	 DB 0xED,0x71
+9535 E6 0F        	 AND 15
+9537 07           	 RLCA
+9538 07           	 RLCA
+9539 71           	 DB 0xED,0x71
+953B C3 3E 95     	 JP $+3
+953E 00           	 NOP
+953F 00           	 NOP
+9540 00           	 NOP
+9541 ED 51        	 OUT (C),D
+9543 E9           	 JP (HL)
+                 	second_34:
+9544 71           	 DB 0xED,0x71
+9546 E1           	 POP HL
+9547 71           	 DB 0xED,0x71
+9549 FD E1        	 POP IY
+954B ED 51        	 OUT (C),D
+954D D1           	 POP DE
+954E 71           	 DB 0xED,0x71
+9550 08           	 EX AF,AF'
+9551 3F           	 CCF
+9552 DA 02 A6     	 JP C,high_suffix_2
+9555 71           	 DB 0xED,0x71
+9557 08           	 EX AF,AF'
+9558 D9           	 EXX
+9559 1A           	 LD A,(DE)
+955A D9           	 EXX
+955B 71           	 DB 0xED,0x71
+955D E6 0F        	 AND 15
+955F 07           	 RLCA
+9560 07           	 RLCA
+9561 ED 51        	 OUT (C),D
+9563 C3 66 95     	 JP $+3
+9566 00           	 NOP
+9567 00           	 NOP
+9568 00           	 NOP
+9569 71           	 DB 0xED,0x71
+956B E9           	 JP (HL)
+                 	second_36:
+956C 71           	 DB 0xED,0x71
+956E E1           	 POP HL
+956F 71           	 DB 0xED,0x71
+9571 FD E1        	 POP IY
+9573 ED 51        	 OUT (C),D
+9575 D1           	 POP DE
+9576 71           	 DB 0xED,0x71
+9578 08           	 EX AF,AF'
+9579 3F           	 CCF
+957A DA 30 A6     	 JP C,high_suffix_4
+957D 71           	 DB 0xED,0x71
+957F 08           	 EX AF,AF'
+9580 D9           	 EXX
+9581 1A           	 LD A,(DE)
+9582 D9           	 EXX
+9583 ED 51        	 OUT (C),D
+9585 E6 0F        	 AND 15
+9587 07           	 RLCA
+9588 07           	 RLCA
+9589 71           	 DB 0xED,0x71
+958B C3 8E 95     	 JP $+3
+958E 00           	 NOP
+958F 00           	 NOP
+9590 00           	 NOP
+9591 71           	 DB 0xED,0x71
+9593 E9           	 JP (HL)
+                 	second_37:
+9594 71           	 DB 0xED,0x71
+9596 E1           	 POP HL
+9597 71           	 DB 0xED,0x71
+9599 FD E1        	 POP IY
+959B ED 51        	 OUT (C),D
+959D D1           	 POP DE
+959E 71           	 DB 0xED,0x71
+95A0 08           	 EX AF,AF'
+95A1 3F           	 CCF
+95A2 DA 47 A6     	 JP C,high_suffix_5
+95A5 71           	 DB 0xED,0x71
+95A7 08           	 EX AF,AF'
+95A8 D9           	 EXX
+95A9 1A           	 LD A,(DE)
+95AA D9           	 EXX
+95AB ED 51        	 OUT (C),D
+95AD E6 0F        	 AND 15
+95AF 07           	 RLCA
+95B0 07           	 RLCA
+95B1 71           	 DB 0xED,0x71
+95B3 C3 B6 95     	 JP $+3
+95B6 00           	 NOP
+95B7 00           	 NOP
+95B8 00           	 NOP
+95B9 ED 51        	 OUT (C),D
+95BB E9           	 JP (HL)
+                 	second_38:
+95BC 71           	 DB 0xED,0x71
+95BE E1           	 POP HL
+95BF 71           	 DB 0xED,0x71
+95C1 FD E1        	 POP IY
+95C3 ED 51        	 OUT (C),D
+95C5 D1           	 POP DE
+95C6 71           	 DB 0xED,0x71
+95C8 08           	 EX AF,AF'
+95C9 3F           	 CCF
+95CA DA 5E A6     	 JP C,high_suffix_6
+95CD 71           	 DB 0xED,0x71
+95CF 08           	 EX AF,AF'
+95D0 D9           	 EXX
+95D1 1A           	 LD A,(DE)
+95D2 D9           	 EXX
+95D3 ED 51        	 OUT (C),D
+95D5 E6 0F        	 AND 15
+95D7 07           	 RLCA
+95D8 07           	 RLCA
+95D9 ED 51        	 OUT (C),D
+95DB C3 DE 95     	 JP $+3
+95DE 00           	 NOP
+95DF 00           	 NOP
+95E0 00           	 NOP
+95E1 71           	 DB 0xED,0x71
+95E3 E9           	 JP (HL)
+                 	second_41:
+95E4 71           	 DB 0xED,0x71
+95E6 E1           	 POP HL
+95E7 71           	 DB 0xED,0x71
+95E9 FD E1        	 POP IY
+95EB ED 51        	 OUT (C),D
+95ED D1           	 POP DE
+95EE 71           	 DB 0xED,0x71
+95F0 08           	 EX AF,AF'
+95F1 3F           	 CCF
+95F2 DA A3 A6     	 JP C,high_suffix_9
+95F5 ED 51        	 OUT (C),D
+95F7 08           	 EX AF,AF'
+95F8 D9           	 EXX
+95F9 1A           	 LD A,(DE)
+95FA D9           	 EXX
+95FB 71           	 DB 0xED,0x71
+95FD E6 0F        	 AND 15
+95FF 07           	 RLCA
+9600 07           	 RLCA
+9601 71           	 DB 0xED,0x71
+9603 C3 06 96     	 JP $+3
+9606 00           	 NOP
+9607 00           	 NOP
+9608 00           	 NOP
+9609 ED 51        	 OUT (C),D
+960B E9           	 JP (HL)
+                 	second_42:
+960C 71           	 DB 0xED,0x71
+960E E1           	 POP HL
+960F 71           	 DB 0xED,0x71
+9611 FD E1        	 POP IY
+9613 ED 51        	 OUT (C),D
+9615 D1           	 POP DE
+9616 71           	 DB 0xED,0x71
+9618 08           	 EX AF,AF'
+9619 3F           	 CCF
+961A DA BA A6     	 JP C,high_suffix_10
+961D ED 51        	 OUT (C),D
+961F 08           	 EX AF,AF'
+9620 D9           	 EXX
+9621 1A           	 LD A,(DE)
+9622 D9           	 EXX
+9623 71           	 DB 0xED,0x71
+9625 E6 0F        	 AND 15
+9627 07           	 RLCA
+9628 07           	 RLCA
+9629 ED 51        	 OUT (C),D
+962B C3 2E 96     	 JP $+3
+962E 00           	 NOP
+962F 00           	 NOP
+9630 00           	 NOP
+9631 71           	 DB 0xED,0x71
+9633 E9           	 JP (HL)
+                 	second_44:
+9634 71           	 DB 0xED,0x71
+9636 E1           	 POP HL
+9637 71           	 DB 0xED,0x71
+9639 FD E1        	 POP IY
+963B ED 51        	 OUT (C),D
+963D D1           	 POP DE
+963E 71           	 DB 0xED,0x71
+9640 08           	 EX AF,AF'
+9641 3F           	 CCF
+9642 DA E8 A6     	 JP C,high_suffix_12
+9645 ED 51        	 OUT (C),D
+9647 08           	 EX AF,AF'
+9648 D9           	 EXX
+9649 1A           	 LD A,(DE)
+964A D9           	 EXX
+964B ED 51        	 OUT (C),D
+964D E6 0F        	 AND 15
+964F 07           	 RLCA
+9650 07           	 RLCA
+9651 71           	 DB 0xED,0x71
+9653 C3 56 96     	 JP $+3
+9656 00           	 NOP
+9657 00           	 NOP
+9658 00           	 NOP
+9659 71           	 DB 0xED,0x71
+965B E9           	 JP (HL)
+                 	second_45:
+965C 71           	 DB 0xED,0x71
+965E E1           	 POP HL
+965F 71           	 DB 0xED,0x71
+9661 FD E1        	 POP IY
+9663 ED 51        	 OUT (C),D
+9665 D1           	 POP DE
+9666 71           	 DB 0xED,0x71
+9668 08           	 EX AF,AF'
+9669 3F           	 CCF
+966A DA FF A6     	 JP C,high_suffix_13
+966D ED 51        	 OUT (C),D
+966F 08           	 EX AF,AF'
+9670 D9           	 EXX
+9671 1A           	 LD A,(DE)
+9672 D9           	 EXX
+9673 ED 51        	 OUT (C),D
+9675 E6 0F        	 AND 15
+9677 07           	 RLCA
+9678 07           	 RLCA
+9679 71           	 DB 0xED,0x71
+967B C3 7E 96     	 JP $+3
+967E 00           	 NOP
+967F 00           	 NOP
+9680 00           	 NOP
+9681 ED 51        	 OUT (C),D
+9683 E9           	 JP (HL)
+                 	second_50:
+9684 71           	 DB 0xED,0x71
+9686 E1           	 POP HL
+9687 71           	 DB 0xED,0x71
+9689 FD E1        	 POP IY
+968B ED 51        	 OUT (C),D
+968D D1           	 POP DE
+968E ED 51        	 OUT (C),D
+9690 08           	 EX AF,AF'
+9691 3F           	 CCF
+9692 DA 02 A6     	 JP C,high_suffix_2
+9695 71           	 DB 0xED,0x71
+9697 08           	 EX AF,AF'
+9698 D9           	 EXX
+9699 1A           	 LD A,(DE)
+969A D9           	 EXX
+969B 71           	 DB 0xED,0x71
+969D E6 0F        	 AND 15
+969F 07           	 RLCA
+96A0 07           	 RLCA
+96A1 ED 51        	 OUT (C),D
+96A3 C3 A6 96     	 JP $+3
+96A6 00           	 NOP
+96A7 00           	 NOP
+96A8 00           	 NOP
+96A9 71           	 DB 0xED,0x71
+96AB E9           	 JP (HL)
+                 	second_51:
+96AC 71           	 DB 0xED,0x71
+96AE E1           	 POP HL
+96AF 71           	 DB 0xED,0x71
+96B1 FD E1        	 POP IY
+96B3 ED 51        	 OUT (C),D
+96B5 D1           	 POP DE
+96B6 ED 51        	 OUT (C),D
+96B8 08           	 EX AF,AF'
+96B9 3F           	 CCF
+96BA DA 19 A6     	 JP C,high_suffix_3
+96BD 71           	 DB 0xED,0x71
+96BF 08           	 EX AF,AF'
+96C0 D9           	 EXX
+96C1 1A           	 LD A,(DE)
+96C2 D9           	 EXX
+96C3 71           	 DB 0xED,0x71
+96C5 E6 0F        	 AND 15
+96C7 07           	 RLCA
+96C8 07           	 RLCA
+96C9 ED 51        	 OUT (C),D
+96CB C3 CE 96     	 JP $+3
+96CE 00           	 NOP
+96CF 00           	 NOP
+96D0 00           	 NOP
+96D1 ED 51        	 OUT (C),D
+96D3 E9           	 JP (HL)
+                 	second_53:
+96D4 71           	 DB 0xED,0x71
+96D6 E1           	 POP HL
+96D7 71           	 DB 0xED,0x71
+96D9 FD E1        	 POP IY
+96DB ED 51        	 OUT (C),D
+96DD D1           	 POP DE
+96DE ED 51        	 OUT (C),D
+96E0 08           	 EX AF,AF'
+96E1 3F           	 CCF
+96E2 DA 47 A6     	 JP C,high_suffix_5
+96E5 71           	 DB 0xED,0x71
+96E7 08           	 EX AF,AF'
+96E8 D9           	 EXX
+96E9 1A           	 LD A,(DE)
+96EA D9           	 EXX
+96EB ED 51        	 OUT (C),D
+96ED E6 0F        	 AND 15
+96EF 07           	 RLCA
+96F0 07           	 RLCA
+96F1 71           	 DB 0xED,0x71
+96F3 C3 F6 96     	 JP $+3
+96F6 00           	 NOP
+96F7 00           	 NOP
+96F8 00           	 NOP
+96F9 ED 51        	 OUT (C),D
+96FB E9           	 JP (HL)
+                 	second_54:
+96FC 71           	 DB 0xED,0x71
+96FE E1           	 POP HL
+96FF 71           	 DB 0xED,0x71
+9701 FD E1        	 POP IY
+9703 ED 51        	 OUT (C),D
+9705 D1           	 POP DE
+9706 ED 51        	 OUT (C),D
+9708 08           	 EX AF,AF'
+9709 3F           	 CCF
+970A DA 5E A6     	 JP C,high_suffix_6
+970D 71           	 DB 0xED,0x71
+970F 08           	 EX AF,AF'
+9710 D9           	 EXX
+9711 1A           	 LD A,(DE)
+9712 D9           	 EXX
+9713 ED 51        	 OUT (C),D
+9715 E6 0F        	 AND 15
+9717 07           	 RLCA
+9718 07           	 RLCA
+9719 ED 51        	 OUT (C),D
+971B C3 1E 97     	 JP $+3
+971E 00           	 NOP
+971F 00           	 NOP
+9720 00           	 NOP
+9721 71           	 DB 0xED,0x71
+9723 E9           	 JP (HL)
+                 	second_57:
+9724 71           	 DB 0xED,0x71
+9726 E1           	 POP HL
+9727 71           	 DB 0xED,0x71
+9729 FD E1        	 POP IY
+972B ED 51        	 OUT (C),D
+972D D1           	 POP DE
+972E ED 51        	 OUT (C),D
+9730 08           	 EX AF,AF'
+9731 3F           	 CCF
+9732 DA A3 A6     	 JP C,high_suffix_9
+9735 ED 51        	 OUT (C),D
+9737 08           	 EX AF,AF'
+9738 D9           	 EXX
+9739 1A           	 LD A,(DE)
+973A D9           	 EXX
+973B 71           	 DB 0xED,0x71
+973D E6 0F        	 AND 15
+973F 07           	 RLCA
+9740 07           	 RLCA
+9741 71           	 DB 0xED,0x71
+9743 C3 46 97     	 JP $+3
+9746 00           	 NOP
+9747 00           	 NOP
+9748 00           	 NOP
+9749 ED 51        	 OUT (C),D
+974B E9           	 JP (HL)
+                 	second_58:
+974C 71           	 DB 0xED,0x71
+974E E1           	 POP HL
+974F 71           	 DB 0xED,0x71
+9751 FD E1        	 POP IY
+9753 ED 51        	 OUT (C),D
+9755 D1           	 POP DE
+9756 ED 51        	 OUT (C),D
+9758 08           	 EX AF,AF'
+9759 3F           	 CCF
+975A DA BA A6     	 JP C,high_suffix_10
+975D ED 51        	 OUT (C),D
+975F 08           	 EX AF,AF'
+9760 D9           	 EXX
+9761 1A           	 LD A,(DE)
+9762 D9           	 EXX
+9763 71           	 DB 0xED,0x71
+9765 E6 0F        	 AND 15
+9767 07           	 RLCA
+9768 07           	 RLCA
+9769 ED 51        	 OUT (C),D
+976B C3 6E 97     	 JP $+3
+976E 00           	 NOP
+976F 00           	 NOP
+9770 00           	 NOP
+9771 71           	 DB 0xED,0x71
+9773 E9           	 JP (HL)
+                 	second_59:
+9774 71           	 DB 0xED,0x71
+9776 E1           	 POP HL
+9777 71           	 DB 0xED,0x71
+9779 FD E1        	 POP IY
+977B ED 51        	 OUT (C),D
+977D D1           	 POP DE
+977E ED 51        	 OUT (C),D
+9780 08           	 EX AF,AF'
+9781 3F           	 CCF
+9782 DA D1 A6     	 JP C,high_suffix_11
+9785 ED 51        	 OUT (C),D
+9787 08           	 EX AF,AF'
+9788 D9           	 EXX
+9789 1A           	 LD A,(DE)
+978A D9           	 EXX
+978B 71           	 DB 0xED,0x71
+978D E6 0F        	 AND 15
+978F 07           	 RLCA
+9790 07           	 RLCA
+9791 ED 51        	 OUT (C),D
+9793 C3 96 97     	 JP $+3
+9796 00           	 NOP
+9797 00           	 NOP
+9798 00           	 NOP
+9799 ED 51        	 OUT (C),D
+979B E9           	 JP (HL)
+                 	second_61:
+979C 71           	 DB 0xED,0x71
+979E E1           	 POP HL
+979F 71           	 DB 0xED,0x71
+97A1 FD E1        	 POP IY
+97A3 ED 51        	 OUT (C),D
+97A5 D1           	 POP DE
+97A6 ED 51        	 OUT (C),D
+97A8 08           	 EX AF,AF'
+97A9 3F           	 CCF
+97AA DA FF A6     	 JP C,high_suffix_13
+97AD ED 51        	 OUT (C),D
+97AF 08           	 EX AF,AF'
+97B0 D9           	 EXX
+97B1 1A           	 LD A,(DE)
+97B2 D9           	 EXX
+97B3 ED 51        	 OUT (C),D
+97B5 E6 0F        	 AND 15
+97B7 07           	 RLCA
+97B8 07           	 RLCA
+97B9 71           	 DB 0xED,0x71
+97BB C3 BE 97     	 JP $+3
+97BE 00           	 NOP
+97BF 00           	 NOP
+97C0 00           	 NOP
+97C1 ED 51        	 OUT (C),D
+97C3 E9           	 JP (HL)
+                 	second_64:
+97C4 71           	 DB 0xED,0x71
+97C6 E1           	 POP HL
+97C7 ED 51        	 OUT (C),D
+97C9 FD E1        	 POP IY
+97CB 71           	 DB 0xED,0x71
+97CD D1           	 POP DE
+97CE 71           	 DB 0xED,0x71
+97D0 08           	 EX AF,AF'
+97D1 3F           	 CCF
+97D2 DA D4 A5     	 JP C,high_suffix_0
+97D5 71           	 DB 0xED,0x71
+97D7 08           	 EX AF,AF'
+97D8 D9           	 EXX
+97D9 1A           	 LD A,(DE)
+97DA D9           	 EXX
+97DB 71           	 DB 0xED,0x71
+97DD E6 0F        	 AND 15
+97DF 07           	 RLCA
+97E0 07           	 RLCA
+97E1 71           	 DB 0xED,0x71
+97E3 C3 E6 97     	 JP $+3
+97E6 00           	 NOP
+97E7 00           	 NOP
+97E8 00           	 NOP
+97E9 71           	 DB 0xED,0x71
+97EB E9           	 JP (HL)
+                 	second_65:
+97EC 71           	 DB 0xED,0x71
+97EE E1           	 POP HL
+97EF ED 51        	 OUT (C),D
+97F1 FD E1        	 POP IY
+97F3 71           	 DB 0xED,0x71
+97F5 D1           	 POP DE
+97F6 71           	 DB 0xED,0x71
+97F8 08           	 EX AF,AF'
+97F9 3F           	 CCF
+97FA DA EB A5     	 JP C,high_suffix_1
+97FD 71           	 DB 0xED,0x71
+97FF 08           	 EX AF,AF'
+9800 D9           	 EXX
+9801 1A           	 LD A,(DE)
+9802 D9           	 EXX
+9803 71           	 DB 0xED,0x71
+9805 E6 0F        	 AND 15
+9807 07           	 RLCA
+9808 07           	 RLCA
+9809 71           	 DB 0xED,0x71
+980B C3 0E 98     	 JP $+3
+980E 00           	 NOP
+980F 00           	 NOP
+9810 00           	 NOP
+9811 ED 51        	 OUT (C),D
+9813 E9           	 JP (HL)
+                 	second_66:
+9814 71           	 DB 0xED,0x71
+9816 E1           	 POP HL
+9817 ED 51        	 OUT (C),D
+9819 FD E1        	 POP IY
+981B 71           	 DB 0xED,0x71
+981D D1           	 POP DE
+981E 71           	 DB 0xED,0x71
+9820 08           	 EX AF,AF'
+9821 3F           	 CCF
+9822 DA 02 A6     	 JP C,high_suffix_2
+9825 71           	 DB 0xED,0x71
+9827 08           	 EX AF,AF'
+9828 D9           	 EXX
+9829 1A           	 LD A,(DE)
+982A D9           	 EXX
+982B 71           	 DB 0xED,0x71
+982D E6 0F        	 AND 15
+982F 07           	 RLCA
+9830 07           	 RLCA
+9831 ED 51        	 OUT (C),D
+9833 C3 36 98     	 JP $+3
+9836 00           	 NOP
+9837 00           	 NOP
+9838 00           	 NOP
+9839 71           	 DB 0xED,0x71
+983B E9           	 JP (HL)
+                 	second_68:
+983C 71           	 DB 0xED,0x71
+983E E1           	 POP HL
+983F ED 51        	 OUT (C),D
+9841 FD E1        	 POP IY
+9843 71           	 DB 0xED,0x71
+9845 D1           	 POP DE
+9846 71           	 DB 0xED,0x71
+9848 08           	 EX AF,AF'
+9849 3F           	 CCF
+984A DA 30 A6     	 JP C,high_suffix_4
+984D 71           	 DB 0xED,0x71
+984F 08           	 EX AF,AF'
+9850 D9           	 EXX
+9851 1A           	 LD A,(DE)
+9852 D9           	 EXX
+9853 ED 51        	 OUT (C),D
+9855 E6 0F        	 AND 15
+9857 07           	 RLCA
+9858 07           	 RLCA
+9859 71           	 DB 0xED,0x71
+985B C3 5E 98     	 JP $+3
+985E 00           	 NOP
+985F 00           	 NOP
+9860 00           	 NOP
+9861 71           	 DB 0xED,0x71
+9863 E9           	 JP (HL)
+                 	second_69:
+9864 71           	 DB 0xED,0x71
+9866 E1           	 POP HL
+9867 ED 51        	 OUT (C),D
+9869 FD E1        	 POP IY
+986B 71           	 DB 0xED,0x71
+986D D1           	 POP DE
+986E 71           	 DB 0xED,0x71
+9870 08           	 EX AF,AF'
+9871 3F           	 CCF
+9872 DA 47 A6     	 JP C,high_suffix_5
+9875 71           	 DB 0xED,0x71
+9877 08           	 EX AF,AF'
+9878 D9           	 EXX
+9879 1A           	 LD A,(DE)
+987A D9           	 EXX
+987B ED 51        	 OUT (C),D
+987D E6 0F        	 AND 15
+987F 07           	 RLCA
+9880 07           	 RLCA
+9881 71           	 DB 0xED,0x71
+9883 C3 86 98     	 JP $+3
+9886 00           	 NOP
+9887 00           	 NOP
+9888 00           	 NOP
+9889 ED 51        	 OUT (C),D
+988B E9           	 JP (HL)
+                 	second_72:
+988C 71           	 DB 0xED,0x71
+988E E1           	 POP HL
+988F ED 51        	 OUT (C),D
+9891 FD E1        	 POP IY
+9893 71           	 DB 0xED,0x71
+9895 D1           	 POP DE
+9896 71           	 DB 0xED,0x71
+9898 08           	 EX AF,AF'
+9899 3F           	 CCF
+989A DA 8C A6     	 JP C,high_suffix_8
+989D ED 51        	 OUT (C),D
+989F 08           	 EX AF,AF'
+98A0 D9           	 EXX
+98A1 1A           	 LD A,(DE)
+98A2 D9           	 EXX
+98A3 71           	 DB 0xED,0x71
+98A5 E6 0F        	 AND 15
+98A7 07           	 RLCA
+98A8 07           	 RLCA
+98A9 71           	 DB 0xED,0x71
+98AB C3 AE 98     	 JP $+3
+98AE 00           	 NOP
+98AF 00           	 NOP
+98B0 00           	 NOP
+98B1 71           	 DB 0xED,0x71
+98B3 E9           	 JP (HL)
+                 	second_73:
+98B4 71           	 DB 0xED,0x71
+98B6 E1           	 POP HL
+98B7 ED 51        	 OUT (C),D
+98B9 FD E1        	 POP IY
+98BB 71           	 DB 0xED,0x71
+98BD D1           	 POP DE
+98BE 71           	 DB 0xED,0x71
+98C0 08           	 EX AF,AF'
+98C1 3F           	 CCF
+98C2 DA A3 A6     	 JP C,high_suffix_9
+98C5 ED 51        	 OUT (C),D
+98C7 08           	 EX AF,AF'
+98C8 D9           	 EXX
+98C9 1A           	 LD A,(DE)
+98CA D9           	 EXX
+98CB 71           	 DB 0xED,0x71
+98CD E6 0F        	 AND 15
+98CF 07           	 RLCA
+98D0 07           	 RLCA
+98D1 71           	 DB 0xED,0x71
+98D3 C3 D6 98     	 JP $+3
+98D6 00           	 NOP
+98D7 00           	 NOP
+98D8 00           	 NOP
+98D9 ED 51        	 OUT (C),D
+98DB E9           	 JP (HL)
+                 	second_74:
+98DC 71           	 DB 0xED,0x71
+98DE E1           	 POP HL
+98DF ED 51        	 OUT (C),D
+98E1 FD E1        	 POP IY
+98E3 71           	 DB 0xED,0x71
+98E5 D1           	 POP DE
+98E6 71           	 DB 0xED,0x71
+98E8 08           	 EX AF,AF'
+98E9 3F           	 CCF
+98EA DA BA A6     	 JP C,high_suffix_10
+98ED ED 51        	 OUT (C),D
+98EF 08           	 EX AF,AF'
+98F0 D9           	 EXX
+98F1 1A           	 LD A,(DE)
+98F2 D9           	 EXX
+98F3 71           	 DB 0xED,0x71
+98F5 E6 0F        	 AND 15
+98F7 07           	 RLCA
+98F8 07           	 RLCA
+98F9 ED 51        	 OUT (C),D
+98FB C3 FE 98     	 JP $+3
+98FE 00           	 NOP
+98FF 00           	 NOP
+9900 00           	 NOP
+9901 71           	 DB 0xED,0x71
+9903 E9           	 JP (HL)
+                 	second_77:
+9904 71           	 DB 0xED,0x71
+9906 E1           	 POP HL
+9907 ED 51        	 OUT (C),D
+9909 FD E1        	 POP IY
+990B 71           	 DB 0xED,0x71
+990D D1           	 POP DE
+990E 71           	 DB 0xED,0x71
+9910 08           	 EX AF,AF'
+9911 3F           	 CCF
+9912 DA FF A6     	 JP C,high_suffix_13
+9915 ED 51        	 OUT (C),D
+9917 08           	 EX AF,AF'
+9918 D9           	 EXX
+9919 1A           	 LD A,(DE)
+991A D9           	 EXX
+991B ED 51        	 OUT (C),D
+991D E6 0F        	 AND 15
+991F 07           	 RLCA
+9920 07           	 RLCA
+9921 71           	 DB 0xED,0x71
+9923 C3 26 99     	 JP $+3
+9926 00           	 NOP
+9927 00           	 NOP
+9928 00           	 NOP
+9929 ED 51        	 OUT (C),D
+992B E9           	 JP (HL)
+                 	second_81:
+992C 71           	 DB 0xED,0x71
+992E E1           	 POP HL
+992F ED 51        	 OUT (C),D
+9931 FD E1        	 POP IY
+9933 71           	 DB 0xED,0x71
+9935 D1           	 POP DE
+9936 ED 51        	 OUT (C),D
+9938 08           	 EX AF,AF'
+9939 3F           	 CCF
+993A DA EB A5     	 JP C,high_suffix_1
+993D 71           	 DB 0xED,0x71
+993F 08           	 EX AF,AF'
+9940 D9           	 EXX
+9941 1A           	 LD A,(DE)
+9942 D9           	 EXX
+9943 71           	 DB 0xED,0x71
+9945 E6 0F        	 AND 15
+9947 07           	 RLCA
+9948 07           	 RLCA
+9949 71           	 DB 0xED,0x71
+994B C3 4E 99     	 JP $+3
+994E 00           	 NOP
+994F 00           	 NOP
+9950 00           	 NOP
+9951 ED 51        	 OUT (C),D
+9953 E9           	 JP (HL)
+                 	second_85:
+9954 71           	 DB 0xED,0x71
+9956 E1           	 POP HL
+9957 ED 51        	 OUT (C),D
+9959 FD E1        	 POP IY
+995B 71           	 DB 0xED,0x71
+995D D1           	 POP DE
+995E ED 51        	 OUT (C),D
+9960 08           	 EX AF,AF'
+9961 3F           	 CCF
+9962 DA 47 A6     	 JP C,high_suffix_5
+9965 71           	 DB 0xED,0x71
+9967 08           	 EX AF,AF'
+9968 D9           	 EXX
+9969 1A           	 LD A,(DE)
+996A D9           	 EXX
+996B ED 51        	 OUT (C),D
+996D E6 0F        	 AND 15
+996F 07           	 RLCA
+9970 07           	 RLCA
+9971 71           	 DB 0xED,0x71
+9973 C3 76 99     	 JP $+3
+9976 00           	 NOP
+9977 00           	 NOP
+9978 00           	 NOP
+9979 ED 51        	 OUT (C),D
+997B E9           	 JP (HL)
+                 	second_86:
+997C 71           	 DB 0xED,0x71
+997E E1           	 POP HL
+997F ED 51        	 OUT (C),D
+9981 FD E1        	 POP IY
+9983 71           	 DB 0xED,0x71
+9985 D1           	 POP DE
+9986 ED 51        	 OUT (C),D
+9988 08           	 EX AF,AF'
+9989 3F           	 CCF
+998A DA 5E A6     	 JP C,high_suffix_6
+998D 71           	 DB 0xED,0x71
+998F 08           	 EX AF,AF'
+9990 D9           	 EXX
+9991 1A           	 LD A,(DE)
+9992 D9           	 EXX
+9993 ED 51        	 OUT (C),D
+9995 E6 0F        	 AND 15
+9997 07           	 RLCA
+9998 07           	 RLCA
+9999 ED 51        	 OUT (C),D
+999B C3 9E 99     	 JP $+3
+999E 00           	 NOP
+999F 00           	 NOP
+99A0 00           	 NOP
+99A1 71           	 DB 0xED,0x71
+99A3 E9           	 JP (HL)
+                 	second_87:
+99A4 71           	 DB 0xED,0x71
+99A6 E1           	 POP HL
+99A7 ED 51        	 OUT (C),D
+99A9 FD E1        	 POP IY
+99AB 71           	 DB 0xED,0x71
+99AD D1           	 POP DE
+99AE ED 51        	 OUT (C),D
+99B0 08           	 EX AF,AF'
+99B1 3F           	 CCF
+99B2 DA 75 A6     	 JP C,high_suffix_7
+99B5 71           	 DB 0xED,0x71
+99B7 08           	 EX AF,AF'
+99B8 D9           	 EXX
+99B9 1A           	 LD A,(DE)
+99BA D9           	 EXX
+99BB ED 51        	 OUT (C),D
+99BD E6 0F        	 AND 15
+99BF 07           	 RLCA
+99C0 07           	 RLCA
+99C1 ED 51        	 OUT (C),D
+99C3 C3 C6 99     	 JP $+3
+99C6 00           	 NOP
+99C7 00           	 NOP
+99C8 00           	 NOP
+99C9 ED 51        	 OUT (C),D
+99CB E9           	 JP (HL)
+                 	second_89:
+99CC 71           	 DB 0xED,0x71
+99CE E1           	 POP HL
+99CF ED 51        	 OUT (C),D
+99D1 FD E1        	 POP IY
+99D3 71           	 DB 0xED,0x71
+99D5 D1           	 POP DE
+99D6 ED 51        	 OUT (C),D
+99D8 08           	 EX AF,AF'
+99D9 3F           	 CCF
+99DA DA A3 A6     	 JP C,high_suffix_9
+99DD ED 51        	 OUT (C),D
+99DF 08           	 EX AF,AF'
+99E0 D9           	 EXX
+99E1 1A           	 LD A,(DE)
+99E2 D9           	 EXX
+99E3 71           	 DB 0xED,0x71
+99E5 E6 0F        	 AND 15
+99E7 07           	 RLCA
+99E8 07           	 RLCA
+99E9 71           	 DB 0xED,0x71
+99EB C3 EE 99     	 JP $+3
+99EE 00           	 NOP
+99EF 00           	 NOP
+99F0 00           	 NOP
+99F1 ED 51        	 OUT (C),D
+99F3 E9           	 JP (HL)
+                 	second_90:
+99F4 71           	 DB 0xED,0x71
+99F6 E1           	 POP HL
+99F7 ED 51        	 OUT (C),D
+99F9 FD E1        	 POP IY
+99FB 71           	 DB 0xED,0x71
+99FD D1           	 POP DE
+99FE ED 51        	 OUT (C),D
+9A00 08           	 EX AF,AF'
+9A01 3F           	 CCF
+9A02 DA BA A6     	 JP C,high_suffix_10
+9A05 ED 51        	 OUT (C),D
+9A07 08           	 EX AF,AF'
+9A08 D9           	 EXX
+9A09 1A           	 LD A,(DE)
+9A0A D9           	 EXX
+9A0B 71           	 DB 0xED,0x71
+9A0D E6 0F        	 AND 15
+9A0F 07           	 RLCA
+9A10 07           	 RLCA
+9A11 ED 51        	 OUT (C),D
+9A13 C3 16 9A     	 JP $+3
+9A16 00           	 NOP
+9A17 00           	 NOP
+9A18 00           	 NOP
+9A19 71           	 DB 0xED,0x71
+9A1B E9           	 JP (HL)
+                 	second_91:
+9A1C 71           	 DB 0xED,0x71
+9A1E E1           	 POP HL
+9A1F ED 51        	 OUT (C),D
+9A21 FD E1        	 POP IY
+9A23 71           	 DB 0xED,0x71
+9A25 D1           	 POP DE
+9A26 ED 51        	 OUT (C),D
+9A28 08           	 EX AF,AF'
+9A29 3F           	 CCF
+9A2A DA D1 A6     	 JP C,high_suffix_11
+9A2D ED 51        	 OUT (C),D
+9A2F 08           	 EX AF,AF'
+9A30 D9           	 EXX
+9A31 1A           	 LD A,(DE)
+9A32 D9           	 EXX
+9A33 71           	 DB 0xED,0x71
+9A35 E6 0F        	 AND 15
+9A37 07           	 RLCA
+9A38 07           	 RLCA
+9A39 ED 51        	 OUT (C),D
+9A3B C3 3E 9A     	 JP $+3
+9A3E 00           	 NOP
+9A3F 00           	 NOP
+9A40 00           	 NOP
+9A41 ED 51        	 OUT (C),D
+9A43 E9           	 JP (HL)
+                 	second_93:
+9A44 71           	 DB 0xED,0x71
+9A46 E1           	 POP HL
+9A47 ED 51        	 OUT (C),D
+9A49 FD E1        	 POP IY
+9A4B 71           	 DB 0xED,0x71
+9A4D D1           	 POP DE
+9A4E ED 51        	 OUT (C),D
+9A50 08           	 EX AF,AF'
+9A51 3F           	 CCF
+9A52 DA FF A6     	 JP C,high_suffix_13
+9A55 ED 51        	 OUT (C),D
+9A57 08           	 EX AF,AF'
+9A58 D9           	 EXX
+9A59 1A           	 LD A,(DE)
+9A5A D9           	 EXX
+9A5B ED 51        	 OUT (C),D
+9A5D E6 0F        	 AND 15
+9A5F 07           	 RLCA
+9A60 07           	 RLCA
+9A61 71           	 DB 0xED,0x71
+9A63 C3 66 9A     	 JP $+3
+9A66 00           	 NOP
+9A67 00           	 NOP
+9A68 00           	 NOP
+9A69 ED 51        	 OUT (C),D
+9A6B E9           	 JP (HL)
+                 	second_94:
+9A6C 71           	 DB 0xED,0x71
+9A6E E1           	 POP HL
+9A6F ED 51        	 OUT (C),D
+9A71 FD E1        	 POP IY
+9A73 71           	 DB 0xED,0x71
+9A75 D1           	 POP DE
+9A76 ED 51        	 OUT (C),D
+9A78 08           	 EX AF,AF'
+9A79 3F           	 CCF
+9A7A DA 16 A7     	 JP C,high_suffix_14
+9A7D ED 51        	 OUT (C),D
+9A7F 08           	 EX AF,AF'
+9A80 D9           	 EXX
+9A81 1A           	 LD A,(DE)
+9A82 D9           	 EXX
+9A83 ED 51        	 OUT (C),D
+9A85 E6 0F        	 AND 15
+9A87 07           	 RLCA
+9A88 07           	 RLCA
+9A89 ED 51        	 OUT (C),D
+9A8B C3 8E 9A     	 JP $+3
+9A8E 00           	 NOP
+9A8F 00           	 NOP
+9A90 00           	 NOP
+9A91 71           	 DB 0xED,0x71
+9A93 E9           	 JP (HL)
+                 	second_107:
+9A94 71           	 DB 0xED,0x71
+9A96 E1           	 POP HL
+9A97 ED 51        	 OUT (C),D
+9A99 FD E1        	 POP IY
+9A9B ED 51        	 OUT (C),D
+9A9D D1           	 POP DE
+9A9E 71           	 DB 0xED,0x71
+9AA0 08           	 EX AF,AF'
+9AA1 3F           	 CCF
+9AA2 DA D1 A6     	 JP C,high_suffix_11
+9AA5 ED 51        	 OUT (C),D
+9AA7 08           	 EX AF,AF'
+9AA8 D9           	 EXX
+9AA9 1A           	 LD A,(DE)
+9AAA D9           	 EXX
+9AAB 71           	 DB 0xED,0x71
+9AAD E6 0F        	 AND 15
+9AAF 07           	 RLCA
+9AB0 07           	 RLCA
+9AB1 ED 51        	 OUT (C),D
+9AB3 C3 B6 9A     	 JP $+3
+9AB6 00           	 NOP
+9AB7 00           	 NOP
+9AB8 00           	 NOP
+9AB9 ED 51        	 OUT (C),D
+9ABB E9           	 JP (HL)
+                 	second_109:
+9ABC 71           	 DB 0xED,0x71
+9ABE E1           	 POP HL
+9ABF ED 51        	 OUT (C),D
+9AC1 FD E1        	 POP IY
+9AC3 ED 51        	 OUT (C),D
+9AC5 D1           	 POP DE
+9AC6 71           	 DB 0xED,0x71
+9AC8 08           	 EX AF,AF'
+9AC9 3F           	 CCF
+9ACA DA FF A6     	 JP C,high_suffix_13
+9ACD ED 51        	 OUT (C),D
+9ACF 08           	 EX AF,AF'
+9AD0 D9           	 EXX
+9AD1 1A           	 LD A,(DE)
+9AD2 D9           	 EXX
+9AD3 ED 51        	 OUT (C),D
+9AD5 E6 0F        	 AND 15
+9AD7 07           	 RLCA
+9AD8 07           	 RLCA
+9AD9 71           	 DB 0xED,0x71
+9ADB C3 DE 9A     	 JP $+3
+9ADE 00           	 NOP
+9ADF 00           	 NOP
+9AE0 00           	 NOP
+9AE1 ED 51        	 OUT (C),D
+9AE3 E9           	 JP (HL)
+                 	second_110:
+9AE4 71           	 DB 0xED,0x71
+9AE6 E1           	 POP HL
+9AE7 ED 51        	 OUT (C),D
+9AE9 FD E1        	 POP IY
+9AEB ED 51        	 OUT (C),D
+9AED D1           	 POP DE
+9AEE 71           	 DB 0xED,0x71
+9AF0 08           	 EX AF,AF'
+9AF1 3F           	 CCF
+9AF2 DA 16 A7     	 JP C,high_suffix_14
+9AF5 ED 51        	 OUT (C),D
+9AF7 08           	 EX AF,AF'
+9AF8 D9           	 EXX
+9AF9 1A           	 LD A,(DE)
+9AFA D9           	 EXX
+9AFB ED 51        	 OUT (C),D
+9AFD E6 0F        	 AND 15
+9AFF 07           	 RLCA
+9B00 07           	 RLCA
+9B01 ED 51        	 OUT (C),D
+9B03 C3 06 9B     	 JP $+3
+9B06 00           	 NOP
+9B07 00           	 NOP
+9B08 00           	 NOP
+9B09 71           	 DB 0xED,0x71
+9B0B E9           	 JP (HL)
+                 	second_111:
+9B0C 71           	 DB 0xED,0x71
+9B0E E1           	 POP HL
+9B0F ED 51        	 OUT (C),D
+9B11 FD E1        	 POP IY
+9B13 ED 51        	 OUT (C),D
+9B15 D1           	 POP DE
+9B16 71           	 DB 0xED,0x71
+9B18 08           	 EX AF,AF'
+9B19 3F           	 CCF
+9B1A DA 2D A7     	 JP C,high_suffix_15
+9B1D ED 51        	 OUT (C),D
+9B1F 08           	 EX AF,AF'
+9B20 D9           	 EXX
+9B21 1A           	 LD A,(DE)
+9B22 D9           	 EXX
+9B23 ED 51        	 OUT (C),D
+9B25 E6 0F        	 AND 15
+9B27 07           	 RLCA
+9B28 07           	 RLCA
+9B29 ED 51        	 OUT (C),D
+9B2B C3 2E 9B     	 JP $+3
+9B2E 00           	 NOP
+9B2F 00           	 NOP
+9B30 00           	 NOP
+9B31 ED 51        	 OUT (C),D
+9B33 E9           	 JP (HL)
+                 	second_118:
+9B34 71           	 DB 0xED,0x71
+9B36 E1           	 POP HL
+9B37 ED 51        	 OUT (C),D
+9B39 FD E1        	 POP IY
+9B3B ED 51        	 OUT (C),D
+9B3D D1           	 POP DE
+9B3E ED 51        	 OUT (C),D
+9B40 08           	 EX AF,AF'
+9B41 3F           	 CCF
+9B42 DA 5E A6     	 JP C,high_suffix_6
+9B45 71           	 DB 0xED,0x71
+9B47 08           	 EX AF,AF'
+9B48 D9           	 EXX
+9B49 1A           	 LD A,(DE)
+9B4A D9           	 EXX
+9B4B ED 51        	 OUT (C),D
+9B4D E6 0F        	 AND 15
+9B4F 07           	 RLCA
+9B50 07           	 RLCA
+9B51 ED 51        	 OUT (C),D
+9B53 C3 56 9B     	 JP $+3
+9B56 00           	 NOP
+9B57 00           	 NOP
+9B58 00           	 NOP
+9B59 71           	 DB 0xED,0x71
+9B5B E9           	 JP (HL)
+                 	second_119:
+9B5C 71           	 DB 0xED,0x71
+9B5E E1           	 POP HL
+9B5F ED 51        	 OUT (C),D
+9B61 FD E1        	 POP IY
+9B63 ED 51        	 OUT (C),D
+9B65 D1           	 POP DE
+9B66 ED 51        	 OUT (C),D
+9B68 08           	 EX AF,AF'
+9B69 3F           	 CCF
+9B6A DA 75 A6     	 JP C,high_suffix_7
+9B6D 71           	 DB 0xED,0x71
+9B6F 08           	 EX AF,AF'
+9B70 D9           	 EXX
+9B71 1A           	 LD A,(DE)
+9B72 D9           	 EXX
+9B73 ED 51        	 OUT (C),D
+9B75 E6 0F        	 AND 15
+9B77 07           	 RLCA
+9B78 07           	 RLCA
+9B79 ED 51        	 OUT (C),D
+9B7B C3 7E 9B     	 JP $+3
+9B7E 00           	 NOP
+9B7F 00           	 NOP
+9B80 00           	 NOP
+9B81 ED 51        	 OUT (C),D
+9B83 E9           	 JP (HL)
+                 	second_123:
+9B84 71           	 DB 0xED,0x71
+9B86 E1           	 POP HL
+9B87 ED 51        	 OUT (C),D
+9B89 FD E1        	 POP IY
+9B8B ED 51        	 OUT (C),D
+9B8D D1           	 POP DE
+9B8E ED 51        	 OUT (C),D
+9B90 08           	 EX AF,AF'
+9B91 3F           	 CCF
+9B92 DA D1 A6     	 JP C,high_suffix_11
+9B95 ED 51        	 OUT (C),D
+9B97 08           	 EX AF,AF'
+9B98 D9           	 EXX
+9B99 1A           	 LD A,(DE)
+9B9A D9           	 EXX
+9B9B 71           	 DB 0xED,0x71
+9B9D E6 0F        	 AND 15
+9B9F 07           	 RLCA
+9BA0 07           	 RLCA
+9BA1 ED 51        	 OUT (C),D
+9BA3 C3 A6 9B     	 JP $+3
+9BA6 00           	 NOP
+9BA7 00           	 NOP
+9BA8 00           	 NOP
+9BA9 ED 51        	 OUT (C),D
+9BAB E9           	 JP (HL)
+                 	second_125:
+9BAC 71           	 DB 0xED,0x71
+9BAE E1           	 POP HL
+9BAF ED 51        	 OUT (C),D
+9BB1 FD E1        	 POP IY
+9BB3 ED 51        	 OUT (C),D
+9BB5 D1           	 POP DE
+9BB6 ED 51        	 OUT (C),D
+9BB8 08           	 EX AF,AF'
+9BB9 3F           	 CCF
+9BBA DA FF A6     	 JP C,high_suffix_13
+9BBD ED 51        	 OUT (C),D
+9BBF 08           	 EX AF,AF'
+9BC0 D9           	 EXX
+9BC1 1A           	 LD A,(DE)
+9BC2 D9           	 EXX
+9BC3 ED 51        	 OUT (C),D
+9BC5 E6 0F        	 AND 15
+9BC7 07           	 RLCA
+9BC8 07           	 RLCA
+9BC9 71           	 DB 0xED,0x71
+9BCB C3 CE 9B     	 JP $+3
+9BCE 00           	 NOP
+9BCF 00           	 NOP
+9BD0 00           	 NOP
+9BD1 ED 51        	 OUT (C),D
+9BD3 E9           	 JP (HL)
+                 	second_126:
+9BD4 71           	 DB 0xED,0x71
+9BD6 E1           	 POP HL
+9BD7 ED 51        	 OUT (C),D
+9BD9 FD E1        	 POP IY
+9BDB ED 51        	 OUT (C),D
+9BDD D1           	 POP DE
+9BDE ED 51        	 OUT (C),D
+9BE0 08           	 EX AF,AF'
+9BE1 3F           	 CCF
+9BE2 DA 16 A7     	 JP C,high_suffix_14
+9BE5 ED 51        	 OUT (C),D
+9BE7 08           	 EX AF,AF'
+9BE8 D9           	 EXX
+9BE9 1A           	 LD A,(DE)
+9BEA D9           	 EXX
+9BEB ED 51        	 OUT (C),D
+9BED E6 0F        	 AND 15
+9BEF 07           	 RLCA
+9BF0 07           	 RLCA
+9BF1 ED 51        	 OUT (C),D
+9BF3 C3 F6 9B     	 JP $+3
+9BF6 00           	 NOP
+9BF7 00           	 NOP
+9BF8 00           	 NOP
+9BF9 71           	 DB 0xED,0x71
+9BFB E9           	 JP (HL)
+                 	second_127:
+9BFC 71           	 DB 0xED,0x71
+9BFE E1           	 POP HL
+9BFF ED 51        	 OUT (C),D
+9C01 FD E1        	 POP IY
+9C03 ED 51        	 OUT (C),D
+9C05 D1           	 POP DE
+9C06 ED 51        	 OUT (C),D
+9C08 08           	 EX AF,AF'
+9C09 3F           	 CCF
+9C0A DA 2D A7     	 JP C,high_suffix_15
+9C0D ED 51        	 OUT (C),D
+9C0F 08           	 EX AF,AF'
+9C10 D9           	 EXX
+9C11 1A           	 LD A,(DE)
+9C12 D9           	 EXX
+9C13 ED 51        	 OUT (C),D
+9C15 E6 0F        	 AND 15
+9C17 07           	 RLCA
+9C18 07           	 RLCA
+9C19 ED 51        	 OUT (C),D
+9C1B C3 1E 9C     	 JP $+3
+9C1E 00           	 NOP
+9C1F 00           	 NOP
+9C20 00           	 NOP
+9C21 ED 51        	 OUT (C),D
+9C23 E9           	 JP (HL)
+                 	second_128:
+9C24 ED 51        	 OUT (C),D
+9C26 E1           	 POP HL
+9C27 71           	 DB 0xED,0x71
+9C29 FD E1        	 POP IY
+9C2B 71           	 DB 0xED,0x71
+9C2D D1           	 POP DE
+9C2E 71           	 DB 0xED,0x71
+9C30 08           	 EX AF,AF'
+9C31 3F           	 CCF
+9C32 DA D4 A5     	 JP C,high_suffix_0
+9C35 71           	 DB 0xED,0x71
+9C37 08           	 EX AF,AF'
+9C38 D9           	 EXX
+9C39 1A           	 LD A,(DE)
+9C3A D9           	 EXX
+9C3B 71           	 DB 0xED,0x71
+9C3D E6 0F        	 AND 15
+9C3F 07           	 RLCA
+9C40 07           	 RLCA
+9C41 71           	 DB 0xED,0x71
+9C43 C3 46 9C     	 JP $+3
+9C46 00           	 NOP
+9C47 00           	 NOP
+9C48 00           	 NOP
+9C49 71           	 DB 0xED,0x71
+9C4B E9           	 JP (HL)
+                 	second_129:
+9C4C ED 51        	 OUT (C),D
+9C4E E1           	 POP HL
+9C4F 71           	 DB 0xED,0x71
+9C51 FD E1        	 POP IY
+9C53 71           	 DB 0xED,0x71
+9C55 D1           	 POP DE
+9C56 71           	 DB 0xED,0x71
+9C58 08           	 EX AF,AF'
+9C59 3F           	 CCF
+9C5A DA EB A5     	 JP C,high_suffix_1
+9C5D 71           	 DB 0xED,0x71
+9C5F 08           	 EX AF,AF'
+9C60 D9           	 EXX
+9C61 1A           	 LD A,(DE)
+9C62 D9           	 EXX
+9C63 71           	 DB 0xED,0x71
+9C65 E6 0F        	 AND 15
+9C67 07           	 RLCA
+9C68 07           	 RLCA
+9C69 71           	 DB 0xED,0x71
+9C6B C3 6E 9C     	 JP $+3
+9C6E 00           	 NOP
+9C6F 00           	 NOP
+9C70 00           	 NOP
+9C71 ED 51        	 OUT (C),D
+9C73 E9           	 JP (HL)
+                 	second_130:
+9C74 ED 51        	 OUT (C),D
+9C76 E1           	 POP HL
+9C77 71           	 DB 0xED,0x71
+9C79 FD E1        	 POP IY
+9C7B 71           	 DB 0xED,0x71
+9C7D D1           	 POP DE
+9C7E 71           	 DB 0xED,0x71
+9C80 08           	 EX AF,AF'
+9C81 3F           	 CCF
+9C82 DA 02 A6     	 JP C,high_suffix_2
+9C85 71           	 DB 0xED,0x71
+9C87 08           	 EX AF,AF'
+9C88 D9           	 EXX
+9C89 1A           	 LD A,(DE)
+9C8A D9           	 EXX
+9C8B 71           	 DB 0xED,0x71
+9C8D E6 0F        	 AND 15
+9C8F 07           	 RLCA
+9C90 07           	 RLCA
+9C91 ED 51        	 OUT (C),D
+9C93 C3 96 9C     	 JP $+3
+9C96 00           	 NOP
+9C97 00           	 NOP
+9C98 00           	 NOP
+9C99 71           	 DB 0xED,0x71
+9C9B E9           	 JP (HL)
+                 	second_132:
+9C9C ED 51        	 OUT (C),D
+9C9E E1           	 POP HL
+9C9F 71           	 DB 0xED,0x71
+9CA1 FD E1        	 POP IY
+9CA3 71           	 DB 0xED,0x71
+9CA5 D1           	 POP DE
+9CA6 71           	 DB 0xED,0x71
+9CA8 08           	 EX AF,AF'
+9CA9 3F           	 CCF
+9CAA DA 30 A6     	 JP C,high_suffix_4
+9CAD 71           	 DB 0xED,0x71
+9CAF 08           	 EX AF,AF'
+9CB0 D9           	 EXX
+9CB1 1A           	 LD A,(DE)
+9CB2 D9           	 EXX
+9CB3 ED 51        	 OUT (C),D
+9CB5 E6 0F        	 AND 15
+9CB7 07           	 RLCA
+9CB8 07           	 RLCA
+9CB9 71           	 DB 0xED,0x71
+9CBB C3 BE 9C     	 JP $+3
+9CBE 00           	 NOP
+9CBF 00           	 NOP
+9CC0 00           	 NOP
+9CC1 71           	 DB 0xED,0x71
+9CC3 E9           	 JP (HL)
+                 	second_136:
+9CC4 ED 51        	 OUT (C),D
+9CC6 E1           	 POP HL
+9CC7 71           	 DB 0xED,0x71
+9CC9 FD E1        	 POP IY
+9CCB 71           	 DB 0xED,0x71
+9CCD D1           	 POP DE
+9CCE 71           	 DB 0xED,0x71
+9CD0 08           	 EX AF,AF'
+9CD1 3F           	 CCF
+9CD2 DA 8C A6     	 JP C,high_suffix_8
+9CD5 ED 51        	 OUT (C),D
+9CD7 08           	 EX AF,AF'
+9CD8 D9           	 EXX
+9CD9 1A           	 LD A,(DE)
+9CDA D9           	 EXX
+9CDB 71           	 DB 0xED,0x71
+9CDD E6 0F        	 AND 15
+9CDF 07           	 RLCA
+9CE0 07           	 RLCA
+9CE1 71           	 DB 0xED,0x71
+9CE3 C3 E6 9C     	 JP $+3
+9CE6 00           	 NOP
+9CE7 00           	 NOP
+9CE8 00           	 NOP
+9CE9 71           	 DB 0xED,0x71
+9CEB E9           	 JP (HL)
+                 	second_137:
+9CEC ED 51        	 OUT (C),D
+9CEE E1           	 POP HL
+9CEF 71           	 DB 0xED,0x71
+9CF1 FD E1        	 POP IY
+9CF3 71           	 DB 0xED,0x71
+9CF5 D1           	 POP DE
+9CF6 71           	 DB 0xED,0x71
+9CF8 08           	 EX AF,AF'
+9CF9 3F           	 CCF
+9CFA DA A3 A6     	 JP C,high_suffix_9
+9CFD ED 51        	 OUT (C),D
+9CFF 08           	 EX AF,AF'
+9D00 D9           	 EXX
+9D01 1A           	 LD A,(DE)
+9D02 D9           	 EXX
+9D03 71           	 DB 0xED,0x71
+9D05 E6 0F        	 AND 15
+9D07 07           	 RLCA
+9D08 07           	 RLCA
+9D09 71           	 DB 0xED,0x71
+9D0B C3 0E 9D     	 JP $+3
+9D0E 00           	 NOP
+9D0F 00           	 NOP
+9D10 00           	 NOP
+9D11 ED 51        	 OUT (C),D
+9D13 E9           	 JP (HL)
+                 	second_144:
+9D14 ED 51        	 OUT (C),D
+9D16 E1           	 POP HL
+9D17 71           	 DB 0xED,0x71
+9D19 FD E1        	 POP IY
+9D1B 71           	 DB 0xED,0x71
+9D1D D1           	 POP DE
+9D1E ED 51        	 OUT (C),D
+9D20 08           	 EX AF,AF'
+9D21 3F           	 CCF
+9D22 DA D4 A5     	 JP C,high_suffix_0
+9D25 71           	 DB 0xED,0x71
+9D27 08           	 EX AF,AF'
+9D28 D9           	 EXX
+9D29 1A           	 LD A,(DE)
+9D2A D9           	 EXX
+9D2B 71           	 DB 0xED,0x71
+9D2D E6 0F        	 AND 15
+9D2F 07           	 RLCA
+9D30 07           	 RLCA
+9D31 71           	 DB 0xED,0x71
+9D33 C3 36 9D     	 JP $+3
+9D36 00           	 NOP
+9D37 00           	 NOP
+9D38 00           	 NOP
+9D39 71           	 DB 0xED,0x71
+9D3B E9           	 JP (HL)
+                 	second_145:
+9D3C ED 51        	 OUT (C),D
+9D3E E1           	 POP HL
+9D3F 71           	 DB 0xED,0x71
+9D41 FD E1        	 POP IY
+9D43 71           	 DB 0xED,0x71
+9D45 D1           	 POP DE
+9D46 ED 51        	 OUT (C),D
+9D48 08           	 EX AF,AF'
+9D49 3F           	 CCF
+9D4A DA EB A5     	 JP C,high_suffix_1
+9D4D 71           	 DB 0xED,0x71
+9D4F 08           	 EX AF,AF'
+9D50 D9           	 EXX
+9D51 1A           	 LD A,(DE)
+9D52 D9           	 EXX
+9D53 71           	 DB 0xED,0x71
+9D55 E6 0F        	 AND 15
+9D57 07           	 RLCA
+9D58 07           	 RLCA
+9D59 71           	 DB 0xED,0x71
+9D5B C3 5E 9D     	 JP $+3
+9D5E 00           	 NOP
+9D5F 00           	 NOP
+9D60 00           	 NOP
+9D61 ED 51        	 OUT (C),D
+9D63 E9           	 JP (HL)
+                 	second_146:
+9D64 ED 51        	 OUT (C),D
+9D66 E1           	 POP HL
+9D67 71           	 DB 0xED,0x71
+9D69 FD E1        	 POP IY
+9D6B 71           	 DB 0xED,0x71
+9D6D D1           	 POP DE
+9D6E ED 51        	 OUT (C),D
+9D70 08           	 EX AF,AF'
+9D71 3F           	 CCF
+9D72 DA 02 A6     	 JP C,high_suffix_2
+9D75 71           	 DB 0xED,0x71
+9D77 08           	 EX AF,AF'
+9D78 D9           	 EXX
+9D79 1A           	 LD A,(DE)
+9D7A D9           	 EXX
+9D7B 71           	 DB 0xED,0x71
+9D7D E6 0F        	 AND 15
+9D7F 07           	 RLCA
+9D80 07           	 RLCA
+9D81 ED 51        	 OUT (C),D
+9D83 C3 86 9D     	 JP $+3
+9D86 00           	 NOP
+9D87 00           	 NOP
+9D88 00           	 NOP
+9D89 71           	 DB 0xED,0x71
+9D8B E9           	 JP (HL)
+                 	second_148:
+9D8C ED 51        	 OUT (C),D
+9D8E E1           	 POP HL
+9D8F 71           	 DB 0xED,0x71
+9D91 FD E1        	 POP IY
+9D93 71           	 DB 0xED,0x71
+9D95 D1           	 POP DE
+9D96 ED 51        	 OUT (C),D
+9D98 08           	 EX AF,AF'
+9D99 3F           	 CCF
+9D9A DA 30 A6     	 JP C,high_suffix_4
+9D9D 71           	 DB 0xED,0x71
+9D9F 08           	 EX AF,AF'
+9DA0 D9           	 EXX
+9DA1 1A           	 LD A,(DE)
+9DA2 D9           	 EXX
+9DA3 ED 51        	 OUT (C),D
+9DA5 E6 0F        	 AND 15
+9DA7 07           	 RLCA
+9DA8 07           	 RLCA
+9DA9 71           	 DB 0xED,0x71
+9DAB C3 AE 9D     	 JP $+3
+9DAE 00           	 NOP
+9DAF 00           	 NOP
+9DB0 00           	 NOP
+9DB1 71           	 DB 0xED,0x71
+9DB3 E9           	 JP (HL)
+                 	second_161:
+9DB4 ED 51        	 OUT (C),D
+9DB6 E1           	 POP HL
+9DB7 71           	 DB 0xED,0x71
+9DB9 FD E1        	 POP IY
+9DBB ED 51        	 OUT (C),D
+9DBD D1           	 POP DE
+9DBE 71           	 DB 0xED,0x71
+9DC0 08           	 EX AF,AF'
+9DC1 3F           	 CCF
+9DC2 DA EB A5     	 JP C,high_suffix_1
+9DC5 71           	 DB 0xED,0x71
+9DC7 08           	 EX AF,AF'
+9DC8 D9           	 EXX
+9DC9 1A           	 LD A,(DE)
+9DCA D9           	 EXX
+9DCB 71           	 DB 0xED,0x71
+9DCD E6 0F        	 AND 15
+9DCF 07           	 RLCA
+9DD0 07           	 RLCA
+9DD1 71           	 DB 0xED,0x71
+9DD3 C3 D6 9D     	 JP $+3
+9DD6 00           	 NOP
+9DD7 00           	 NOP
+9DD8 00           	 NOP
+9DD9 ED 51        	 OUT (C),D
+9DDB E9           	 JP (HL)
+                 	second_162:
+9DDC ED 51        	 OUT (C),D
+9DDE E1           	 POP HL
+9DDF 71           	 DB 0xED,0x71
+9DE1 FD E1        	 POP IY
+9DE3 ED 51        	 OUT (C),D
+9DE5 D1           	 POP DE
+9DE6 71           	 DB 0xED,0x71
+9DE8 08           	 EX AF,AF'
+9DE9 3F           	 CCF
+9DEA DA 02 A6     	 JP C,high_suffix_2
+9DED 71           	 DB 0xED,0x71
+9DEF 08           	 EX AF,AF'
+9DF0 D9           	 EXX
+9DF1 1A           	 LD A,(DE)
+9DF2 D9           	 EXX
+9DF3 71           	 DB 0xED,0x71
+9DF5 E6 0F        	 AND 15
+9DF7 07           	 RLCA
+9DF8 07           	 RLCA
+9DF9 ED 51        	 OUT (C),D
+9DFB C3 FE 9D     	 JP $+3
+9DFE 00           	 NOP
+9DFF 00           	 NOP
+9E00 00           	 NOP
+9E01 71           	 DB 0xED,0x71
+9E03 E9           	 JP (HL)
+                 	second_164:
+9E04 ED 51        	 OUT (C),D
+9E06 E1           	 POP HL
+9E07 71           	 DB 0xED,0x71
+9E09 FD E1        	 POP IY
+9E0B ED 51        	 OUT (C),D
+9E0D D1           	 POP DE
+9E0E 71           	 DB 0xED,0x71
+9E10 08           	 EX AF,AF'
+9E11 3F           	 CCF
+9E12 DA 30 A6     	 JP C,high_suffix_4
+9E15 71           	 DB 0xED,0x71
+9E17 08           	 EX AF,AF'
+9E18 D9           	 EXX
+9E19 1A           	 LD A,(DE)
+9E1A D9           	 EXX
+9E1B ED 51        	 OUT (C),D
+9E1D E6 0F        	 AND 15
+9E1F 07           	 RLCA
+9E20 07           	 RLCA
+9E21 71           	 DB 0xED,0x71
+9E23 C3 26 9E     	 JP $+3
+9E26 00           	 NOP
+9E27 00           	 NOP
+9E28 00           	 NOP
+9E29 71           	 DB 0xED,0x71
+9E2B E9           	 JP (HL)
+                 	second_165:
+9E2C ED 51        	 OUT (C),D
+9E2E E1           	 POP HL
+9E2F 71           	 DB 0xED,0x71
+9E31 FD E1        	 POP IY
+9E33 ED 51        	 OUT (C),D
+9E35 D1           	 POP DE
+9E36 71           	 DB 0xED,0x71
+9E38 08           	 EX AF,AF'
+9E39 3F           	 CCF
+9E3A DA 47 A6     	 JP C,high_suffix_5
+9E3D 71           	 DB 0xED,0x71
+9E3F 08           	 EX AF,AF'
+9E40 D9           	 EXX
+9E41 1A           	 LD A,(DE)
+9E42 D9           	 EXX
+9E43 ED 51        	 OUT (C),D
+9E45 E6 0F        	 AND 15
+9E47 07           	 RLCA
+9E48 07           	 RLCA
+9E49 71           	 DB 0xED,0x71
+9E4B C3 4E 9E     	 JP $+3
+9E4E 00           	 NOP
+9E4F 00           	 NOP
+9E50 00           	 NOP
+9E51 ED 51        	 OUT (C),D
+9E53 E9           	 JP (HL)
+                 	second_166:
+9E54 ED 51        	 OUT (C),D
+9E56 E1           	 POP HL
+9E57 71           	 DB 0xED,0x71
+9E59 FD E1        	 POP IY
+9E5B ED 51        	 OUT (C),D
+9E5D D1           	 POP DE
+9E5E 71           	 DB 0xED,0x71
+9E60 08           	 EX AF,AF'
+9E61 3F           	 CCF
+9E62 DA 5E A6     	 JP C,high_suffix_6
+9E65 71           	 DB 0xED,0x71
+9E67 08           	 EX AF,AF'
+9E68 D9           	 EXX
+9E69 1A           	 LD A,(DE)
+9E6A D9           	 EXX
+9E6B ED 51        	 OUT (C),D
+9E6D E6 0F        	 AND 15
+9E6F 07           	 RLCA
+9E70 07           	 RLCA
+9E71 ED 51        	 OUT (C),D
+9E73 C3 76 9E     	 JP $+3
+9E76 00           	 NOP
+9E77 00           	 NOP
+9E78 00           	 NOP
+9E79 71           	 DB 0xED,0x71
+9E7B E9           	 JP (HL)
+                 	second_168:
+9E7C ED 51        	 OUT (C),D
+9E7E E1           	 POP HL
+9E7F 71           	 DB 0xED,0x71
+9E81 FD E1        	 POP IY
+9E83 ED 51        	 OUT (C),D
+9E85 D1           	 POP DE
+9E86 71           	 DB 0xED,0x71
+9E88 08           	 EX AF,AF'
+9E89 3F           	 CCF
+9E8A DA 8C A6     	 JP C,high_suffix_8
+9E8D ED 51        	 OUT (C),D
+9E8F 08           	 EX AF,AF'
+9E90 D9           	 EXX
+9E91 1A           	 LD A,(DE)
+9E92 D9           	 EXX
+9E93 71           	 DB 0xED,0x71
+9E95 E6 0F        	 AND 15
+9E97 07           	 RLCA
+9E98 07           	 RLCA
+9E99 71           	 DB 0xED,0x71
+9E9B C3 9E 9E     	 JP $+3
+9E9E 00           	 NOP
+9E9F 00           	 NOP
+9EA0 00           	 NOP
+9EA1 71           	 DB 0xED,0x71
+9EA3 E9           	 JP (HL)
+                 	second_169:
+9EA4 ED 51        	 OUT (C),D
+9EA6 E1           	 POP HL
+9EA7 71           	 DB 0xED,0x71
+9EA9 FD E1        	 POP IY
+9EAB ED 51        	 OUT (C),D
+9EAD D1           	 POP DE
+9EAE 71           	 DB 0xED,0x71
+9EB0 08           	 EX AF,AF'
+9EB1 3F           	 CCF
+9EB2 DA A3 A6     	 JP C,high_suffix_9
+9EB5 ED 51        	 OUT (C),D
+9EB7 08           	 EX AF,AF'
+9EB8 D9           	 EXX
+9EB9 1A           	 LD A,(DE)
+9EBA D9           	 EXX
+9EBB 71           	 DB 0xED,0x71
+9EBD E6 0F        	 AND 15
+9EBF 07           	 RLCA
+9EC0 07           	 RLCA
+9EC1 71           	 DB 0xED,0x71
+9EC3 C3 C6 9E     	 JP $+3
+9EC6 00           	 NOP
+9EC7 00           	 NOP
+9EC8 00           	 NOP
+9EC9 ED 51        	 OUT (C),D
+9ECB E9           	 JP (HL)
+                 	second_170:
+9ECC ED 51        	 OUT (C),D
+9ECE E1           	 POP HL
+9ECF 71           	 DB 0xED,0x71
+9ED1 FD E1        	 POP IY
+9ED3 ED 51        	 OUT (C),D
+9ED5 D1           	 POP DE
+9ED6 71           	 DB 0xED,0x71
+9ED8 08           	 EX AF,AF'
+9ED9 3F           	 CCF
+9EDA DA BA A6     	 JP C,high_suffix_10
+9EDD ED 51        	 OUT (C),D
+9EDF 08           	 EX AF,AF'
+9EE0 D9           	 EXX
+9EE1 1A           	 LD A,(DE)
+9EE2 D9           	 EXX
+9EE3 71           	 DB 0xED,0x71
+9EE5 E6 0F        	 AND 15
+9EE7 07           	 RLCA
+9EE8 07           	 RLCA
+9EE9 ED 51        	 OUT (C),D
+9EEB C3 EE 9E     	 JP $+3
+9EEE 00           	 NOP
+9EEF 00           	 NOP
+9EF0 00           	 NOP
+9EF1 71           	 DB 0xED,0x71
+9EF3 E9           	 JP (HL)
+                 	second_174:
+9EF4 ED 51        	 OUT (C),D
+9EF6 E1           	 POP HL
+9EF7 71           	 DB 0xED,0x71
+9EF9 FD E1        	 POP IY
+9EFB ED 51        	 OUT (C),D
+9EFD D1           	 POP DE
+9EFE 71           	 DB 0xED,0x71
+9F00 08           	 EX AF,AF'
+9F01 3F           	 CCF
+9F02 DA 16 A7     	 JP C,high_suffix_14
+9F05 ED 51        	 OUT (C),D
+9F07 08           	 EX AF,AF'
+9F08 D9           	 EXX
+9F09 1A           	 LD A,(DE)
+9F0A D9           	 EXX
+9F0B ED 51        	 OUT (C),D
+9F0D E6 0F        	 AND 15
+9F0F 07           	 RLCA
+9F10 07           	 RLCA
+9F11 ED 51        	 OUT (C),D
+9F13 C3 16 9F     	 JP $+3
+9F16 00           	 NOP
+9F17 00           	 NOP
+9F18 00           	 NOP
+9F19 71           	 DB 0xED,0x71
+9F1B E9           	 JP (HL)
+                 	second_178:
+9F1C ED 51        	 OUT (C),D
+9F1E E1           	 POP HL
+9F1F 71           	 DB 0xED,0x71
+9F21 FD E1        	 POP IY
+9F23 ED 51        	 OUT (C),D
+9F25 D1           	 POP DE
+9F26 ED 51        	 OUT (C),D
+9F28 08           	 EX AF,AF'
+9F29 3F           	 CCF
+9F2A DA 02 A6     	 JP C,high_suffix_2
+9F2D 71           	 DB 0xED,0x71
+9F2F 08           	 EX AF,AF'
+9F30 D9           	 EXX
+9F31 1A           	 LD A,(DE)
+9F32 D9           	 EXX
+9F33 71           	 DB 0xED,0x71
+9F35 E6 0F        	 AND 15
+9F37 07           	 RLCA
+9F38 07           	 RLCA
+9F39 ED 51        	 OUT (C),D
+9F3B C3 3E 9F     	 JP $+3
+9F3E 00           	 NOP
+9F3F 00           	 NOP
+9F40 00           	 NOP
+9F41 71           	 DB 0xED,0x71
+9F43 E9           	 JP (HL)
+                 	second_181:
+9F44 ED 51        	 OUT (C),D
+9F46 E1           	 POP HL
+9F47 71           	 DB 0xED,0x71
+9F49 FD E1        	 POP IY
+9F4B ED 51        	 OUT (C),D
+9F4D D1           	 POP DE
+9F4E ED 51        	 OUT (C),D
+9F50 08           	 EX AF,AF'
+9F51 3F           	 CCF
+9F52 DA 47 A6     	 JP C,high_suffix_5
+9F55 71           	 DB 0xED,0x71
+9F57 08           	 EX AF,AF'
+9F58 D9           	 EXX
+9F59 1A           	 LD A,(DE)
+9F5A D9           	 EXX
+9F5B ED 51        	 OUT (C),D
+9F5D E6 0F        	 AND 15
+9F5F 07           	 RLCA
+9F60 07           	 RLCA
+9F61 71           	 DB 0xED,0x71
+9F63 C3 66 9F     	 JP $+3
+9F66 00           	 NOP
+9F67 00           	 NOP
+9F68 00           	 NOP
+9F69 ED 51        	 OUT (C),D
+9F6B E9           	 JP (HL)
+                 	second_182:
+9F6C ED 51        	 OUT (C),D
+9F6E E1           	 POP HL
+9F6F 71           	 DB 0xED,0x71
+9F71 FD E1        	 POP IY
+9F73 ED 51        	 OUT (C),D
+9F75 D1           	 POP DE
+9F76 ED 51        	 OUT (C),D
+9F78 08           	 EX AF,AF'
+9F79 3F           	 CCF
+9F7A DA 5E A6     	 JP C,high_suffix_6
+9F7D 71           	 DB 0xED,0x71
+9F7F 08           	 EX AF,AF'
+9F80 D9           	 EXX
+9F81 1A           	 LD A,(DE)
+9F82 D9           	 EXX
+9F83 ED 51        	 OUT (C),D
+9F85 E6 0F        	 AND 15
+9F87 07           	 RLCA
+9F88 07           	 RLCA
+9F89 ED 51        	 OUT (C),D
+9F8B C3 8E 9F     	 JP $+3
+9F8E 00           	 NOP
+9F8F 00           	 NOP
+9F90 00           	 NOP
+9F91 71           	 DB 0xED,0x71
+9F93 E9           	 JP (HL)
+                 	second_183:
+9F94 ED 51        	 OUT (C),D
+9F96 E1           	 POP HL
+9F97 71           	 DB 0xED,0x71
+9F99 FD E1        	 POP IY
+9F9B ED 51        	 OUT (C),D
+9F9D D1           	 POP DE
+9F9E ED 51        	 OUT (C),D
+9FA0 08           	 EX AF,AF'
+9FA1 3F           	 CCF
+9FA2 DA 75 A6     	 JP C,high_suffix_7
+9FA5 71           	 DB 0xED,0x71
+9FA7 08           	 EX AF,AF'
+9FA8 D9           	 EXX
+9FA9 1A           	 LD A,(DE)
+9FAA D9           	 EXX
+9FAB ED 51        	 OUT (C),D
+9FAD E6 0F        	 AND 15
+9FAF 07           	 RLCA
+9FB0 07           	 RLCA
+9FB1 ED 51        	 OUT (C),D
+9FB3 C3 B6 9F     	 JP $+3
+9FB6 00           	 NOP
+9FB7 00           	 NOP
+9FB8 00           	 NOP
+9FB9 ED 51        	 OUT (C),D
+9FBB E9           	 JP (HL)
+                 	second_186:
+9FBC ED 51        	 OUT (C),D
+9FBE E1           	 POP HL
+9FBF 71           	 DB 0xED,0x71
+9FC1 FD E1        	 POP IY
+9FC3 ED 51        	 OUT (C),D
+9FC5 D1           	 POP DE
+9FC6 ED 51        	 OUT (C),D
+9FC8 08           	 EX AF,AF'
+9FC9 3F           	 CCF
+9FCA DA BA A6     	 JP C,high_suffix_10
+9FCD ED 51        	 OUT (C),D
+9FCF 08           	 EX AF,AF'
+9FD0 D9           	 EXX
+9FD1 1A           	 LD A,(DE)
+9FD2 D9           	 EXX
+9FD3 71           	 DB 0xED,0x71
+9FD5 E6 0F        	 AND 15
+9FD7 07           	 RLCA
+9FD8 07           	 RLCA
+9FD9 ED 51        	 OUT (C),D
+9FDB C3 DE 9F     	 JP $+3
+9FDE 00           	 NOP
+9FDF 00           	 NOP
+9FE0 00           	 NOP
+9FE1 71           	 DB 0xED,0x71
+9FE3 E9           	 JP (HL)
+                 	second_187:
+9FE4 ED 51        	 OUT (C),D
+9FE6 E1           	 POP HL
+9FE7 71           	 DB 0xED,0x71
+9FE9 FD E1        	 POP IY
+9FEB ED 51        	 OUT (C),D
+9FED D1           	 POP DE
+9FEE ED 51        	 OUT (C),D
+9FF0 08           	 EX AF,AF'
+9FF1 3F           	 CCF
+9FF2 DA D1 A6     	 JP C,high_suffix_11
+9FF5 ED 51        	 OUT (C),D
+9FF7 08           	 EX AF,AF'
+9FF8 D9           	 EXX
+9FF9 1A           	 LD A,(DE)
+9FFA D9           	 EXX
+9FFB 71           	 DB 0xED,0x71
+9FFD E6 0F        	 AND 15
+9FFF 07           	 RLCA
+A000 07           	 RLCA
+A001 ED 51        	 OUT (C),D
+A003 C3 06 A0     	 JP $+3
+A006 00           	 NOP
+A007 00           	 NOP
+A008 00           	 NOP
+A009 ED 51        	 OUT (C),D
+A00B E9           	 JP (HL)
+                 	second_189:
+A00C ED 51        	 OUT (C),D
+A00E E1           	 POP HL
+A00F 71           	 DB 0xED,0x71
+A011 FD E1        	 POP IY
+A013 ED 51        	 OUT (C),D
+A015 D1           	 POP DE
+A016 ED 51        	 OUT (C),D
+A018 08           	 EX AF,AF'
+A019 3F           	 CCF
+A01A DA FF A6     	 JP C,high_suffix_13
+A01D ED 51        	 OUT (C),D
+A01F 08           	 EX AF,AF'
+A020 D9           	 EXX
+A021 1A           	 LD A,(DE)
+A022 D9           	 EXX
+A023 ED 51        	 OUT (C),D
+A025 E6 0F        	 AND 15
+A027 07           	 RLCA
+A028 07           	 RLCA
+A029 71           	 DB 0xED,0x71
+A02B C3 2E A0     	 JP $+3
+A02E 00           	 NOP
+A02F 00           	 NOP
+A030 00           	 NOP
+A031 ED 51        	 OUT (C),D
+A033 E9           	 JP (HL)
+                 	second_190:
+A034 ED 51        	 OUT (C),D
+A036 E1           	 POP HL
+A037 71           	 DB 0xED,0x71
+A039 FD E1        	 POP IY
+A03B ED 51        	 OUT (C),D
+A03D D1           	 POP DE
+A03E ED 51        	 OUT (C),D
+A040 08           	 EX AF,AF'
+A041 3F           	 CCF
+A042 DA 16 A7     	 JP C,high_suffix_14
+A045 ED 51        	 OUT (C),D
+A047 08           	 EX AF,AF'
+A048 D9           	 EXX
+A049 1A           	 LD A,(DE)
+A04A D9           	 EXX
+A04B ED 51        	 OUT (C),D
+A04D E6 0F        	 AND 15
+A04F 07           	 RLCA
+A050 07           	 RLCA
+A051 ED 51        	 OUT (C),D
+A053 C3 56 A0     	 JP $+3
+A056 00           	 NOP
+A057 00           	 NOP
+A058 00           	 NOP
+A059 71           	 DB 0xED,0x71
+A05B E9           	 JP (HL)
+                 	second_191:
+A05C ED 51        	 OUT (C),D
+A05E E1           	 POP HL
+A05F 71           	 DB 0xED,0x71
+A061 FD E1        	 POP IY
+A063 ED 51        	 OUT (C),D
+A065 D1           	 POP DE
+A066 ED 51        	 OUT (C),D
+A068 08           	 EX AF,AF'
+A069 3F           	 CCF
+A06A DA 2D A7     	 JP C,high_suffix_15
+A06D ED 51        	 OUT (C),D
+A06F 08           	 EX AF,AF'
+A070 D9           	 EXX
+A071 1A           	 LD A,(DE)
+A072 D9           	 EXX
+A073 ED 51        	 OUT (C),D
+A075 E6 0F        	 AND 15
+A077 07           	 RLCA
+A078 07           	 RLCA
+A079 ED 51        	 OUT (C),D
+A07B C3 7E A0     	 JP $+3
+A07E 00           	 NOP
+A07F 00           	 NOP
+A080 00           	 NOP
+A081 ED 51        	 OUT (C),D
+A083 E9           	 JP (HL)
+                 	second_194:
+A084 ED 51        	 OUT (C),D
+A086 E1           	 POP HL
+A087 ED 51        	 OUT (C),D
+A089 FD E1        	 POP IY
+A08B 71           	 DB 0xED,0x71
+A08D D1           	 POP DE
+A08E 71           	 DB 0xED,0x71
+A090 08           	 EX AF,AF'
+A091 3F           	 CCF
+A092 DA 02 A6     	 JP C,high_suffix_2
+A095 71           	 DB 0xED,0x71
+A097 08           	 EX AF,AF'
+A098 D9           	 EXX
+A099 1A           	 LD A,(DE)
+A09A D9           	 EXX
+A09B 71           	 DB 0xED,0x71
+A09D E6 0F        	 AND 15
+A09F 07           	 RLCA
+A0A0 07           	 RLCA
+A0A1 ED 51        	 OUT (C),D
+A0A3 C3 A6 A0     	 JP $+3
+A0A6 00           	 NOP
+A0A7 00           	 NOP
+A0A8 00           	 NOP
+A0A9 71           	 DB 0xED,0x71
+A0AB E9           	 JP (HL)
+                 	second_196:
+A0AC ED 51        	 OUT (C),D
+A0AE E1           	 POP HL
+A0AF ED 51        	 OUT (C),D
+A0B1 FD E1        	 POP IY
+A0B3 71           	 DB 0xED,0x71
+A0B5 D1           	 POP DE
+A0B6 71           	 DB 0xED,0x71
+A0B8 08           	 EX AF,AF'
+A0B9 3F           	 CCF
+A0BA DA 30 A6     	 JP C,high_suffix_4
+A0BD 71           	 DB 0xED,0x71
+A0BF 08           	 EX AF,AF'
+A0C0 D9           	 EXX
+A0C1 1A           	 LD A,(DE)
+A0C2 D9           	 EXX
+A0C3 ED 51        	 OUT (C),D
+A0C5 E6 0F        	 AND 15
+A0C7 07           	 RLCA
+A0C8 07           	 RLCA
+A0C9 71           	 DB 0xED,0x71
+A0CB C3 CE A0     	 JP $+3
+A0CE 00           	 NOP
+A0CF 00           	 NOP
+A0D0 00           	 NOP
+A0D1 71           	 DB 0xED,0x71
+A0D3 E9           	 JP (HL)
+                 	second_197:
+A0D4 ED 51        	 OUT (C),D
+A0D6 E1           	 POP HL
+A0D7 ED 51        	 OUT (C),D
+A0D9 FD E1        	 POP IY
+A0DB 71           	 DB 0xED,0x71
+A0DD D1           	 POP DE
+A0DE 71           	 DB 0xED,0x71
+A0E0 08           	 EX AF,AF'
+A0E1 3F           	 CCF
+A0E2 DA 47 A6     	 JP C,high_suffix_5
+A0E5 71           	 DB 0xED,0x71
+A0E7 08           	 EX AF,AF'
+A0E8 D9           	 EXX
+A0E9 1A           	 LD A,(DE)
+A0EA D9           	 EXX
+A0EB ED 51        	 OUT (C),D
+A0ED E6 0F        	 AND 15
+A0EF 07           	 RLCA
+A0F0 07           	 RLCA
+A0F1 71           	 DB 0xED,0x71
+A0F3 C3 F6 A0     	 JP $+3
+A0F6 00           	 NOP
+A0F7 00           	 NOP
+A0F8 00           	 NOP
+A0F9 ED 51        	 OUT (C),D
+A0FB E9           	 JP (HL)
+                 	second_198:
+A0FC ED 51        	 OUT (C),D
+A0FE E1           	 POP HL
+A0FF ED 51        	 OUT (C),D
+A101 FD E1        	 POP IY
+A103 71           	 DB 0xED,0x71
+A105 D1           	 POP DE
+A106 71           	 DB 0xED,0x71
+A108 08           	 EX AF,AF'
+A109 3F           	 CCF
+A10A DA 5E A6     	 JP C,high_suffix_6
+A10D 71           	 DB 0xED,0x71
+A10F 08           	 EX AF,AF'
+A110 D9           	 EXX
+A111 1A           	 LD A,(DE)
+A112 D9           	 EXX
+A113 ED 51        	 OUT (C),D
+A115 E6 0F        	 AND 15
+A117 07           	 RLCA
+A118 07           	 RLCA
+A119 ED 51        	 OUT (C),D
+A11B C3 1E A1     	 JP $+3
+A11E 00           	 NOP
+A11F 00           	 NOP
+A120 00           	 NOP
+A121 71           	 DB 0xED,0x71
+A123 E9           	 JP (HL)
+                 	second_201:
+A124 ED 51        	 OUT (C),D
+A126 E1           	 POP HL
+A127 ED 51        	 OUT (C),D
+A129 FD E1        	 POP IY
+A12B 71           	 DB 0xED,0x71
+A12D D1           	 POP DE
+A12E 71           	 DB 0xED,0x71
+A130 08           	 EX AF,AF'
+A131 3F           	 CCF
+A132 DA A3 A6     	 JP C,high_suffix_9
+A135 ED 51        	 OUT (C),D
+A137 08           	 EX AF,AF'
+A138 D9           	 EXX
+A139 1A           	 LD A,(DE)
+A13A D9           	 EXX
+A13B 71           	 DB 0xED,0x71
+A13D E6 0F        	 AND 15
+A13F 07           	 RLCA
+A140 07           	 RLCA
+A141 71           	 DB 0xED,0x71
+A143 C3 46 A1     	 JP $+3
+A146 00           	 NOP
+A147 00           	 NOP
+A148 00           	 NOP
+A149 ED 51        	 OUT (C),D
+A14B E9           	 JP (HL)
+                 	second_202:
+A14C ED 51        	 OUT (C),D
+A14E E1           	 POP HL
+A14F ED 51        	 OUT (C),D
+A151 FD E1        	 POP IY
+A153 71           	 DB 0xED,0x71
+A155 D1           	 POP DE
+A156 71           	 DB 0xED,0x71
+A158 08           	 EX AF,AF'
+A159 3F           	 CCF
+A15A DA BA A6     	 JP C,high_suffix_10
+A15D ED 51        	 OUT (C),D
+A15F 08           	 EX AF,AF'
+A160 D9           	 EXX
+A161 1A           	 LD A,(DE)
+A162 D9           	 EXX
+A163 71           	 DB 0xED,0x71
+A165 E6 0F        	 AND 15
+A167 07           	 RLCA
+A168 07           	 RLCA
+A169 ED 51        	 OUT (C),D
+A16B C3 6E A1     	 JP $+3
+A16E 00           	 NOP
+A16F 00           	 NOP
+A170 00           	 NOP
+A171 71           	 DB 0xED,0x71
+A173 E9           	 JP (HL)
+                 	second_204:
+A174 ED 51        	 OUT (C),D
+A176 E1           	 POP HL
+A177 ED 51        	 OUT (C),D
+A179 FD E1        	 POP IY
+A17B 71           	 DB 0xED,0x71
+A17D D1           	 POP DE
+A17E 71           	 DB 0xED,0x71
+A180 08           	 EX AF,AF'
+A181 3F           	 CCF
+A182 DA E8 A6     	 JP C,high_suffix_12
+A185 ED 51        	 OUT (C),D
+A187 08           	 EX AF,AF'
+A188 D9           	 EXX
+A189 1A           	 LD A,(DE)
+A18A D9           	 EXX
+A18B ED 51        	 OUT (C),D
+A18D E6 0F        	 AND 15
+A18F 07           	 RLCA
+A190 07           	 RLCA
+A191 71           	 DB 0xED,0x71
+A193 C3 96 A1     	 JP $+3
+A196 00           	 NOP
+A197 00           	 NOP
+A198 00           	 NOP
+A199 71           	 DB 0xED,0x71
+A19B E9           	 JP (HL)
+                 	second_205:
+A19C ED 51        	 OUT (C),D
+A19E E1           	 POP HL
+A19F ED 51        	 OUT (C),D
+A1A1 FD E1        	 POP IY
+A1A3 71           	 DB 0xED,0x71
+A1A5 D1           	 POP DE
+A1A6 71           	 DB 0xED,0x71
+A1A8 08           	 EX AF,AF'
+A1A9 3F           	 CCF
+A1AA DA FF A6     	 JP C,high_suffix_13
+A1AD ED 51        	 OUT (C),D
+A1AF 08           	 EX AF,AF'
+A1B0 D9           	 EXX
+A1B1 1A           	 LD A,(DE)
+A1B2 D9           	 EXX
+A1B3 ED 51        	 OUT (C),D
+A1B5 E6 0F        	 AND 15
+A1B7 07           	 RLCA
+A1B8 07           	 RLCA
+A1B9 71           	 DB 0xED,0x71
+A1BB C3 BE A1     	 JP $+3
+A1BE 00           	 NOP
+A1BF 00           	 NOP
+A1C0 00           	 NOP
+A1C1 ED 51        	 OUT (C),D
+A1C3 E9           	 JP (HL)
+                 	second_210:
+A1C4 ED 51        	 OUT (C),D
+A1C6 E1           	 POP HL
+A1C7 ED 51        	 OUT (C),D
+A1C9 FD E1        	 POP IY
+A1CB 71           	 DB 0xED,0x71
+A1CD D1           	 POP DE
+A1CE ED 51        	 OUT (C),D
+A1D0 08           	 EX AF,AF'
+A1D1 3F           	 CCF
+A1D2 DA 02 A6     	 JP C,high_suffix_2
+A1D5 71           	 DB 0xED,0x71
+A1D7 08           	 EX AF,AF'
+A1D8 D9           	 EXX
+A1D9 1A           	 LD A,(DE)
+A1DA D9           	 EXX
+A1DB 71           	 DB 0xED,0x71
+A1DD E6 0F        	 AND 15
+A1DF 07           	 RLCA
+A1E0 07           	 RLCA
+A1E1 ED 51        	 OUT (C),D
+A1E3 C3 E6 A1     	 JP $+3
+A1E6 00           	 NOP
+A1E7 00           	 NOP
+A1E8 00           	 NOP
+A1E9 71           	 DB 0xED,0x71
+A1EB E9           	 JP (HL)
+                 	second_211:
+A1EC ED 51        	 OUT (C),D
+A1EE E1           	 POP HL
+A1EF ED 51        	 OUT (C),D
+A1F1 FD E1        	 POP IY
+A1F3 71           	 DB 0xED,0x71
+A1F5 D1           	 POP DE
+A1F6 ED 51        	 OUT (C),D
+A1F8 08           	 EX AF,AF'
+A1F9 3F           	 CCF
+A1FA DA 19 A6     	 JP C,high_suffix_3
+A1FD 71           	 DB 0xED,0x71
+A1FF 08           	 EX AF,AF'
+A200 D9           	 EXX
+A201 1A           	 LD A,(DE)
+A202 D9           	 EXX
+A203 71           	 DB 0xED,0x71
+A205 E6 0F        	 AND 15
+A207 07           	 RLCA
+A208 07           	 RLCA
+A209 ED 51        	 OUT (C),D
+A20B C3 0E A2     	 JP $+3
+A20E 00           	 NOP
+A20F 00           	 NOP
+A210 00           	 NOP
+A211 ED 51        	 OUT (C),D
+A213 E9           	 JP (HL)
+                 	second_213:
+A214 ED 51        	 OUT (C),D
+A216 E1           	 POP HL
+A217 ED 51        	 OUT (C),D
+A219 FD E1        	 POP IY
+A21B 71           	 DB 0xED,0x71
+A21D D1           	 POP DE
+A21E ED 51        	 OUT (C),D
+A220 08           	 EX AF,AF'
+A221 3F           	 CCF
+A222 DA 47 A6     	 JP C,high_suffix_5
+A225 71           	 DB 0xED,0x71
+A227 08           	 EX AF,AF'
+A228 D9           	 EXX
+A229 1A           	 LD A,(DE)
+A22A D9           	 EXX
+A22B ED 51        	 OUT (C),D
+A22D E6 0F        	 AND 15
+A22F 07           	 RLCA
+A230 07           	 RLCA
+A231 71           	 DB 0xED,0x71
+A233 C3 36 A2     	 JP $+3
+A236 00           	 NOP
+A237 00           	 NOP
+A238 00           	 NOP
+A239 ED 51        	 OUT (C),D
+A23B E9           	 JP (HL)
+                 	second_214:
+A23C ED 51        	 OUT (C),D
+A23E E1           	 POP HL
+A23F ED 51        	 OUT (C),D
+A241 FD E1        	 POP IY
+A243 71           	 DB 0xED,0x71
+A245 D1           	 POP DE
+A246 ED 51        	 OUT (C),D
+A248 08           	 EX AF,AF'
+A249 3F           	 CCF
+A24A DA 5E A6     	 JP C,high_suffix_6
+A24D 71           	 DB 0xED,0x71
+A24F 08           	 EX AF,AF'
+A250 D9           	 EXX
+A251 1A           	 LD A,(DE)
+A252 D9           	 EXX
+A253 ED 51        	 OUT (C),D
+A255 E6 0F        	 AND 15
+A257 07           	 RLCA
+A258 07           	 RLCA
+A259 ED 51        	 OUT (C),D
+A25B C3 5E A2     	 JP $+3
+A25E 00           	 NOP
+A25F 00           	 NOP
+A260 00           	 NOP
+A261 71           	 DB 0xED,0x71
+A263 E9           	 JP (HL)
+                 	second_217:
+A264 ED 51        	 OUT (C),D
+A266 E1           	 POP HL
+A267 ED 51        	 OUT (C),D
+A269 FD E1        	 POP IY
+A26B 71           	 DB 0xED,0x71
+A26D D1           	 POP DE
+A26E ED 51        	 OUT (C),D
+A270 08           	 EX AF,AF'
+A271 3F           	 CCF
+A272 DA A3 A6     	 JP C,high_suffix_9
+A275 ED 51        	 OUT (C),D
+A277 08           	 EX AF,AF'
+A278 D9           	 EXX
+A279 1A           	 LD A,(DE)
+A27A D9           	 EXX
+A27B 71           	 DB 0xED,0x71
+A27D E6 0F        	 AND 15
+A27F 07           	 RLCA
+A280 07           	 RLCA
+A281 71           	 DB 0xED,0x71
+A283 C3 86 A2     	 JP $+3
+A286 00           	 NOP
+A287 00           	 NOP
+A288 00           	 NOP
+A289 ED 51        	 OUT (C),D
+A28B E9           	 JP (HL)
+                 	second_218:
+A28C ED 51        	 OUT (C),D
+A28E E1           	 POP HL
+A28F ED 51        	 OUT (C),D
+A291 FD E1        	 POP IY
+A293 71           	 DB 0xED,0x71
+A295 D1           	 POP DE
+A296 ED 51        	 OUT (C),D
+A298 08           	 EX AF,AF'
+A299 3F           	 CCF
+A29A DA BA A6     	 JP C,high_suffix_10
+A29D ED 51        	 OUT (C),D
+A29F 08           	 EX AF,AF'
+A2A0 D9           	 EXX
+A2A1 1A           	 LD A,(DE)
+A2A2 D9           	 EXX
+A2A3 71           	 DB 0xED,0x71
+A2A5 E6 0F        	 AND 15
+A2A7 07           	 RLCA
+A2A8 07           	 RLCA
+A2A9 ED 51        	 OUT (C),D
+A2AB C3 AE A2     	 JP $+3
+A2AE 00           	 NOP
+A2AF 00           	 NOP
+A2B0 00           	 NOP
+A2B1 71           	 DB 0xED,0x71
+A2B3 E9           	 JP (HL)
+                 	second_219:
+A2B4 ED 51        	 OUT (C),D
+A2B6 E1           	 POP HL
+A2B7 ED 51        	 OUT (C),D
+A2B9 FD E1        	 POP IY
+A2BB 71           	 DB 0xED,0x71
+A2BD D1           	 POP DE
+A2BE ED 51        	 OUT (C),D
+A2C0 08           	 EX AF,AF'
+A2C1 3F           	 CCF
+A2C2 DA D1 A6     	 JP C,high_suffix_11
+A2C5 ED 51        	 OUT (C),D
+A2C7 08           	 EX AF,AF'
+A2C8 D9           	 EXX
+A2C9 1A           	 LD A,(DE)
+A2CA D9           	 EXX
+A2CB 71           	 DB 0xED,0x71
+A2CD E6 0F        	 AND 15
+A2CF 07           	 RLCA
+A2D0 07           	 RLCA
+A2D1 ED 51        	 OUT (C),D
+A2D3 C3 D6 A2     	 JP $+3
+A2D6 00           	 NOP
+A2D7 00           	 NOP
+A2D8 00           	 NOP
+A2D9 ED 51        	 OUT (C),D
+A2DB E9           	 JP (HL)
+                 	second_221:
+A2DC ED 51        	 OUT (C),D
+A2DE E1           	 POP HL
+A2DF ED 51        	 OUT (C),D
+A2E1 FD E1        	 POP IY
+A2E3 71           	 DB 0xED,0x71
+A2E5 D1           	 POP DE
+A2E6 ED 51        	 OUT (C),D
+A2E8 08           	 EX AF,AF'
+A2E9 3F           	 CCF
+A2EA DA FF A6     	 JP C,high_suffix_13
+A2ED ED 51        	 OUT (C),D
+A2EF 08           	 EX AF,AF'
+A2F0 D9           	 EXX
+A2F1 1A           	 LD A,(DE)
+A2F2 D9           	 EXX
+A2F3 ED 51        	 OUT (C),D
+A2F5 E6 0F        	 AND 15
+A2F7 07           	 RLCA
+A2F8 07           	 RLCA
+A2F9 71           	 DB 0xED,0x71
+A2FB C3 FE A2     	 JP $+3
+A2FE 00           	 NOP
+A2FF 00           	 NOP
+A300 00           	 NOP
+A301 ED 51        	 OUT (C),D
+A303 E9           	 JP (HL)
+                 	second_222:
+A304 ED 51        	 OUT (C),D
+A306 E1           	 POP HL
+A307 ED 51        	 OUT (C),D
+A309 FD E1        	 POP IY
+A30B 71           	 DB 0xED,0x71
+A30D D1           	 POP DE
+A30E ED 51        	 OUT (C),D
+A310 08           	 EX AF,AF'
+A311 3F           	 CCF
+A312 DA 16 A7     	 JP C,high_suffix_14
+A315 ED 51        	 OUT (C),D
+A317 08           	 EX AF,AF'
+A318 D9           	 EXX
+A319 1A           	 LD A,(DE)
+A31A D9           	 EXX
+A31B ED 51        	 OUT (C),D
+A31D E6 0F        	 AND 15
+A31F 07           	 RLCA
+A320 07           	 RLCA
+A321 ED 51        	 OUT (C),D
+A323 C3 26 A3     	 JP $+3
+A326 00           	 NOP
+A327 00           	 NOP
+A328 00           	 NOP
+A329 71           	 DB 0xED,0x71
+A32B E9           	 JP (HL)
+                 	second_223:
+A32C ED 51        	 OUT (C),D
+A32E E1           	 POP HL
+A32F ED 51        	 OUT (C),D
+A331 FD E1        	 POP IY
+A333 71           	 DB 0xED,0x71
+A335 D1           	 POP DE
+A336 ED 51        	 OUT (C),D
+A338 08           	 EX AF,AF'
+A339 3F           	 CCF
+A33A DA 2D A7     	 JP C,high_suffix_15
+A33D ED 51        	 OUT (C),D
+A33F 08           	 EX AF,AF'
+A340 D9           	 EXX
+A341 1A           	 LD A,(DE)
+A342 D9           	 EXX
+A343 ED 51        	 OUT (C),D
+A345 E6 0F        	 AND 15
+A347 07           	 RLCA
+A348 07           	 RLCA
+A349 ED 51        	 OUT (C),D
+A34B C3 4E A3     	 JP $+3
+A34E 00           	 NOP
+A34F 00           	 NOP
+A350 00           	 NOP
+A351 ED 51        	 OUT (C),D
+A353 E9           	 JP (HL)
+                 	second_230:
+A354 ED 51        	 OUT (C),D
+A356 E1           	 POP HL
+A357 ED 51        	 OUT (C),D
+A359 FD E1        	 POP IY
+A35B ED 51        	 OUT (C),D
+A35D D1           	 POP DE
+A35E 71           	 DB 0xED,0x71
+A360 08           	 EX AF,AF'
+A361 3F           	 CCF
+A362 DA 5E A6     	 JP C,high_suffix_6
+A365 71           	 DB 0xED,0x71
+A367 08           	 EX AF,AF'
+A368 D9           	 EXX
+A369 1A           	 LD A,(DE)
+A36A D9           	 EXX
+A36B ED 51        	 OUT (C),D
+A36D E6 0F        	 AND 15
+A36F 07           	 RLCA
+A370 07           	 RLCA
+A371 ED 51        	 OUT (C),D
+A373 C3 76 A3     	 JP $+3
+A376 00           	 NOP
+A377 00           	 NOP
+A378 00           	 NOP
+A379 71           	 DB 0xED,0x71
+A37B E9           	 JP (HL)
+                 	second_233:
+A37C ED 51        	 OUT (C),D
+A37E E1           	 POP HL
+A37F ED 51        	 OUT (C),D
+A381 FD E1        	 POP IY
+A383 ED 51        	 OUT (C),D
+A385 D1           	 POP DE
+A386 71           	 DB 0xED,0x71
+A388 08           	 EX AF,AF'
+A389 3F           	 CCF
+A38A DA A3 A6     	 JP C,high_suffix_9
+A38D ED 51        	 OUT (C),D
+A38F 08           	 EX AF,AF'
+A390 D9           	 EXX
+A391 1A           	 LD A,(DE)
+A392 D9           	 EXX
+A393 71           	 DB 0xED,0x71
+A395 E6 0F        	 AND 15
+A397 07           	 RLCA
+A398 07           	 RLCA
+A399 71           	 DB 0xED,0x71
+A39B C3 9E A3     	 JP $+3
+A39E 00           	 NOP
+A39F 00           	 NOP
+A3A0 00           	 NOP
+A3A1 ED 51        	 OUT (C),D
+A3A3 E9           	 JP (HL)
+                 	second_234:
+A3A4 ED 51        	 OUT (C),D
+A3A6 E1           	 POP HL
+A3A7 ED 51        	 OUT (C),D
+A3A9 FD E1        	 POP IY
+A3AB ED 51        	 OUT (C),D
+A3AD D1           	 POP DE
+A3AE 71           	 DB 0xED,0x71
+A3B0 08           	 EX AF,AF'
+A3B1 3F           	 CCF
+A3B2 DA BA A6     	 JP C,high_suffix_10
+A3B5 ED 51        	 OUT (C),D
+A3B7 08           	 EX AF,AF'
+A3B8 D9           	 EXX
+A3B9 1A           	 LD A,(DE)
+A3BA D9           	 EXX
+A3BB 71           	 DB 0xED,0x71
+A3BD E6 0F        	 AND 15
+A3BF 07           	 RLCA
+A3C0 07           	 RLCA
+A3C1 ED 51        	 OUT (C),D
+A3C3 C3 C6 A3     	 JP $+3
+A3C6 00           	 NOP
+A3C7 00           	 NOP
+A3C8 00           	 NOP
+A3C9 71           	 DB 0xED,0x71
+A3CB E9           	 JP (HL)
+                 	second_235:
+A3CC ED 51        	 OUT (C),D
+A3CE E1           	 POP HL
+A3CF ED 51        	 OUT (C),D
+A3D1 FD E1        	 POP IY
+A3D3 ED 51        	 OUT (C),D
+A3D5 D1           	 POP DE
+A3D6 71           	 DB 0xED,0x71
+A3D8 08           	 EX AF,AF'
+A3D9 3F           	 CCF
+A3DA DA D1 A6     	 JP C,high_suffix_11
+A3DD ED 51        	 OUT (C),D
+A3DF 08           	 EX AF,AF'
+A3E0 D9           	 EXX
+A3E1 1A           	 LD A,(DE)
+A3E2 D9           	 EXX
+A3E3 71           	 DB 0xED,0x71
+A3E5 E6 0F        	 AND 15
+A3E7 07           	 RLCA
+A3E8 07           	 RLCA
+A3E9 ED 51        	 OUT (C),D
+A3EB C3 EE A3     	 JP $+3
+A3EE 00           	 NOP
+A3EF 00           	 NOP
+A3F0 00           	 NOP
+A3F1 ED 51        	 OUT (C),D
+A3F3 E9           	 JP (HL)
+                 	second_237:
+A3F4 ED 51        	 OUT (C),D
+A3F6 E1           	 POP HL
+A3F7 ED 51        	 OUT (C),D
+A3F9 FD E1        	 POP IY
+A3FB ED 51        	 OUT (C),D
+A3FD D1           	 POP DE
+A3FE 71           	 DB 0xED,0x71
+A400 08           	 EX AF,AF'
+A401 3F           	 CCF
+A402 DA FF A6     	 JP C,high_suffix_13
+A405 ED 51        	 OUT (C),D
+A407 08           	 EX AF,AF'
+A408 D9           	 EXX
+A409 1A           	 LD A,(DE)
+A40A D9           	 EXX
+A40B ED 51        	 OUT (C),D
+A40D E6 0F        	 AND 15
+A40F 07           	 RLCA
+A410 07           	 RLCA
+A411 71           	 DB 0xED,0x71
+A413 C3 16 A4     	 JP $+3
+A416 00           	 NOP
+A417 00           	 NOP
+A418 00           	 NOP
+A419 ED 51        	 OUT (C),D
+A41B E9           	 JP (HL)
+                 	second_238:
+A41C ED 51        	 OUT (C),D
+A41E E1           	 POP HL
+A41F ED 51        	 OUT (C),D
+A421 FD E1        	 POP IY
+A423 ED 51        	 OUT (C),D
+A425 D1           	 POP DE
+A426 71           	 DB 0xED,0x71
+A428 08           	 EX AF,AF'
+A429 3F           	 CCF
+A42A DA 16 A7     	 JP C,high_suffix_14
+A42D ED 51        	 OUT (C),D
+A42F 08           	 EX AF,AF'
+A430 D9           	 EXX
+A431 1A           	 LD A,(DE)
+A432 D9           	 EXX
+A433 ED 51        	 OUT (C),D
+A435 E6 0F        	 AND 15
+A437 07           	 RLCA
+A438 07           	 RLCA
+A439 ED 51        	 OUT (C),D
+A43B C3 3E A4     	 JP $+3
+A43E 00           	 NOP
+A43F 00           	 NOP
+A440 00           	 NOP
+A441 71           	 DB 0xED,0x71
+A443 E9           	 JP (HL)
+                 	second_239:
+A444 ED 51        	 OUT (C),D
+A446 E1           	 POP HL
+A447 ED 51        	 OUT (C),D
+A449 FD E1        	 POP IY
+A44B ED 51        	 OUT (C),D
+A44D D1           	 POP DE
+A44E 71           	 DB 0xED,0x71
+A450 08           	 EX AF,AF'
+A451 3F           	 CCF
+A452 DA 2D A7     	 JP C,high_suffix_15
+A455 ED 51        	 OUT (C),D
+A457 08           	 EX AF,AF'
+A458 D9           	 EXX
+A459 1A           	 LD A,(DE)
+A45A D9           	 EXX
+A45B ED 51        	 OUT (C),D
+A45D E6 0F        	 AND 15
+A45F 07           	 RLCA
+A460 07           	 RLCA
+A461 ED 51        	 OUT (C),D
+A463 C3 66 A4     	 JP $+3
+A466 00           	 NOP
+A467 00           	 NOP
+A468 00           	 NOP
+A469 ED 51        	 OUT (C),D
+A46B E9           	 JP (HL)
+                 	second_243:
+A46C ED 51        	 OUT (C),D
+A46E E1           	 POP HL
+A46F ED 51        	 OUT (C),D
+A471 FD E1        	 POP IY
+A473 ED 51        	 OUT (C),D
+A475 D1           	 POP DE
+A476 ED 51        	 OUT (C),D
+A478 08           	 EX AF,AF'
+A479 3F           	 CCF
+A47A DA 19 A6     	 JP C,high_suffix_3
+A47D 71           	 DB 0xED,0x71
+A47F 08           	 EX AF,AF'
+A480 D9           	 EXX
+A481 1A           	 LD A,(DE)
+A482 D9           	 EXX
+A483 71           	 DB 0xED,0x71
+A485 E6 0F        	 AND 15
+A487 07           	 RLCA
+A488 07           	 RLCA
+A489 ED 51        	 OUT (C),D
+A48B C3 8E A4     	 JP $+3
+A48E 00           	 NOP
+A48F 00           	 NOP
+A490 00           	 NOP
+A491 ED 51        	 OUT (C),D
+A493 E9           	 JP (HL)
+                 	second_245:
+A494 ED 51        	 OUT (C),D
+A496 E1           	 POP HL
+A497 ED 51        	 OUT (C),D
+A499 FD E1        	 POP IY
+A49B ED 51        	 OUT (C),D
+A49D D1           	 POP DE
+A49E ED 51        	 OUT (C),D
+A4A0 08           	 EX AF,AF'
+A4A1 3F           	 CCF
+A4A2 DA 47 A6     	 JP C,high_suffix_5
+A4A5 71           	 DB 0xED,0x71
+A4A7 08           	 EX AF,AF'
+A4A8 D9           	 EXX
+A4A9 1A           	 LD A,(DE)
+A4AA D9           	 EXX
+A4AB ED 51        	 OUT (C),D
+A4AD E6 0F        	 AND 15
+A4AF 07           	 RLCA
+A4B0 07           	 RLCA
+A4B1 71           	 DB 0xED,0x71
+A4B3 C3 B6 A4     	 JP $+3
+A4B6 00           	 NOP
+A4B7 00           	 NOP
+A4B8 00           	 NOP
+A4B9 ED 51        	 OUT (C),D
+A4BB E9           	 JP (HL)
+                 	second_246:
+A4BC ED 51        	 OUT (C),D
+A4BE E1           	 POP HL
+A4BF ED 51        	 OUT (C),D
+A4C1 FD E1        	 POP IY
+A4C3 ED 51        	 OUT (C),D
+A4C5 D1           	 POP DE
+A4C6 ED 51        	 OUT (C),D
+A4C8 08           	 EX AF,AF'
+A4C9 3F           	 CCF
+A4CA DA 5E A6     	 JP C,high_suffix_6
+A4CD 71           	 DB 0xED,0x71
+A4CF 08           	 EX AF,AF'
+A4D0 D9           	 EXX
+A4D1 1A           	 LD A,(DE)
+A4D2 D9           	 EXX
+A4D3 ED 51        	 OUT (C),D
+A4D5 E6 0F        	 AND 15
+A4D7 07           	 RLCA
+A4D8 07           	 RLCA
+A4D9 ED 51        	 OUT (C),D
+A4DB C3 DE A4     	 JP $+3
+A4DE 00           	 NOP
+A4DF 00           	 NOP
+A4E0 00           	 NOP
+A4E1 71           	 DB 0xED,0x71
+A4E3 E9           	 JP (HL)
+                 	second_247:
+A4E4 ED 51        	 OUT (C),D
+A4E6 E1           	 POP HL
+A4E7 ED 51        	 OUT (C),D
+A4E9 FD E1        	 POP IY
+A4EB ED 51        	 OUT (C),D
+A4ED D1           	 POP DE
+A4EE ED 51        	 OUT (C),D
+A4F0 08           	 EX AF,AF'
+A4F1 3F           	 CCF
+A4F2 DA 75 A6     	 JP C,high_suffix_7
+A4F5 71           	 DB 0xED,0x71
+A4F7 08           	 EX AF,AF'
+A4F8 D9           	 EXX
+A4F9 1A           	 LD A,(DE)
+A4FA D9           	 EXX
+A4FB ED 51        	 OUT (C),D
+A4FD E6 0F        	 AND 15
+A4FF 07           	 RLCA
+A500 07           	 RLCA
+A501 ED 51        	 OUT (C),D
+A503 C3 06 A5     	 JP $+3
+A506 00           	 NOP
+A507 00           	 NOP
+A508 00           	 NOP
+A509 ED 51        	 OUT (C),D
+A50B E9           	 JP (HL)
+                 	second_250:
+A50C ED 51        	 OUT (C),D
+A50E E1           	 POP HL
+A50F ED 51        	 OUT (C),D
+A511 FD E1        	 POP IY
+A513 ED 51        	 OUT (C),D
+A515 D1           	 POP DE
+A516 ED 51        	 OUT (C),D
+A518 08           	 EX AF,AF'
+A519 3F           	 CCF
+A51A DA BA A6     	 JP C,high_suffix_10
+A51D ED 51        	 OUT (C),D
+A51F 08           	 EX AF,AF'
+A520 D9           	 EXX
+A521 1A           	 LD A,(DE)
+A522 D9           	 EXX
+A523 71           	 DB 0xED,0x71
+A525 E6 0F        	 AND 15
+A527 07           	 RLCA
+A528 07           	 RLCA
+A529 ED 51        	 OUT (C),D
+A52B C3 2E A5     	 JP $+3
+A52E 00           	 NOP
+A52F 00           	 NOP
+A530 00           	 NOP
+A531 71           	 DB 0xED,0x71
+A533 E9           	 JP (HL)
+                 	second_251:
+A534 ED 51        	 OUT (C),D
+A536 E1           	 POP HL
+A537 ED 51        	 OUT (C),D
+A539 FD E1        	 POP IY
+A53B ED 51        	 OUT (C),D
+A53D D1           	 POP DE
+A53E ED 51        	 OUT (C),D
+A540 08           	 EX AF,AF'
+A541 3F           	 CCF
+A542 DA D1 A6     	 JP C,high_suffix_11
+A545 ED 51        	 OUT (C),D
+A547 08           	 EX AF,AF'
+A548 D9           	 EXX
+A549 1A           	 LD A,(DE)
+A54A D9           	 EXX
+A54B 71           	 DB 0xED,0x71
+A54D E6 0F        	 AND 15
+A54F 07           	 RLCA
+A550 07           	 RLCA
+A551 ED 51        	 OUT (C),D
+A553 C3 56 A5     	 JP $+3
+A556 00           	 NOP
+A557 00           	 NOP
+A558 00           	 NOP
+A559 ED 51        	 OUT (C),D
+A55B E9           	 JP (HL)
+                 	second_253:
+A55C ED 51        	 OUT (C),D
+A55E E1           	 POP HL
+A55F ED 51        	 OUT (C),D
+A561 FD E1        	 POP IY
+A563 ED 51        	 OUT (C),D
+A565 D1           	 POP DE
+A566 ED 51        	 OUT (C),D
+A568 08           	 EX AF,AF'
+A569 3F           	 CCF
+A56A DA FF A6     	 JP C,high_suffix_13
+A56D ED 51        	 OUT (C),D
+A56F 08           	 EX AF,AF'
+A570 D9           	 EXX
+A571 1A           	 LD A,(DE)
+A572 D9           	 EXX
+A573 ED 51        	 OUT (C),D
+A575 E6 0F        	 AND 15
+A577 07           	 RLCA
+A578 07           	 RLCA
+A579 71           	 DB 0xED,0x71
+A57B C3 7E A5     	 JP $+3
+A57E 00           	 NOP
+A57F 00           	 NOP
+A580 00           	 NOP
+A581 ED 51        	 OUT (C),D
+A583 E9           	 JP (HL)
+                 	second_254:
+A584 ED 51        	 OUT (C),D
+A586 E1           	 POP HL
+A587 ED 51        	 OUT (C),D
+A589 FD E1        	 POP IY
+A58B ED 51        	 OUT (C),D
+A58D D1           	 POP DE
+A58E ED 51        	 OUT (C),D
+A590 08           	 EX AF,AF'
+A591 3F           	 CCF
+A592 DA 16 A7     	 JP C,high_suffix_14
+A595 ED 51        	 OUT (C),D
+A597 08           	 EX AF,AF'
+A598 D9           	 EXX
+A599 1A           	 LD A,(DE)
+A59A D9           	 EXX
+A59B ED 51        	 OUT (C),D
+A59D E6 0F        	 AND 15
+A59F 07           	 RLCA
+A5A0 07           	 RLCA
+A5A1 ED 51        	 OUT (C),D
+A5A3 C3 A6 A5     	 JP $+3
+A5A6 00           	 NOP
+A5A7 00           	 NOP
+A5A8 00           	 NOP
+A5A9 71           	 DB 0xED,0x71
+A5AB E9           	 JP (HL)
+                 	second_255:
+A5AC ED 51        	 OUT (C),D
+A5AE E1           	 POP HL
+A5AF ED 51        	 OUT (C),D
+A5B1 FD E1        	 POP IY
+A5B3 ED 51        	 OUT (C),D
+A5B5 D1           	 POP DE
+A5B6 ED 51        	 OUT (C),D
+A5B8 08           	 EX AF,AF'
+A5B9 3F           	 CCF
+A5BA DA 2D A7     	 JP C,high_suffix_15
+A5BD ED 51        	 OUT (C),D
+A5BF 08           	 EX AF,AF'
+A5C0 D9           	 EXX
+A5C1 1A           	 LD A,(DE)
+A5C2 D9           	 EXX
+A5C3 ED 51        	 OUT (C),D
+A5C5 E6 0F        	 AND 15
+A5C7 07           	 RLCA
+A5C8 07           	 RLCA
+A5C9 ED 51        	 OUT (C),D
+A5CB C3 CE A5     	 JP $+3
+A5CE 00           	 NOP
+A5CF 00           	 NOP
+A5D0 00           	 NOP
+A5D1 ED 51        	 OUT (C),D
+A5D3 E9           	 JP (HL)
+                 	high_suffix_0:
+A5D4 71           	 DB 0xED,0x71
+A5D6 08           	 EX AF,AF'
+A5D7 D9           	 EXX
+A5D8 1A           	 LD A,(DE)
+A5D9 D9           	 EXX
+A5DA 71           	 DB 0xED,0x71
+A5DC E6 F0        	 AND 240
+A5DE 0F           	 RRCA
+A5DF 0F           	 RRCA
+A5E0 71           	 DB 0xED,0x71
+A5E2 D9           	 EXX
+A5E3 1C           	 INC E
+A5E4 CA 00 80     	 JP Z,page_tail_0
+A5E7 D9           	 EXX
+A5E8 71           	 DB 0xED,0x71
+A5EA E9           	 JP (HL)
+                 	high_suffix_1:
+A5EB 71           	 DB 0xED,0x71
+A5ED 08           	 EX AF,AF'
+A5EE D9           	 EXX
+A5EF 1A           	 LD A,(DE)
+A5F0 D9           	 EXX
+A5F1 71           	 DB 0xED,0x71
+A5F3 E6 F0        	 AND 240
+A5F5 0F           	 RRCA
+A5F6 0F           	 RRCA
+A5F7 71           	 DB 0xED,0x71
+A5F9 D9           	 EXX
+A5FA 1C           	 INC E
+A5FB CA 10 80     	 JP Z,page_tail_1
+A5FE D9           	 EXX
+A5FF ED 51        	 OUT (C),D
+A601 E9           	 JP (HL)
+                 	high_suffix_2:
+A602 71           	 DB 0xED,0x71
+A604 08           	 EX AF,AF'
+A605 D9           	 EXX
+A606 1A           	 LD A,(DE)
+A607 D9           	 EXX
+A608 71           	 DB 0xED,0x71
+A60A E6 F0        	 AND 240
+A60C 0F           	 RRCA
+A60D 0F           	 RRCA
+A60E ED 51        	 OUT (C),D
+A610 D9           	 EXX
+A611 1C           	 INC E
+A612 CA 00 80     	 JP Z,page_tail_0
+A615 D9           	 EXX
+A616 71           	 DB 0xED,0x71
+A618 E9           	 JP (HL)
+                 	high_suffix_3:
+A619 71           	 DB 0xED,0x71
+A61B 08           	 EX AF,AF'
+A61C D9           	 EXX
+A61D 1A           	 LD A,(DE)
+A61E D9           	 EXX
+A61F 71           	 DB 0xED,0x71
+A621 E6 F0        	 AND 240
+A623 0F           	 RRCA
+A624 0F           	 RRCA
+A625 ED 51        	 OUT (C),D
+A627 D9           	 EXX
+A628 1C           	 INC E
+A629 CA 10 80     	 JP Z,page_tail_1
+A62C D9           	 EXX
+A62D ED 51        	 OUT (C),D
+A62F E9           	 JP (HL)
+                 	high_suffix_4:
+A630 71           	 DB 0xED,0x71
+A632 08           	 EX AF,AF'
+A633 D9           	 EXX
+A634 1A           	 LD A,(DE)
+A635 D9           	 EXX
+A636 ED 51        	 OUT (C),D
+A638 E6 F0        	 AND 240
+A63A 0F           	 RRCA
+A63B 0F           	 RRCA
+A63C 71           	 DB 0xED,0x71
+A63E D9           	 EXX
+A63F 1C           	 INC E
+A640 CA 00 80     	 JP Z,page_tail_0
+A643 D9           	 EXX
+A644 71           	 DB 0xED,0x71
+A646 E9           	 JP (HL)
+                 	high_suffix_5:
+A647 71           	 DB 0xED,0x71
+A649 08           	 EX AF,AF'
+A64A D9           	 EXX
+A64B 1A           	 LD A,(DE)
+A64C D9           	 EXX
+A64D ED 51        	 OUT (C),D
+A64F E6 F0        	 AND 240
+A651 0F           	 RRCA
+A652 0F           	 RRCA
+A653 71           	 DB 0xED,0x71
+A655 D9           	 EXX
+A656 1C           	 INC E
+A657 CA 10 80     	 JP Z,page_tail_1
+A65A D9           	 EXX
+A65B ED 51        	 OUT (C),D
+A65D E9           	 JP (HL)
+                 	high_suffix_6:
+A65E 71           	 DB 0xED,0x71
+A660 08           	 EX AF,AF'
+A661 D9           	 EXX
+A662 1A           	 LD A,(DE)
+A663 D9           	 EXX
+A664 ED 51        	 OUT (C),D
+A666 E6 F0        	 AND 240
+A668 0F           	 RRCA
+A669 0F           	 RRCA
+A66A ED 51        	 OUT (C),D
+A66C D9           	 EXX
+A66D 1C           	 INC E
+A66E CA 00 80     	 JP Z,page_tail_0
+A671 D9           	 EXX
+A672 71           	 DB 0xED,0x71
+A674 E9           	 JP (HL)
+                 	high_suffix_7:
+A675 71           	 DB 0xED,0x71
+A677 08           	 EX AF,AF'
+A678 D9           	 EXX
+A679 1A           	 LD A,(DE)
+A67A D9           	 EXX
+A67B ED 51        	 OUT (C),D
+A67D E6 F0        	 AND 240
+A67F 0F           	 RRCA
+A680 0F           	 RRCA
+A681 ED 51        	 OUT (C),D
+A683 D9           	 EXX
+A684 1C           	 INC E
+A685 CA 10 80     	 JP Z,page_tail_1
+A688 D9           	 EXX
+A689 ED 51        	 OUT (C),D
+A68B E9           	 JP (HL)
+                 	high_suffix_8:
+A68C ED 51        	 OUT (C),D
+A68E 08           	 EX AF,AF'
+A68F D9           	 EXX
+A690 1A           	 LD A,(DE)
+A691 D9           	 EXX
+A692 71           	 DB 0xED,0x71
+A694 E6 F0        	 AND 240
+A696 0F           	 RRCA
+A697 0F           	 RRCA
+A698 71           	 DB 0xED,0x71
+A69A D9           	 EXX
+A69B 1C           	 INC E
+A69C CA 00 80     	 JP Z,page_tail_0
+A69F D9           	 EXX
+A6A0 71           	 DB 0xED,0x71
+A6A2 E9           	 JP (HL)
+                 	high_suffix_9:
+A6A3 ED 51        	 OUT (C),D
+A6A5 08           	 EX AF,AF'
+A6A6 D9           	 EXX
+A6A7 1A           	 LD A,(DE)
+A6A8 D9           	 EXX
+A6A9 71           	 DB 0xED,0x71
+A6AB E6 F0        	 AND 240
+A6AD 0F           	 RRCA
+A6AE 0F           	 RRCA
+A6AF 71           	 DB 0xED,0x71
+A6B1 D9           	 EXX
+A6B2 1C           	 INC E
+A6B3 CA 10 80     	 JP Z,page_tail_1
+A6B6 D9           	 EXX
+A6B7 ED 51        	 OUT (C),D
+A6B9 E9           	 JP (HL)
+                 	high_suffix_10:
+A6BA ED 51        	 OUT (C),D
+A6BC 08           	 EX AF,AF'
+A6BD D9           	 EXX
+A6BE 1A           	 LD A,(DE)
+A6BF D9           	 EXX
+A6C0 71           	 DB 0xED,0x71
+A6C2 E6 F0        	 AND 240
+A6C4 0F           	 RRCA
+A6C5 0F           	 RRCA
+A6C6 ED 51        	 OUT (C),D
+A6C8 D9           	 EXX
+A6C9 1C           	 INC E
+A6CA CA 00 80     	 JP Z,page_tail_0
+A6CD D9           	 EXX
+A6CE 71           	 DB 0xED,0x71
+A6D0 E9           	 JP (HL)
+                 	high_suffix_11:
+A6D1 ED 51        	 OUT (C),D
+A6D3 08           	 EX AF,AF'
+A6D4 D9           	 EXX
+A6D5 1A           	 LD A,(DE)
+A6D6 D9           	 EXX
+A6D7 71           	 DB 0xED,0x71
+A6D9 E6 F0        	 AND 240
+A6DB 0F           	 RRCA
+A6DC 0F           	 RRCA
+A6DD ED 51        	 OUT (C),D
+A6DF D9           	 EXX
+A6E0 1C           	 INC E
+A6E1 CA 10 80     	 JP Z,page_tail_1
+A6E4 D9           	 EXX
+A6E5 ED 51        	 OUT (C),D
+A6E7 E9           	 JP (HL)
+                 	high_suffix_12:
+A6E8 ED 51        	 OUT (C),D
+A6EA 08           	 EX AF,AF'
+A6EB D9           	 EXX
+A6EC 1A           	 LD A,(DE)
+A6ED D9           	 EXX
+A6EE ED 51        	 OUT (C),D
+A6F0 E6 F0        	 AND 240
+A6F2 0F           	 RRCA
+A6F3 0F           	 RRCA
+A6F4 71           	 DB 0xED,0x71
+A6F6 D9           	 EXX
+A6F7 1C           	 INC E
+A6F8 CA 00 80     	 JP Z,page_tail_0
+A6FB D9           	 EXX
+A6FC 71           	 DB 0xED,0x71
+A6FE E9           	 JP (HL)
+                 	high_suffix_13:
+A6FF ED 51        	 OUT (C),D
+A701 08           	 EX AF,AF'
+A702 D9           	 EXX
+A703 1A           	 LD A,(DE)
+A704 D9           	 EXX
+A705 ED 51        	 OUT (C),D
+A707 E6 F0        	 AND 240
+A709 0F           	 RRCA
+A70A 0F           	 RRCA
+A70B 71           	 DB 0xED,0x71
+A70D D9           	 EXX
+A70E 1C           	 INC E
+A70F CA 10 80     	 JP Z,page_tail_1
+A712 D9           	 EXX
+A713 ED 51        	 OUT (C),D
+A715 E9           	 JP (HL)
+                 	high_suffix_14:
+A716 ED 51        	 OUT (C),D
+A718 08           	 EX AF,AF'
+A719 D9           	 EXX
+A71A 1A           	 LD A,(DE)
+A71B D9           	 EXX
+A71C ED 51        	 OUT (C),D
+A71E E6 F0        	 AND 240
+A720 0F           	 RRCA
+A721 0F           	 RRCA
+A722 ED 51        	 OUT (C),D
+A724 D9           	 EXX
+A725 1C           	 INC E
+A726 CA 00 80     	 JP Z,page_tail_0
+A729 D9           	 EXX
+A72A 71           	 DB 0xED,0x71
+A72C E9           	 JP (HL)
+                 	high_suffix_15:
+A72D ED 51        	 OUT (C),D
+A72F 08           	 EX AF,AF'
+A730 D9           	 EXX
+A731 1A           	 LD A,(DE)
+A732 D9           	 EXX
+A733 ED 51        	 OUT (C),D
+A735 E6 F0        	 AND 240
+A737 0F           	 RRCA
+A738 0F           	 RRCA
+A739 ED 51        	 OUT (C),D
+A73B D9           	 EXX
+A73C 1C           	 INC E
+A73D CA 10 80     	 JP Z,page_tail_1
+A740 D9           	 EXX
+A741 ED 51        	 OUT (C),D
+A743 E9           	 JP (HL)
+                 	second_end:
+A744 00           	complete: NOP

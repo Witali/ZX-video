@@ -1,5 +1,36 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Exact native PDM code sharing frees space for PCM16 selection
+
+- **Objective/input:** Continue the user's full reconstructed16-bit SDM
+  mechanism by reducing its measured13732-byte pattern dictionary. Use all
+  138 FIRST/124 SECOND literals from the authenticated completeB catalogue;
+  keep original encoders/player, compressed IMA and delivered disk unchanged.
+- **Implemented layouts:** Share SECOND high tails through the existing
+  conditional JP:11124 bytes, saving2608 with zero additional CPU T-states.
+  Sharing FIRST as well gives9220 bytes/+10 T. Sharing both SECOND phases
+  gives7156 bytes, saving6576/+20 T. In the last layout Pentagon padding
+  26 ->6 T retains449 ordinary/463 page/692 bank; pulse positions within
+  packets change.128/Scorpion become443/457/686 or710 T before ULA waits.
+  These variants have not replaced the unchanged player dictionary.
+- **Verification:**18864 paired native component cases pass across128,
+  Scorpion, Pentagon512/1024: every required literal, both phases and
+  ordinary/page/bank paths, all pulse ports/values, live registers/flags,
+  predictor/prefetch, coherent physical paging and memory guards. The first
+  layout also matches every pulse timestamp. Hand-counted instruction lists
+  match absolute/delta CPU timings; no ULA/ROM/floppy proof is implied.
+  Independent root audit checks25 artifacts and byte-matches all13732 bytes
+  against actual repository macros. Its initial final-DS serialization
+  assertion was fixed with a sentinel; no opcode mismatch was found.
+- **Decision:** Retain the zero-cycle2608-byte saving and larger counted
+  alternatives as proven components. A full-input selector and complete
+  RAM/timing/quality integration remain required. No new release or goal
+  completion follows; b96763ca stays unchanged. This continuation makes
+  implementation progress and narrows the next memory/timing constraint.
+  [Mechanism and reproduction](audiobook-beeper/SDM16_PRECISION.md),
+  [native evidence](audiobook-beeper/experiments/song-snr/evidence/sdm16-patterns/report.json),
+  [independent audit](audiobook-beeper/experiments/song-snr/evidence/sdm16-patterns-audit/report.json).
+
 ## 2026-10-19 — Full-input SDM table and arithmetic feasibility measured
 
 - **Objective/scope:** Finish the CPU/RAM audit for the decoded16-bit precision

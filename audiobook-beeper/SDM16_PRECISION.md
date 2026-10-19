@@ -126,3 +126,46 @@ state precision and true second-order shaping remain separate mechanisms.
 The old25-level/reduced-gain SD2 port must not be repeated as an apparent
 precision upgrade. Existing encoders, player defaults and delivered b96763ca
 remain unchanged.
+
+## Compact pattern bodies, 2026-10-19
+
+The [standalone pattern generator](experiments/song-snr/sdm16_patterns.py)
+now implements three source-independent code-sharing layouts for all138
+FIRST and124 SECOND literals needed by the completeB catalogue. This is a
+memory mechanism for a future full-input selector, not an integrated player.
+
+| Layout | FIRST+SECOND bytes | Saved bytes | Additional deterministic T/sample |
+|---|---:|---:|---:|
+| Existing unrolled bodies |13732|0|0|
+| Shared SECOND high suffixes |11124|2608|0|
+| Also shared FIRST suffixes |9220|4512|10|
+| Both SECOND suffixes and FIRST suffixes |7156|6576|20 before pacing exchange|
+
+The first compact layout redirects an existing10-T conditional JP to one of
+sixteen shared high-phase tails. It preserves every native pulse timestamp,
+port, value and live register. The maximum-sharing layout introduces two
+constant10-T transfers. On Pentagon its padding can change26 ->6 T using
+`INC HL` with deadHL, retaining449 T ordinary/463 T page/692 T bank. Its
+intra-packet timestamps still change, so identical total duration is not an
+audio-quality equivalence proof. On128/Scorpion it adds20 T: ordinary443,
+page457, bank686/710 T before any ULA waits. The intermediate layout adds10 T
+without a pacing exchange. The saved instruction-by-instruction tables
+separate these CPU counts from ULA, ROM and physical-disk delays.
+
+All18864 paired native cases pass across four coherent-bank profiles,
+covering every required FIRST/SECOND literal, both nibble phases and
+ordinary/page/bank tails. Live flags/registers, lookupSP, predictor/prefetch,
+physical paging and guarded memory match the unshared control. These are
+component tests, not every possible literal pair or a whole disk execution.
+The [independent auditor](experiments/song-snr/sdm16_patterns_audit.py) checks
+all25 saved artifacts and assembles the actual unchanged repository macros:
+all13732 baseline code bytes match the experimental control. Its finalDS
+padding is sealed with a sentinel because pyz80 omits trailing reservations.
+
+[Native results](experiments/song-snr/evidence/sdm16-patterns/report.json),
+[instruction counts](experiments/song-snr/evidence/sdm16-patterns/timing.json),
+[independent audit](experiments/song-snr/evidence/sdm16-patterns-audit/report.json).
+Reproduce with `python audiobook-beeper/experiments/song-snr/sdm16_patterns.py`
+and `python audiobook-beeper/experiments/song-snr/sdm16_patterns_audit.py`.
+No fullPCM16 selector, cold boot, UI, ULA/Fuse or complete-source quality proof
+is established by this code-sharing experiment. The delivered disk is unchanged.
