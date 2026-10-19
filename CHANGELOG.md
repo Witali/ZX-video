@@ -150,6 +150,18 @@
   [native evidence](libraries/evidence/ten_percent_tail_refill.json),
   [verification](libraries/evidence/ten_percent_tail_refill_verification.json).
 
+## 2026-10-19 — Distinguish real and full-corpus wide decoder buffer requirements
+
+- **Scope/result:** The wide decoder's published 8,198-byte input maximum is
+  explicitly for the 21 real blocks. Add the all-95-cases maximum: the
+  literal-only 15,872-byte case needs 15,878 compressed-input bytes; maximum
+  decoded output/history is 15,872. Record the test IRQ handler's 13 code bytes
+  separately from its six stack bytes and the decoder service footprint.
+- **Verification/decision:** Reauthenticate the existing complete native
+  report, 27-test log and isolated wheel; no generated decoder byte or CPU
+  timing changes (0 T). Keep both input scopes explicit in documentation and
+  [verification metadata](libraries/evidence/wide_profiles_verification.json).
+
 ## 2026-10-19 — Publish raw wide LZSA2 profiles under the clarified 10,000-byte service cap
 
 - **Updated authorization/baseline:** The user replaces the earlier preferred

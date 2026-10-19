@@ -49,6 +49,9 @@ def main():
             worst_alignment_service_bytes=v['total_storage_bytes']+255,
             corpus_cases=v['corpus_cases'], directed_cases=v['directed_cases'],
             actual_irq_probe_stack_headroom_bytes=v['verified_irq_headroom_bytes'],
+            actual_irq_probe_code_bytes=13,
+            maximum_corpus_input_bytes=max(r['compressed_input_bytes'] for r in v['blocks']),
+            maximum_corpus_output_history_bytes=max(r['output_including_history_bytes'] for r in v['blocks']),
             maximum_real_input_bytes=v['maximum_real_input_bytes'],
             maximum_real_output_history_bytes=v['maximum_real_output_history_bytes'],
             maximum_real_separate_service_and_buffers_bytes=max(r['separate_service_and_buffers_bytes']

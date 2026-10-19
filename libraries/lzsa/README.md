@@ -51,6 +51,9 @@ rejects these profiles until the caller reserves a larger code range.
 Compressed input and complete decoded output/history are separate caller
 buffers. The retained real corpus needs up to 8,198 compressed-input bytes
 and 15,872 output/history bytes; no shared-buffer overlap is assumed here.
+Across all 95 corpus cases, the literal-only case needs 15,878 compressed-input
+bytes; the output/history maximum remains 15,872. The test IRQ handler itself
+occupies 13 code bytes, also separate from the decoder's service footprint.
 Add actual IRQ/hardware-return stack headroom separately: the measured
 register-preserving IM1 test handler needs six extra bytes. IRQ must preserve
 both main and alternate live registers, because HL' temporarily holds the
