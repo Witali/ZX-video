@@ -328,3 +328,42 @@ exports the option independently. See [TAIL_REFILL.md](TAIL_REFILL.md) for
 absolute counts, complete reproduction and the separately tracked Mega.
 This component improvement leaves the 10%-per-library goal active; it does
 not qualify player/movie delivery or change defaults.
+
+## Full-token LZSA2 dispatch speed bound (2026-10-19)
+
+**Decision: retain test-only; reject adoption at the measured code cost.**
+Simple register/short-copy substitutions cannot remove enough classification
+work from the tight Fast decoder. A full 256-entry target lookup fuses XYZ,
+LL and MMM and specializes constant short counts. EXX borrows HL' for the
+table lookup; each handler restores main registers before data access. Raw
+entry/EOF preserve caller HL' once; IRQ and the other preserved pairs stay
+valid. Both prototypes keep exact EOF and legal short word lengths.
+
+On the complete 21-real-block input, the expanded/shared variants save
+12.052517% /10.670425% from `f5a0362c` resident +fast_jumps. However, code is
+6,998 /3,446 bytes versus 219, including the 512-byte table; alignment at
+9103h adds another 253 bytes. This is far beyond the approximately 10% free
+code-growth preference. Rounded code sectors are 28 /14 versus one; there
+is no physical disk-delivery claim. Stack peak is six bytes versus four.
+
+Sharing offset/MMM bodies across LL prefixes trades 245,530 CPU T for 3,552
+bytes saved on real data. The zero-literal form falls through; nonempty
+prefixes jump to their body. Before new offsets, fixed one/two LDIs do not
+need initialized BC because no temporary count/PV result is consumed and
+the parser replaces both B and C. Repeat-offset forms retain B=0. This
+invariant is checked with every token value in both nibble-cache phases.
+
+All 95 corpus blocks, relocation and IRQs pass for each prototype. Every
+real block improves, while 21 expanded /22 shared directed blocks are slower
+by at most 20/30 T. Another 580 directed cases per profile cover every token
+twice, all offset nibble forms, one/two-byte word literals and one-nibble EOF.
+All 25 library tests pass with the original default/resource hashes.
+Coroutine/guarded input are deliberately unimplemented in this experiment;
+the joint library goal is not achieved by a large raw-only speed bound.
+
+Reproduce with `python tests/measure_full_token_dispatch.py --output
+evidence/ten_percent_full_token_dispatch.json` from `libraries/`, with the
+native `z80==1.2.0` dependency and worktree-local TMP/TEMP. See
+[complete input hashes, code layouts, slower cases and timings](evidence/ten_percent_full_token_dispatch.json),
+[independent prototype](tests/full_token_dispatch.py), and
+[timing derivation](TIMING.md#full-token-lzsa2-dispatch-speed-bound-2026-10-19).

@@ -110,6 +110,50 @@
   [native evidence](libraries/evidence/ten_percent_tail_refill.json),
   [verification](libraries/evidence/ten_percent_tail_refill_verification.json).
 
+## 2026-10-19 — Full-token LZSA2 dispatch proves a raw speed bound at excessive code cost
+
+- **Objective/baseline:** Seek another approximately 10% without changing raw
+  LZSA2 data. Work in `.worktree/codec-lzsa-dispatch`, from `674a1fc8`, against
+  the goal's `f5a0362c` Fast resident +fast_jumps baseline. Reuse all 95 native
+  corpus cases, including the complete authenticated 21 real blocks /323,940
+  decoded bytes. Compare the prior branch-tuned base separately.
+- **Experiment/parameters:** Test-only 256-token dispatch uses a 512-byte
+  two-page target table and EXX to borrow HL' while preserving input HL. Save
+  caller HL' once on entry, restore it at exact EOF; other alternate pairs and
+  IX remain untouched. Specialize offset class, literal count and short match
+  length together. A second layout shares 64 offset/MMM bodies across the four
+  LL prefixes, with the most frequent zero-literal prefix falling through.
+  Fixed one/two LDIs can wrap temporary BC only before a new-offset parser
+  overwrites both bytes; repeat-offset tokens retain explicit literal counts.
+- **Measured result:** Real resident CPU 17,765,094 ->15,623,953 T for expanded
+  dispatch (-2,141,141; 12.052517%), or ->15,869,483 T for shared bodies
+  (-1,895,611; 10.670425%). The previous tuned resident is 17,714,484 T.
+  Both exceed 10% on this raw workload, but code grows 219 ->6,998 /3,446
+  bytes, respectively. These counts include the complete table and handlers;
+  rounded code-region allocation grows 1 ->28 /14 sectors. Relocating to
+  9103h adds 253 alignment bytes, also counted. Caller stack peak grows 4 ->6
+  bytes, with no persistent state or compressed payload change.
+- **Regressions/verification:** Every real block improves. Expanded/shared
+  layouts slow 21/22 directed corpus blocks, at most 20/30 T. Each passes all
+  95 complete blocks with relocation and register-preserving IM1 probes, plus
+  580 directed cases: all 256 token values in both nibble-cache phases, all 64
+  offset-nibble forms, legal one/two-byte word literals, and single-nibble EOF.
+  Opcode-fetch timing probes verify representative repeat-match dispatch:
+  zero/one/two literals 116/145/166 ->75/98/114 T expanded, ->75/108/124 T
+  shared, through entry to PUSH HL. The first manual baseline sum used JP10
+  for an actual taken JR12; the native assertion caught and corrected +2 T.
+  All 25 library tests pass, preserving 31 default profiles and six upstream
+  resources. Public decoder sources and defaults are unchanged.
+- **Decision/limits:** Preserve both oversized prototypes as reproducible
+  speed/size bounds; reject public/player adoption at this code cost, far
+  beyond the approximately 10% free-growth preference. This is raw-only:
+  coroutine, guarded-input producer integration, sustained disk delivery,
+  physical ROM/ULA timing and publication timing remain unmeasured. The joint
+  library goal stays incomplete. [Reproducer](libraries/tests/measure_full_token_dispatch.py),
+  [complete results](libraries/evidence/ten_percent_full_token_dispatch.json),
+  [test log](libraries/evidence/full_token_dispatch/library-tests.log.gz),
+  [instruction costs](libraries/TIMING.md#full-token-lzsa2-dispatch-speed-bound-2026-10-19).
+
 ## 2026-10-19 — Optional conditional Fast layouts toward the active ten-percent goal
 
 - **Request/baseline:** Pursue another approximately 10% per ZX0/LZSA2,

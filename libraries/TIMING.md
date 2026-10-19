@@ -167,3 +167,51 @@ CPU falls another 359,963 T per resident/coroutine profile: branch-tuned Fast
 coroutine 178,657,995 ->178,298,032 T (388 ->391 total bytes). No state/stack
 reservation grows. [Detailed counts and limits](TAIL_REFILL.md),
 [full per-case evidence](evidence/ten_percent_tail_refill.json).
+
+## Full-token LZSA2 dispatch speed bound (2026-10-19)
+
+These are independent test-only raw decoders, not public options or player
+changes. Flat CPU counts use the same Zilog instruction timings and complete
+authenticated input as item31; injected IRQ work, ULA/ROM/disk latency and
+publication timing are excluded.
+
+| Raw profile, 21 real blocks /323,940 decoded bytes | CPU T | Difference from f5a0362c | Code bytes | Rounded code sectors |
+| --- | ---: | ---: | ---: | ---: |
+| Fast +fast_jumps baseline | 17,765,094 | 0 | 219 | 1 |
+| Previous branch_tuned | 17,714,484 | -50,610 | 220 | 1 |
+| Expanded full-token dispatch | 15,623,953 | -2,141,141 (-12.052517%) | 6,998 | 28 |
+| Shared LL prefixes /64 bodies | 15,869,483 | -1,895,611 (-10.670425%) | 3,446 | 14 |
+
+Both code counts include the 512-byte table. Starting at 9103h needs 253
+alignment bytes: total 7,251 /3,699 bytes, with identical CPU counts. Maximum
+caller stack use is six bytes versus four. No state or payload byte is added.
+Sharing saves 3,552 code bytes and adds 245,530 T. Neither meets the preferred
+approximately 10% code-growth tradeoff; do not promote them based on CPU alone.
+
+The table lookup plus register restoration costs 58 T: LD A,(HL)7 +INC HL6
++EXX4 +LD L,A4 +LD H,n7 +LD A,(HL)7 +INC H4 +LD H,(HL)7 +LD L,A4
++JP (HL)4 +handler EXX4. Only HL' is scratch; entry EXX/PUSH HL/EXX costs
+19 T, EOF EXX/POP HL/EXX costs 18 T, so alternate-HL preservation adds 37 T
+per block. Fixed one/two literals use one/two LDIs (16/32 T); two LDIs save
+5 T over two-byte LDIR37. New-offset handlers may omit LD C,n7 because their
+parser replaces temporary wrapped BC before it is consumed. Repeated-offset
+handlers retain the initialization. Shared nonempty literal prefixes add JP10.
+
+Opcode-fetch probes also verify complete classification/length work before
+PUSH HL for a two-byte repeat-offset match:
+
+| Literal count | Baseline T | Expanded T /delta | Shared T /delta |
+| --- | ---: | ---: | ---: |
+| 0 | 116 | 75 /-41 | 75 /-41 |
+| 1 | 145 | 98 /-47 | 108 /-37 |
+| 2 | 166 | 114 /-52 | 124 /-42 |
+
+The baseline includes a taken JR12 at MatchLen, not JP10. The initial manual
+sum was corrected by the native timing assertion. All real blocks improve;
+expanded/shared variants slow 21/22 directed corpus cases by up to 20/30 T.
+The native evidence includes all 95 cases and 580 additional directed cases
+per profile with relocation and register-preserving IRQ probes. This covers
+every 256-token handler in both cache phases, all offset nibbles and exact
+single-nibble EOF. Coroutine/partial-input modes and physical delivery remain
+unmeasured. [Complete report and repro hashes](evidence/ten_percent_full_token_dispatch.json),
+[reproducer](tests/measure_full_token_dispatch.py).
