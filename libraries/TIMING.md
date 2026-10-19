@@ -107,3 +107,36 @@ No stack/state/input bytes or rounded code-region sectors are added.
 [Decisions and the rejected cold-wrapper expansion](OPTIMIZATION_PLAN.md#item30--unconditional-branch-speed-policy-2026-10-19),
 [native counts](evidence/fast_jumps.json),
 [guarded/package authentication](evidence/fast_jumps_verification.json).
+
+## Measured Fast conditional branches, item31 (2026-10-19)
+
+The optional `branch_tuned` policy uses the full real-input frequencies to
+select JR (7 T untaken / 12 T taken, two bytes) or JP (10 T, three bytes).
+The condition and flags are unchanged. Real savings are not universal savings:
+directed cases and individual slices can be slower. A per-call assembler
+factory retries an out-of-range selected JR as JP, with no global patches.
+
+| Same-feature profile, real input | Previous T | New T | Difference | Code bytes |
+| --- | ---: | ---: | ---: | ---: |
+| ZX0 Fast resident, 364 blocks | 156,012,520 | 153,706,279 | -2,306,241 (-1.478241%) | 207 ->193 |
+| ZX0 Fast coroutine, 256-byte demands | 180,610,040 | 178,657,995 | -1,952,045 (-1.080806%) | 401 ->388 |
+| LZSA2 Fast resident +fast_jumps, 21 blocks | 17,765,094 | 17,714,484 | -50,610 (-0.284885%) | 219 ->220 |
+| LZSA2 ordinary coroutine +fast_jumps | 19,407,004 | 19,356,394 | -50,610 (-0.260782%) | 386 ->387 |
+
+The raw Fast ZX0 layout changes 14 branches; the coroutine retains one JP
+whose target would exceed relative reach, changing 13. Three directed cases
+per ZX0 profile are 1..4 T slower. Seventeen directed LZSA2 cases per basic
+profile are 3..8 T slower. All retained real blocks improve. Combined prior
+LZSA2 long-copy/near-literal/restore profiles also pass complete replays.
+
+Guarded CALL/direct producer+decoder totals respectively:
+29,614,150 ->29,563,863 and 27,397,679 ->27,347,392 T (-50,287 each).
+The producer work stays 2,007,656 /1,997,321 T; all 772 sector reads, waits,
+slice counts and code/state extents match. Each mode has 32 slower slices
+out of 2,670, with a largest +43 T, while all real blocks improve overall.
+See the report for separate real-slice counts. These are flat CPU/model
+counts, excluding injected IRQ, ULA, ROM/disk latency and publication timing.
+[Native candidate and all directed regressions](evidence/ten_percent_tuned_branches.json),
+[public option combinations](evidence/ten_percent_tuned_combinations.json),
+[guarded/package authentication](evidence/ten_percent_branch_verification.json).
+The approximately 10% goal for each library remains active and unachieved.

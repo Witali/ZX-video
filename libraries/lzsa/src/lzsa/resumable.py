@@ -13,7 +13,7 @@ PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
 def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,restore_compare=False,fast_jumps=False,
-          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,_one_shot=False):
+          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,_one_shot=False,_assembler=None):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
     Configure input_pointer, block_end and slice_target, then call begin or
@@ -34,7 +34,16 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     fast_jumps replaces core unconditional JR with JP, saving 2 T per execution
     for one extra code byte per site. Conditional branches and cold input-wait
     retries stay unchanged: the producer-helper tail has a fixed RAM budget.
+    branch_tuned selects measured conditional JR/JP forms. Conditions/flags
+    remain identical; some synthetic cases are slower. Metadata lists changes.
     """
+    if branch_tuned:
+        from ._branch_tuning import tune
+        return tune(build,dict(core=core,core_limit=core_limit,streaming=streaming,
+            direct_header=direct_header,long_copy=long_copy,near_literals=near_literals,
+            word_state_init=word_state_init,restore_compare=restore_compare,fast_jumps=fast_jumps,
+            prefix=prefix,prefix_limit=prefix_limit,stack=stack,output_base=output_base,
+            _one_shot=_one_shot),'lzsa2')
     if direct_header and not streaming:raise ValueError('direct header requires streaming input')
     if near_literals and (not long_copy or streaming):
         raise ValueError('near literals require ordinary long-copy input')
@@ -45,7 +54,8 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         raise ValueError('invalid code reservations')
     if not _one_shot and not (core_limit<=prefix or prefix_limit<=core):raise ValueError('code reservations overlap')
     if not 0<stack<=65535 or not 0<=output_base<65535:raise ValueError('invalid stack/output address')
-    cold=MiniAssembler(prefix);a=MiniAssembler(core);rows=[];fast_jump_sites=[]
+    assembler=_assembler or MiniAssembler
+    cold=assembler(prefix);a=assembler(core);rows=[];fast_jump_sites=[]
     def emit(name,code,t):rows.append(dict(address=a.pc,instruction=name,tstates=t));a.emit(*code)
     def ld(name,op,target,t):
         rows.append(dict(address=a.pc,instruction=name,tstates=t));a.abs16(op,target)

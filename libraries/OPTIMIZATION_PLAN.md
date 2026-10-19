@@ -224,3 +224,67 @@ also consumes the indexed rejected-trial evidence, successful test logs,
 both wheel smoke reports and `compare_producer.py` output. Its report indexes
 the full gzip archives and embeds wheel results. Preserve their checkpoint
 and source hashes when reauthenticating a historical run.
+
+## Item31 — measured conditional Fast branches (2026-10-19)
+
+**Decision: optional measured intermediate step; the 10% goal stays active.**
+The new user request starts from `f5a0362c`, including item30. Full real token
+and native branch profiles show that short matches dominate; do not recycle
+old gains, weaken coroutine features, change inputs, or use Standard as the
+primary baseline. Keep the separately recorded Mega baseline in view.
+
+`branch_tuned=True` / `--branch-tuned` selects JR/JP forms from the complete
+real-input frequencies. Both instructions preserve flags; their 7/12 versus
+10 T costs depend on taken frequency. The generator uses an injected private
+assembler per call and retries an out-of-range selected JR as JP. No global
+assembler mutation is used in the public packages. Metadata and generated
+assembly identify the option and its performance tradeoff. Defaults and all
+upstream resources stay exact; Small and non-Fast ZX0 profiles stay independent.
+
+All 1,024 main profile comparisons use unchanged inputs: Fast ZX0 resident
+and 256-byte-demand coroutine each replay 417 complete blocks, and LZSA2
+resident/coroutine each replay 95. Every candidate also passes relocated
+9103h code and register-preserving IRQ execution. The public package results
+match the previously frozen independent candidate byte/address/label maps.
+
+Real gains are 1.478241% ZX0 resident (207 ->193 bytes), 1.080806% coroutine
+(401 ->388); LZSA2 +fast_jumps gains 0.284885% resident (219 ->220) and
+0.260782% coroutine (386 ->387). Absolute counts and endpoints are in
+[TIMING.md](TIMING.md#measured-fast-conditional-branches-item31-2026-10-19).
+All real blocks improve. Three directed ZX0 cases per profile are 1..4 T
+slower; 17 directed LZSA2 cases are 3..8 T slower. Ordinary slices can also
+be slower: retain every counterexample in the native report rather than
+describing aggregate gains as universal. One shortened ZX0 coroutine branch
+exceeds relative reach and retains JP; the resident branch fits.
+
+Another 570 complete native comparisons cover six public LZSA2 combinations
+with/without fast_jumps, long-copy/near-literal, and ordinary restore-compare.
+Both partial-input modes pass 63 cases with six placements, including all
+21 real blocks and 18 legal short word forms. Producer work/waits/slices and
+772 once-only sectors per mode match the prior fast_jumps baseline. Guarded
+totals improve 50,287 T each; 32/2,670 slices per mode are slower, maximum
++43 T. No real block slows overall. The wrapper/state/core extents stay exact.
+
+All 25 library and 67 toolkit tests pass (92), with 31 exact default profiles
+and six exact upstream resources. Independently installed wheels include
+the new helper and preserve converter-free imports and byte-exact CLI/ORG-DB
+exports. This does not promote a player default, prove physical delivery,
+qualify a movie/TRD or complete the migration plan. The new 10% goal is not
+achieved; this step supplies a smaller/faster compatible base for further work.
+
+- [Complete real token mix](evidence/ten_percent_copy_mix.json), recorded
+  at the frozen source checkpoint in commit `1158fd8c`.
+- [Native branch frequencies](evidence/ten_percent_branch_mix.json),
+  reproduced by `tests/profile_branch_mix.py`.
+- [Independent candidate/native regressions](evidence/ten_percent_tuned_branches.json),
+  reproduced by `tests/measure_tuned_branches.py`.
+- [Public option combinations](evidence/ten_percent_tuned_combinations.json),
+  reproduced by `tests/measure_tuned_combinations.py`.
+- [Guarded/native/package authentication and full archives](evidence/ten_percent_branch_verification.json),
+  reproduced by `tests/summarize_tuned_branches.py --directory .tmp --output libraries/evidence/ten_percent_branch_verification.json`.
+
+For the guarded runs, use the same decompressed fixtures and `--noncanonical
+--stream .tmp/lzsa-stream --raw .tmp/lzsa-raw --fast-jumps --branch-tuned`
+arguments as item30, with and without `--direct-header`; save to
+`.tmp/tuned-branch-call.json` / `.tmp/tuned-branch-direct.json`. Successful
+unit logs and both isolated smoke results are indexed by the summary.

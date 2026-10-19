@@ -178,3 +178,19 @@ Real resident CPU 17,767,606 ->17,765,094 T (-0.014138%); ordinary coroutine
 long-copy/near-literal/restore-compare options. Both partial-input guard modes
 retain waits, slices and sector reads. [Counts, rejected cold-wrapper trial
 and full regression scope](../OPTIMIZATION_PLAN.md#item30--unconditional-branch-speed-policy-2026-10-19).
+
+## Optional measured Fast branch layout
+
+`lzsa.block.build(branch_tuned=True)` and
+`lzsa.resumable.build(branch_tuned=True)` choose conditional JR/JP forms from
+the complete real-input frequencies. Add CLI `--branch-tuned` for either Fast
+profile; Small remains independent. The option combines with `fast_jumps`.
+Conditions/flags, data format, exact EOF, input guards and coroutine ABI stay
+unchanged; relative branches are checked at generation time.
+
+With `fast_jumps=True`, 21 real resident blocks improve 17,765,094 ->17,714,484 T
+(0.284885%), 219 ->220 bytes. The ordinary coroutine improves
+19,407,004 ->19,356,394 T (0.260782%), 386 ->387 total bytes. All real blocks
+improve; 17 directed cases per profile are 3..8 T slower, and some slices are
+slower. Defaults are unchanged. This optional intermediate gain does not
+complete the user's separate 10% goal. [Complete candidate counts](../evidence/ten_percent_tuned_branches.json).

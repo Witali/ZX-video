@@ -4,7 +4,7 @@ from .codec import emit_decoder
 from .resumable import emit_fast
 
 
-def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False):
+def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False,branch_tuned=False,_assembler=None):
     """Call metadata entry with HL=input, DE=nonwrapping output, caller stack.
 
     Supply a complete valid block and resident input/history. AF/BC/DE/HL
@@ -15,8 +15,12 @@ def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False):
     fast_jumps changes only unconditional JR to JP in Standard/Turbo/Mega:
     12 -> 10 T per execution, one extra byte per site. Fast already uses JP.
     """
+    if branch_tuned:
+        if variant!='fast':raise ValueError('branch tuning requires the Fast decoder')
+        from ._branch_tuning import tune
+        return tune(build,dict(variant=variant,core=core,core_limit=core_limit,fast_jumps=fast_jumps),'zx0')
     if not 0<=core<core_limit<=65536:raise ValueError('invalid code reservation')
-    a=MiniAssembler(core)
+    a=(_assembler or MiniAssembler)(core)
     if variant=='fast':
         emit_fast(a,lambda a,site:None);entry='DecompressZX0';offset='PrevOffset+1'
     else:

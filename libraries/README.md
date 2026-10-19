@@ -77,6 +77,16 @@ block; ZX0 Fast already uses JP. Conditional branches and the LZSA2 cold
 wrapper remain unchanged. [Component/integration evidence](evidence/fast_jumps_verification.json)
 records 89 tests, both guarded producer modes, relocation and IRQ checks.
 
+The optional `branch_tuned=True` / `--branch-tuned` Fast policy is the first
+implementation step toward the user's additional 10% goal. It changes only
+conditional JR/JP forms: same-format resident real gains are 1.478241% for
+ZX0 and 0.284885% for LZSA2, with ZX0 code 207 ->193 and LZSA2 219 ->220
+bytes (the LZSA2 comparison includes `fast_jumps`). All real blocks improve,
+but small directed cases and slices can be slower; defaults remain unchanged.
+[Full limits and timing](TIMING.md#measured-fast-conditional-branches-item31-2026-10-19),
+[evidence](evidence/ten_percent_branch_verification.json).
+This intermediate result does not complete the 10%-per-library goal.
+
 ## Verification and provenance
 
 [Verification](verification.json) records the extraction from `0085a116`.

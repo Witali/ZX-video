@@ -1,0 +1,245 @@
+{
+  "date": "2026-10-19",
+  "baseline_revision": "f5a0362c",
+  "complete": true,
+  "release": false,
+  "goal_achieved": false,
+  "goal": "Another approximately 10% per library; still active.",
+  "evidence": {
+    "ten_percent_branch_mix": {
+      "file": "evidence/ten_percent_branch_mix.json",
+      "sha256": "b5d257af75ced187076439b41d2a30cde24c33a667f0aa7974c698c098830e2e"
+    },
+    "ten_percent_tuned_branches": {
+      "file": "evidence/ten_percent_tuned_branches.json",
+      "sha256": "6389909d64a30549098803bdbdfce7ded803fe6f015dace81ec72cc758e2dcf7"
+    },
+    "ten_percent_tuned_combinations": {
+      "file": "evidence/ten_percent_tuned_combinations.json",
+      "sha256": "f459bde0affbcdc7f50ec9d5e1533aa870392c813438eea9adf5743cd2910ec5"
+    }
+  },
+  "streaming": {
+    "call": {
+      "cases": 63,
+      "real_cases": 21,
+      "placements_per_case": 6,
+      "baseline_tstates": 29614150,
+      "candidate_tstates": 29563863,
+      "delta_tstates": -50287,
+      "baseline_decoder_tstates": 27606494,
+      "candidate_decoder_tstates": 27556207,
+      "producer_tstates": 2007656,
+      "sector_reads": 772,
+      "sectors_exact_once": true,
+      "slices": 2670,
+      "slower_slices": 32,
+      "largest_slice_delta": 43,
+      "slower_real_blocks": 0,
+      "slower_real_slices": 31,
+      "largest_real_slice_delta": 43,
+      "injected_interrupts": 257,
+      "input_waits_and_producer_exact": true,
+      "code_and_state_extent_unchanged": true
+    },
+    "direct": {
+      "cases": 63,
+      "real_cases": 21,
+      "placements_per_case": 6,
+      "baseline_tstates": 27397679,
+      "candidate_tstates": 27347392,
+      "delta_tstates": -50287,
+      "baseline_decoder_tstates": 25400358,
+      "candidate_decoder_tstates": 25350071,
+      "producer_tstates": 1997321,
+      "sector_reads": 772,
+      "sectors_exact_once": true,
+      "slices": 2670,
+      "slower_slices": 32,
+      "largest_slice_delta": 43,
+      "slower_real_blocks": 0,
+      "slower_real_slices": 31,
+      "largest_real_slice_delta": 43,
+      "injected_interrupts": 235,
+      "input_waits_and_producer_exact": true,
+      "code_and_state_extent_unchanged": true
+    }
+  },
+  "archives": [
+    {
+      "file": "evidence/tuned_branches/tuned-branch-call.json.gz",
+      "sha256": "d577524e28f4422e2ca085f75ffa5f9ed767771b9a03e0e4ae79a54bc207d9fa",
+      "decoded_sha256": "f4d4f5d7119737f0c46daf8827cbf3492bcc607568b4bcf9e45dda93f915914a"
+    },
+    {
+      "file": "evidence/tuned_branches/tuned-branch-direct.json.gz",
+      "sha256": "6d3ec4490c303c6dce5ec36233adce421635df147f35067275883ee83a89c833",
+      "decoded_sha256": "431c76ccdbbcbfbb33ea51a9cc02bb60e0d2d723f5fd0459a0d7860d6ca14ae3"
+    },
+    {
+      "file": "evidence/tuned_branches/tuned-branch-library-tests.log.gz",
+      "sha256": "926de9617f5b25b031e9fb3fbe278397a7d1334d725fb77ed9b71a739e23fd79",
+      "decoded_sha256": "678fec7c57300e0b6aee9d1b0619dcb350242a30316afcaba0b3d32b7fa0dc50"
+    },
+    {
+      "file": "evidence/tuned_branches/tuned-branch-toolkit-tests.log.gz",
+      "sha256": "9ad1e67a71011e6531b5533520151e32f374d235b7b4be53f055df16d9523395",
+      "decoded_sha256": "81cdb5cd2b1bc1d05eb526e03d491cbff4190472b39f30b9f08200e6c49f84ca"
+    }
+  ],
+  "source_sha256_lf": {
+    "libraries/zx0/src/zx0/__init__.py": "f1cac84d7bf6e4fca5dcb3abdf3170416c7760bc47655eab0aae86da927feef3",
+    "libraries/zx0/src/zx0/__main__.py": "b89b054f5ab5f15cf15ed3448c6ff4da9abdf3ce167cba959e99a6e990c07f40",
+    "libraries/zx0/src/zx0/_branch_tuning.py": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54",
+    "libraries/zx0/src/zx0/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/zx0/src/zx0/bank_local.py": "90b2b4f74d323b5b1c6883f957151c7bb2a3864cf3f7a473d388b685e5b0e102",
+    "libraries/zx0/src/zx0/banked.py": "6535d8405b79fa8a1001ac39309e7198d4adfe40441fcfa9486a10a8657d381f",
+    "libraries/zx0/src/zx0/block.py": "5afea9a004809576462ede56b4bba3c99179b664bc4699c857693c01999a734e",
+    "libraries/zx0/src/zx0/codec.py": "8199cd0fed07bbb72cec174f0c2f7708ddb13812a5a79a3d440d0dcf84136437",
+    "libraries/zx0/src/zx0/compressor.py": "80e11256c842bfaaa71ae30658355df99ba15601d33c915ad63ed8bcfa85e5d3",
+    "libraries/zx0/src/zx0/export.py": "33d250557c1478e492b837bfcd04fa2c0993d57938d6acdfa23c9f93edbaf9f9",
+    "libraries/zx0/src/zx0/incremental.py": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a",
+    "libraries/zx0/src/zx0/inplace.py": "57693ad1d72805bb251daac1a3ed8afec365fb64fd6403519c67c761a9ac72dc",
+    "libraries/zx0/src/zx0/resumable.py": "5ccb96f3da24d92e70f910be5b27c4760b0b6b8de811d6ce5c32f9aa0522653b",
+    "libraries/zx0/src/zx0/selection.py": "027011ca7929f33a1d875350bf5f9e4ccd3282c0fbc311b3c58935a5472763e6",
+    "libraries/zx0/src/zx0/split_bank2.py": "0d8b24c3d4c4540b0111ad1dc77f34854e045897490423ef877f1d00a9852e07",
+    "libraries/zx0/src/zx0/split_streaming.py": "f01968bdf9f95d96b9b470dee8a3efb525313c8258b13a39fb48bc7af03c2527",
+    "libraries/zx0/src/zx0/streaming.py": "15b9659b03d27b57f989c1400a903ed5889bcfb7604438efe8defc91e1e1a234",
+    "libraries/zx0/src/zx0/streaming_inline.py": "e4d3b169b2e0075c7dce7565ab29e248f22f14a04444bdba20173c4f5dec4bd3",
+    "libraries/zx0/src/zx0/tokens.py": "48555eea40aa0d8fc4a9be67a5263a75c2cf6231b7879b17780afae803e46268",
+    "libraries/lzsa/src/lzsa/__init__.py": "dfad484c1a07ca2f6e3a759b5ac53763808b47e69d5997e645a152250fb20a9b",
+    "libraries/lzsa/src/lzsa/__main__.py": "7378ddb59a03f59c3ef8b9fa9e05f81636aaa52fc65876d0859ae11ef9968ff9",
+    "libraries/lzsa/src/lzsa/_branch_tuning.py": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54",
+    "libraries/lzsa/src/lzsa/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/lzsa/src/lzsa/author.py": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b",
+    "libraries/lzsa/src/lzsa/block.py": "acd8da40aca043c7eae8572624e9459996e1dd44c7684bfe93ae11077fc59022",
+    "libraries/lzsa/src/lzsa/budget.py": "5ae4458bf5bbc6c0f81d9daf064cc555b480a6e3dd6962d7b3b9689291afcf06",
+    "libraries/lzsa/src/lzsa/codec.py": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775",
+    "libraries/lzsa/src/lzsa/compact.py": "0d382910264a4341002c751845420e795ed1357c94989db10974514722cd6676",
+    "libraries/lzsa/src/lzsa/compressor.py": "524e91046757a255f418f4a5e4d64669ac51b704b8bb76d063e54e4e3e6db088",
+    "libraries/lzsa/src/lzsa/distance_cost.py": "a5d4cc55fd9861229fa609d9609f06ceda660395715a49c178e99fd98eb70af6",
+    "libraries/lzsa/src/lzsa/distances.py": "553ff5d6934d60a0bd5f71188b24d6f240e7b1624f38625682c326b58d5e6e95",
+    "libraries/lzsa/src/lzsa/export.py": "8e2cb93d5bf909e76f1066baf8184a21f21fda67a86a416f44247fb5cd57ec0e",
+    "libraries/lzsa/src/lzsa/native.py": "7f8c6295c81fa4892ec099b6b9a2b38a74c1fbfadceac551ca397a8158e4f63d",
+    "libraries/lzsa/src/lzsa/oracle.py": "039654e7a86477f5c8cf34755a68a8cb474053c87108ce6a7e6cc29c75564c5b",
+    "libraries/lzsa/src/lzsa/resumable.py": "d896b3bd987644a930891ad7f934620f3f061365e9ccfa0524d139c019a72a46",
+    "libraries/lzsa/src/lzsa/streaming.py": "8cdf842acc989b253c31bf7d0dc2e5e238afd6e975436f8a988002eb15c80aaa"
+  },
+  "default_profiles_exact": 31,
+  "upstream_resources_exact": 6,
+  "default_instruction_delta_tstates": 0,
+  "observed_units": {
+    "libraries": 25,
+    "toolkit": 67,
+    "total": 92
+  },
+  "isolated_wheels": [
+    {
+      "report": {
+        "package": "zx0",
+        "independent_wheel": true,
+        "custom_layout": true,
+        "cli_export": true,
+        "resources": true,
+        "exact_round_trip": true,
+        "external_encoder": false,
+        "resident_profiles": [
+          {
+            "variant": "standard",
+            "bytes": 68,
+            "exact_export": true
+          },
+          {
+            "variant": "turbo",
+            "bytes": 126,
+            "exact_export": true
+          },
+          {
+            "variant": "fast",
+            "bytes": 207,
+            "exact_export": true
+          },
+          {
+            "variant": "mega",
+            "bytes": 673,
+            "exact_export": true
+          }
+        ],
+        "fast_jump_profiles": [
+          {
+            "variant": "standard",
+            "bytes": 70,
+            "exact_export": true
+          },
+          {
+            "variant": "turbo",
+            "bytes": 127,
+            "exact_export": true
+          },
+          {
+            "variant": "mega",
+            "bytes": 674,
+            "exact_export": true
+          },
+          {
+            "variant": "fast",
+            "bytes": 207,
+            "exact_export": true
+          }
+        ],
+        "branch_tuned_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 193,
+            "exact_export": true
+          }
+        ]
+      },
+      "wheel_sha256": "6b0cb02cad26e7a90e5b3949d93b68065038d122b03a1df186fa9900b40ec128"
+    },
+    {
+      "report": {
+        "package": "lzsa",
+        "independent_wheel": true,
+        "custom_layout": true,
+        "cli_export": true,
+        "resources": true,
+        "exact_round_trip": true,
+        "external_encoder": false,
+        "resident_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 218,
+            "exact_export": true
+          },
+          {
+            "variant": "small",
+            "bytes": 137,
+            "exact_export": true
+          }
+        ],
+        "fast_jump_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 219,
+            "exact_export": true
+          }
+        ],
+        "branch_tuned_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 219,
+            "exact_export": true
+          }
+        ]
+      },
+      "wheel_sha256": "aed4c877ee1b7fc17af741cbac2fbc20142a4510f76d464cb4bb75d4a7ff6294"
+    }
+  ],
+  "native_profile_comparisons": 1594,
+  "payload_delta_bytes": 0,
+  "state_delta_bytes": 0,
+  "stack_delta_bytes": 0,
+  "physical_disk_rom_ula_publication_measured": false,
+  "new_player_release": false
+}

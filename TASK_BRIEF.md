@@ -21,6 +21,18 @@ The full 10%-per-library objective remains active until verified; smaller
 intermediate gains do not complete it. Movie/player qualification and the
 repository migration remain separate tasks.
 
+First implementation step: optional `branch_tuned=True` / `--branch-tuned`
+preserves data and coroutine features while improving Fast resident real CPU
+by 1.478241% ZX0 /0.284885% LZSA2 (+fast_jumps baseline). Code changes are
+207 ->193 /219 ->220 bytes. The 256-byte-demand coroutine gains are
+1.080806% /0.260782%. All real blocks improve; retain directed/slice slowdowns
+as recorded. There are 1,594 full native profile comparisons, both 63-case
+guarded modes at six placements, 92 unit tests and isolated wheel checks.
+This remains far below 10% per library: keep the full goal active. Do not
+claim completion from these intermediate gains or count Standard's old gain.
+[Item31 and reproduction](libraries/OPTIMIZATION_PLAN.md#item31--measured-conditional-fast-branches-2026-10-19),
+[authenticated intermediate evidence](libraries/evidence/ten_percent_branch_verification.json).
+
 ## Codec speed pass 3 — unconditional branches (2026-10-19)
 
 The user requests continued ZX0/LZSA optimization in a separate worktree.

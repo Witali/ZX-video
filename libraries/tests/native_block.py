@@ -2,7 +2,7 @@
 from z80 import Z80Machine
 
 
-def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc000,alternate_af=0):
+def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc000,alternate_af=0,watch=None):
     regions,labels,metadata=profile
     m=Z80Machine();m.memory[:]=b'\xa5'*65536
     stack,stop=0xbff0,0x100
@@ -26,9 +26,15 @@ def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc
     for at,n in ((stack-64,64),(0x38,len(irq)),(0x200,7)):
         m.unmark_addrs(at,n,m.READ_MARK)
     for at in metadata.get('patched_addresses',[]):m.unmark_addr(at,m.WRITE_MARK)
+    if watch:
+        assert all(any(lo<=at<lo+len(blob) for lo,blob in regions) for at in watch)
+        for at in watch:m.mark_addr(at,m.READ_MARK)
     high=output;cursor=source;lowest=stack-2
     def read(at):
         nonlocal cursor
+        if watch and at in watch:
+            watch[at](m)
+            return m.memory[at]
         if source<=at<source+len(payload):
             assert at in (cursor,cursor-1),('nonsequential source',hex(at),hex(cursor),hex(m.pc))
             if at==cursor:cursor+=1

@@ -50,6 +50,9 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
     if metadata.get('fast_jumps'):
         lines += ['; Optional unconditional JR -> JP: 12 -> 10 T per execution, +1 byte/site.',
                   '; Conditional branches, register/flag ownership and the caller ABI are unchanged.', '']
+    if metadata.get('branch_tuned'):
+        lines += ['; Optional measured conditional branches: JR 7/12 T versus JP 10 T.',
+                  '; Conditions/flags are unchanged; some synthetic cases are slower.', '']
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')

@@ -1,5 +1,50 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Optional conditional Fast layouts toward the active ten-percent goal
+
+- **Request/baseline:** Pursue another approximately 10% per ZX0/LZSA2,
+  preserving existing data; approximately 10% code growth has no penalty.
+  Use `f5a0362c` in `.worktree/codec-speed-pass3`; profile snapshot `1158fd8c`
+  authenticates the complete real inputs and exposes dominant short matches.
+  Item30 gains are already included and do not count toward this goal.
+- **Change/parameters:** Add optional `branch_tuned=True` / `--branch-tuned`
+  for Fast resident/coroutine profiles. Complete real native branch frequencies
+  choose JR 7/12 T or JP 10 T without changing conditions/flags or caller ABI.
+  Inject a private per-call assembler; do not mutate package globals. Retry
+  an out-of-range shortened branch as JP. Public outputs match the frozen
+  independent candidate exactly. Preserve upstream bytes and all defaults.
+- **Measured result:** 1,024 complete main-profile comparisons, each with
+  relocated and IRQ replays. Real ZX0 resident 156,012,520 ->153,706,279 T
+  (-2,306,241, 1.478241%), 207 ->193 bytes; 256-byte-demand coroutine
+  180,610,040 ->178,657,995 T (-1,952,045, 1.080806%), 401 ->388 total bytes.
+  LZSA2 +fast_jumps resident 17,765,094 ->17,714,484 T (-50,610, 0.284885%),
+  219 ->220 bytes; ordinary coroutine 19,407,004 ->19,356,394 T (0.260782%),
+  386 ->387 bytes. All real blocks improve; another 570 full native cases
+  cover six public LZSA2 combinations with old copy/restore/jump options.
+- **Regressions/layout decisions:** Keep the option off by default. Three
+  directed ZX0 cases per profile slow 1..4 T; 17 basic LZSA2 cases slow 3..8 T.
+  Ordinary slices can also slow. The all-short ZX0 coroutine proposal puts
+  one target outside relative reach; retain JP at that site, yielding 13
+  changed branches versus 14 resident. No format/count/EOF assumptions are
+  relaxed to remove those counterexamples. Save every measured slow case.
+- **Guarded integration:** Both CALL/direct modes pass 63 complete cases,
+  six placements each, including real data and short word escapes. Totals
+  29,614,150 ->29,563,863 /27,397,679 ->27,347,392 T (-50,287 each), with
+  identical producer work, waits, slice counts and 772 once-only sectors.
+  Each has 32 slower slices out of 2,670, maximum +43 T; all real blocks
+  improve overall. Keep code/state extents, compressed payload and stack
+  unchanged. IRQ correctness is separate from plain CPU counts; physical
+  disk/ROM/ULA and actual publication are unmeasured.
+- **Verification/decision:** 25 library +67 toolkit tests pass (92), 31 exact
+  default byte/address/label profiles, six exact upstream resources, isolated
+  wheel/CLI/ORG-DB exports with the new helper and no converter imports.
+  Default instruction delta is 0 T. Accept an optional compatible intermediate
+  base; the approximately 10% goal for each library remains active and is
+  NOT achieved. No new player/movie release or repository migration.
+  [Item31 and reproducing scripts](libraries/OPTIMIZATION_PLAN.md#item31--measured-conditional-fast-branches-2026-10-19),
+  [main native comparison](libraries/evidence/ten_percent_tuned_branches.json),
+  [complete verification and guarded archives](libraries/evidence/ten_percent_branch_verification.json).
+
 ## 2026-10-19 — Freeze the next ten-percent codec goal and full real token mix
 
 - **Request/baseline:** The user requests approximately another 10% speed

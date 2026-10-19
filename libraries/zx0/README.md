@@ -132,3 +132,20 @@ python -m zx0 build --variant standard --fast-jumps --core 0x8000 --core-limit 0
 The CLI flag is supported by resident Standard/Turbo/Mega/Fast-block profiles.
 The existing coroutine CLI variants retain their own branch policy.
 [Full counts, space costs and regression scope](../OPTIMIZATION_PLAN.md#item30--unconditional-branch-speed-policy-2026-10-19).
+
+## Optional measured Fast branch layout
+
+`zx0.block.build(branch_tuned=True)` and `zx0.resumable.build(branch_tuned=True)`
+select conditional JR/JP forms using the full frozen real-input frequencies.
+The data format, conditions/flags, coroutine quotas and caller ABI remain exact.
+The resident Fast profile improves 156,012,520 ->153,706,279 T (1.478241%)
+on 364 real blocks while shrinking 207 ->193 bytes. The same coroutine work
+improves 180,610,040 ->178,657,995 T (1.080806%), 401 ->388 total bytes.
+The policy rechecks relative reach and retains JP when a coroutine insertion
+makes a target too far away. Metadata records changes and fallbacks.
+
+Enable with `--branch-tuned` on `--variant fast` or `--variant fast-block`.
+Defaults are unchanged. Three directed cases per profile are 1..4 T slower;
+individual slices can also be slower. All real blocks improve in the retained
+corpus. This is an intermediate step toward the separate 10% goal, not its
+completion or a player-release claim. [Complete candidate counts](../evidence/ten_percent_tuned_branches.json).

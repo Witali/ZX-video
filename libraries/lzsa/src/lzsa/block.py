@@ -2,7 +2,7 @@
 from .resumable import build as _build
 
 
-def build(variant='fast',*,core=0x8000,core_limit=0x8400,long_copy=False,near_literals=False,fast_jumps=False):
+def build(variant='fast',*,core=0x8000,core_limit=0x8400,long_copy=False,near_literals=False,fast_jumps=False,branch_tuned=False):
     """Return regions/labels/metadata for a valid fully resident raw-v2 block.
 
     Call start with HL=input, DE=output and the caller stack. AF/AF'/BC/DE/HL
@@ -12,9 +12,9 @@ def build(variant='fast',*,core=0x8000,core_limit=0x8400,long_copy=False,near_li
     and expected output externally. Reentrant calls cannot share patched code.
     """
     if variant=='small':
-        if long_copy or near_literals or fast_jumps:raise ValueError('compact profile does not support fast copy/jump options')
+        if long_copy or near_literals or fast_jumps or branch_tuned:raise ValueError('compact profile does not support fast copy/jump options')
         from .compact import build as compact_build
         return compact_build(core=core,core_limit=core_limit)
     if variant!='fast':raise ValueError('unknown block decoder')
     return _build(core=core,core_limit=core_limit,long_copy=long_copy,
-                  near_literals=near_literals,fast_jumps=fast_jumps,_one_shot=True)
+                  near_literals=near_literals,fast_jumps=fast_jumps,branch_tuned=branch_tuned,_one_shot=True)

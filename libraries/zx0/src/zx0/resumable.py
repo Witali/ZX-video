@@ -19,7 +19,7 @@ UPSTREAM = Path(__file__).parent/'asm/dzx0_fast.asm'
 
 
 def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
-          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000):
+          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,_assembler=None):
     """Return (address/bytes regions, labels, metadata) for a private coroutine.
 
     Set input_pointer, block_end and slice_target before begin. Resume through
@@ -27,13 +27,21 @@ def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
     Code/state must be writable. AF/BC/DE/HL and AF' are clobbered; the caller's
     SP is restored on return. Interrupt handlers must preserve live registers
     and fit below the private stack. Output history and source stay available.
+    branch_tuned optionally selects measured JR/JP forms in Fast. Branch
+    conditions stay exact; metadata reports fallbacks and synthetic slowdowns.
     """
+    if branch_tuned:
+        if variant!='fast':raise ValueError('branch tuning requires the Fast decoder')
+        from ._branch_tuning import tune
+        return tune(build,dict(variant=variant,core=core,core_limit=core_limit,
+            prefix=prefix,prefix_limit=prefix_limit,stack=stack,output_base=output_base),'zx0')
     if variant not in ('fast','turbo_tuned'): raise ValueError('unknown decoder')
     if not (0<=core<core_limit<=65536 and 0<=prefix<prefix_limit<=65536):
         raise ValueError('invalid code reservations')
     if not (core_limit<=prefix or prefix_limit<=core):raise ValueError('code reservations overlap')
     if not 0<stack<=65535 or not 0<=output_base<65535:raise ValueError('invalid stack/output address')
-    cold, hot = MiniAssembler(prefix), MiniAssembler(core)
+    assembler=_assembler or MiniAssembler
+    cold, hot = assembler(prefix), assembler(core)
     sites = ('match','match3','slice') if variant == 'fast' else ('match','slice')
     patches = []
 
