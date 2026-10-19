@@ -1,5 +1,41 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Full reconstructedPCM16 SDM input and state precision isolated
+
+- **Objective/baseline:** Implement the user's proposal to preserve16-bit
+  reconstructed audio into SDM. IMA already keeps a16-bit IX predictor; the
+  existing modulation lookup discards its lower10 bits. Add a separate
+  standalone C research program and exact Fraction Python reference while
+  leaving original encoders/player/CLI and delivered b96763ca unchanged.
+  Freeze all nine authenticated half-joint449 IMA streams, original source,
+  beta0.5, ordinary449 weights, actual page/bank schedule, filter and edges.
+- **Causal implementation:** A reproduces64 input levels and32 packet-state
+  codes. B uses `(signedPCM16+32768)/65536` without DC bias, retaining A's
+  packet rounding/clipping. C additionally retains unquantized f64 state,
+  with no packet/bank resets. These are input/state precision controls, not
+  a true second-order change or a new Z80 implementation. No input gain,
+  fitted source clock, decoder content or reference fidelity is substituted.
+- **Verification/results:** Six tests pass in1.091 s: all2048 anchors match
+  original words/successors and independent Fraction; full16-bit cells and
+  carried B/C trajectories pass. A one-LSB37 ->38 change affects B's carried
+  state and third packet while A stays identical. All nine whole A streams
+  and archived scores reproduce exactly.19 producers,1195520 source samples,
+  3586560 A/B/C packets,27 unscaled array identities and179 saved artifacts
+  pass the independent audit. All conversion/modulation runs use the new C
+  executable; Python does not run inside that program and no BLAS is needed.
+- **Quality/decision:** Whole-song PDM diagnostic25.831087 ->26.270322 ->
+  26.579564 dB, but total original-clock20.250316 ->19.096820 ->19.118673.
+  B has8 SNR/9 RMS regressions, C6/7; silence RMS0.0154867382 ->0.0155139391
+  in both. B/C respectively have32/32 AM,38/37 delay and22/19 line numerical
+  increases, with33 modulation inconclusives each. Reject direct replacement
+  on frozen old IMA; those codes are not reoptimized for B/C, so this is not
+  a ceiling or a rejection of a matched encoder. CPU/RAM feasibility and
+  actual player execution remain required before promotion. The broader
+  source-independent quality goal remains active.
+  [Explanation and reproduction](audiobook-beeper/SDM16_PRECISION.md),
+  [whole-corpus report](audiobook-beeper/experiments/song-snr/evidence/sdm16-precision/report.json),
+  [exact parity](audiobook-beeper/experiments/song-snr/evidence/sdm16-precision/parity.json).
+
 ## 2026-10-19 — Whole-corpus448 pacing control executed; quality replacement rejected
 
 - **Objective/input scope:** Complete the separate448-T timing-only control

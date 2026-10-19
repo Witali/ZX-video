@@ -76,6 +76,22 @@ repeat. Keep real16-bit SDM precision separate from modulation order and from
 the still nonuniform physical page/bank schedule. Finish this precision
 mechanism before opening an unrelated sweep.
 
+The first precision step is now implemented and verified as a standalone C
+host counterfactual, with original encoders/player untouched. `sdm16_precision`
+A reproduces64-level/32-state lookup; B accepts all decoded16 bits with the
+same packet quantization, C additionally carries continuous f64 state. Beta
+stays0.5; original IMA and physical449 clocks are frozen. Six Fraction/cell/
+trajectory tests pass, including one-LSB37/38 state/output influence. All
+nine entire A streams and archived scores reproduce exactly.19 producers,
+1195520 samples,3586560 packets,27 unscaled arrays and179 artifacts pass audit.
+Song PDM-only25.831087 ->26.270322/26.579564 dB, but original-clock total
+20.250316 ->19.096820/19.118673. B/C have8/6 total-SNR regressions and silence
+is slightly worse. No new IMA optimization, Z80 player, CPU/RAM fit, actual
+emulator or release claim is made. See [precision results](audiobook-beeper/SDM16_PRECISION.md).
+Next: prove a feasible lower-bit-preserving player representation, then match
+the automatic IMA encoder to that implemented modulator and repeat complete
+source/artifact/clock/RAM checks. Frozen-IMA regressions are not an SNR ceiling.
+
 Worktree `.worktree/audio-snr-research`, branch `codex/audio-snr-research`.
 The requested loading/playback interface is completed and separately
 delivered as the named best-measured song disk, nowb96763ca... . The user
