@@ -68,6 +68,15 @@ helpers, resident Fast/Mega profiles and an explicit compact LZSA2 tradeoff.
 [final summary](second_pass_verification.json) authenticates evidence, exact
 defaults/resources,85 observed unit tests and independent wheel exports.
 
+The [item30 follow-up](OPTIMIZATION_PLAN.md#item30--unconditional-branch-speed-policy-2026-10-19)
+adds optional `fast_jumps=True` / `--fast-jumps`: unconditional JP saves 2 T
+per selected branch, costing one byte per site. ZX0 Standard gains 1.034685%
+on the real fixture (68 ->70 bytes); LZSA2 Fast gains 0.014138% resident or
+0.025768% ordinary coroutine (+1/+2 bytes). Turbo/Mega save only 2 T per
+block; ZX0 Fast already uses JP. Conditional branches and the LZSA2 cold
+wrapper remain unchanged. [Component/integration evidence](evidence/fast_jumps_verification.json)
+records 89 tests, both guarded producer modes, relocation and IRQ checks.
+
 ## Verification and provenance
 
 [Verification](verification.json) records the extraction from `0085a116`.

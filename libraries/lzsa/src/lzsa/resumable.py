@@ -12,7 +12,7 @@ from ._z80 import sha
 PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
-def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,restore_compare=False,
+def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,restore_compare=False,fast_jumps=False,
           prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,_one_shot=False):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
@@ -31,6 +31,9 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     caller/IRQ observers see initialized flags only after instruction completion.
     restore_compare restores the compared target with ADD HL,DE instead of
     reloading it. S/Z/PV/C agree; H/N and undocumented flags are dead here.
+    fast_jumps replaces core unconditional JR with JP, saving 2 T per execution
+    for one extra code byte per site. Conditional branches and cold input-wait
+    retries stay unchanged: the producer-helper tail has a fixed RAM budget.
     """
     if direct_header and not streaming:raise ValueError('direct header requires streaming input')
     if near_literals and (not long_copy or streaming):
@@ -42,13 +45,21 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         raise ValueError('invalid code reservations')
     if not _one_shot and not (core_limit<=prefix or prefix_limit<=core):raise ValueError('code reservations overlap')
     if not 0<stack<=65535 or not 0<=output_base<65535:raise ValueError('invalid stack/output address')
-    cold=MiniAssembler(prefix);a=MiniAssembler(core);rows=[]
+    cold=MiniAssembler(prefix);a=MiniAssembler(core);rows=[];fast_jump_sites=[]
     def emit(name,code,t):rows.append(dict(address=a.pc,instruction=name,tstates=t));a.emit(*code)
     def ld(name,op,target,t):
         rows.append(dict(address=a.pc,instruction=name,tstates=t));a.abs16(op,target)
     def jp(op,target):ld('JP '+target,op,target,10)
     def jr(op,target):
+        if fast_jumps and op==0x18:
+            fast_jump_sites.append(dict(address=a.pc,target=target))
+            jp(0xc3,target);return
         rows.append(dict(address=a.pc,instruction='JR '+target,tstates=12 if op==0x18 else [7,12]));a.rel8(op,target)
+    def jump_metadata():
+        return (dict(fast_jumps=True,fast_jump_sites=fast_jump_sites,
+                     fast_jump_code_delta=len(fast_jump_sites),
+                     unconditional_jump_tstates_before=12,unconditional_jump_tstates_after=10)
+                if fast_jumps else {})
     def x():emit('EX AF,AF\'',(8,),4)
     def inc():emit('INC HL',(0x23,),6)
     def ldir():emit('LDIR',(0xed,0xb0),[16,21])
@@ -93,6 +104,7 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     emit('OR A',(0xb7,),4);jp(0xf2,'Case0xx')
     emit('CP 192',(0xfe,192),7);jr(0x38,'Case10x')
     a.label('Case11x');emit('CP 224',(0xfe,224),7);jr(0x30,'MatchLen')
+    # The 16-bit offset path owns no flags changed by either branch form.
     emit('LD B,(HL)',(0x46,),7);inc();jr(0x18,'ReadOffsetC')
     a.label('Literals00or11');jr(0x20,'MoreLiterals')
     a.label('NoLiterals');emit('OR (HL)',(0xb6,),7);inc();jp(0xfa,'Case1xx')
@@ -167,7 +179,7 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         return [(core,a.resolve())],a.labels,dict(entry='start',variant='fast-block',one_shot=True,
             code_bytes=a.pc-core,core_end=a.pc,patched_addresses=[a.labels['offset']+i for i in (0,1)],
             instruction_listing=rows,state_bytes=0,private_stack_bytes=0,
-            long_copy=long_copy,near_literals=near_literals,
+            long_copy=long_copy,near_literals=near_literals,**jump_metadata(),
             upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
             timing_source='https://www.zilog.com/docs/z80/um0080.pdf')
     # Output-only suspension and unavailable-input suspension have different
@@ -297,5 +309,5 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         **(dict(restore_compare=True,sync_tstate_delta=-5,sync_code_delta=-2,
                 sync_regular_tstates_before=127,sync_regular_tstates_after=122,
                 sync_final_tstates_before=132,sync_final_tstates_after=127) if restore_compare else {}),
-        timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
+        **jump_metadata(),timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         upstream_sha256=sha((Path(__file__).parent/'asm/unlzsa2_fast.asm').read_bytes()))

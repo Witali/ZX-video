@@ -47,6 +47,9 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
                  '; ABI: HL=input, DE=output; AF/BC/DE/HL clobbered; uses caller stack. Resident source/history required.',
                  '; Standard can run in ROM; the other profiles patch offsets and require writable code.',
                  '; Counts exclude IRQ/ULA/disk. Preserve working registers in interrupt handlers.', '']
+    if metadata.get('fast_jumps'):
+        lines += ['; Optional unconditional JR -> JP: 12 -> 10 T per execution, +1 byte/site.',
+                  '; Conditional branches, register/flag ownership and the caller ABI are unchanged.', '']
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')

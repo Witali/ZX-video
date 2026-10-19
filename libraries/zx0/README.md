@@ -115,3 +115,20 @@ resident source/history and the caller stack. AF/BC/DE/HL are clobbered. Preserv
 them in IRQ handlers and reserve caller-stack headroom; the offset operand needs
 writable RAM. There is no yield, paging or output-quota contract. See the native
 comparison in [SECOND_PASS.md](../SECOND_PASS.md); defaults retain their ABI.
+
+## Optional unconditional jump policy
+
+`zx0.block.build('standard', fast_jumps=True)` changes two unconditional JR
+instructions into JP, saving 2 T each time for two extra code bytes (68 ->70).
+The real 364-block fixture improves 201,490,104 ->199,405,316 T (1.034685%).
+Turbo/Mega have only one eligible startup jump: +1 byte and -2 T per block.
+Fast already uses JP, so this option adds no bytes or CPU gain there.
+Conditional branches, wire format and caller ABI are unchanged.
+
+```powershell
+python -m zx0 build --variant standard --fast-jumps --core 0x8000 --core-limit 0x8100 --output build/zx0-standard-fast-jumps
+```
+
+The CLI flag is supported by resident Standard/Turbo/Mega/Fast-block profiles.
+The existing coroutine CLI variants retain their own branch policy.
+[Full counts, space costs and regression scope](../OPTIMIZATION_PLAN.md#item30--unconditional-branch-speed-policy-2026-10-19).

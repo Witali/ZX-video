@@ -78,3 +78,32 @@ Whole-run unroll and distance1 selector were rejected for real CPU regressions
 (+8767/+3816 T). Synthetic gains and isolated primitives do not override these
 measurements. Standalone rounded code-region sectors are space estimates,
 not disk latency or movie/frame-publication qualification.
+
+## Optional unconditional jumps, item30 (2026-10-19)
+
+`fast_jumps=True` / `--fast-jumps` uses JP (10 T, three bytes) for selected
+unconditional JR sites (12 T, two bytes), preserving flags/registers/stack.
+Conditional branch policy and cold LZSA2 input retries remain unchanged.
+Counts use the same [Zilog table](https://www.zilog.com/docs/z80/um0080.pdf)
+and complete-block endpoints as the preceding passes.
+
+ZX0 Standard's two sites include the Elias backedge: real 364 blocks
+201,490,104 ->199,405,316 T (-2,084,788), code 68 ->70 bytes. All 417 blocks:
+207,225,467 ->205,122,965 T (-2,102,502). Turbo and Mega change one startup
+jump: exactly -2 T/block and +1 byte; Fast already uses JP. LZSA2 resident
+changes one offset site: real 17,767,606 ->17,765,094 T (-2,512), 218 ->219
+bytes. Ordinary coroutine adds the post-yield site: real 19,412,006 ->19,407,004 T
+(-5,002), 384 ->386 total region bytes. All 95 ordinary blocks:
+26,352,611 ->26,346,833 T (-5,778).
+
+Guarded 63-case CALL producer+decoder: 29,619,154 ->29,614,150 T; direct:
+27,402,683 ->27,397,679 T (-5,004 each). Decoder-only totals respectively:
+27,611,498 ->27,606,494 and 25,405,362 ->25,400,358 T. Producer totals
+2,007,656/1,997,321 T, 772 sector acquisitions, waits and slices stay exact.
+These totals include deterministic producer instructions only; ROM/physical
+latency/ULA and injected IRQ costs are excluded. Six-placement native tests
+include IRQ correctness separately. Default instruction delta stays 0 T.
+No stack/state/input bytes or rounded code-region sectors are added.
+[Decisions and the rejected cold-wrapper expansion](OPTIMIZATION_PLAN.md#item30--unconditional-branch-speed-policy-2026-10-19),
+[native counts](evidence/fast_jumps.json),
+[guarded/package authentication](evidence/fast_jumps_verification.json).

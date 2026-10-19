@@ -63,7 +63,7 @@ def decompress(data: bytes, limit: int = 8192, *, on_match=None, on_literals=Non
         mode = 'offset' if bit() else 'literal'
 
 
-def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, source_page_wrap=None, label_prefix="", inline_match=None, inline_literal=None):
+def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, source_page_wrap=None, label_prefix="", inline_match=None, inline_literal=None, fast_jumps=False):
     if variant not in ("standard", "turbo", "mega"):
         raise ValueError(variant)
     if copy_hook and variant != 'turbo': raise ValueError('suspension requires turbo')
@@ -85,7 +85,7 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         'rl b': (0xCB,0x10), 'rl c': (0xCB,0x11), 'rla': (0x17,),
         'ret': (0xC9,), 'ret z': (0xC8,), 'ret nz': (0xC0,), 'ret c': (0xD8,),
     }
-    aliases = {}; copy_index=0; inline_delta=0
+    aliases = {}; copy_index=0; inline_delta=0; jump_delta=0
     for original in source.read_text().splitlines():
         line = ' '.join(original.split(';')[0].strip().split()).replace(', ', ',')
         if not line: continue
@@ -110,6 +110,11 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         instruction, operands = line.split(' ', 1)
         if instruction in ('call', 'jr', 'jp'):
             condition, label = operands.split(',',1) if ',' in operands else ('', operands)
+            if fast_jumps and instruction == 'jr' and not condition:
+                # Unconditional JR always costs 12 T; JP costs 10 T and one
+                # extra byte. Flags/registers/stack are identical. Conditional
+                # branches retain their 7-T untaken path and original policy.
+                instruction = 'jp'; jump_delta += 1
             opcodes = {'call': {'':0xCD,'nc':0xD4},
                        'jr': {'':0x18,'c':0x38,'nc':0x30,'nz':0x20,'z':0x28},
                        'jp': {'':0xC3,'nz':0xC2,'z':0xCA,'c':0xDA,'nc':0xD2}}
@@ -134,5 +139,5 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         else:
             raise ValueError(f'unsupported ZX0 instruction: {line}')
     for alias,(label,offset) in aliases.items(): a.labels[alias]=a.labels[label]+offset
-    assert a.pc-start == {'standard':68,'turbo':126,'mega':673}[variant]+(2 if copy_hook else 0)+(30 if source_wrap else 0)+(18 if source_page_wrap else 0)+inline_delta
+    assert a.pc-start == {'standard':68,'turbo':126,'mega':673}[variant]+(2 if copy_hook else 0)+(30 if source_wrap else 0)+(18 if source_page_wrap else 0)+inline_delta+jump_delta
     return f'{label_prefix}dzx0_{variant}'

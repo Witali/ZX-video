@@ -47,9 +47,27 @@ else:
     assert (installed/'zx0/asm/dzx0_mega.asm').is_file()
     sys.argv=[name,'build','--variant','fast-block','--output',str(destination/'fast-block-cli')]
 runpy.run_module(name+'.__main__',run_name='__main__')
+fast_jumps=[]
+for variant in (('fast',) if name=='lzsa' else ('standard','turbo','mega','fast')):
+    block_build=importlib.import_module(name+'.block').build
+    regions,labels,metadata=block_build(variant,fast_jumps=True)
+    at=destination/('fast-jumps-'+variant)
+    export(at,regions,labels,metadata)
+    rebuilt=[]
+    for line in (at/'decoder.asm').read_text().splitlines():
+        if line.startswith('org '):rebuilt.append((int(line[5:],16),bytearray()))
+        elif line.startswith('db '):rebuilt[-1][1].extend(int(x[1:],16) for x in line[3:].split(','))
+    assert [(address,bytes(data)) for address,data in rebuilt]==regions
+    assert metadata['fast_jumps'] and '12 -> 10 T' in (at/'decoder.asm').read_text()
+    fast_jumps.append(dict(variant=variant,bytes=sum(len(data) for _,data in regions),exact_export=True))
+sys.argv=([name,'build','--profile','fast-block'] if name=='lzsa' else
+          [name,'build','--variant','standard'])+['--fast-jumps','--output',str(destination/'fast-jumps-cli')]
+runpy.run_module(name+'.__main__',run_name='__main__')
+assert json.loads((destination/'fast-jumps-cli/metadata.json').read_text())['fast_jumps']
 if encoder:
     assert package.decompress(package.compress(raw,executable=encoder),limit=len(raw))==raw
 report=dict(package=name,independent_wheel=True,custom_layout=True,cli_export=True,
-            resources=True,exact_round_trip=True,external_encoder=bool(encoder),resident_profiles=resident)
+            resources=True,exact_round_trip=True,external_encoder=bool(encoder),resident_profiles=resident,
+            fast_jump_profiles=fast_jumps)
 (destination/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report))

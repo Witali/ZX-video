@@ -140,3 +140,87 @@ Speed candidates have priority over compact profiles. The source's upstream
 percentages and raw core sizes do not qualify our coroutine/streaming ABI.
 The [saved report](evidence/web_research_2026-10-14.json) records source hashes,
 current profile sizes and exclusions. Defaults and compressed formats unchanged.
+
+## Item30 — unconditional branch speed policy (2026-10-19)
+
+**Decision: optional measured `fast_jumps=True` / `--fast-jumps`.** Continue
+from main `dbde780c` in `.worktree/codec-speed-pass3`, branch
+`codex/codec-speed-pass3`. Unconditional JR is 12 T / two bytes; JP is 10 T /
+three bytes, with the same register/flag/stack contract. Conditional branches
+retain their policy, including their 7-T untaken paths. ZX0 Standard has two
+eligible sites; Turbo and Mega have one startup site each. ZX0 Fast already
+uses absolute jumps and receives no additional gain. LZSA2 Fast has one
+16-bit-offset site and, in coroutine modes, one post-yield return site.
+Small retains its independent compact implementation.
+
+The [full-block report](evidence/fast_jumps.json) records 1,631 comparisons
+across seven profiles: three ZX0 profiles with 417 blocks each, plus resident
+and ordinary coroutine LZSA2 with 95 blocks each, both alone and combined with
+applicable prior long-copy/near-literal/restore-compare options. Inputs are the
+same authenticated real, directed and seeded streams. Every candidate also
+passes relocation to 9103h and register-preserving IM1 replay. No slower block
+or ordinary coroutine slice is observed.
+
+| Profile | Real blocks | Previous CPU T | New CPU T | Difference | Code bytes |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| ZX0 Standard | 364 | 201,490,104 | 199,405,316 | -2,084,788 (-1.034685%) | 68 -> 70 |
+| ZX0 Turbo | 364 | 160,653,056 | 160,652,328 | -728 | 126 -> 127 |
+| ZX0 Mega | 364 | 146,422,274 | 146,421,546 | -728 | 673 -> 674 |
+| LZSA2 Fast resident | 21 | 17,767,606 | 17,765,094 | -2,512 (-0.014138%) | 218 -> 219 |
+| LZSA2 ordinary coroutine | 21 | 19,412,006 | 19,407,004 | -5,002 (-0.025768%) | 384 -> 386 |
+
+The largest relative gain belongs to compact Standard's Elias loop, not to
+Fast or Mega. Turbo/Mega save exactly 2 T per block, so their one-byte growth
+is only an explicitly selected speed/space tradeoff. Existing compact profiles
+remain available. No measured layout adds a rounded 256-byte code region sector.
+Stack, state and compressed payload sizes are unchanged. Actual boot packing
+and physical delivery remain unmeasured.
+
+The [authenticated integration summary](evidence/fast_jumps_verification.json)
+retains both CALL and direct guarded modes: 63 complete cases per mode,
+including 21 real blocks and all 18 legal short word encodings, each with six
+input placements. Producer-plus-decoder totals: 29,619,154 ->29,614,150 T and
+27,402,683 ->27,397,679 T (-5,004 each). Producer work, waits and slices match;
+each mode reads the same 772 sectors exactly once. No slower block/slice is
+observed. IRQ placement is a correctness check; deterministic totals exclude
+injected IRQs, ULA, ROM and physical disk latency.
+
+**Retained rejected attempt:** expanding two cold CALL-guard retry jumps grows
+its wrapper by two bytes. Its helper would end at 7D51h, exceeding the 7D50h
+producer origin by one byte (the original ends at 7D4Fh). CALL construction
+rejects this before decoding. The direct trial passes 63 cases but is not the
+final common policy. Retain its full report, failure log and
+[exact discarded code](tests/fixtures/fast_jumps_cold_retry_rejected.json).
+The final option leaves cold retries unchanged and preserves the original
+wrapper/state extent. The summary script reproduces the rejection. Its initial
+two-byte-overrun assertion was corrected against the one-byte original headroom.
+
+All 22 library and 67 toolkit tests pass (89), including new reservation,
+16-bit-offset, gamma, overlap, relocation and CLI/export regressions. All 31
+old decoder byte/address/label profiles and six upstream resources remain exact.
+Both original producer variants retain code, labels and timing rows. Independent
+wheels install without converter imports and export all old resident profiles
+plus five optional profiles exactly; no external encoder rerun is claimed.
+Initial system-TEMP access and sparse-import setup failures were resolved and
+are recorded in the summary. This completes item30. Player adoption, physical
+timing, movie qualification and repository migration remain separate work.
+
+Reproduction uses `z80==1.2.0`, the authenticated fixtures listed in the report,
+and TMP/TEMP inside the worktree:
+
+```powershell
+python -m unittest discover -s libraries/tests -v
+python libraries/tests/measure_fast_jumps.py --output libraries/evidence/fast_jumps.json
+python -c "import gzip;from pathlib import Path;[(Path('.tmp')/('lzsa-'+k)).write_bytes(gzip.decompress((Path('toolkit/row_lzsa_evidence')/('video.'+k+'.gz')).read_bytes())) for k in ('stream','raw')]"
+python toolkit/test_streaming_lzsa2.py --noncanonical --stream .tmp/lzsa-stream --raw .tmp/lzsa-raw --output .tmp/fast-jumps-call-before.json
+python toolkit/test_streaming_lzsa2.py --noncanonical --stream .tmp/lzsa-stream --raw .tmp/lzsa-raw --fast-jumps --output .tmp/fast-jumps-call-after.json
+python toolkit/test_streaming_lzsa2.py --noncanonical --stream .tmp/lzsa-stream --raw .tmp/lzsa-raw --direct-header --output .tmp/fast-jumps-direct-before.json
+python toolkit/test_streaming_lzsa2.py --noncanonical --stream .tmp/lzsa-stream --raw .tmp/lzsa-raw --direct-header --fast-jumps --output .tmp/fast-jumps-direct-after.json
+```
+
+`tests/summarize_fast_jumps.py --stream-directory .tmp --library-tests 22
+--toolkit-tests 67 --output libraries/evidence/fast_jumps_verification.json`
+also consumes the indexed rejected-trial evidence, successful test logs,
+both wheel smoke reports and `compare_producer.py` output. Its report indexes
+the full gzip archives and embeds wheel results. Preserve their checkpoint
+and source hashes when reauthenticating a historical run.

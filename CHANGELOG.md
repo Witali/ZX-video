@@ -1,5 +1,49 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Optional faster unconditional branches in reusable codecs
+
+- **Request/baseline:** Continue ZX0/LZSA speed work in a separate worktree.
+  Use `.worktree/codec-speed-pass3`, branch `codex/codec-speed-pass3`, from
+  main `dbde780c`; preserve the completed 29-item pass and all old defaults.
+- **Change/parameters:** Add `fast_jumps=True` / CLI `--fast-jumps` for
+  resident ZX0 Standard/Turbo/Mega and LZSA2 Fast resident/coroutine modes.
+  Selected unconditional JR (12 T/two bytes) becomes JP (10 T/three bytes),
+  preserving flags/registers/stack. ZX0 Fast already uses JP; Small stays
+  compact. Conditional branches, input formats and cold retry wrappers stay
+  intact. Record the instruction costs in metadata and generated comments.
+- **Measured results:** 1,631 full-block profile comparisons include all
+  417 ZX0/95 LZSA2 inputs, relocation to 9103h and IRQ replays; no slower
+  block or ordinary slice. Standard real 364 blocks: 201,490,104 ->199,405,316 T
+  (-2,084,788, 1.034685%), 68 ->70 bytes. Turbo/Mega save only 2 T/block for
+  +1 byte. LZSA2 resident real 21: 17,767,606 ->17,765,094 T (-2,512,
+  0.014138%), 218 ->219 bytes; ordinary 19,412,006 ->19,407,004 T (-5,002,
+  0.025768%), 384 ->386 total bytes. Applicable combined prior options pass.
+  Code-region sector rounding, compressed payload, state and stack are unchanged.
+- **Guarded integration:** Both CALL/direct modes pass 63 complete cases
+  including real data and legal short word forms, each at six placements.
+  Producer+decoder 29,619,154 ->29,614,150 and 27,402,683 ->27,397,679 T
+  (-5,004 each), identical producer work/waits/slices and 772 once-only sectors
+  each; no slower block/slice. Separate IRQ correctness from deterministic
+  CPU totals; physical disk, ROM, ULA and actual publication are unmeasured.
+- **Failures/decision:** Initial expansion of both cold CALL-guard retries
+  adds two wrapper bytes, leaving helper end 7D51h past producer 7D50h; reject
+  before decoding. Preserve exact discarded code, failure log and completed
+  63-case direct trial. Final option accelerates core jumps only; helper end
+  stays 7D4Fh. Initial audit expected two bytes of overlap; actual original
+  one-byte headroom proves an overlap of one. Initial baseline system-TEMP
+  permission and sparse `ay-converter` import failures are resolved using
+  worktree TMP/TEMP and the required source directory. Accept the measured
+  optional policy under the speed-first priority; defaults remain byte-exact.
+- **Verification:** 22 library +67 toolkit tests pass (89), all 31 default
+  byte/address/label profiles and six upstream resources remain exact, default
+  instruction delta 0 T. Both old producer variants retain code/labels/timings.
+  Independent wheels retain resources/CLI/ORG-DB exports, including five new
+  optional exports. No external encoder rerun, player adoption, repository
+  migration or new movie/disk qualification is claimed.
+  [Item30, reproduction and full decisions](libraries/OPTIMIZATION_PLAN.md#item30--unconditional-branch-speed-policy-2026-10-19),
+  [native report](libraries/evidence/fast_jumps.json),
+  [integration and archived evidence](libraries/evidence/fast_jumps_verification.json).
+
 ## 2026-10-14 — Add the focused native title/face comparison
 
 - **Finding/change:** Final artifact checks find the README's focused PNG link

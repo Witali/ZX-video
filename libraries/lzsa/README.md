@@ -159,3 +159,22 @@ without an installed compressor:
 ```powershell
 python /path/to/lzsa/examples/prepare.py build/lzsa-example
 ```
+
+## Optional unconditional jump policy
+
+`lzsa.block.build(fast_jumps=True)` replaces the 16-bit-offset path's
+unconditional JR with JP (12 ->10 T, 218 ->219 bytes). Ordinary and streaming
+`lzsa.resumable.build(fast_jumps=True)` additionally accelerate the post-yield
+return (+2 core bytes total). Cold input retries retain their original size
+to fit the existing producer-helper tail. Small does not accept this option.
+Conditional branches, AF' ownership, exact EOF and the caller ABI are unchanged.
+
+```powershell
+python -m lzsa build --profile fast-block --fast-jumps --core 0x8000 --core-limit 0x8100 --output build/lzsa-fast-jumps
+```
+
+Real resident CPU 17,767,606 ->17,765,094 T (-0.014138%); ordinary coroutine
+19,412,006 ->19,407,004 T (-0.025768%). It combines with the applicable existing
+long-copy/near-literal/restore-compare options. Both partial-input guard modes
+retain waits, slices and sector reads. [Counts, rejected cold-wrapper trial
+and full regression scope](../OPTIMIZATION_PLAN.md#item30--unconditional-branch-speed-policy-2026-10-19).

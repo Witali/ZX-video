@@ -1,7 +1,33 @@
 # Focused optimization task
 
-Updated 2026-10-14. Use this brief to continue the project in this or a new
+Updated 2026-10-19. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
+
+## Codec speed pass 3 — unconditional branches (2026-10-19)
+
+The user requests continued ZX0/LZSA optimization in a separate worktree.
+Use `.worktree/codec-speed-pass3`, branch `codex/codec-speed-pass3`, baseline
+`dbde780c`. This bounded milestone evaluates optional unconditional JR-to-JP
+conversion: 12 -> 10 T per execution, one extra byte per site. Conditional
+branches, compressed bytes, existing default layouts and caller ABI stay intact.
+Measure complete identical real/directed/random blocks, relocated code, IRQs,
+legal short word escapes and both guarded LZSA2 producer modes. Record absolute
+CPU totals, slower cases/slices, code/stack/payload costs and regression coverage.
+Finish and commit this component result before another experiment. Repository
+migration, player adoption and movie qualification are separate future work.
+
+Item30 is complete: optional `fast_jumps=True` / CLI `--fast-jumps` saves 2 T
+per selected unconditional branch, +1 byte/site. Standard real ZX0 improves
+201,490,104 ->199,405,316 T (1.034685%, 68 ->70 bytes); LZSA2 resident/ordinary
+real gains are 2,512/5,002 T (+1/+2 bytes). No slower block/slice across 1,631
+native profile comparisons. Both guarded modes pass 63 cases/six placements,
+with identical producers/waits and 772 once-only sectors each. Cold retry
+expansion was rejected for a one-byte producer overlap; final wrapper/state
+extent stays exact. All 22 library +67 toolkit tests and isolated wheels pass;
+31 defaults/six upstream resources remain exact, default instruction delta 0 T.
+[Decisions and reproduction](libraries/OPTIMIZATION_PLAN.md#item30--unconditional-branch-speed-policy-2026-10-19),
+[authenticated evidence](libraries/evidence/fast_jumps_verification.json).
+This bounded step is complete; no further experiment starts automatically.
 
 ## Native-pixel line drawing — experimental prototype checked; release timing unresolved (2026-10-14)
 

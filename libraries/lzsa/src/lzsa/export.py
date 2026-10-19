@@ -57,6 +57,10 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
                '; Offset operand needs writable non-reentrant code; IRQ preserves all live registers, including AF\'.',
                '; Exact EOD returns before dummy word reads. Counts exclude IRQ/ULA/disk.', '']
         routines['ReadToken']='Enter the next resident token directly; AF\' nibble survives, no quota/frontier check.'
+    if metadata.get('fast_jumps'):
+        lines += ['; Optional core unconditional JR -> JP: 12 -> 10 T per execution, +1 byte/site.',
+                  '; Conditional branches and cold input-wait retries keep their original encoding.',
+                  '; Register/flag ownership and the caller ABI are unchanged.', '']
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')
