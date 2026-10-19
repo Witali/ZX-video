@@ -13,6 +13,7 @@ ROUTINES = {
     'slice_finished': 'Verify the exact output end, then return on the caller stack.',
     'slice_sync_target': 'Patch high/low output comparisons while the decoder is suspended.',
     'DecompressZX0': 'Fast ZX0 v2 bit/gamma decoder with shared literal and match boundaries.',
+    'TailRefill': 'Exhausted repeated-match gamma reservoir: refill A from (HL), advance HL, then call the aligned reader only if the stop bit is clear. BC keeps the partial length; DE stays the output cursor.',
     'dzx0_turbo': 'ZX0 v2 turbo decoder; HL=input, DE=output, AF holds the bit reservoir.',
     'dzx0_standard': 'ZX0 v2 compact decoder; HL=input, DE=output; uses the caller stack.',
     'dzx0_mega': 'One-shot bit-phase-expanded ZX0 v2; HL=input, DE=output; AF/BC/HL/DE clobbered. Resident source/history required; writable offset, caller stack.',
@@ -53,6 +54,9 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
     if metadata.get('branch_tuned'):
         lines += ['; Optional measured conditional branches: JR 7/12 T versus JP 10 T.',
                   '; Conditions/flags are unchanged; some synthetic cases are slower.', '']
+    if metadata.get('inline_tail_refill'):
+        lines += ['; Optional Fast repeat-gamma tail refill: +3 bytes, save 18/5 T for stop bit 1/0.',
+                  '; Exact input consumption, count, flags and copy continuation are unchanged.', '']
     routines = dict(ROUTINES)
     if metadata.get('literal_prefix'):
         lines += ['; Optional literal prefix: BC>=2 takes LDI then LDIR, saving 5 T/run.',

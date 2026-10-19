@@ -161,3 +161,14 @@ At 256-byte demands it saves 268,301 T overall while two real blocks and some
 slices slow; keep the option off for workloads where that cost dominates.
 Choose core reservations explicitly; the untuned coroutine exceeds its old
 default reservation. [Counts, limits and verification](../LITERAL_PREFIX.md).
+
+## Optional repeated-match tail refill
+
+`inline_tail_refill=True` on Fast resident/coroutine builds, or
+`--inline-tail-refill` on Fast CLI profiles, removes a redundant CALL/RET when
+a repeated-match gamma code exhausts its bit reservoir. It costs three bytes
+and saves 18/5 T per such refill (terminating/continuing stop bit), without
+changing input bytes, quotas, IRQ requirements or caller ABI. It combines with
+`branch_tuned`. The complete real corpus saves another 359,963 T per profile;
+no block or slice slows in all 417 retained cases. Defaults remain exact.
+[Absolute counts, register contract and reproduction](../TAIL_REFILL.md).

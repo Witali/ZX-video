@@ -152,3 +152,18 @@ counts, excluding injected IRQ, ULA, ROM/disk latency and publication timing.
 [public option combinations](evidence/ten_percent_tuned_combinations.json),
 [guarded/package authentication](evidence/ten_percent_branch_verification.json).
 The approximately 10% goal for each library remains active and unachieved.
+
+## Optional ZX0 repeated-match tail refill (2026-10-19)
+
+`inline_tail_refill=True` costs three code bytes and retains the same data,
+copy boundaries and caller ABI. At an exhausted repeated-match gamma
+reservoir, inline refill plus CALL NC to the aligned reader replaces CALL to
+the refill reader plus its RET: stop-one path 55 ->37 T (-18); stop-zero
+path 49+G ->44+G T (-5), with G the unchanged aligned reader including RET.
+Normal nonzero-reservoir paths stay exact. All 417 native cases verify the
+per-execution sum independently and have no slower block/slice. Real 364-block
+CPU falls another 359,963 T per resident/coroutine profile: branch-tuned Fast
+153,706,279 ->153,346,316 T (193 ->196 bytes); branch-tuned 256-byte-demand
+coroutine 178,657,995 ->178,298,032 T (388 ->391 total bytes). No state/stack
+reservation grows. [Detailed counts and limits](TAIL_REFILL.md),
+[full per-case evidence](evidence/ten_percent_tail_refill.json).

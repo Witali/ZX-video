@@ -4,7 +4,7 @@ from .codec import emit_decoder
 from .resumable import emit_fast
 
 
-def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False,branch_tuned=False,literal_prefix=False,_assembler=None):
+def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False,branch_tuned=False,literal_prefix=False,inline_tail_refill=False,_assembler=None):
     """Call metadata entry with HL=input, DE=nonwrapping output, caller stack.
 
     Supply a complete valid block and resident input/history. AF/BC/DE/HL
@@ -16,17 +16,20 @@ def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False,branch
     12 -> 10 T per execution, one extra byte per site. Fast already uses JP.
     literal_prefix adds one LDI before LDIR only when the literal count is
     at least two: saves 5 T per such run for two extra code bytes in Fast.
+    inline_tail_refill removes the repeat-gamma tail's redundant CALL/RET;
+    Fast only, +3 bytes, -18/-5 T at an exhausted reservoir (stop bit 1/0).
     """
     if branch_tuned:
         if variant!='fast':raise ValueError('branch tuning requires the Fast decoder')
         from ._branch_tuning import tune
         return tune(build,dict(variant=variant,core=core,core_limit=core_limit,fast_jumps=fast_jumps,
-                               literal_prefix=literal_prefix),'zx0')
+                               literal_prefix=literal_prefix,inline_tail_refill=inline_tail_refill),'zx0')
     if literal_prefix and variant!='fast':raise ValueError('literal prefix requires the Fast decoder')
+    if inline_tail_refill and variant!='fast':raise ValueError('inline tail refill requires the Fast decoder')
     if not 0<=core<core_limit<=65536:raise ValueError('invalid code reservation')
     a=(_assembler or MiniAssembler)(core)
     if variant=='fast':
-        emit_fast(a,lambda a,site,**kwargs:False,literal_prefix=literal_prefix);entry='DecompressZX0';offset='PrevOffset+1'
+        emit_fast(a,lambda a,site,**kwargs:False,literal_prefix=literal_prefix,inline_tail_refill=inline_tail_refill);entry='DecompressZX0';offset='PrevOffset+1'
     else:
         entry=emit_decoder(a,variant,fast_jumps=fast_jumps);offset=f'dzx0{variant[0]}_last_offset+1'
     patches=[] if variant=='standard' else [a.labels[offset]+i for i in (0,1)]
@@ -37,5 +40,7 @@ def build(variant='fast',*,core=0x8000,core_limit=0x8400,fast_jumps=False,branch
         code_sha256=sha(a.resolve()),
         **(dict(literal_prefix=True,literal_prefix_bytes=1,literal_prefix_minimum=2,
                 literal_copy_delta_tstates=-5,additional_sync_tstates=0) if literal_prefix else {}),
+        **(dict(inline_tail_refill=True,tail_refill_code_delta_bytes=3,
+                tail_refill_delta_tstates_stop_1=-18,tail_refill_delta_tstates_stop_0=-5) if inline_tail_refill else {}),
         **(dict(fast_jumps=True,fast_jump_sites={'fast':0,'standard':2,'turbo':1,'mega':1}[variant],
                 unconditional_jump_tstates_before=12,unconditional_jump_tstates_after=10) if fast_jumps else {}))

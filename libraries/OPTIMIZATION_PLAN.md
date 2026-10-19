@@ -308,3 +308,23 @@ tests, 31 exact default profiles, six exact upstream resources and isolated
 wheel/CLI exports pass. Leave flags off by default and choose hot reservations
 explicitly; no player/streaming default is promoted. This does not complete
 the active ten-percent goal. [Full arithmetic, evidence and reproduction](LITERAL_PREFIX.md).
+
+## ZX0 repeat-gamma tail refill (2026-10-19)
+
+**Decision: accept an optional three-byte intermediate optimization.**
+The shared length-two LDIR path cannot simply be duplicated profitably:
+its 5-T copy saving is smaller than an added join or indirect-offset fetch.
+That instruction audit led to a rare repeated-match gamma continuation whose
+CALL/RET is avoidable. `inline_tail_refill=True` / `--inline-tail-refill` for
+Fast replaces that tail with a local refill and CALL NC ReadGammaAligned,
+then the same CopyMatch1 continuation. Exact counts are -18/-5 T depending on
+the stop bit, with no extra data/state/buffer and no larger stack reservation.
+
+All four plain/branch-tuned resident/coroutine profiles pass 417 cases, each
+also relocated and with IRQs. There are no slower blocks/slices; real CPU
+saves 359,963 T per profile, +3 code bytes. All 31 defaults/six upstream
+resources remain exact, 27 library tests pass, and the installed ZX0 wheel
+exports the option independently. See [TAIL_REFILL.md](TAIL_REFILL.md) for
+absolute counts, complete reproduction and the separately tracked Mega.
+This component improvement leaves the 10%-per-library goal active; it does
+not qualify player/movie delivery or change defaults.

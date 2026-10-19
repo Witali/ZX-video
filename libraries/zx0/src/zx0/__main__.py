@@ -21,6 +21,8 @@ def main():
                           help='select measured conditional JR/JP forms in Fast profiles')
     assembly.add_argument('--literal-prefix', action='store_true',
                           help='save 5 T on multi-byte literals in Fast; coroutine may need a larger core')
+    assembly.add_argument('--inline-tail-refill', action='store_true',
+                          help='inline Fast repeated-match gamma refill; +3 bytes, save 18/5 T')
     for name, default in (('core',0x8df2),('core-limit',0x8f09),('prefix',0x7c00),
                           ('prefix-limit',0x7d50),('stack',0x7be0),('output-base',0xc000)):
         assembly.add_argument('--'+name, type=lambda value:int(value,0), default=default)
@@ -39,11 +41,13 @@ def main():
             parser.error('--branch-tuned requires a Fast profile')
         if args.literal_prefix and args.variant not in ('fast','fast-block'):
             parser.error('--literal-prefix requires a Fast profile')
+        if args.inline_tail_refill and args.variant not in ('fast','fast-block'):
+            parser.error('--inline-tail-refill requires a Fast profile')
         if args.fast_jumps and args.variant in ('fast','turbo_tuned'):
             parser.error('--fast-jumps is supported by resident profiles')
         if args.variant=='fast-block':
             from .block import build as block_build
-            regions,labels,metadata=block_build(core=args.core,core_limit=args.core_limit,fast_jumps=args.fast_jumps,branch_tuned=args.branch_tuned,literal_prefix=args.literal_prefix)
+            regions,labels,metadata=block_build(core=args.core,core_limit=args.core_limit,fast_jumps=args.fast_jumps,branch_tuned=args.branch_tuned,literal_prefix=args.literal_prefix,inline_tail_refill=args.inline_tail_refill)
         elif args.variant in ('standard','turbo','mega'):
             a = MiniAssembler(args.core)
             entry=emit_decoder(a, args.variant,fast_jumps=args.fast_jumps)
@@ -59,7 +63,7 @@ def main():
                     patched_addresses=[a.labels['dzx0m_last_offset+1']+i for i in (0,1)])
         else:
             regions, labels, metadata = build(args.variant,core=args.core,core_limit=args.core_limit,
-                prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base,branch_tuned=args.branch_tuned,literal_prefix=args.literal_prefix)
+                prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base,branch_tuned=args.branch_tuned,literal_prefix=args.literal_prefix,inline_tail_refill=args.inline_tail_refill)
         export(args.output,regions,labels,metadata,namespace=args.namespace)
         print(args.output / 'decoder.asm')
     else:

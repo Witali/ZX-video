@@ -19,7 +19,7 @@ UPSTREAM = Path(__file__).parent/'asm/dzx0_fast.asm'
 
 
 def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
-          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,literal_prefix=False,_assembler=None):
+          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,literal_prefix=False,inline_tail_refill=False,_assembler=None):
     """Return (address/bytes regions, labels, metadata) for a private coroutine.
 
     Set input_pointer, block_end and slice_target before begin. Resume through
@@ -32,13 +32,16 @@ def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
     literal_prefix restores one LDI for proven multi-byte literals. Separate
     short/long checks share the final AF restore and LDIR; quotas are checked
     before either copy. Reserve the larger core explicitly when enabling it.
+    inline_tail_refill replaces the repeat-gamma tail CALL/RET with a local
+    refill and conditional aligned-gamma call: +3 bytes, -18/-5 T (stop 1/0).
     """
     if branch_tuned:
         if variant!='fast':raise ValueError('branch tuning requires the Fast decoder')
         from ._branch_tuning import tune
         return tune(build,dict(variant=variant,core=core,core_limit=core_limit,
             prefix=prefix,prefix_limit=prefix_limit,stack=stack,output_base=output_base,
-            literal_prefix=literal_prefix),'zx0')
+            literal_prefix=literal_prefix,inline_tail_refill=inline_tail_refill),'zx0')
+    if inline_tail_refill and variant!='fast':raise ValueError('inline tail refill requires the Fast decoder')
     if variant not in ('fast','turbo_tuned'): raise ValueError('unknown decoder')
     if literal_prefix and variant!='fast':raise ValueError('literal prefix requires the Fast decoder')
     if not (0<=core<core_limit<=65536 and 0<=prefix<prefix_limit<=65536):
@@ -107,7 +110,7 @@ def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
             inline_match=lambda a:copy(a,'match'), inline_literal=lambda a:copy(a,'slice'))
         offset = 'dzx0t_last_offset'
     else:
-        emit_fast(hot,boundary,literal_prefix=literal_prefix)
+        emit_fast(hot,boundary,literal_prefix=literal_prefix,inline_tail_refill=inline_tail_refill)
         offset = 'PrevOffset'
     labels = cold.labels | hot.labels
     labels['last_offset_operand'] = labels[offset]+1
@@ -126,11 +129,13 @@ def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT,
         upstream_sha256=sha(UPSTREAM.read_bytes()),patched_addresses=patched,
         regions=[dict(address=at,code_hex=data.hex(),sha256=sha(data)) for at,data in regions],
         **(dict(literal_prefix=True,literal_prefix_bytes=1,literal_prefix_minimum=2,
-                literal_copy_delta_tstates=-5,additional_sync_tstates=26) if literal_prefix else {}))
+                literal_copy_delta_tstates=-5,additional_sync_tstates=26) if literal_prefix else {}),
+        **(dict(inline_tail_refill=True,tail_refill_code_delta_bytes=3,
+                tail_refill_delta_tstates_stop_1=-18,tail_refill_delta_tstates_stop_0=-5) if inline_tail_refill else {}))
     return regions,labels,report
 
 
-def emit_fast(a,boundary,*,literal_prefix=False):
+def emit_fast(a,boundary,*,literal_prefix=False,inline_tail_refill=False):
     """Assemble the pinned upstream code with explicitly marked adaptations.
 
     boundary(assembler, site) normally emits a complete quota check. With
@@ -179,6 +184,14 @@ def emit_fast(a,boundary,*,literal_prefix=False):
             continue
         if line.startswith('ld ix,'):continue  # Caller can own IX between resumptions.
         if line=='push ix':
+            if inline_tail_refill:
+                # The only caller continues directly to CopyMatch1. Refill
+                # locally; a set stop bit needs no gamma subroutine at all.
+                # A clear stop bit enters the unchanged aligned reader, with
+                # A=reservoir, BC=partial length, HL=next input, C flag=0.
+                a.label('TailRefill')
+                a.emit(0x7e,0x23,0x17); a.abs16(0xd4,'ReadGammaAligned')
+                a.abs16(0xc3,'CopyMatch1');continue
             a.abs16(0xcd,'ReloadReadGamma'); a.abs16(0xc3,'CopyMatch1');continue
         if line=='ldi' and last_label=='CopyLiterals':continue # One shared literal-boundary check.
         if line in simple:a.emit(*simple[line]);continue

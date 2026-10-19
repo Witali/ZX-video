@@ -99,11 +99,26 @@ if name=='zx0':
         runpy.run_module('zx0.__main__',run_name='__main__')
         assert json.loads((at/'cli/metadata.json').read_text())['literal_prefix']
         literal_prefix.append(dict(resident=is_resident,bytes=sum(len(data) for _,data in profile[0]),exact_export=True))
+tail_refill=[]
+if name=='zx0':
+    for resident_mode in (False,True):
+        builder=block_build if resident_mode else build
+        regions,labels,metadata=builder(branch_tuned=True,inline_tail_refill=True)
+        at=destination/('tail-refill-'+('block' if resident_mode else 'coroutine'))
+        export(at,regions,labels,metadata)
+        assert metadata['inline_tail_refill'] and metadata['tail_refill_code_delta_bytes']==3
+        assert 'save 18/5 T' in (at/'decoder.asm').read_text()
+        tail_refill.append(dict(resident=resident_mode,bytes=sum(len(blob) for _,blob in regions)))
+    sys.argv=[name,'build','--variant','fast-block','--branch-tuned','--inline-tail-refill',
+              '--output',str(destination/'tail-refill-cli')]
+    runpy.run_module(name+'.__main__',run_name='__main__')
+    assert json.loads((destination/'tail-refill-cli/metadata.json').read_text())['inline_tail_refill']
 assert not any(n.startswith(('toolkit','cv2','numpy')) for n in sys.modules)
 if encoder:
     assert package.decompress(package.compress(raw,executable=encoder),limit=len(raw))==raw
 report=dict(package=name,independent_wheel=True,custom_layout=True,cli_export=True,
             resources=True,exact_round_trip=True,external_encoder=bool(encoder),resident_profiles=resident,
-            fast_jump_profiles=fast_jumps,branch_tuned_profiles=tuned,literal_prefix_profiles=literal_prefix)
+            fast_jump_profiles=fast_jumps,branch_tuned_profiles=tuned,literal_prefix_profiles=literal_prefix,
+            inline_tail_refill_profiles=tail_refill)
 (destination/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report))

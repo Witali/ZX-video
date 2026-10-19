@@ -78,6 +78,38 @@
   result; the full 10%-per-library goal remains active. No player release,
   physical disk/ROM/ULA timing, external encoder or wheel reinstall is claimed.
 
+## 2026-10-19 — Optional ZX0 repeated-match gamma tail refill
+
+- **Objective/baseline:** Continue compatible ZX0 speed work on an isolated
+  `codex/codec-zx0-short` worktree from `674a1fc8`; the active approximately
+  10%-per-library goal still compares with `f5a0362c`. Audit the dominant short
+  matches without rejecting legal length-one repeats or weakening quotas.
+- **Audit/changed parameters:** A duplicated length-two copy saves only 5 T
+  but needs a 10-T join or 6-T slower offset load; reject those sketches by
+  instruction count without claiming measured implementations. Instead add
+  optional `inline_tail_refill=True` / `--inline-tail-refill` in Fast resident
+  and coroutine profiles. Inline the exhausted repeat-gamma refill and CALL
+  NC the unchanged aligned reader before the known copy continuation. +3
+  code bytes, no state/buffer/payload growth and no larger stack reservation.
+- **Measurements:** Stop-one tail 55 ->37 T (-18); stop-zero 49+G ->44+G T
+  (-5), with G the unchanged aligned reader including RET. Complete 417 cases
+  save 359,968 T per profile. All 364 real blocks save 359,963 T: plain Fast
+  resident 156,012,520 ->155,652,557, coroutine 180,610,040 ->180,250,077;
+  branch-tuned resident 153,706,279 ->153,346,316, coroutine
+  178,657,995 ->178,298,032. Total code/state bytes respectively
+  207 ->210 /401 ->404 /193 ->196 /388 ->391. Watch all raw executed refill
+  stop bits and verify the independent -5/-18 T sum for every case.
+- **Verification/decision:** Four complete 417-case profile comparisons,
+  relocated 9103h and register-preserving IM1 replays, exact bytes/EOF/history,
+  same coroutine slice counts, zero slower block/slice. All 31 defaults and
+  six upstream resources remain exact; 27 library tests and standalone ZX0
+  wheel API/CLI exports pass. Accept the small optional improvement. The
+  strongest existing Mega stays tracked separately and remains faster; this
+  is far below the active 10% goal. No toolkit/player/movie-release claim.
+  [Algorithm, full counts and reproduction](libraries/TAIL_REFILL.md),
+  [native evidence](libraries/evidence/ten_percent_tail_refill.json),
+  [verification](libraries/evidence/ten_percent_tail_refill_verification.json).
+
 ## 2026-10-19 — Optional conditional Fast layouts toward the active ten-percent goal
 
 - **Request/baseline:** Pursue another approximately 10% per ZX0/LZSA2,
