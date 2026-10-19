@@ -1,5 +1,9 @@
 # Retained native timing and extraction accounting
 
+Use the local [Z80 timing desk reference](Z80_TIMINGS.md) for instruction
+costs and branch/block-repeat rules; the measurements below retain their own
+historical baselines, input scope and application assumptions.
+
 2026-10-13, baseline `0085a116`. Moving implementations and sharing the
 guard patcher preserves all default opcode bytes, addresses and label maps.
 The extraction adds **0 deterministic T-states** to any existing decoder or

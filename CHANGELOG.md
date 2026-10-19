@@ -1,5 +1,25 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Persist a shared Z80 instruction timing desk reference
+
+- **Request/scope:** Keep instruction T-states close to the active codec work
+  so later context and parallel experiments reuse the same timing assumptions.
+  Baseline is `674a1fc8`; no decoder implementation or compressed data changes.
+- **Change:** Add [Z80 timings](libraries/Z80_TIMINGS.md) with documented
+  operand families, byte sizes, both conditional outcomes, terminating/repeat
+  costs, indexed forms, interrupt entry and common sequence arithmetic. Link
+  it from the task brief, library README and retained timing notes. Cite Zilog
+  UM008011-0816; distinguish undocumented forms and plain CPU from waits,
+  Spectrum contention, interrupt service and physical disk delivery.
+- **Verification/decision:** Check arithmetic/source links and replay 87
+  representative encodings/outcomes in `z80==1.2.0`, including both branch
+  outcomes and LDIR counts 1/2/17. All match. This is not exhaustive opcode,
+  IO or hardware validation. Emphasize BC=0 block-copy wrap, 11-T taken
+  conditional RET and quota-safe LDI prefixes.
+  Documentation-only instruction/code delta is 0 T/0 bytes; no new movie or
+  hardware qualification and no additional speed claim. Retain this reference
+  for every following experiment; the ten-percent codec goal remains active.
+
 ## 2026-10-19 — Optional conditional Fast layouts toward the active ten-percent goal
 
 - **Request/baseline:** Pursue another approximately 10% per ZX0/LZSA2,

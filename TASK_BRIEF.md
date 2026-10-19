@@ -3,6 +3,11 @@
 Updated 2026-10-19. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+Timing desk reference: [Z80 instruction T-states](libraries/Z80_TIMINGS.md).
+Read it before calculating changed hot paths; it includes indexed operands,
+taken/not-taken branches, block-repeat termination and stack-transfer costs.
+Use plain CPU counts separately from Spectrum contention, IRQ and disk time.
+
 ## Active codec goal — another approximately 10% per library (2026-10-19)
 
 The user requests roughly another 10% speed improvement for each library,

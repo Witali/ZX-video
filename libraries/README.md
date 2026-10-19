@@ -1,5 +1,10 @@
 # Reusable ZX0 and LZSA libraries
 
+[Z80 instruction timing desk reference](Z80_TIMINGS.md) keeps per-instruction
+T-states, conditional/repeating costs and common optimization arithmetic close
+to the implementations. [Measured codec paths](TIMING.md) retain experiment
+totals and their input scope.
+
 These are two independently installable libraries extracted from ZX-video.
 Copy either directory to another project or install it from this checkout:
 
