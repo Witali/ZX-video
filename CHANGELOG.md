@@ -1,5 +1,46 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Whole-corpus448 pacing control executed; quality replacement rejected
+
+- **Objective/input scope:** Complete the separate448-T timing-only control
+  from2a51d1db before changing modulation order or precision. Keep the same
+  beta0.5/half-recent449-weight table and common C search settings; reoptimize
+  compressed IMA on each declared physical clock. Use all nine authenticated
+  original sources plus six generated16.448-second controls,1985024 PCM8
+  samples total. Long prefixes exactly match the original signal definitions.
+- **Host results:** All nine archived449 scores reproduce exactly. Whole
+  song20.250315887 ->20.300560172 dB, speech21.692334 ->21.974302 and
+  Entertainer19.445475 ->19.673120. Short loud3000 and multitone regress;
+  short silence RMS0.0154867382 ->0.0167859769, with a3999.77-Hz line
+  carrying97.64% of three-bin spectral error. Long silence improves
+  0.0156580822 ->0.0118114206. All six long SNR/noise controls improve,
+  but aggregate numerical increases remain:2 SNR,3 RMS,50 AM,48 delay,
+  25 lines and63 inconclusive modulation comparisons. Long quiet997 has
+  enough bank cycles but unreliable phase tracking. No source-specific fit,
+  changed filter/edges/gain or artifact acceptance threshold is introduced.
+- **Actual complete verification:**12 full native runs and four independent
+  full installed-Fuse runs cover song plus long silence/quiet997. Each of
+  the song's512/1024 executions checks11526111 pulses and720382 predictor/
+  index states, every independently counted448 timestamp with0-T error,
+  zero live ROM reads/refills, maxcontinuous277 T,92 loading phases and22
+  exact green progress positions. Both actual scores equal20.300560172 dB;
+  measured rate7999.387078 Hz.128/Scorpion retain3/1 insufficient-RAM refills.
+  Short long-control UI is explicitly disabled; its initial guarded build
+  rejection is preserved. Actual coverage is not the entire15-source corpus
+  or real hardware. Seven host tests pass; all sealed files are verified.
+- **Independent diagnosis/decision:** A second closed-form clock audit checks
+  all four full traces.500 indexed artifacts preserve manifests, producers,
+  inputs, packed streams, clocks, previews and failures. Ideal loud3000 DAC
+  remains7.934648 dB at448 versus8.192982 at449, with99.9974% of448 error
+  above4 kHz; this is a counterfactual, not a hardware ceiling. Reject an
+  unconditional replacement despite scalar gain23.385788460 dB versus the
+  authenticated legacy449 baseline. Delivered b96763ca is independently
+  unchanged; original encoders/modulator stay exact. The broad goal remains
+  active. The user's next steering asks for full16-bit reconstructed input
+  into SDM, addressing the current64-level modulation-input quantizer.
+  [Results and reproduction](audiobook-beeper/PACING448.md),
+  [independent audit](audiobook-beeper/experiments/song-snr/evidence/pacing448-audit/audit.json).
+
 ## 2026-10-19 — Optional448-T Pentagon pacing mechanism and automatic converter
 
 - **Objective/baseline:** Resume the source-independent audio goal in the

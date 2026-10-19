@@ -1,0 +1,9 @@
+{
+  "decision": "Preserve the guard; execute the same source and 448-T pacing with UI explicitly disabled. Whole song separately verifies enabled UI.",
+  "rejected_before_execution": true,
+  "phase": "build",
+  "source": "long_silence",
+  "audio_progress_ui": true,
+  "reason": "The unchanged builder requires at most two bar cells per RAM handoff. The 131584-sample/65792-byte artifact control is too short for that UI contract.",
+  "complete": false
+}

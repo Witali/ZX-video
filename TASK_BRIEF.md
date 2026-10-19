@@ -48,6 +48,34 @@ weights, re-encodes the source for the448 physical schedule and reports both.
 Its full host/own-clock execution results are separate evidence; keep the
 broader background/modulation/general-source gates open.
 
+The completed448 control is now rejected as an unconditional quality update.
+All15 host sources (nine originals plus six16.448-s generated controls) and
+all nine archived449 score rechecks pass coverage. Song20.300560172 dB is
+only+0.050244285 over half-joint; short loud3000/multitone and silence regress.
+There are50 AM/48 delay/25 line numerical increases and63 inconclusives.
+Twelve whole native and four independently cold complete installed-Fuse runs
+verify song plus long silence/quiet997. The song512/1024 clocks independently
+match every448 tick, no refills/live ROM,92 dot phases/22 progress updates;
+actual own-clock scores reproduce the host result.500 artifacts are indexed
+by `evidence/pacing448-audit`; delivered b96763ca stays unchanged. See
+[full results and limits](audiobook-beeper/PACING448.md). No goal completion
+or default promotion follows from the scalar SNR gain.
+
+Latest user steering2026-10-19: reconstruct16-bit audio internally and pass
+that full precision into SDM. IMA already has an exact16-bit predictor IX,
+but the current modulator selects one of64 input levels using the high bits.
+The next authorized mechanism must preserve useful lower predictor bits
+through actual modulation; merely using a16-bit host array or relabelling
+the existing6-bit lookup is insufficient. Begin with a high-precision common-
+settings model on authenticated complete sources and actual pulse clocks,
+then prove CPU/table/RAM feasibility before a player/release claim. Retain
+compressed IMA storage, original executable Python/C, complete source/gain/
+filter/edges, independent boot and seamless residency where RAM suffices.
+The prior low-gain/25-level SD2 port is rejected evidence, not a baseline to
+repeat. Keep real16-bit SDM precision separate from modulation order and from
+the still nonuniform physical page/bank schedule. Finish this precision
+mechanism before opening an unrelated sweep.
+
 Worktree `.worktree/audio-snr-research`, branch `codex/audio-snr-research`.
 The requested loading/playback interface is completed and separately
 delivered as the named best-measured song disk, nowb96763ca... . The user
