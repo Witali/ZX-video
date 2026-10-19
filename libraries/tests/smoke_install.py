@@ -133,12 +133,31 @@ for is_resident in (True,False):
     sys.argv=[name,'build',*cli,'--branch-tuned','--core','0x6000','--core-limit','0x6400','--output',str(at/'cli')]
     runpy.run_module(name+'.__main__',run_name='__main__')
     combined_profiles.append(dict(resident=is_resident,bytes=sum(len(data) for _,data in profile[0]),exact_export=True,options=options))
+wide=[]
+if name=='lzsa':
+    for variant in ('wide','wide-shared'):
+        regions,labels,metadata=block_build(variant,core=0x8000,core_limit=0xb000)
+        assert metadata['service_memory_bytes']==metadata['code_bytes']+6<=10000
+        at=destination/variant
+        export(at,regions,labels,metadata)
+        sys.argv=[name,'build','--profile',variant+'-block','--core','0x8000',
+                  '--core-limit','0xb000','--output',str(destination/(variant+'-cli'))]
+        runpy.run_module(name+'.__main__',run_name='__main__')
+        cli=json.loads((destination/(variant+'-cli')/'metadata.json').read_text())
+        assert cli['regions']==json.loads((at/'metadata.json').read_text())['regions']
+        rebuilt=[]
+        for line in (at/'decoder.asm').read_text().splitlines():
+            if line.startswith('org '):rebuilt.append((int(line[5:],16),bytearray()))
+            elif line.startswith('db '):rebuilt[-1][1].extend(int(x[1:],16) for x in line[3:].split(','))
+        assert [(address,bytes(data)) for address,data in rebuilt]==regions
+        wide.append(dict(variant=variant,code_bytes=metadata['code_bytes'],
+                         service_memory_bytes=metadata['service_memory_bytes'],exact_export=True))
 assert not any(n.startswith(('toolkit','cv2','numpy')) for n in sys.modules)
 if encoder:
     assert package.decompress(package.compress(raw,executable=encoder),limit=len(raw))==raw
 report=dict(package=name,independent_wheel=True,custom_layout=True,cli_export=True,
             resources=True,exact_round_trip=True,external_encoder=bool(encoder),resident_profiles=resident,
             fast_jump_profiles=fast_jumps,branch_tuned_profiles=tuned,literal_prefix_profiles=literal_prefix,
-            inline_tail_refill_profiles=tail_refill,combined_profiles=combined_profiles)
+            inline_tail_refill_profiles=tail_refill,combined_profiles=combined_profiles,wide_profiles=wide)
 (destination/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report))

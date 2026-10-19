@@ -150,6 +150,49 @@
   [native evidence](libraries/evidence/ten_percent_tail_refill.json),
   [verification](libraries/evidence/ten_percent_tail_refill_verification.json).
 
+## 2026-10-19 — Publish raw wide LZSA2 profiles under the clarified 10,000-byte service cap
+
+- **Updated authorization/baseline:** The user replaces the earlier preferred
+  approximately 10% code-growth tradeoff with three directions, including
+  maximum speed under a hard 10,000-byte service-memory cap. Compressed input
+  and complete output/history are counted separately. The raw-only bound from
+  `042989fc` is now size-authorized; preserve its original historical rejection.
+  Work in `.worktree/codec-lzsa-wide` against `f5a0362c` Fast +fast_jumps.
+- **Change:** Promote the independent complete-token generator into the
+  standalone package as `lzsa.block.build('wide')` and `'wide-shared'`, plus
+  CLI `--profile wide-block` /`wide-shared-block`. Export documented ORG/DB,
+  exact tables and raw ABI. No package imports tests, toolkit or another codec.
+  Require a larger explicit core reservation; retain original defaults and
+  reject unrelated Fast option flags for these profiles.
+- **CPU/memory result:** Public bytes match the frozen independent prototype
+  at 8000h and 9103h. Complete real21 /323,940 output bytes remain
+  17,765,094 ->15,623,953 /15,869,483 T (-12.052517% /-10.670425%). Code,
+  table and embedded variables total 6,998 /3,446 bytes; adding maximum six-
+  byte caller stack including return gives **7,004 /3,452 service bytes**.
+  No external state, scratch or internal buffer. Relocated service is
+  7,257 /3,705 bytes; all 256 alignment offsets stay <=7,259 /3,707 bytes.
+  The 512-byte table and two embedded mutable offset bytes are already counted
+  inside code. IRQ headroom is separate; the tested handler adds six bytes.
+- **External buffers/limits:** Complete resident compressed input and decoded
+  output/history remain caller-owned and nonwrapping. Real maxima are 8,198
+  input and 15,872 output/history bytes, separately from the service cap.
+  IX/IY and other alternate pairs remain intact at return; IRQ must preserve
+  both working sets while EXX borrows HL'. These are raw profiles only:
+  ordinary coroutine/guarded producers retain their prior implementation.
+- **Verification/decision:** Each public variant repeats all 95 complete
+  corpus cases and 580 directed cases with relocation and IM1 probes, matching
+  every frozen CPU count. All 256 token values in both cache phases, all 64
+  offset-nibble forms, one/two-byte word literals and exact one-nibble EOF pass.
+  Expanded/shared still have 21/22 slower directed blocks, max20/30 T; all real
+  blocks improve. All 27 library tests pass, preserving 31 default profiles
+  and six upstream resources. Independently built/installed wheel contains the
+  new module exactly and exports both CLI/API profiles without converter
+  imports. Accept explicit raw speed/intermediate profiles under the new cap;
+  no default, player/movie or physical-delivery promotion. The joint objective
+  remains incomplete. [Native proof](libraries/evidence/wide_profiles.json),
+  [package/default authentication](libraries/evidence/wide_profiles_verification.json),
+  [reproducer](libraries/tests/measure_wide_profiles.py).
+
 ## 2026-10-19 — Full-token LZSA2 dispatch proves a raw speed bound at excessive code cost
 
 - **Objective/baseline:** Seek another approximately 10% without changing raw

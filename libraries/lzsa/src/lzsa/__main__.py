@@ -10,7 +10,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     assembly = commands.add_parser('build')
-    assembly.add_argument('--profile',choices=('coroutine','fast-block','small-block'),default='coroutine')
+    assembly.add_argument('--profile',choices=('coroutine','fast-block','small-block','wide-block','wide-shared-block'),default='coroutine',
+                          help='wide profiles need explicit larger --core/--core-limit reservations')
     assembly.add_argument('--output', type=Path, required=True)
     assembly.add_argument('--namespace', default='lzsa2')
     assembly.add_argument('--streaming', action='store_true')
@@ -46,7 +47,10 @@ def main():
             from .block import build as block_build
             if args.profile=='small-block' and (args.long_copy or args.near_literals or args.fast_jumps or args.branch_tuned or args.nibble_prefill):
                 parser.error('compact profile does not support fast copy/jump options')
-            regions,labels,metadata=block_build('small' if args.profile=='small-block' else 'fast',core=args.core,core_limit=args.core_limit,
+            variant=args.profile.removesuffix('-block')
+            if variant in ('wide','wide-shared') and (args.long_copy or args.near_literals or args.fast_jumps or args.branch_tuned or args.nibble_prefill):
+                parser.error('wide profiles use their own copy/branch layout')
+            regions,labels,metadata=block_build(variant,core=args.core,core_limit=args.core_limit,
                 long_copy=args.long_copy,near_literals=args.near_literals,fast_jumps=args.fast_jumps,branch_tuned=args.branch_tuned,nibble_prefill=args.nibble_prefill)
         else:
             regions, labels, metadata = build(core=args.core,core_limit=args.core_limit,

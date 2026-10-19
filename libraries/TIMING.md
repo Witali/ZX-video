@@ -215,3 +215,31 @@ every 256-token handler in both cache phases, all offset nibbles and exact
 single-nibble EOF. Coroutine/partial-input modes and physical delivery remain
 unmeasured. [Complete report and repro hashes](evidence/ten_percent_full_token_dispatch.json),
 [reproducer](tests/measure_full_token_dispatch.py).
+
+## Public wide service-memory accounting (2026-10-19)
+
+The user authorizes the raw full-token layouts under a hard **10,000-byte
+service** cap. Input/output/history are counted separately. Public wide and
+wide-shared bytes/timings exactly match the preceding independent profiles;
+the earlier preferred code-growth rejection is historical, not this cap.
+
+| Public raw profile | Code/table/embedded variables at 8000h | Maximum caller stack including return | Service at 8000h | Service at 9103h | Worst alignment service |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| wide | 6,998 | 6 | 7,004 | 7,257 | 7,259 |
+| wide-shared | 3,446 | 6 | 3,452 | 3,705 | 3,707 |
+
+The 512 table bytes and two writable offset bytes are inside the code count;
+do not add them again. External state, scratch and internal buffers are zero.
+Add actual IRQ/hardware stack headroom separately; the register-preserving
+IM1 test handler needs another six bytes. Real blocks require up to 8,198
+input bytes and 15,872 output/history bytes outside this service budget.
+No shared-buffer packing or sector-delivery improvement is claimed.
+
+Real resident CPU stays **15,623,953 /15,869,483 T**, saving 12.052517% /
+10.670425% from the same f5a0362c 17,765,094-T baseline. Native replays match
+all 95 frozen corpus counts plus 580 directed cases per public variant with
+relocation/IRQ, while preserving every reported slow case. All 27 library
+tests preserve default/resource hashes; isolated wheel/API/CLI/ORG-DB exports
+pass. Coroutine/guarded integration and movie timing remain separate work.
+[Public native evidence](evidence/wide_profiles.json),
+[service-memory/package authentication](evidence/wide_profiles_verification.json).

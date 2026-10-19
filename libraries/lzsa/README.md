@@ -29,6 +29,41 @@ All95 native blocks pass, but the21 real blocks cost14.948% more CPU than
 resident Fast. Both cores still round to one256-byte raw code sector. Choose
 this profile explicitly for code space; the speed-first default is unchanged.
 
+For a larger resident speed profile, use `lzsa.block.build('wide',
+core=0x8000, core_limit=0xb000)` or the intermediate `'wide-shared'` variant:
+
+```powershell
+python -m lzsa build --profile wide-block --core 0x8000 --core-limit 0xb000 --output build/lzsa-wide
+python -m lzsa build --profile wide-shared-block --core 0x8000 --core-limit 0xb000 --output build/lzsa-shared
+```
+
+Wide profiles decode the same standard raw LZSA2 payload with the same HL/DE
+caller interface and exact EOF. A 512-byte table selects complete token
+specializations. At 8000h, wide uses 6,998 code/table bytes plus six caller-
+stack bytes including return: **7,004 service bytes**. Shared uses 3,446+6 =
+**3,452 service bytes**. At 9103h they need another 253 alignment bytes;
+worst alignment adds 255. Offset variables are embedded in code, with no
+external state, scratch or internal buffers. The complete service footprint
+stays below the user-authorized **10,000-byte** cap. Metadata records each
+component; do not add embedded operands twice. The default small reservation
+rejects these profiles until the caller reserves a larger code range.
+
+Compressed input and complete decoded output/history are separate caller
+buffers. The retained real corpus needs up to 8,198 compressed-input bytes
+and 15,872 output/history bytes; no shared-buffer overlap is assumed here.
+Add actual IRQ/hardware-return stack headroom separately: the measured
+register-preserving IM1 test handler needs six extra bytes. IRQ must preserve
+both main and alternate live registers, because HL' temporarily holds the
+dispatch address; the raw decoder restores the caller's HL' at EOF.
+
+On the complete 21-block real fixture, wide/shared cost 15,623,953 /15,869,483 T
+versus 17,765,094 T for Fast +fast_jumps: **12.052517% /10.670425% less CPU**.
+All real blocks improve, while 21/22 directed cases slow by at most 20/30 T.
+These are explicit speed/space choices; `fast`/`small` and coroutine defaults
+stay unchanged. Wide variants use their own branch/copy layouts and reject
+the independent Fast tuning flags. They provide no coroutine/partial-input
+checks or new player timing qualification. [Full native/package evidence](../evidence/wide_profiles_verification.json).
+
 ```python
 from lzsa import compress, decompress, trace
 

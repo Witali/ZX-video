@@ -367,3 +367,37 @@ native `z80==1.2.0` dependency and worktree-local TMP/TEMP. See
 [complete input hashes, code layouts, slower cases and timings](evidence/ten_percent_full_token_dispatch.json),
 [independent prototype](tests/full_token_dispatch.py), and
 [timing derivation](TIMING.md#full-token-lzsa2-dispatch-speed-bound-2026-10-19).
+
+## Public wide profiles under the clarified service cap (2026-10-19)
+
+The user now explicitly authorizes maximum speed under **10,000 total service
+bytes**, including code, tables, alignment, variables, maximum decoder stack,
+scratch and internal buffers. Compressed input/output/history are separate.
+This supersedes the preceding experiment's preferred approximately 10% code-
+growth rejection; retain that historical evidence unchanged.
+
+`lzsa.block.build('wide')` /`'wide-shared'` and CLI `--profile wide-block` /
+`wide-shared-block` publish the exact measured raw implementations. Reserve
+the code explicitly, e.g. `core=0x8000, core_limit=0xb000`. At 8000h, service
+footprints are **7,004 /3,452 bytes**: code/table/embedded offset plus six
+caller-stack bytes including return. External state, scratch and internal
+buffers are zero. At 9103h add 253 alignment bytes; all low-byte alignments
+are checked and worst cases remain 7,259 /3,707 bytes. Metadata breaks this
+down and enforces the cap. Add the actual IRQ handler/hardware-return stack
+separately; measured tests use six bytes. The complete resident source and
+output/history remain separate caller buffers (real maxima 8,198 /15,872).
+
+Public bytes and CPU counts match the independent proof on all 95 corpus
+cases and 580 directed cases per variant, with relocation/IRQ checks. All
+27 library tests, old default/resource hashes and isolated wheel/CLI/API
+exports pass. Real resident savings are 12.052517% /10.670425%; retain the
+21/22 directed slow cases rather than describing universal gains. Raw ABI
+and exact EOF stay unchanged. Defaults and coroutine/guarded profiles stay
+independent; physical delivery and publication timing remain unmeasured.
+
+[Public native reauthentication](evidence/wide_profiles.json),
+[service/package/default verification](evidence/wide_profiles_verification.json).
+Reproduce with `tests/measure_wide_profiles.py --output evidence/wide_profiles.json`,
+then `tests/summarize_wide_profiles.py --directory ../.tmp --output
+evidence/wide_profiles_verification.json` from `libraries/` after the
+documented library tests and isolated wheel smoke run.

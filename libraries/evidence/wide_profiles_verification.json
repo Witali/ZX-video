@@ -1,0 +1,213 @@
+{
+  "date": "2026-10-19",
+  "complete": true,
+  "release": false,
+  "goal_achieved": false,
+  "scope": "Public raw wide profiles under the user-authorized 10000-byte service-memory cap.",
+  "budget_scope": "code/table/alignment/embedded variables/external state/decoder stack/scratch/internal buffers",
+  "compressed_input_output_history_counted_separately": true,
+  "native_evidence_sha256": "3a5121ea7a87b62e27ef7f1020f5c6a57e20392426c71103d14f743314f7284d",
+  "library_tests": 27,
+  "default_profiles": 31,
+  "upstream_resources": 6,
+  "unit_log": {
+    "path": "libraries/evidence/wide_profiles/library-tests.log.gz",
+    "sha256": "eab7dcb214cfa5be227a5224f2cb82c99bfbac7762fbfc73cea25d94e389ddc5"
+  },
+  "profiles": {
+    "wide": {
+      "service_bytes": 7004,
+      "relocated_service_bytes": 7257,
+      "worst_alignment_service_bytes": 7259,
+      "corpus_cases": 95,
+      "directed_cases": 580,
+      "actual_irq_probe_stack_headroom_bytes": 6,
+      "maximum_real_input_bytes": 8198,
+      "maximum_real_output_history_bytes": 15872,
+      "maximum_real_separate_service_and_buffers_bytes": 31074
+    },
+    "wide-shared": {
+      "service_bytes": 3452,
+      "relocated_service_bytes": 3705,
+      "worst_alignment_service_bytes": 3707,
+      "corpus_cases": 95,
+      "directed_cases": 580,
+      "actual_irq_probe_stack_headroom_bytes": 6,
+      "maximum_real_input_bytes": 8198,
+      "maximum_real_output_history_bytes": 15872,
+      "maximum_real_separate_service_and_buffers_bytes": 27522
+    }
+  },
+  "wheel": {
+    "filename": "zxvideo_lzsa-0.1.0-py3-none-any.whl",
+    "sha256": "cf5509f9750c4568c8a926dcf6a5ead208d0136d21030ec4c6eef7f6999f3ef3",
+    "exact_members": [
+      {
+        "path": "lzsa/LICENSE",
+        "bytes": 862,
+        "sha256": "656e18178a11644dc6f34867949214112233c200794d1f64b8cd9ededcfde137"
+      },
+      {
+        "path": "lzsa/__init__.py",
+        "bytes": 246,
+        "sha256": "dfad484c1a07ca2f6e3a759b5ac53763808b47e69d5997e645a152250fb20a9b"
+      },
+      {
+        "path": "lzsa/__main__.py",
+        "bytes": 4390,
+        "sha256": "0cb76b6c917f8194e17183c7666b55c8bbe33859a4a98576862a7b8ba9c8ba3d"
+      },
+      {
+        "path": "lzsa/_branch_tuning.py",
+        "bytes": 4489,
+        "sha256": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54"
+      },
+      {
+        "path": "lzsa/_z80.py",
+        "bytes": 2095,
+        "sha256": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d"
+      },
+      {
+        "path": "lzsa/author.py",
+        "bytes": 990,
+        "sha256": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b"
+      },
+      {
+        "path": "lzsa/block.py",
+        "bytes": 1829,
+        "sha256": "0a8f95334a46a2ef8599b673bb05183a8e2920aacf8d786b0f32339e42f885ff"
+      },
+      {
+        "path": "lzsa/budget.py",
+        "bytes": 3503,
+        "sha256": "5ae4458bf5bbc6c0f81d9daf064cc555b480a6e3dd6962d7b3b9689291afcf06"
+      },
+      {
+        "path": "lzsa/codec.py",
+        "bytes": 3211,
+        "sha256": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775"
+      },
+      {
+        "path": "lzsa/compact.py",
+        "bytes": 5133,
+        "sha256": "0d382910264a4341002c751845420e795ed1357c94989db10974514722cd6676"
+      },
+      {
+        "path": "lzsa/compressor.py",
+        "bytes": 1260,
+        "sha256": "524e91046757a255f418f4a5e4d64669ac51b704b8bb76d063e54e4e3e6db088"
+      },
+      {
+        "path": "lzsa/distance_cost.py",
+        "bytes": 3235,
+        "sha256": "a5d4cc55fd9861229fa609d9609f06ceda660395715a49c178e99fd98eb70af6"
+      },
+      {
+        "path": "lzsa/distances.py",
+        "bytes": 7967,
+        "sha256": "553ff5d6934d60a0bd5f71188b24d6f240e7b1624f38625682c326b58d5e6e95"
+      },
+      {
+        "path": "lzsa/export.py",
+        "bytes": 8385,
+        "sha256": "560faf0608d7f7204f80d0db27fb366ef58e81a4d6e861ec440331528d4d6f0d"
+      },
+      {
+        "path": "lzsa/native.py",
+        "bytes": 4330,
+        "sha256": "7f8c6295c81fa4892ec099b6b9a2b38a74c1fbfadceac551ca397a8158e4f63d"
+      },
+      {
+        "path": "lzsa/oracle.py",
+        "bytes": 4654,
+        "sha256": "039654e7a86477f5c8cf34755a68a8cb474053c87108ce6a7e6cc29c75564c5b"
+      },
+      {
+        "path": "lzsa/resumable.py",
+        "bytes": 21949,
+        "sha256": "d896b3bd987644a930891ad7f934620f3f061365e9ccfa0524d139c019a72a46"
+      },
+      {
+        "path": "lzsa/streaming.py",
+        "bytes": 2564,
+        "sha256": "8cdf842acc989b253c31bf7d0dc2e5e238afd6e975436f8a988002eb15c80aaa"
+      },
+      {
+        "path": "lzsa/wide.py",
+        "bytes": 7724,
+        "sha256": "7d7195c51a5de6cfa31433378d17ec77ea52695dc3edcd3614e3893428e1bee6"
+      },
+      {
+        "path": "lzsa/asm/unlzsa2_fast.asm",
+        "bytes": 6803,
+        "sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071"
+      },
+      {
+        "path": "lzsa/asm/unlzsa2_small.asm",
+        "bytes": 5949,
+        "sha256": "862882a4ba95de2b7a9cf1246c5c070b6b70ced60be68cd91f4ea4d3a5d7450b"
+      }
+    ],
+    "smoke": {
+      "package": "lzsa",
+      "independent_wheel": true,
+      "custom_layout": true,
+      "cli_export": true,
+      "resources": true,
+      "exact_round_trip": true,
+      "external_encoder": false,
+      "resident_profiles": [
+        {
+          "variant": "fast",
+          "bytes": 218,
+          "exact_export": true
+        },
+        {
+          "variant": "small",
+          "bytes": 137,
+          "exact_export": true
+        }
+      ],
+      "fast_jump_profiles": [
+        {
+          "variant": "fast",
+          "bytes": 219,
+          "exact_export": true
+        }
+      ],
+      "branch_tuned_profiles": [
+        {
+          "variant": "fast",
+          "bytes": 219,
+          "exact_export": true
+        }
+      ],
+      "wide_profiles": [
+        {
+          "variant": "wide",
+          "code_bytes": 6998,
+          "service_memory_bytes": 7004,
+          "exact_export": true
+        },
+        {
+          "variant": "wide-shared",
+          "code_bytes": 3446,
+          "service_memory_bytes": 3452,
+          "exact_export": true
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Raw-only; coroutine and guarded producer profiles retain their old implementation.",
+    "Add actual IRQ/hardware stack headroom; six bytes were used by the register-preserving test handler.",
+    "No physical disk/ROM/ULA or movie publication timing qualification."
+  ],
+  "source_sha256_lf": {
+    "libraries/lzsa/src/lzsa/wide.py": "7d7195c51a5de6cfa31433378d17ec77ea52695dc3edcd3614e3893428e1bee6",
+    "libraries/lzsa/src/lzsa/block.py": "0a8f95334a46a2ef8599b673bb05183a8e2920aacf8d786b0f32339e42f885ff",
+    "libraries/lzsa/src/lzsa/__main__.py": "0cb76b6c917f8194e17183c7666b55c8bbe33859a4a98576862a7b8ba9c8ba3d",
+    "libraries/lzsa/src/lzsa/export.py": "560faf0608d7f7204f80d0db27fb366ef58e81a4d6e861ec440331528d4d6f0d",
+    "libraries/tests/measure_wide_profiles.py": "f9533655e6baf946fa186140cb60f9a21d598a3476cddc5791812af16d7170fa"
+  }
+}

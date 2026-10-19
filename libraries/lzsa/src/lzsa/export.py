@@ -67,6 +67,27 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
     if metadata.get('nibble_prefill'):
         lines += ['; Optional pre-normalized AF\' low-nibble cache: refill 62 -> 65 T, cached 23 -> 16 T.',
                   '; Carry phase is unchanged. Unpaired refill +3 T; complete pair -4 T, +4 code bytes.', '']
+
+    if metadata.get('full_token_dispatch'):
+        lines += ['; Wide raw profile: 256 token handlers; 512-byte low/high target table.',
+                  '; EXX lends HL\' for lookup; every handler restores main registers before data access.',
+                  '; IRQ must preserve both main and alternate register sets while dispatch is live.',
+                  '; Raw entry/EOF retain caller HL\'; six stack bytes include the caller return word.',
+                  '; Code + tables + alignment + six stack bytes stay within 10000 bytes.',
+                  '; Compressed source and complete output/history are separate caller buffers.',
+                  '; Add actual hardware-return/IRQ-handler stack headroom separately.',
+                  '; Fixed one/two literal LDIs may wrap BC before a new-offset parser replaces B/C.',
+                  '; Repeat-offset tokens retain B=0; short escaped word lengths use bounded LDIR.', '']
+        routines.update({
+            'dispatch_low':'256 immutable low bytes of token targets; indexed by the complete token.',
+            'dispatch_high':'256 immutable high bytes, exactly one page above dispatch_low.',
+            'start':'Save caller HL\' once, initialize B=0 and the AF\' nibble phase, enter token lookup.',
+            'ReadToken':'58-T token lookup/restoration; main HL=input remains intact while HL\' is scratch.',
+            'MatchUseC':'BC=count, HL=input, DE=output; save input HL and copy from patched offset with forward overlap.',
+            'LongerMatch':'Parse nibble/byte/word length, returning at exact EOF before dummy word reads.',
+            'LongLiterals':'Parse LL=3 literal length; keep legal one/two-byte word escapes on LDIR.',
+            'done':'Restore caller HL\' and return with exact input/output cursors and caller SP.',
+        })
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')
