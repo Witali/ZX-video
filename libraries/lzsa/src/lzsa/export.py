@@ -64,6 +64,9 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
     if metadata.get('branch_tuned'):
         lines += ['; Optional measured conditional branches: JR 7/12 T versus JP 10 T.',
                   '; Conditions/flags are unchanged; some synthetic cases are slower.', '']
+    if metadata.get('nibble_prefill'):
+        lines += ['; Optional pre-normalized AF\' low-nibble cache: refill 62 -> 65 T, cached 23 -> 16 T.',
+                  '; Carry phase is unchanged. Unpaired refill +3 T; complete pair -4 T, +4 code bytes.', '']
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')

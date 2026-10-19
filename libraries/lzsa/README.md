@@ -194,3 +194,18 @@ With `fast_jumps=True`, 21 real resident blocks improve 17,765,094 ->17,714,484 
 improve; 17 directed cases per profile are 3..8 T slower, and some slices are
 slower. Defaults are unchanged. This optional intermediate gain does not
 complete the user's separate 10% goal. [Complete candidate counts](../evidence/ten_percent_tuned_branches.json).
+
+## Optional pre-normalized nibble cache
+
+`nibble_prefill=True` / `--nibble-prefill` normalizes each spare low nibble in
+AF' during refill, allowing cached entries to skip their final OR F0h. It
+costs +3 T on refill, saves 7 T on the cached entry and adds four code bytes.
+Carry phase, raw-v2 data, exact EOF and suspension/IRQ requirements remain
+unchanged. Small does not accept it. It combines with existing Fast options.
+
+With fast_jumps and branch_tuned, complete real resident CPU improves
+17,714,484 ->17,635,500 T (0.445872%), 220 ->224 bytes. The ordinary coroutine
+improves 19,356,394 ->19,277,410 T (0.408051%), 387 ->391 bytes. Unmatched
+final refills and some slices are 3 T slower, so the option stays explicit.
+[Native, guarded-input and compatibility evidence](../NIBBLE_PREFILL.md)
+records all cases. This smaller gain does not complete the active 10% goal.

@@ -13,7 +13,7 @@ PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
 def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,restore_compare=False,fast_jumps=False,
-          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,_one_shot=False,_assembler=None):
+          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,nibble_prefill=False,_one_shot=False,_assembler=None):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
     Configure input_pointer, block_end and slice_target, then call begin or
@@ -36,6 +36,9 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     retries stay unchanged: the producer-helper tail has a fixed RAM budget.
     branch_tuned selects measured conditional JR/JP forms. Conditions/flags
     remain identical; some synthetic cases are slower. Metadata lists changes.
+    nibble_prefill normalizes the cached low nibble while refilling: +3 T on
+    refill, -7 T when consumed, +4 code bytes. An unmatched refill is slower.
+    AF' carry still distinguishes refill/cache; suspension saves it intact.
     """
     if branch_tuned:
         from ._branch_tuning import tune
@@ -43,7 +46,7 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
             direct_header=direct_header,long_copy=long_copy,near_literals=near_literals,
             word_state_init=word_state_init,restore_compare=restore_compare,fast_jumps=fast_jumps,
             prefix=prefix,prefix_limit=prefix_limit,stack=stack,output_base=output_base,
-            _one_shot=_one_shot),'lzsa2')
+            nibble_prefill=nibble_prefill,_one_shot=_one_shot),'lzsa2')
     if direct_header and not streaming:raise ValueError('direct header requires streaming input')
     if near_literals and (not long_copy or streaming):
         raise ValueError('near literals require ordinary long-copy input')
@@ -70,6 +73,11 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
                      fast_jump_code_delta=len(fast_jump_sites),
                      unconditional_jump_tstates_before=12,unconditional_jump_tstates_after=10)
                 if fast_jumps else {})
+    def nibble_metadata():
+        return (dict(nibble_prefill=True,nibble_prefill_code_delta=4,
+                     nibble_refill_tstates_before=62,nibble_refill_tstates_after=65,
+                     nibble_cached_tstates_before=23,nibble_cached_tstates_after=16)
+                if nibble_prefill else {})
     def x():emit('EX AF,AF\'',(8,),4)
     def inc():emit('INC HL',(0x23,),6)
     def ldir():emit('LDIR',(0xed,0xb0),[16,21])
@@ -77,10 +85,17 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     def nibble(label,scf=False):
         if scf:emit('SCF',(0x37,),4)
         x();jr(0x30,label)
-        emit('LD A,(HL)',(0x7e,),7);emit('OR A',(0xb7,),4);x()
+        # Pre-normalize the spare low nibble so cached entries can skip the
+        # final OR F0. Required carry phase and AF' ownership stay unchanged.
+        emit('LD A,(HL)',(0x7e,),7)
+        if nibble_prefill:emit('OR F0h',(0xf6,0xf0),7)
+        else:emit('OR A',(0xb7,),4)
+        x()
         emit('LD A,(HL)',(0x7e,),7);inc()
         for _ in range(4):emit('RRCA',(0x0f,),4)
-        a.label(label);emit('OR F0h',(0xf6,0xf0),7)
+        if not nibble_prefill:a.label(label)
+        emit('OR F0h',(0xf6,0xf0),7)
+        if nibble_prefill:a.label(label)
     def long_literals():
         # A=count/B=token, count 18..255; BC entry requires readable literals.
         # Sixteen LDIs leave positive BC and preserve forward overlap/AF'.
@@ -189,7 +204,7 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         return [(core,a.resolve())],a.labels,dict(entry='start',variant='fast-block',one_shot=True,
             code_bytes=a.pc-core,core_end=a.pc,patched_addresses=[a.labels['offset']+i for i in (0,1)],
             instruction_listing=rows,state_bytes=0,private_stack_bytes=0,
-            long_copy=long_copy,near_literals=near_literals,**jump_metadata(),
+            long_copy=long_copy,near_literals=near_literals,**jump_metadata(),**nibble_metadata(),
             upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
             timing_source='https://www.zilog.com/docs/z80/um0080.pdf')
     # Output-only suspension and unavailable-input suspension have different
@@ -319,5 +334,5 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         **(dict(restore_compare=True,sync_tstate_delta=-5,sync_code_delta=-2,
                 sync_regular_tstates_before=127,sync_regular_tstates_after=122,
                 sync_final_tstates_before=132,sync_final_tstates_after=127) if restore_compare else {}),
-        **jump_metadata(),timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
+        **jump_metadata(),**nibble_metadata(),timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         upstream_sha256=sha((Path(__file__).parent/'asm/unlzsa2_fast.asm').read_bytes()))

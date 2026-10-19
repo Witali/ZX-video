@@ -53,6 +53,31 @@
   hardware qualification and no additional speed claim. Retain this reference
   for every following experiment; the ten-percent codec goal remains active.
 
+## 2026-10-19 — Pre-normalize the optional LZSA2 nibble cache
+
+- Objective: continue the user's approximately 10% speed goal without changing
+  raw-v2 data. Experiment from `674a1fc8`; goal baseline remains `f5a0362c`.
+- Added explicit `nibble_prefill=True` / `--nibble-prefill` for Fast resident
+  and coroutine generators. Refill 62 ->65 T, cached nibble 23 ->16 T:
+  complete pair -4 T, +4 code bytes, unchanged carry phase and AF' ownership.
+- Same 21 real blocks with fast_jumps/branch_tuned: resident
+  17,714,484 ->17,635,500 T (-0.445872%), 220 ->224 bytes; coroutine
+  19,356,394 ->19,277,410 T (-0.408051%), 387 ->391 bytes. No real block slows.
+  Four tiny/directed blocks per profile and some slices are +3 T; keep opt-in.
+- Verified 776 complete native comparisons (95 existing plus two exact
+  single-nibble EOF cases, eight profiles), relocation and IRQs; all 256 byte
+  values in both phases at four sites; 29 library tests, 31 exact defaults
+  and six exact upstream resources. Both guarded modes pass 63 cases/six
+  placements with identical producer/waits/772 once-only sectors; -79,102 T
+  each, 32/2,670 slices slower, maximum +3 T. Strongest combined streaming
+  options also pass 65 cases/six placements/both modes and IRQ placement.
+- [Timing, reproduction and limitations](libraries/NIBBLE_PREFILL.md),
+  [native results](libraries/evidence/ten_percent_nibble_prefill.json),
+  [authenticated guarded evidence](libraries/evidence/nibble_prefill_verification.json).
+  State, stack and payload are unchanged. This is a smaller intermediate
+  result; the full 10%-per-library goal remains active. No player release,
+  physical disk/ROM/ULA timing, external encoder or wheel reinstall is claimed.
+
 ## 2026-10-19 — Optional conditional Fast layouts toward the active ten-percent goal
 
 - **Request/baseline:** Pursue another approximately 10% per ZX0/LZSA2,
