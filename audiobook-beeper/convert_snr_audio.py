@@ -140,18 +140,21 @@ def ordinary_source(path, ffmpeg, duration=None):
     return source, metadata
 
 
-def instruction_timeline(samples):
+def instruction_timeline(samples, pentagon_ordinary_tstates=449):
     """Count every pulse on one resident Pentagon1024 batch, without ROM time.
 
-    The ordinary path is 449 T (423 plus 26 in slot7); page and bank tails
-    add 14 and 243 T respectively. This is identical to general.timeline for
+    The default ordinary path is 449 T (423 plus 26 in slot7). The optional
+    448-T experiment removes one T from that same slot; all page and bank
+    tails still add 14 and 243 T. The default equals general.timeline for
     sources that fit Pentagon512. Larger TRDs use 56 extra physical banks,
     rather than pretending a 512-KiB refill has no physical disk latency.
     """
     if not 512 <= samples <= MAXIMUM_SAMPLES or samples % 512:
         raise ValueError('timeline requires a complete aligned one-TRD source')
+    if type(pentagon_ordinary_tstates) is not int or pentagon_ordinary_tstates not in (448, 449):
+        raise ValueError('pentagon_ordinary_tstates must be integer448 or449')
     holds = np.tile(HOLDS, samples).astype(np.int64)
-    holds[7::16] += 26
+    holds[7::16] += pentagon_ordinary_tstates - 423
     batch, remaining = sections(samples // 2, 56)
     assert remaining == 0
     offset = 0
@@ -205,7 +208,12 @@ def unchanged_producers(hashes):
 
 
 def quality_measurement(source, packed, baseline, model, times, ffmpeg, scratch, output):
-    """Render one fixed reference and two whole outputs with an identical filter."""
+    """Use each player's own clock against the unchanged uniform source.
+
+    A new pacing experiment must not silently accelerate the legacy baseline.
+    Keep its original449-T schedule and independently integrate its reference
+    to that schedule's endpoint. No timing, gain or delay is fitted to audio.
+    """
     count = (len(source) - 3) * 16 + 15
     edges = times[:count]
     values, fixed_edges = uniform(source / 256, edges[-1])
@@ -213,7 +221,13 @@ def quality_measurement(source, packed, baseline, model, times, ffmpeg, scratch,
     _, _, _, bits = reference(packed, cycles=1, model=model)
     actual = filtered(bits[:count - 1], edges, ffmpeg, scratch)
     _, _, _, before_bits = reference(baseline, cycles=1, model=dict(models())['legacy'])
-    before_actual = filtered(before_bits[:count - 1], edges, ffmpeg, scratch)
+    before_edges = edges
+    before_wanted = wanted
+    if model.get('pentagon_ordinary_tstates', 449) != 449:
+        before_edges = instruction_timeline(len(source))[:count]
+        before_values, before_fixed_edges = uniform(source / 256, before_edges[-1])
+        before_wanted = filtered(before_values, before_fixed_edges, ffmpeg, scratch)
+    before_actual = filtered(before_bits[:count - 1], before_edges, ffmpeg, scratch)
     if len(wanted) <= 8820:
         unavailable = dict(snr_db=None, error_rms=None, signal_rms=None,
                            reason='Source is too short for the fixed 100-ms crop at both edges',
@@ -221,19 +235,26 @@ def quality_measurement(source, packed, baseline, model, times, ffmpeg, scratch,
         after = dict(unavailable)
         before = dict(unavailable)
     else:
-        after, before = metrics(wanted, actual), metrics(wanted, before_actual)
-        after['measured_samples'] = before['measured_samples'] = len(wanted) - 8820
+        after, before = metrics(wanted, actual), metrics(before_wanted, before_actual)
+        after['measured_samples'] = len(wanted) - 8820
+        before['measured_samples'] = len(before_wanted) - 8820
     gain = (after['snr_db'] - before['snr_db']) if after['snr_db'] is not None and before['snr_db'] is not None else None
     write_wav(output / 'reference.wav', wanted * .5)
     write_wav(output / 'host-actual.wav', actual * .5)
     write_wav(output / 'baseline-actual.wav', before_actual * .5)
-    return dict(fixed_clock=after, baseline_fixed_clock=before, change_db=gain,
+    result = dict(fixed_clock=after, baseline_fixed_clock=before, change_db=gain,
                 snr_improvement_at_least_5_db=gain is not None and gain >= 5,
                 snr_at_least_20_db=after['snr_db'] is not None and after['snr_db'] >= 20,
                 source_rate_hz=RATE, source_specific_fitted_gain_delay_clock=False,
                 listening_export_gain=.5, host_prediction=True,
                 scope='Complete source at its original 8-kHz clock; same continuous listening filter and fixed 100-ms edges. No fitted gain, delay or clock.',
                 baseline_algorithm='Uncompensated PCM-error IMA beam32/block64, legacy PDM table; generated automatically from this same prepared source')
+    if model.get('pentagon_ordinary_tstates', 449) != 449:
+        result.update(candidate_ordinary_tstates=model['pentagon_ordinary_tstates'],
+                      baseline_ordinary_tstates=449,
+                      baseline_reclocked_to_candidate=False,
+                      baseline_scope='Legacy output and original8-kHz reference rendered on the unmodified449-T player clock; not the candidate clock')
+    return result
 
 
 def verify(output, disk, meta, packed, times, fuse):
@@ -262,12 +283,14 @@ def verify(output, disk, meta, packed, times, fuse):
 
 def convert(input_path, output, *, cover=None, prepared_pcm=False, encoder='c',
             ffmpeg=None, duration=None, verify_fuse=None, started=None,
-            audio_progress_ui=False):
+            audio_progress_ui=False, pentagon_ordinary_tstates=449):
     started = time.perf_counter() if started is None else started
     if encoder not in ('c', 'python'):
         raise ValueError('encoder must be c or python')
     if type(audio_progress_ui) is not bool:
         raise ValueError('audio_progress_ui must be a boolean')
+    if type(pentagon_ordinary_tstates) is not int or pentagon_ordinary_tstates not in (448, 449):
+        raise ValueError('pentagon_ordinary_tstates must be integer448 or449')
     if prepared_pcm and duration is not None:
         raise ValueError('--duration cannot alter an explicitly prepared PCM source')
     ffmpeg = ffmpeg or shutil.which('ffmpeg')
@@ -292,6 +315,8 @@ def convert(input_path, output, *, cover=None, prepared_pcm=False, encoder='c',
     parameters = dict(PARAMETERS)
     model = dict(models())[parameters['model_name']]
     if audio_progress_ui:model=dict(model,audio_progress_ui=True)
+    if pentagon_ordinary_tstates != 449:
+        model=dict(model,pentagon_ordinary_tstates=pentagon_ordinary_tstates)
     frozen = dict(parameters=parameters, model=model, algorithm='joint', target_resident_profile='pentagon1024')
     save(output / 'parameters.json', dict(**frozen, sha256=sha(json.dumps(frozen, sort_keys=True).encode())))
     pcm_wav(output / 'source-preview.wav', source)
@@ -301,7 +326,7 @@ def convert(input_path, output, *, cover=None, prepared_pcm=False, encoder='c',
         scratch = Path(temporary)
         assert scratch.resolve().is_relative_to(output)
         phase = time.perf_counter()
-        times = instruction_timeline(len(source))
+        times = instruction_timeline(len(source), pentagon_ordinary_tstates)
         target, coverage = compensated_prior(source, times)
         desired, features, ids, nxt, quantization = prepare_waveform(source, times, model)
         timings['model_preparation_seconds'] = time.perf_counter() - phase
@@ -369,8 +394,8 @@ def convert(input_path, output, *, cover=None, prepared_pcm=False, encoder='c',
                   quality_target='Resident Pentagon playback at CPU 3584000 Hz; 128/Scorpion audio quality is not claimed',
                   required_resident_pentagon_ram_kib=512 if len(packed) <= BASE_AUDIO_BYTES + 24 * 16384 else 1024,
                   resident_capacities_bytes={name: BASE_AUDIO_BYTES + item['pages'] * 16384 for name, item in PROFILES.items()},
-                  hot_path_instruction_delta_tstates=0,
-                  ordinary_native_tstates={'128': 423, 'scorpion': 423, 'pentagon512': 449, 'pentagon1024': 449},
+                  hot_path_instruction_delta_tstates=pentagon_ordinary_tstates-449,
+                  ordinary_native_tstates={'128': 423, 'scorpion': 423, 'pentagon512': pentagon_ordinary_tstates, 'pentagon1024': pentagon_ordinary_tstates},
                   page_extra_tstates=14, bank_extra_tstates={'128': 243, 'scorpion': 267, 'pentagon512': 243, 'pentagon1024': 243},
                   release_accepted=False, status='research; artifact and corpus-regression gates remain unproven',
                   known_model_limitations=('The frozen half-recent model has measured whine/background and source regressions; automatic SNR scoring does not waive these gates'
@@ -403,12 +428,15 @@ def main(argv=None):
     parser.add_argument('--verify-fuse', type=Path, metavar='FUSE_EXE', help='Additionally complete native four-profile and cold Pentagon Fuse checks')
     parser.add_argument('--audio-progress-ui', action='store_true',
                         help='Gray LOADING dots and clock-preserving green playback progress (Pentagon512/1024 about every4seconds)')
+    parser.add_argument('--pentagon-ordinary-tstates', type=int, choices=(448, 449), default=449,
+                        help='Optional448-T resident Pentagon pacing research control;449 retains the existing player. Tables, source gain and filter are unchanged')
     args = parser.parse_args(argv)
     try:
         result = convert(args.input, args.output, cover=args.cover, prepared_pcm=args.prepared_pcm,
                          encoder=args.encoder, ffmpeg=args.ffmpeg, duration=args.duration,
                          verify_fuse=args.verify_fuse, started=PROCESS_STARTED,
-                         audio_progress_ui=args.audio_progress_ui)
+                         audio_progress_ui=args.audio_progress_ui,
+                         pentagon_ordinary_tstates=args.pentagon_ordinary_tstates)
     except (ValueError, OSError, RuntimeError, wave.Error, subprocess.SubprocessError) as error:
         parser.exit(1, 'Conversion failed: ' + str(error) + '\n')
     print(json.dumps(dict(output=str(args.output.resolve()), audio_trd=str((args.output / 'audio.trd').resolve()),

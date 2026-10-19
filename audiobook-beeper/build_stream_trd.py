@@ -106,6 +106,7 @@ def build(packed,work,cover,model=None):
                    cover_disk=disk_address(positions[4]),audio_sector=position,audio_sectors=len(packed)//256,
                    record_slots=len(all_sections)+1,worker_origin=worker_origin,
                    compact_stream_loader=int(compact_loader),
+                   pentagon_ordinary_tstates=model.get('pentagon_ordinary_tstates',449),
                    audio_progress_ui=int(progress_ui),audio_ui_resident_origin=resident_end)
     for i in range(256):constants.update({f'first_address_{i}':first.get(i,-1),f'second_address_{i}':second.get(i,-1)})
     config=''.join(f'{k}: EQU {v}\n' for k,v in constants.items())
@@ -132,6 +133,8 @@ def build(packed,work,cover,model=None):
     if not progress_ui:
         for name in ('audio_progress_ui','audio_ui_resident_origin'):
             labels.pop(name,None)
+    if model.get('pentagon_ordinary_tstates')!=448:
+        labels.pop('pentagon_ordinary_tstates',None)
     blob=(work/'player.bin').read_bytes();assert len(blob)==16384
     files[1]=TrdFile('PLAYER','C',blob,start=0x8000)
     # A TR-DOS directory sector count is one byte. Split file entries, but keep
@@ -159,6 +162,16 @@ def build(packed,work,cover,model=None):
     if 'idle_cycle_word' in model:meta['idle_cycle_packet']=idle_cycle_packet_metadata(model)
     if 'idle_pair_words' in model:meta['idle_pair_packet']=idle_pair_packet_metadata(model)
     if 'endpoint_idle_pair_words' in model:meta['endpoint_idle_pair']=endpoint_idle_pair_metadata(model)
+    if model.get('pentagon_ordinary_tstates')==448:
+        meta['pentagon_pacing']=dict(ordinary_tstates_before=449,ordinary_tstates_after=448,
+            ordinary_delta_tstates=-1,slot=7,slot_extra_tstates_before=26,slot_extra_tstates_after=25,
+            old_stub_tstates=16,new_stub_tstates=15,clone_dispatch_jp_tstates=10,
+            final_jp_iy_tstates=8,unchanged_128_scorpion_ordinary_tstates=423,
+            page_extra_tstates=14,bank_extra_tstates=243,
+            table_generation_hold_sum=sum(model['holds']),
+            table_generation_holds_equal_physical_pentagon=(list(model['holds'])==HOLDS[:7]+[HOLDS[7]+25]+HOLDS[8:]),
+            changes='LD A,R9 + INC HL6 replaces four NOPs16 only when cache_mode>=2',
+            scope='Native instruction counts; page/bank extras remain and actual Fuse/source-clock quality require separate verification')
     if progress_ui:
         meta['audio_progress_ui']=dict(loading_label='LOADING. / LOADING.. / LOADING...',
             loading_attribute=0x3f,empty_loading_attribute=0x07,dot_period_completed_sectors=16,
@@ -168,6 +181,10 @@ def build(packed,work,cover,model=None):
             smaller_ram_updates='Existing refill pauses and final completion',
             live_bank_extra_tstates_before=243,live_bank_extra_tstates_after=243,
             live_bank_delta_tstates=0)
+        if model.get('pentagon_ordinary_tstates')==448:
+            #32768 samples traverse63 page tails and one bank tail. This is a
+            # deterministic native interval, not a measurement of disk/ULA.
+            meta['audio_progress_ui']['full_bank_update_seconds']=(32768*448+63*14+243)/3584000
     save(work/'player.json',meta)
     return disk,meta
 

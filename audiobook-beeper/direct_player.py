@@ -36,6 +36,15 @@ def canonical_pcm_model(model=None):
     if type(progress_ui) is not bool:
         raise ValueError('audio_progress_ui must be a boolean')
     if progress_ui:result['audio_progress_ui']=True
+    # Only the continuous player implements this experimental Pentagon pace.
+    # Explicit449 canonicalizes to the historical absent setting, including
+    # exported metadata. Table holds are generation weights and may intentionally
+    # differ from physical pacing in a separately measured timing-only control.
+    pace=result.pop('pentagon_ordinary_tstates',449)
+    if type(pace) is not int or pace not in (448,449):
+        raise ValueError('pentagon_ordinary_tstates must be integer448 or449')
+    if pace==448:
+        result['pentagon_ordinary_tstates']=448
     bias=result.pop('pcm_quantization_bias',0)
     if type(bias) is not int or bias not in (0,512):
         raise ValueError('pcm_quantization_bias must be integer0 or512 (PCM16 units)')
@@ -200,6 +209,8 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     model=canonical_pcm_model(model)
     if model.get('audio_progress_ui'):
         raise ValueError('audio_progress_ui requires build_stream_trd.build')
+    if model.get('pentagon_ordinary_tstates')==448:
+        raise ValueError('Pentagon448 requires build_stream_trd.build')
     work=Path(work).resolve();work.mkdir(parents=True,exist_ok=True)
     words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage=layout(packed,model,hot_indices)
     extended=ram_enabled(model or {})

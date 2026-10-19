@@ -345,7 +345,10 @@ def native_check(disk,meta,packed,profile,*,out=None):
     assert np.array_equal(np.frombuffer(got,'u1'),expected),('native pulse values',profile,np.flatnonzero(np.frombuffer(got,'u1')!=expected)[:8])
     periods=np.diff(np.asarray(times,dtype=np.int64))
     baseline=np.tile(meta['ordinary_holds_tstates'],len(pcm))[:len(periods)].astype(np.int64)
-    baseline[7::16]+=PROFILES[profile]['ima4_extra']
+    pacing=meta['model'].get('pentagon_ordinary_tstates',449)
+    assert type(pacing) is int and pacing in (448,449),'invalid Pentagon pacing metadata'
+    extra_tstates=(pacing-423 if profile.startswith('pentagon') else 0)
+    baseline[7::16]+=extra_tstates
     delta=periods-baseline
     # From the instruction table: old ordinary-bank handoff extra140 T;
     # new fixed descriptor path extra243 T (delta+103). Scorpion replaces
@@ -383,7 +386,7 @@ def native_check(disk,meta,packed,profile,*,out=None):
                 rom_calls_during_refills=reads,maximum_native_hold_tstates=int(periods.max()),loading=loading,
                 every_bit_predictor_index_exact=True,every_continuous_native_hold_exact=True,memory_guards_passed=True,
                 explicit_reload_intervals=reload_positions,bank_extra_tstates=bank_extra,bank_delta_tstates=bank_extra-140,
-                ordinary_tstates=423+PROFILES[profile]['ima4_extra'],pages=pages,interval_extras=events)
+                ordinary_tstates=423+extra_tstates,pages=pages,interval_extras=events)
     if meta['model'].get('pcm_quantization_bias'):
         report.update(pcm_quantization_bias=512,all256_hardware_lookup_entries_verified=True,
                       lookup_native_tstate_delta=0,

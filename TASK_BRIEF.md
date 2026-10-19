@@ -1,6 +1,6 @@
 # Focused optimization task
 
-Updated 2026-10-14. Use this brief to continue the project in this or a new
+Updated 2026-10-19. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
 ## Active source-independent +5-dB audio milestone (2026-10-14)
@@ -34,6 +34,19 @@ claim physical-hardware proof from emulator traces or compensated Pentagon
 quality on a different clone without its own measurements.
 
 ### Current continuation checkpoint
+
+Resumed2026-10-19 from5d10036c after restoring the same branch/worktree with
+a sparse source checkout. Optional `pentagon_ordinary_tstates=448` and public
+`--pentagon-ordinary-tstates 448` now implement the retained one-T hypothesis.
+The six-byte stub changes only dead A/F/HL; all addresses/RAM stay fixed.
+Six mechanism tests, three new converter tests and ten legacy converter
+tests pass. Default/explicit449 disks AND player metadata reproduce the
+archived UI-off/on controls exactly; original C/Python encoders stay intact.
+This is an optional mechanism proof, not an accepted quality replacement.
+The current matched experiment intentionally retains449 table-generation
+weights, re-encodes the source for the448 physical schedule and reports both.
+Its full host/own-clock execution results are separate evidence; keep the
+broader background/modulation/general-source gates open.
 
 Worktree `.worktree/audio-snr-research`, branch `codex/audio-snr-research`.
 The requested loading/playback interface is completed and separately
@@ -131,11 +144,11 @@ one-word. Matched42 AM/22 delay/16 line increases/33 inconclusives disclosed;
 five complete baseline comparisons. Reuse `evidence/endpoint-idle-pair-*`;
 no new Fuse, old producer/main/default changes or accepted universal model.
 
-Next separate mechanism is a pacing audit of448 ordinary Pentagon T instead
-of449, motivated by the retained ideal-DAC clock-image failure on loud3000.
-First prove register/flag liveness and exact absolute/delta counts for the
-prospective15-T stub `LD A,R`(9)+`INC HL`(6), preserving all clone paths. It
-remains a hypothesis, not an implementation or permission blocker. Page/bank
+The next pacing mechanism has now passed its register/flag liveness and
+exact absolute/delta instruction audit:448 ordinary Pentagon T instead of449,
+using the15-T stub `LD A,R`(9)+`INC HL`(6), with all other clone paths retained.
+Its whole-source/corpus quality is evaluated separately; correctness alone
+does not accept it as a default improvement. Page/bank
 extras still prevent an exact uniform8-kHz clock; disclose residual drift,
 evaluate total delivery and original-clock waveform/alias errors. No source,
 gain/filter/edges/original C/Python change or repeated failed width/idle sweep.

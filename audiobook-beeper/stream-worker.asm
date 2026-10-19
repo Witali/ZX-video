@@ -368,14 +368,28 @@ stream_rom_sector_ok:
         DJNZ stream_read_next
         RET
 
-; Pentagon-only register-preserving pacing: JP10 +4 NOPs16 +old JP(IY)8,
-; ordinary delta26 T.128/Scorpion retain their original JP(IY), delta0.
+; Pentagon-only pacing: caller JP10 plus old JP(IY)8. The default4 NOPs16
+; add26 T to the423-T base. Optional448 uses LD A,R9 + INC HL6, adding25 T.
+; Main HL is dead here and SECOND overwrites it with POP HL before using it.
+; A/F are dead: SECOND swaps them out while reading phase/code from AF', then
+; swaps back and overwrites A with LD A,(DE), F with AND before meaningful use.
+; R and IFF2 may change A/PV, but no live control/data depends on either value.
+; IX/IY, lookup SP, BC/DE and the saved AF' phase/code are untouched. Live
+; maskable IRQs are disabled; this is not an NMI-resilient handler.128/Scorpion
+; retain the original direct JP(IY), delta0. Padding keeps all later addresses.
 hardware_delay:
+        IF pentagon_ordinary_tstates == 448
+        LD A,R
+        INC HL
+        JP (IY)
+        DEFB 0                  ; unreachable: retain the default six-byte stub
+        ELSE
         NOP
         NOP
         NOP
         NOP
         JP (IY)
+        ENDIF
 stream_patch_first:
         LD A,(cache_mode)
         CP 2

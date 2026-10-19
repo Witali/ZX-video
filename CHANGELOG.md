@@ -1,5 +1,37 @@
 # Changelog and optimization experiments
 
+## 2026-10-19 — Optional448-T Pentagon pacing mechanism and automatic converter
+
+- **Objective/baseline:** Resume the source-independent audio goal in the
+  restored sparse `.worktree/audio-snr-research`, branch `codex/audio-snr-research`,
+  from5d10036c. The preceding goal turn yielded a verified modulation-order
+  audit (progress); no prior compute process was assumed to remain live.
+  Implement the retained448-T pacing hypothesis while preserving the delivered
+  b96763ca disk, original C/Python encoders and all449-T defaults.
+- **Implementation/counts:** The opt-in integer model/CLI setting replaces
+  four NOPs16 T with LD A,R9 + INC HL6 and one unreachable padding byte.
+  The fixed six-byte stub retains every address and RAM allocation. Pentagon
+  ordinary423+JP10+stub16=449 T becomes448 T, delta-1 T at slot7;
+  Spectrum128/Scorpion stay423 T, delta0. Page extra14 T and bank extras
+  243/267 T remain unchanged. Comments and directed tests explain why HL,
+  A/F and the refresh/IFF2 result are dead before meaningful use.
+- **Verification:** Six native mechanism tests pass in54.967 s:3,552 literal
+  executions,32 directed before/after page/bank cases, eight complete16,640-B
+  native runs and maximum2392-sector cold loads on four profiles. Both literal
+  tail bits, nibble phases, refresh seeds, register/flag/memory guards pass.
+  Default/explicit449 disks AND player metadata equal archived5d10036c with
+  UI off/on.94 preserved files are hashed. Three additional converter tests
+  pass in12.480 s; ten existing converter tests pass in25.363 s, including
+  short default installed-Fuse checks. New C/Python448 UI disks match exactly.
+  The448 quality path renders the legacy baseline on its own449 clock rather
+  than silently accelerating it. [CPU proof](audiobook-beeper/experiments/song-snr/evidence/pacing448-player/README.md),
+  [converter checks](audiobook-beeper/experiments/song-snr/evidence/pacing448-cli/tests.log).
+- **Decision/scope:** Retain this optional research mechanism, with absent449
+  defaults unchanged. CPU correctness is not a quality acceptance claim.
+  Complete source/corpus and independent own-clock Fuse results are recorded
+  as a separate experiment; the broad audio goal remains active. No main
+  checkout promotion or physical-hardware claim follows from this change.
+
 ## 2026-10-14 — Sector-count loading animation verified and UI disk delivered
 
 - **Objective/baseline:** Fix the actual phase1 failure of frame-clock image
