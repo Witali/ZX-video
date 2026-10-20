@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "samples": 4096,
+  "original_CLI_container_byte_identical": true,
+  "old_model_sha256": "70582ffa6ec234742248acd008bda13795f5243a884681f496af87bd6609260f",
+  "source_pcm16_sha256": "06705d57f21f0e80cbbba6982e8b39bcda2baa79f52a638844e0247df8949083",
+  "container_sha256": "f35762372ac49e4818d410a5742e5b4bee9004ceace3e549252fc7770ad5fcb1",
+  "new_C_adapter_run": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-common-native\\dha_common_host.exe",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\adapter-control\\original-model.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\adapter-control\\source-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\adapter-control\\native\\audio.dhaf",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\adapter-control\\native\\decoded-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\adapter-control\\native\\frames.jsonl"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 2.0121781999478117
+  },
+  "validation": {
+    "file_bytes": 2199,
+    "file_sha256": "f35762372ac49e4818d410a5742e5b4bee9004ceace3e549252fc7770ad5fcb1",
+    "frames": [
+      {
+        "sequence": 0,
+        "file_offset": 1572,
+        "packet_bytes": 627,
+        "samples": 4096,
+        "kind": "DHA",
+        "payload_bits": 4756,
+        "payload_bytes": 595
+      }
+    ],
+    "dha_frames": 1,
+    "pcm16_fallback_frames": 0,
+    "payload_bits": 4756,
+    "payload_bytes": 595,
+    "DLL_decode_matches_every_C_adapter_sample": true,
+    "DLL_stream_info": {
+      "sample_rate": 8000,
+      "channels": 1,
+      "declared_samples": 4096
+    },
+    "all_PCM16_fallback_samples_exact": true,
+    "all_C_progress_rows_match_serialized_frames": true
+  },
+  "control_source_sha256": "ec649c7554e8cb3e7e19a7417db1f59870644d4e57156a00a5dc064f5aef330b"
+}

@@ -1,0 +1,28 @@
+{
+  "model_sha256": "199a17a9967bfbb941099039f32a47192af8933faf37cf015047abb51bfb9a7b",
+  "ANS_sha256": "af7cef130c9edf04d1da1944678314a4cd5e2c7d6957ded64f0cc5f028fa7ce8",
+  "model_training_report_sha256": "957aac9b03a3db8cc960778ae806eed5d18c82ce8d9c0697c8aa62c7de8c5e8e",
+  "pinned_source_manifest_sha256": "58391f943d6c972acfc21a3edea225d8736a650a921c9f65921ccca6d0514d74",
+  "old_library_DLL_sha256": "aaf3d94dd378bab13a48e3a531eadd47de8498f661511f735a8b98935476eef9",
+  "settings": {
+    "frame_samples": 4096,
+    "beam_width": 64,
+    "gain_candidates": 8,
+    "lookahead": 2,
+    "rate_penalty": 82,
+    "allow_pcm_fallback": true
+  },
+  "sources": [
+    "sea_foam",
+    "silence",
+    "quiet440",
+    "loud3000",
+    "steps",
+    "quiet997",
+    "multitone",
+    "speech",
+    "entertainer"
+  ],
+  "only_codec_parameter_change": "One common1024-byte model trained on speech+Entertainer8k, before holdout encoding",
+  "input_mapping": "signedPCM16=(authenticatedPCM8-128)*256; no resampling/normalization/filter/content change"
+}

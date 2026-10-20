@@ -1,0 +1,185 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "elapsed_seconds": 3.2820000000065193,
+  "mechanism": "Resident unsigned PCM8, modulo16 first-order accumulator, eight equally timed pulses per sample; no DHA decoding during playback.",
+  "code_bytes": 90,
+  "code_sha256": "2c6a3e88b61cec2110cec324c6add012a7a9f00c85fae28384fb322aab805a5c",
+  "labels": {
+    "packet": 32768,
+    "pulse_0": 32768,
+    "gap_0": 32773,
+    "pulse_1": 32779,
+    "gap_1": 32784,
+    "pulse_2": 32790,
+    "gap_2": 32795,
+    "pulse_3": 32801,
+    "gap_3": 32806,
+    "pulse_4": 32812,
+    "gap_4": 32817,
+    "pulse_5": 32823,
+    "gap_5": 32828,
+    "pulse_6": 32834,
+    "gap_6": 32839,
+    "pulse_7": 32845,
+    "gap_7": 32850,
+    "kernel_end": 32857
+  },
+  "native": {
+    "engine": "z80.Z80Machine",
+    "all_input_phase_pairs": 65536,
+    "all_input_phase_outputs": 524288,
+    "all_input_phase_tstates": 29360128,
+    "trajectory": {
+      "samples": 16383,
+      "outputs": 131064,
+      "tstates": 7339584,
+      "first_OUT_callback_tstate": 29,
+      "final_accumulator": 22528,
+      "bit_sha256": "aa3e8e5348865b851c19f3319c7391cec8bf9a54625c5510c6a8b8a1ee75f3f6"
+    },
+    "total_outputs": 655368,
+    "all_bits_and_accumulator_states_exact": true,
+    "all_actual_OUT_holds_tstates": 56,
+    "sample_period_tstates": 448,
+    "preserved_registers": [
+      "B",
+      "C=16",
+      "IX",
+      "IY",
+      "SP",
+      "I",
+      "alternateBC",
+      "alternateHL"
+    ],
+    "no_RAM_writes": true,
+    "no_CALL_PUSH": true,
+    "source_bytes_prefetched_and_held": true
+  },
+  "arithmetic": {
+    "target": "unsignedPCM8<<8",
+    "accumulator_bits": 16,
+    "effective_target_levels": 256,
+    "signed_pcm16_mapping": "(PCM8-128)*256",
+    "order": 1,
+    "physical_time_weighted": true,
+    "physical_area_identity": "56*sum(target/65536-bit)=56*(final_accumulator-initial_accumulator)/65536",
+    "uniform_holds_necessary_for_this_identity": true
+  },
+  "clocks": {
+    "pentagon_hz": 3584000,
+    "sample_hz": 8000,
+    "output_decisions_hz": 64000,
+    "scorpion_hz": 3500000,
+    "unchanged_kernel_scorpion_sample_hz": 7812.5,
+    "other_clone_clock_support_proved": false
+  },
+  "timing": {
+    "pulse": [
+      {
+        "instruction": "ADD HL,DE",
+        "tstates": 11
+      },
+      {
+        "instruction": "SBC A,A",
+        "tstates": 4
+      },
+      {
+        "instruction": "AND C",
+        "tstates": 4
+      },
+      {
+        "instruction": "OUT (FE),A",
+        "tstates": 11
+      }
+    ],
+    "pulse_total": 30,
+    "every_gap_total": 26,
+    "gap_useful_tstates": [
+      19,
+      0,
+      0,
+      0,
+      0,
+      0,
+      14,
+      18
+    ],
+    "gap_free_tstates": [
+      7,
+      26,
+      26,
+      26,
+      26,
+      26,
+      12,
+      8
+    ],
+    "gap8_loop_jump_included": true,
+    "first_OUT_callback_tstate": 29,
+    "CPU_output_instruction_completion_tstate": 30,
+    "previous_source_DHA_live_decode_tstates": 800,
+    "previous_source_clock_hz": 20000000,
+    "delta_versus_source_sample_period_tstates": -352,
+    "existing_Spectrum_449_packet_tstates": 449,
+    "delta_versus_existing_Spectrum_449_packet_tstates": -1,
+    "existing_Spectrum_448_experiment_packet_tstates": 448,
+    "delta_versus_existing_Spectrum_448_packet_tstates": 0,
+    "comparison_scope": "Counts compare different mechanisms: decoding moved to loading. This is not a drop-in 352-T optimization of the old DHA live decoder."
+  },
+  "one_LSB_witnesses": [
+    {
+      "samples": 1,
+      "outputs": 8,
+      "tstates": 448,
+      "first_OUT_callback_tstate": 29,
+      "final_accumulator": 30720,
+      "bit_sha256": "9d523143304148a2b2d887da817f10830e37f50d7689ca5a9e69f10d7b2eb31f",
+      "target": 127,
+      "bits": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "samples": 1,
+      "outputs": 8,
+      "tstates": 448,
+      "first_OUT_callback_tstate": 29,
+      "final_accumulator": 32768,
+      "bit_sha256": "efef8d5a9f8dbe5bb218e6b0cc452583eb9d1452b615b1c7ab66ad49c82e9d70",
+      "target": 128,
+      "bits": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "artifacts": {
+    "pcm8_sha256": "2c838406a1d3ea1ff6913679b05508f9ce40001a003b05d1ccbc5fb6e52e65e2",
+    "trajectory_bits_sha256": "aa3e8e5348865b851c19f3319c7391cec8bf9a54625c5510c6a8b8a1ee75f3f6",
+    "trajectory_times_sha256": "1ef7c1e6aeb47ac5964bbd39ee0e33e7108980e05200d7e3a895ad3434d51a2c"
+  },
+  "not_proved": [
+    "DHA file decode or quality",
+    "whole song RAM allocation",
+    "bank handoff",
+    "Spectrum 128/Scorpion clock adaptation",
+    "loading or progress UI",
+    "EOF and bootable TRD",
+    "Fuse/physical playback",
+    "second-order modulation"
+  ]
+}

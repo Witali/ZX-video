@@ -1,0 +1,135 @@
+{
+  "complete": true,
+  "date": "2026-10-19",
+  "source": "sea_foam",
+  "scope": "First16384 physical samples only; original model and lambda0 causal control; no whole-song encode",
+  "physical_samples": 16384,
+  "coded_samples": 32768,
+  "physical_rate_hz": 8000,
+  "coded_helper_rate_hz": 16000,
+  "physical_duration_seconds": 2.048,
+  "decoded_physical_samples": 16384,
+  "decoded_coded_samples": 32768,
+  "source_physical_sha256": "9fcac7a7a9de059e2a9bdfc76a7802c52d84fbf7a9f91dd7a96fcd26b9c69c86",
+  "coded_targets_sha256": "c957da17aeb485824ec2a72fb542a0debbf706f984e9d089fa522b7514789578",
+  "decoded_physical_sha256": "e170cdc866d5aa831c3ab11b941c64063ee4e2cfd43431eb83007e082062989b",
+  "decoded_coded_sha256": "9b62277a8d633d3d95ff994e7f3a3b5fb2bbe09d9f30ebcd9f139cf7a182fcda",
+  "model_sha256": "70582ffa6ec234742248acd008bda13795f5243a884681f496af87bd6609260f",
+  "ANS_sha256": "af7cef130c9edf04d1da1944678314a4cd5e2c7d6957ded64f0cc5f028fa7ce8",
+  "settings": {
+    "frame_samples": 4096,
+    "beam_width": 64,
+    "gain_candidates": 8,
+    "lookahead": 2,
+    "rate_penalty": 0,
+    "allow_pcm_fallback": true
+  },
+  "default_model_trained_on_same_song_family": true,
+  "only_changed_search_parameter": "rate_penalty82 ->0",
+  "old_DLL_matches_every_C_decoded_coded_sample": true,
+  "old_bridge_DLL_matches_Python_even_selection": true,
+  "all_helpers_and_headers_charged": true,
+  "all_source_physical_positions_retained_before_codec": true,
+  "file_bytes": 15475,
+  "file_sha256": "78c0fa26943af4e207dafd8ad7f74d7c71ed9412ac60ae8981978fbdd1549645",
+  "header_bytes": 1572,
+  "frame_headers_bytes": 256,
+  "payload_bytes": 13647,
+  "payload_bits": 109144,
+  "dha_frames": 8,
+  "pcm16_fallback_frames": 0,
+  "frames": [
+    {
+      "sequence": 0,
+      "file_offset": 1572,
+      "packet_bytes": 1711,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 13428,
+      "payload_bytes": 1679
+    },
+    {
+      "sequence": 1,
+      "file_offset": 3283,
+      "packet_bytes": 1515,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 11859,
+      "payload_bytes": 1483
+    },
+    {
+      "sequence": 2,
+      "file_offset": 4798,
+      "packet_bytes": 1661,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 13032,
+      "payload_bytes": 1629
+    },
+    {
+      "sequence": 3,
+      "file_offset": 6459,
+      "packet_bytes": 1783,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 14004,
+      "payload_bytes": 1751
+    },
+    {
+      "sequence": 4,
+      "file_offset": 8242,
+      "packet_bytes": 1744,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 13690,
+      "payload_bytes": 1712
+    },
+    {
+      "sequence": 5,
+      "file_offset": 9986,
+      "packet_bytes": 1836,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 14429,
+      "payload_bytes": 1804
+    },
+    {
+      "sequence": 6,
+      "file_offset": 11822,
+      "packet_bytes": 1825,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 14337,
+      "payload_bytes": 1793
+    },
+    {
+      "sequence": 7,
+      "file_offset": 13647,
+      "packet_bytes": 1828,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 14365,
+      "payload_bytes": 1796
+    }
+  ],
+  "bits_per_physical_sample": 7.55615234375,
+  "original_default_bridge_file_bytes": 5903,
+  "original_default_bridge_report_sha256": "4c8071a50b090c3475eefc23b584d83fe9bae2c9127890638ae4b191609767f7",
+  "no_source_clock_gain_delay_or_filter_fit": true,
+  "no_SNR_measurement": true,
+  "no_Z80_player_or_TRD_proof": true,
+  "encode_and_C_decode": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-quality0-native\\dha_quality_host.exe",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-bridge2-quality0-pilot\\model.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-bridge2-quality0-pilot\\coded-targets-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-bridge2-quality0-pilot\\native\\audio.dhaf",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-bridge2-quality0-pilot\\native\\decoded-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-bridge2-quality0-pilot\\native\\frames.jsonl"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 28.158646499970928
+  },
+  "physical_hardware_tested": false,
+  "release_accepted": false
+}

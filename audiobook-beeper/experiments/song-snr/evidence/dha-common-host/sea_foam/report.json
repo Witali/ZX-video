@@ -1,0 +1,1667 @@
+{
+  "complete": true,
+  "source": "sea_foam",
+  "input_samples": 720384,
+  "decoded_samples": 720384,
+  "sample_rate_hz": 8000,
+  "source_u8_sha256": "84fa43d12f3f0c67e70846aa53c4568b346dda88e7a4bfa94a4c834eed457700",
+  "source_pcm16_sha256": "8613b083a88e9e8d0d13b80b6202e1ba7f09fac618bb9dac224effe6617e2545",
+  "source_wav_sha256": "9875aa8c3edbb4cdd2a713fe7308418f97a4a1fc6cf5910349055d12b5b7cd28",
+  "decoded_pcm16_sha256": "0a5fc8a86eb7949109cfeef5a60ec7e27e5cd4e6fc0e15f0bb0582b454cdb1cb",
+  "settings": {
+    "frame_samples": 4096,
+    "beam_width": 64,
+    "gain_candidates": 8,
+    "lookahead": 2,
+    "rate_penalty": 82,
+    "allow_pcm_fallback": true
+  },
+  "model_sha256": "199a17a9967bfbb941099039f32a47192af8933faf37cf015047abb51bfb9a7b",
+  "ANS_sha256": "af7cef130c9edf04d1da1944678314a4cd5e2c7d6957ded64f0cc5f028fa7ce8",
+  "common_model_frozen_before_holdout": true,
+  "model_training_names": [
+    "speech",
+    "entertainer"
+  ],
+  "source_is_training_member": false,
+  "adapter_compiler": {
+    "command": "cmd /d /s /c \"call \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x64 >nul && cl /nologo /O2 /std:c11 /fp:strict /MT /I \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\include\" /I \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\" /DDHA_HAS_ENCODER=1 \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\\dha_common.c\" \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\\dha_decode.c\" \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\\dha_encode.c\" \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\dha_common_host.c\" /link /OUT:dha_common_host.exe\"",
+    "returncode": 0,
+    "elapsed_seconds": 2.8161192999687046,
+    "executable_sha256": "dc55cf53a08f068aa87044a35f2b3c6b9a908152713e0c6715d84c39221e213b",
+    "adapter_sha256": "4e35b2a7bcb3f72cb3522e310a279e5f2d6c820c943de6c13077d8ff7342a6e0",
+    "compiler": "Installed MSVC x64 /O2 /std:c11 /fp:strict /MT",
+    "pinned_snapshot": "../../dha-host/producer-source",
+    "original_library_unchanged": true
+  },
+  "pilot": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-common-native\\dha_common_host.exe",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\model.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\sea_foam\\pilot-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\sea_foam\\pilot-first-frame\\audio.dhaf",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\sea_foam\\pilot-first-frame\\decoded-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\sea_foam\\pilot-first-frame\\frames.jsonl"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 2.0389333999482915
+  },
+  "encode_and_C_decode": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-common-native\\dha_common_host.exe",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\model.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\sea_foam\\source-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\sea_foam\\full\\audio.dhaf",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\sea_foam\\full\\decoded-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\sea_foam\\full\\frames.jsonl"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 10.633892800018657
+  },
+  "container": "DHAFv1 independent-frame host container; not Spectrum/player wire",
+  "no_source_gain_clock_delay_fit": true,
+  "no_SNR_measurement": true,
+  "no_Z80_or_TRD_proof": true,
+  "release_accepted": false,
+  "physical_hardware_tested": false,
+  "file_bytes": 1411268,
+  "file_sha256": "8b871e8cdfa68e77198f3a40abe52fb21cd78a992d1c5b55ac5cad4013b25a53",
+  "frames": [
+    {
+      "sequence": 0,
+      "file_offset": 1572,
+      "packet_bytes": 605,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 4583,
+      "payload_bytes": 573
+    },
+    {
+      "sequence": 1,
+      "file_offset": 2177,
+      "packet_bytes": 792,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 6080,
+      "payload_bytes": 760
+    },
+    {
+      "sequence": 2,
+      "file_offset": 2969,
+      "packet_bytes": 947,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 7317,
+      "payload_bytes": 915
+    },
+    {
+      "sequence": 3,
+      "file_offset": 3916,
+      "packet_bytes": 954,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 7376,
+      "payload_bytes": 922
+    },
+    {
+      "sequence": 4,
+      "file_offset": 4870,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 5,
+      "file_offset": 13094,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 6,
+      "file_offset": 21318,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 7,
+      "file_offset": 29542,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 8,
+      "file_offset": 37766,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 9,
+      "file_offset": 45990,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 10,
+      "file_offset": 54214,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 11,
+      "file_offset": 62438,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 12,
+      "file_offset": 70662,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 13,
+      "file_offset": 78886,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 14,
+      "file_offset": 87110,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 15,
+      "file_offset": 95334,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 16,
+      "file_offset": 103558,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 17,
+      "file_offset": 111782,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 18,
+      "file_offset": 120006,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 19,
+      "file_offset": 128230,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 20,
+      "file_offset": 136454,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 21,
+      "file_offset": 144678,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 22,
+      "file_offset": 152902,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 23,
+      "file_offset": 161126,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 24,
+      "file_offset": 169350,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 25,
+      "file_offset": 177574,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 26,
+      "file_offset": 185798,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 27,
+      "file_offset": 194022,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 28,
+      "file_offset": 202246,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 29,
+      "file_offset": 210470,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 30,
+      "file_offset": 218694,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 31,
+      "file_offset": 226918,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 32,
+      "file_offset": 235142,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 33,
+      "file_offset": 243366,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 34,
+      "file_offset": 251590,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 35,
+      "file_offset": 259814,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 36,
+      "file_offset": 268038,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 37,
+      "file_offset": 276262,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 38,
+      "file_offset": 284486,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 39,
+      "file_offset": 292710,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 40,
+      "file_offset": 300934,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 41,
+      "file_offset": 309158,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 42,
+      "file_offset": 317382,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 43,
+      "file_offset": 325606,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 44,
+      "file_offset": 333830,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 45,
+      "file_offset": 342054,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 46,
+      "file_offset": 350278,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 47,
+      "file_offset": 358502,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 48,
+      "file_offset": 366726,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 49,
+      "file_offset": 374950,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 50,
+      "file_offset": 383174,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 51,
+      "file_offset": 391398,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 52,
+      "file_offset": 399622,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 53,
+      "file_offset": 407846,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 54,
+      "file_offset": 416070,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 55,
+      "file_offset": 424294,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 56,
+      "file_offset": 432518,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 57,
+      "file_offset": 440742,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 58,
+      "file_offset": 448966,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 59,
+      "file_offset": 457190,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 60,
+      "file_offset": 465414,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 61,
+      "file_offset": 473638,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 62,
+      "file_offset": 481862,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 63,
+      "file_offset": 490086,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 64,
+      "file_offset": 498310,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 65,
+      "file_offset": 506534,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 66,
+      "file_offset": 514758,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 67,
+      "file_offset": 522982,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 68,
+      "file_offset": 531206,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 69,
+      "file_offset": 539430,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 70,
+      "file_offset": 547654,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 71,
+      "file_offset": 555878,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 72,
+      "file_offset": 564102,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 73,
+      "file_offset": 572326,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 74,
+      "file_offset": 580550,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 75,
+      "file_offset": 588774,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 76,
+      "file_offset": 596998,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 77,
+      "file_offset": 605222,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 78,
+      "file_offset": 613446,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 79,
+      "file_offset": 621670,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 80,
+      "file_offset": 629894,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 81,
+      "file_offset": 638118,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 82,
+      "file_offset": 646342,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 83,
+      "file_offset": 654566,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 84,
+      "file_offset": 662790,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 85,
+      "file_offset": 671014,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 86,
+      "file_offset": 679238,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 87,
+      "file_offset": 687462,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 88,
+      "file_offset": 695686,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 89,
+      "file_offset": 703910,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 90,
+      "file_offset": 712134,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 91,
+      "file_offset": 720358,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 92,
+      "file_offset": 728582,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 93,
+      "file_offset": 736806,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 94,
+      "file_offset": 745030,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 95,
+      "file_offset": 753254,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 96,
+      "file_offset": 761478,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 97,
+      "file_offset": 769702,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 98,
+      "file_offset": 777926,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 99,
+      "file_offset": 786150,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 100,
+      "file_offset": 794374,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 101,
+      "file_offset": 802598,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 102,
+      "file_offset": 810822,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 103,
+      "file_offset": 819046,
+      "packet_bytes": 1118,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 8683,
+      "payload_bytes": 1086
+    },
+    {
+      "sequence": 104,
+      "file_offset": 820164,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 105,
+      "file_offset": 828388,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 106,
+      "file_offset": 836612,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 107,
+      "file_offset": 844836,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 108,
+      "file_offset": 853060,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 109,
+      "file_offset": 861284,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 110,
+      "file_offset": 869508,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 111,
+      "file_offset": 877732,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 112,
+      "file_offset": 885956,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 113,
+      "file_offset": 894180,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 114,
+      "file_offset": 902404,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 115,
+      "file_offset": 910628,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 116,
+      "file_offset": 918852,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 117,
+      "file_offset": 927076,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 118,
+      "file_offset": 935300,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 119,
+      "file_offset": 943524,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 120,
+      "file_offset": 951748,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 121,
+      "file_offset": 959972,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 122,
+      "file_offset": 968196,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 123,
+      "file_offset": 976420,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 124,
+      "file_offset": 984644,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 125,
+      "file_offset": 992868,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 126,
+      "file_offset": 1001092,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 127,
+      "file_offset": 1009316,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 128,
+      "file_offset": 1017540,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 129,
+      "file_offset": 1025764,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 130,
+      "file_offset": 1033988,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 131,
+      "file_offset": 1042212,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 132,
+      "file_offset": 1050436,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 133,
+      "file_offset": 1058660,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 134,
+      "file_offset": 1066884,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 135,
+      "file_offset": 1075108,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 136,
+      "file_offset": 1083332,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 137,
+      "file_offset": 1091556,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 138,
+      "file_offset": 1099780,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 139,
+      "file_offset": 1108004,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 140,
+      "file_offset": 1116228,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 141,
+      "file_offset": 1124452,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 142,
+      "file_offset": 1132676,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 143,
+      "file_offset": 1140900,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 144,
+      "file_offset": 1149124,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 145,
+      "file_offset": 1157348,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 146,
+      "file_offset": 1165572,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 147,
+      "file_offset": 1173796,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 148,
+      "file_offset": 1182020,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 149,
+      "file_offset": 1190244,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 150,
+      "file_offset": 1198468,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 151,
+      "file_offset": 1206692,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 152,
+      "file_offset": 1214916,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 153,
+      "file_offset": 1223140,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 154,
+      "file_offset": 1231364,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 155,
+      "file_offset": 1239588,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 156,
+      "file_offset": 1247812,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 157,
+      "file_offset": 1256036,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 158,
+      "file_offset": 1264260,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 159,
+      "file_offset": 1272484,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 160,
+      "file_offset": 1280708,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 161,
+      "file_offset": 1288932,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 162,
+      "file_offset": 1297156,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 163,
+      "file_offset": 1305380,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 164,
+      "file_offset": 1313604,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 165,
+      "file_offset": 1321828,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 166,
+      "file_offset": 1330052,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 167,
+      "file_offset": 1338276,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 168,
+      "file_offset": 1346500,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 169,
+      "file_offset": 1354724,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 170,
+      "file_offset": 1362948,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 171,
+      "file_offset": 1371172,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 172,
+      "file_offset": 1379396,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 173,
+      "file_offset": 1387620,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 174,
+      "file_offset": 1395844,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 175,
+      "file_offset": 1404068,
+      "packet_bytes": 7200,
+      "samples": 3584,
+      "kind": "PCM16",
+      "payload_bits": 57344,
+      "payload_bytes": 7168
+    }
+  ],
+  "dha_frames": 5,
+  "pcm16_fallback_frames": 171,
+  "payload_bits": 11232503,
+  "payload_bytes": 1404064,
+  "DLL_decode_matches_every_C_adapter_sample": true,
+  "DLL_stream_info": {
+    "sample_rate": 8000,
+    "channels": 1,
+    "declared_samples": 720384
+  },
+  "all_PCM16_fallback_samples_exact": true,
+  "all_C_progress_rows_match_serialized_frames": true
+}

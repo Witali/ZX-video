@@ -1,0 +1,72 @@
+{
+  "complete": true,
+  "date": "2026-10-19",
+  "sample_rate": 8000,
+  "training_names": [
+    "speech",
+    "entertainer"
+  ],
+  "holdout_names": [
+    "sea_foam",
+    "silence",
+    "quiet440",
+    "loud3000",
+    "steps",
+    "quiet997",
+    "multitone"
+  ],
+  "inputs": [
+    {
+      "name": "speech",
+      "wav_sha256": "6dfd92aac774283ffd96e7549cfa42eaeb833439570ec51f9ca1c69d36bedde0",
+      "pcm8_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+      "samples": 186880,
+      "training_rows": 186876,
+      "sample_rate": 8000
+    },
+    {
+      "name": "entertainer",
+      "wav_sha256": "3b49a603888957c2a9cd298eccf25b0b86b658a8619713e71cc750b9e9fd92ca",
+      "pcm8_sha256": "fb630abd3c8129c0ce2b0e2b4f367cf1136c0bc5eb4b104bcec3cd6e7ab501bb",
+      "samples": 186880,
+      "training_rows": 186876,
+      "sample_rate": 8000
+    }
+  ],
+  "training_rows": 373752,
+  "mathematical_target": "q_next - q_prev; q_reference=2*(PCM8-128)",
+  "fit": "One unweighted least-squares fit, no intercept/ridge; no source-specific refit",
+  "coefficients": [
+    -0.17605282144709125,
+    0.652046159585695,
+    -0.45827306657745503,
+    0.35211982041446527
+  ],
+  "matrix_rank": 4,
+  "singular_values": [
+    27048.437929847794,
+    23712.885922244426,
+    12748.007284626123,
+    4253.266164362714
+  ],
+  "least_squares_residuals": [
+    97986911.862596
+  ],
+  "separate_product_rounding": "nearest-even np.rint; signed8 table saturation is explicit",
+  "saturated_table_entries": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "model_bytes": 1024,
+  "model_sha256": "199a17a9967bfbb941099039f32a47192af8933faf37cf015047abb51bfb9a7b",
+  "numpy_version": "2.3.5",
+  "producer_sha256": "f880a011658b8c5c092212f2be9e4eae8ac7a9cbdf5fe5b1a9afff351bd66efd",
+  "encoder_options_changed": false,
+  "sample_gain_or_rate_changed": false,
+  "evaluation_fit": false,
+  "heldout_song_used_for_fit": false,
+  "compression_or_quality_accepted": false,
+  "limits": "Raw target histories train one shared codec predictor; coding uses reconstructed histories and may still require PCM16 fallback. Table fit alone is no quality/compression/player proof."
+}

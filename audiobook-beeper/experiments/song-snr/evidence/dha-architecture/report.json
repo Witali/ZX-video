@@ -1,0 +1,469 @@
+{
+  "status": "read-only-authenticated-architecture-audit",
+  "native_execution_rerun": false,
+  "tester_root": "C:\\Work\\z80-tester",
+  "samples": 375000,
+  "seconds": 15.0,
+  "independent_whole_wire": {
+    "samples": 375000,
+    "exact_q": true,
+    "exact_symbols": true,
+    "exact_gains": true,
+    "exact_DAC": true,
+    "ROM_tables_exact": true,
+    "terminal_ans": 0,
+    "gain_control": 32,
+    "consumed_bits": 506257,
+    "ANS_bits": 498937,
+    "gain_bits": 7320,
+    "padding_bits": 7,
+    "suffix_length_histogram": [
+      119274,
+      140519,
+      17956,
+      86998,
+      0,
+      0,
+      10252
+    ],
+    "prediction_q_d1_d2_d3_ranges": [
+      [
+        -256,
+        254
+      ],
+      [
+        -256,
+        254
+      ],
+      [
+        -115,
+        109
+      ],
+      [
+        -87,
+        87
+      ],
+      [
+        -84,
+        87
+      ]
+    ]
+  },
+  "identities": {
+    "ROM_sha256": "99af7097369d25a65b6ddf7e300d10dccfb3948fe03537972335e5411272ceca",
+    "payload_sha256": "c8fe1ac41c6196ce3a6b14f238fa2511070375562cf5344bd0f3204cd9e32040",
+    "q_sha256": "9de9f8e911773282fbc20182074d0fdab87f681a70e351edec380bc9edbf5bd4",
+    "DAC_sha256": "defee62d35cb38deaf2c2d436bddc57d6d3a21eacac2561a5dcfd6a6082ed271",
+    "model_sha256": "70582ffa6ec234742248acd008bda13795f5243a884681f496af87bd6609260f",
+    "retained_reference_sha256": "cc26f695ab5b0aa954e40886f11d8707434859779eeb77971d7d5f6343065a21"
+  },
+  "published_quality_recheck": {
+    "measurement": "All physical R2R8 DAC outputs against original once-native25k PCM16; no gain/delay fitting, fading, omitted samples, filtering or new resampling; digital only",
+    "source_start_seconds": 56,
+    "source_end_seconds": 71,
+    "sample_rate_hz": 25000,
+    "signal_sum_squares": 56330183672286,
+    "error_sum_squares": 166882387934,
+    "SER_dB": 25.28330661831493,
+    "rms_error_pcm16": 667.0979696846134,
+    "peak_error_pcm16": 4030.0,
+    "prepared_reference_path": "C:\\Work\\z80-tester\\build\\audio\\capacity-stage25-five-ans-full\\reference.pcm16",
+    "prepared_reference_available": false,
+    "scalar_quality_recomputed_from_reference": false,
+    "retained_sufficient_statistics_rechecked": true,
+    "note": "R2R8 / 15-second excerpt only; not whole-song ZX filtered beeper SNR. When the prepared reference is absent, only retained sufficient-statistic arithmetic is rechecked."
+  },
+  "packing": {
+    "payload_bytes": 63283,
+    "meaningful_bits": 506257,
+    "bits_per_sample": 1.3500186666666667,
+    "stored_bits_per_sample": 1.3500373333333333,
+    "bytes_per_second_25000": 4218.866666666667,
+    "hypothetical_bytes_per_second_8000_same_bits_per_sample": 1350.0186666666666,
+    "extrapolation_is_not_measured_8k_compression_or_quality": true,
+    "IMA4_at_8000_bytes_per_second": 4000,
+    "fixed_model_bytes": 1024,
+    "fixed_ANS_bytes": 512,
+    "startup_code_padding_bytes": 577,
+    "free_ROM_bytes": 140,
+    "host_DHAF_header_bytes": 1572,
+    "host_frame_header_bytes": 32,
+    "host_max_frame_samples": 4096,
+    "host_PCM16_fallback_bits_per_sample": 16,
+    "board_wire_and_DHAF_are_distinct_formats": true
+  },
+  "CPU": {
+    "tester_cpu_hz": 20000000,
+    "native_period_T": 800,
+    "parser_T": 399,
+    "predictor_R2R_return_T": 401,
+    "predictor_groups": [
+      {
+        "name": "q1 odd-half correction and signed SP accumulation",
+        "tstates": 87,
+        "positive_tstates": 87,
+        "negative_tstates": 87,
+        "zero_tstates": 87
+      },
+      {
+        "name": "D full correction and signed SP accumulation",
+        "tstates": 51,
+        "operations": [
+          [
+            "LD L,D",
+            4
+          ],
+          [
+            "LD H,251",
+            7
+          ],
+          [
+            "LD A,(HL)",
+            7
+          ],
+          [
+            "LD L,A",
+            4
+          ],
+          [
+            "ADD A,A",
+            4
+          ],
+          [
+            "SBC A,A",
+            4
+          ],
+          [
+            "LD H,A",
+            4
+          ],
+          [
+            "ADD HL,SP",
+            11
+          ],
+          [
+            "LD SP,HL",
+            6
+          ]
+        ]
+      },
+      {
+        "name": "E full correction and signed SP accumulation",
+        "tstates": 51,
+        "operations": [
+          [
+            "LD L,E",
+            4
+          ],
+          [
+            "LD H,252",
+            7
+          ],
+          [
+            "LD A,(HL)",
+            7
+          ],
+          [
+            "LD L,A",
+            4
+          ],
+          [
+            "ADD A,A",
+            4
+          ],
+          [
+            "SBC A,A",
+            4
+          ],
+          [
+            "LD H,A",
+            4
+          ],
+          [
+            "ADD HL,SP",
+            11
+          ],
+          [
+            "LD SP,HL",
+            6
+          ]
+        ]
+      },
+      {
+        "name": "IXL full correction and signed SP accumulation",
+        "tstates": 59,
+        "operations": [
+          [
+            "LD A,IXL",
+            8
+          ],
+          [
+            "LD L,A",
+            4
+          ],
+          [
+            "LD H,253",
+            7
+          ],
+          [
+            "LD A,(HL)",
+            7
+          ],
+          [
+            "LD L,A",
+            4
+          ],
+          [
+            "ADD A,A",
+            4
+          ],
+          [
+            "SBC A,A",
+            4
+          ],
+          [
+            "LD H,A",
+            4
+          ],
+          [
+            "ADD HL,SP",
+            11
+          ],
+          [
+            "LD SP,HL",
+            6
+          ]
+        ]
+      },
+      {
+        "name": "qnew=qold+SP; SP is exactly d1new",
+        "tstates": 19,
+        "operations": [
+          [
+            "LD H,B",
+            4
+          ],
+          [
+            "LD L,C",
+            4
+          ],
+          [
+            "ADD HL,SP",
+            11
+          ]
+        ]
+      },
+      {
+        "name": "save qnew in BC; recover signed d1new from SP",
+        "tstates": 29,
+        "operations": [
+          [
+            "LD B,H",
+            4
+          ],
+          [
+            "LD C,L",
+            4
+          ],
+          [
+            "LD HL,0",
+            10
+          ],
+          [
+            "ADD HL,SP",
+            11
+          ]
+        ]
+      },
+      {
+        "name": "update three byte differences in place",
+        "tstates": 54,
+        "operations": [
+          [
+            "LD A,L",
+            4
+          ],
+          [
+            "SUB D",
+            4
+          ],
+          [
+            "LD H,A",
+            4
+          ],
+          [
+            "LD A,L",
+            4
+          ],
+          [
+            "XOR 128",
+            7
+          ],
+          [
+            "LD D,A",
+            4
+          ],
+          [
+            "LD A,H",
+            4
+          ],
+          [
+            "SUB E",
+            4
+          ],
+          [
+            "XOR 128",
+            7
+          ],
+          [
+            "LD IXL,A",
+            8
+          ],
+          [
+            "LD E,H",
+            4
+          ]
+        ]
+      },
+      {
+        "name": "restore HL from saved qnew BC; rounded DAC; return",
+        "tstates": 51,
+        "operations": [
+          [
+            "LD H,B",
+            4
+          ],
+          [
+            "LD L,C",
+            4
+          ],
+          [
+            "INC HL",
+            6
+          ],
+          [
+            "LD A,H",
+            4
+          ],
+          [
+            "RRA",
+            4
+          ],
+          [
+            "LD A,L",
+            4
+          ],
+          [
+            "RRA",
+            4
+          ],
+          [
+            "OUT (0),A",
+            11
+          ],
+          [
+            "JP sample",
+            10
+          ]
+        ]
+      }
+    ],
+    "current_parser_normalized": true,
+    "parser_399_is_not_a_lower_bound": true,
+    "parser_components_T": {
+      "preface": 87,
+      "lookup": 70,
+      "reader": 157,
+      "finish": 28,
+      "residual_handler": 57
+    },
+    "ZX_cpu_hz": 3584000,
+    "ZX_rate": 8000,
+    "ZX_budget_T": 448,
+    "current_decoder_utilization": 1.7857142857142858,
+    "decoder_only_max_rate_hz": 4480.0,
+    "remaining_T_after_unchanged_predictor": 47,
+    "decoder_over_budget_T": 352,
+    "minimum_16_OUT_immediate_T": 176,
+    "minimum_16_OUT_C_T": 192,
+    "predictor_before_final_OUT_and_return_T": 380,
+    "unchanged_predictor_plus_16_immediate_OUT_T": 556,
+    "note": "Counts exclude Spectrum contention, paging, UI and disk work. Not an impossibility bound for a redesigned decoder or predecode."
+  },
+  "register_contract": {
+    "main": "BC=q+256; D=d1+128; E=d2+128; IXL=d3+128; HL scratch; SP residual/accumulator/new d1",
+    "alternate": "HL=ROM bit cursor; B=sentinel bit reservoir; C=pending gain; D=current G; E=block count",
+    "additional": "AF'=ANS state; IXH=current G; IYH=0; IYL=residual handler; I=free8",
+    "incompatibility": "SP is arithmetic state; all normal main/alternate data registers are occupied. Existing IMA/SDM lookup ABI cannot be kept by substitution."
+  },
+  "precision": {
+    "predictive_q_range": [
+      -256,
+      254
+    ],
+    "predictive_state_bits_about": 9,
+    "predictive_PCM16_formula": "(((q+257)//2)-128)*256",
+    "predictive_low8_bits_zero": true,
+    "PCM16_container_does_not_mean_16bit_predictive_precision": true,
+    "raw_q9_possible_but_changes_output_objective": true,
+    "PDM_library_helper": "first-order unsigned8 phase accumulator; schedule provided by caller"
+  },
+  "model_provenance": {
+    "model_sha256": "70582ffa6ec234742248acd008bda13795f5243a884681f496af87bd6609260f",
+    "training_source": "sea-foam original source 56..71 seconds, 375000 samples at 25 kHz",
+    "method": "Ordinary least squares, q1/d1/d2/d3 frozen-history features; each signed8 correction table rounded separately with np.rint",
+    "library_default_is_frozen_not_refitted_per_upload": true,
+    "general_source_quality_not_established_by_training_excerpt": true
+  },
+  "predecode_size_only": {
+    "full_ZX_source_samples": 720384,
+    "sample_rate_hz": 8000,
+    "rows": [
+      {
+        "machine": "128",
+        "inherited_audio_capacity_bytes": 91392,
+        "pcm8_bytes": 720384,
+        "pcm8_fits_size_only": false,
+        "packed_q9_bytes": 810432,
+        "packed_q9_fits_size_only": false,
+        "pcm16_bytes": 1440768,
+        "pcm16_fits_size_only": false
+      },
+      {
+        "machine": "scorpion256",
+        "inherited_audio_capacity_bytes": 222464,
+        "pcm8_bytes": 720384,
+        "pcm8_fits_size_only": false,
+        "packed_q9_bytes": 810432,
+        "packed_q9_fits_size_only": false,
+        "pcm16_bytes": 1440768,
+        "pcm16_fits_size_only": false
+      },
+      {
+        "machine": "pentagon512",
+        "inherited_audio_capacity_bytes": 484608,
+        "pcm8_bytes": 720384,
+        "pcm8_fits_size_only": false,
+        "packed_q9_bytes": 810432,
+        "packed_q9_fits_size_only": false,
+        "pcm16_bytes": 1440768,
+        "pcm16_fits_size_only": false
+      },
+      {
+        "machine": "pentagon1024",
+        "inherited_audio_capacity_bytes": 1008896,
+        "pcm8_bytes": 720384,
+        "pcm8_fits_size_only": true,
+        "packed_q9_bytes": 810432,
+        "packed_q9_fits_size_only": true,
+        "pcm16_bytes": 1440768,
+        "pcm16_fits_size_only": false
+      }
+    ],
+    "native25000_full_90_seconds_PCM8_bytes": 2250000,
+    "caveat": "Inherited IMA audio capacity is an estimate for a different PCM player. Need new code/table/workspace ledger, compressed/decoded coexistence strategy, actual loading speed and seamless playback proof."
+  },
+  "decision": "Test the fixed C library on unchanged 8-kHz complete sources and holdouts first. If quality/size gates pass, predecode to RAM or design a new fused decoder; the published 20-MHz decoder cannot be inserted in the current 448-T SDM loop.",
+  "all_consumed_tester_files_unchanged": true,
+  "authenticated_native_outputs": 2250003
+}

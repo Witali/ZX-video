@@ -1,0 +1,107 @@
+                 	
+                 	; Resident unsignedPCM8, first-order accumulator, eight uniform56-T holds.
+                 	; MainHL=continuous modulo65536 accumulator, DE=PCM8<<8 (E remains zero),
+                 	; C=16 EAR mask. MainB/IX/IY/SP/I and alternateBC/HL are preserved.
+                 	; AlternateDE points to the NEXT source byte; current byte is already in D.
+                 	; AF' holds the prefetched byte only from gap1 to gap8; mainA/F are scratch.
+                 	; OUT(FE),A emits EAR0/16, with MIC/border zero. No RAM writes/CALL/PUSH.
+                 	; IRQs must be disabled. This bounded kernel has no EOF or bank handoff.
+                 	; Enter packet after priming D. All eight output holds are exactly56 T;
+                 	; source changes only after output8, for an exact448-T PCM sample period.
+8000              	 ORG 0x8000
+                 	packet:
+                 	pulse_0:
+8000 19           	 ADD HL,DE
+8001 9F           	 SBC A,A
+8002 A1           	 AND C
+8003 D3 FE        	 OUT (254),A
+                 	gap_0:
+                 	; Gap1: prefetch next target in AF',26 T including7-T dead load.
+8005 D9           	 EXX
+8006 1A           	 LD A,(DE)
+8007 08           	 EX AF,AF'
+8008 D9           	 EXX
+8009 3E 00        	 LD A,0
+                 	pulse_1:
+800B 19           	 ADD HL,DE
+800C 9F           	 SBC A,A
+800D A1           	 AND C
+800E D3 FE        	 OUT (254),A
+                 	gap_1:
+                 	;26 T free scheduling space; R-dependent flags/data are dead.
+8010 ED 5F        	 LD A,R
+8012 ED 5F        	 LD A,R
+8014 00           	 NOP
+8015 00           	 NOP
+                 	pulse_2:
+8016 19           	 ADD HL,DE
+8017 9F           	 SBC A,A
+8018 A1           	 AND C
+8019 D3 FE        	 OUT (254),A
+                 	gap_2:
+                 	;26 T free scheduling space; R-dependent flags/data are dead.
+801B ED 5F        	 LD A,R
+801D ED 5F        	 LD A,R
+801F 00           	 NOP
+8020 00           	 NOP
+                 	pulse_3:
+8021 19           	 ADD HL,DE
+8022 9F           	 SBC A,A
+8023 A1           	 AND C
+8024 D3 FE        	 OUT (254),A
+                 	gap_3:
+                 	;26 T free scheduling space; R-dependent flags/data are dead.
+8026 ED 5F        	 LD A,R
+8028 ED 5F        	 LD A,R
+802A 00           	 NOP
+802B 00           	 NOP
+                 	pulse_4:
+802C 19           	 ADD HL,DE
+802D 9F           	 SBC A,A
+802E A1           	 AND C
+802F D3 FE        	 OUT (254),A
+                 	gap_4:
+                 	;26 T free scheduling space; R-dependent flags/data are dead.
+8031 ED 5F        	 LD A,R
+8033 ED 5F        	 LD A,R
+8035 00           	 NOP
+8036 00           	 NOP
+                 	pulse_5:
+8037 19           	 ADD HL,DE
+8038 9F           	 SBC A,A
+8039 A1           	 AND C
+803A D3 FE        	 OUT (254),A
+                 	gap_5:
+                 	;26 T free scheduling space; R-dependent flags/data are dead.
+803C ED 5F        	 LD A,R
+803E ED 5F        	 LD A,R
+8040 00           	 NOP
+8041 00           	 NOP
+                 	pulse_6:
+8042 19           	 ADD HL,DE
+8043 9F           	 SBC A,A
+8044 A1           	 AND C
+8045 D3 FE        	 OUT (254),A
+                 	gap_6:
+                 	; Gap7: source advance,14 useful T plus12 T padding.
+8047 D9           	 EXX
+8048 13           	 INC DE
+8049 D9           	 EXX
+804A 00           	 NOP
+804B 00           	 NOP
+804C 00           	 NOP
+                 	pulse_7:
+804D 19           	 ADD HL,DE
+804E 9F           	 SBC A,A
+804F A1           	 AND C
+8050 D3 FE        	 OUT (254),A
+                 	gap_7:
+                 	; Gap8: latch prefetched next target only after current output8.
+                 	; The10-T loop jump is included in the26-T gap, not added to the448-T clock.
+8052 08           	 EX AF,AF'
+8053 57           	 LD D,A
+8054 00           	 NOP
+8055 00           	 NOP
+8056 C3 00 80     	 JP packet
+                 	kernel_end:
+8059 00           	 NOP

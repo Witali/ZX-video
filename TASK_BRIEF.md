@@ -1,6 +1,6 @@
 # Focused optimization task
 
-Updated 2026-10-19. Use this brief to continue the project in this or a new
+Updated 2026-10-20. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
 ## Active source-independent +5-dB audio milestone (2026-10-14)
@@ -34,6 +34,41 @@ claim physical-hardware proof from emulator traces or compensated Pentagon
 quality on a different clone without its own measurements.
 
 ### Current continuation checkpoint
+
+Latest user steering2026-10-19 prioritizes trying the stronger audio codec
+from `C:/Work/z80-tester`. DHA is now integrated as an isolated C host trial;
+the unfinished PCM16 player experiment below remains preserved. Complete
+default and common8k-model encodes/decodes cover all9 original sources,
+1195520 samples each. The shared model is trained only on speech/Entertainer;
+song and six synthetics are holdouts. Separate old-DLL decoding, frame CRCs,
+sample counts and exact raw-fallback samples pass. No original encoder or
+player is changed. The default tester model was trained on a15s25k excerpt
+of the same song and cannot establish independent generality.
+
+Direct8k DHA is rejected as a replacement: full-song default/common files
+take1418393/1411268 bytes versus360192 IMA bytes, with172/171 of176 frames
+falling back to rawPCM16. Ideal-DAC song scores38.0952/37.9248 dB largely
+reflect that fallback; quiet tones, speech and Entertainer regress. This is
+not a new one-bit-player SNR result. The separately authenticated current
+20MHz tester decoder needs800T, versus448T total available at Pentagon8k.
+A90-byte residentPCM8 first-order component proves8 equally spaced56T
+pulses per448T sample with655368 native outputs, but only within one bank.
+Decoded songPCM8 needs720384 bytes:1024K residency is plausible,512K is not
+enough; no complete RAM map, bank handoff or bootable DHA disk is claimed.
+
+A source-preserving bridge pilot retains every original sample at even
+positions, adds midpoint helpers and discards helpers after decoding at
+unchanged physical8k. For16384 physical samples, default penalty82 uses
+5903B but scores16.4125 dB versus IMA22.6552. The single causal penalty0
+control reaches25.2160 dB but expands to15475B versus8192 IMA bytes, with
+all helpers/headers charged. Neither pilot proves stronger compression at
+equal quality. No full-song helper encode was launched on those results.
+The limit-interrupted work resumed2026-10-20 without rerunning passed
+encodes; all9 common-model quality outputs were already complete. Preserve
+these negative/positive controls, distinguish codec-only ideal DAC from
+actual one-bit playback, and do not promote a new disk. See
+[DHA investigation](audiobook-beeper/DHA_TRIAL.md). The wider saved noise
+goal remains unfinished; this bounded codec investigation is complete.
 
 Resumed2026-10-19 from5d10036c after restoring the same branch/worktree with
 a sparse source checkout. Optional `pentagon_ordinary_tstates=448` and public
@@ -73,8 +108,9 @@ compressed IMA storage, original executable Python/C, complete source/gain/
 filter/edges, independent boot and seamless residency where RAM suffices.
 The prior low-gain/25-level SD2 port is rejected evidence, not a baseline to
 repeat. Keep real16-bit SDM precision separate from modulation order and from
-the still nonuniform physical page/bank schedule. Finish this precision
-mechanism before opening an unrelated sweep.
+the still nonuniform physical page/bank schedule. This was the priority
+before the user's later DHA request, recorded above; preserve the unfinished
+precision mechanism rather than restarting its completed controls.
 
 The first precision step is now implemented and verified as a standalone C
 host counterfactual, with original encoders/player untouched. `sdm16_precision`

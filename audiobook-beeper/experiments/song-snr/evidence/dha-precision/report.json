@@ -1,0 +1,270 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "source_root": "C:\\Work\\z80-tester",
+  "scope": "Static C/API/provenance audit plus exhaustive integer enumeration of all 511 declared q values; no native execution, encoding, fitting, resampling, or quality measurement.",
+  "source_repository_modified": false,
+  "sources": [
+    {
+      "path": "audio/lib/dha-codec/include/dha_codec.h",
+      "bytes": 11188,
+      "sha256": "0291e5344ba7a87ed5827b08739837426291e74bf98eca38c5920e8214fb07d6",
+      "canonical_lf_sha256": "177b85f9806952e9c2f31736812ee2688143814114e4247e86f60b7e88ae7987"
+    },
+    {
+      "path": "audio/lib/dha-codec/src/dha_decode.c",
+      "bytes": 10072,
+      "sha256": "eabe2ee0193327c3268e2fcec9f9d94f970af8cbd10f2cb7ea7cd4767fd9f04e",
+      "canonical_lf_sha256": "45e3398515e2a3184b987ddedebed5d9a78881edd3db68a59b15ca85357a1421"
+    },
+    {
+      "path": "audio/lib/dha-codec/src/dha_encode.c",
+      "bytes": 31197,
+      "sha256": "dabdd99efc9ad8170dbcfd23520a3066874e62dfb675b36667ce35e5c02ffc02",
+      "canonical_lf_sha256": "f0de57d65af5f1e8d067bc27c9820f72bfbd487fe7f59bb45ab239712beff6c6"
+    },
+    {
+      "path": "audio/lib/dha-codec/src/dha_common.c",
+      "bytes": 16281,
+      "sha256": "7ba47af58d90718ffaa16c37033d86e2f93a26f7da763a89f934943346a7d2c7",
+      "canonical_lf_sha256": "0158454f57e018067cd076f01264a4930c83209cb5158d9e1ac0ba3b43a64ee3"
+    },
+    {
+      "path": "audio/lib/dha-codec/src/dha_tables.inc.h",
+      "bytes": 5792,
+      "sha256": "dcbb16ef26c4fb4f25b9becef78b9ac49358451c41a885f34f578655d8befd22",
+      "canonical_lf_sha256": "187844b5ea3b5a07cc7d1073b2a41a7fe42d25cd6dae123db743f469e24ea025"
+    },
+    {
+      "path": "audio/lib/dha-codec/README.md",
+      "bytes": 13856,
+      "sha256": "17361f6b2791c01b995a4d30b3d28d43ba3ab3440f4b449c8df6d1a6b20b6f26",
+      "canonical_lf_sha256": "4fa68a784c8ac3b90c90b5c7348afa43676795c9e5c8f008c9ced01ce34ff5c5"
+    },
+    {
+      "path": "audio/lib/dha-codec/FORMAT.md",
+      "bytes": 5856,
+      "sha256": "163d1f4269c880cf95898ccad36e5d13b155e7f1f02b1f87143909f27a165c66",
+      "canonical_lf_sha256": "942fbe0d4029a41e1887691fc3b3f700564747a98448fe16b08356163ab24f33"
+    },
+    {
+      "path": "audio/music/sea-foam/recorded-difference-history/src/probe.py",
+      "bytes": 20470,
+      "sha256": "69d9dd92672810471d75f42e000a280e0487b79f5e2c833cdb6ae9e7f42f6815",
+      "canonical_lf_sha256": "94aeb8b15d0e2e7ea3e5c748a248b606f84a8265ccee4a21b3418edbe4d0bf4e"
+    },
+    {
+      "path": "audio/music/sea-foam/recorded-difference-history/README.md",
+      "bytes": 21761,
+      "sha256": "d10011bea322676020b0a699197ec06f0a4fd787f8fbe2a1382205820c7dc82b",
+      "canonical_lf_sha256": "147f9fd2cfceb93d9997b5ec0a5c8cd67427be36f79b165c0dc544d300adfab2"
+    }
+  ],
+  "tables": {
+    "dha_default_model": {
+      "bytes": 1024,
+      "sha256": "70582ffa6ec234742248acd008bda13795f5243a884681f496af87bd6609260f",
+      "minimum": -115,
+      "maximum": 114
+    },
+    "dha_default_ans": {
+      "bytes": 512,
+      "sha256": "af7cef130c9edf04d1da1944678314a4cd5e2c7d6957ded64f0cc5f028fa7ce8",
+      "minimum": 0,
+      "maximum": 254
+    }
+  },
+  "precision": {
+    "q_min": -256,
+    "q_max": 254,
+    "internal_distinct_q": 511,
+    "public_predictive_distinct_pcm16": 256,
+    "public_predictive_low_zero_bits": 8,
+    "public_predictive_pcm16_range": [
+      -32768,
+      32512
+    ],
+    "raw_q128_distinct_pcm16": 511,
+    "raw_q128_pcm16_range": [
+      -32768,
+      32512
+    ],
+    "public_minus_raw_q128_values": [
+      0,
+      128
+    ],
+    "all_q_verified": 511,
+    "pcm16_fallback_preserves_input": true
+  },
+  "pdm": {
+    "order": 1,
+    "target_bits": 8,
+    "accumulator_bits": 8,
+    "clock_owned_by_caller": true
+  },
+  "encoder": {
+    "beam_width": 64,
+    "gain_candidates": 8,
+    "lookahead": 2,
+    "rate_penalty": 82.0,
+    "allow_pcm_fallback": true,
+    "loss_target": "Rounded unsigned-PCM8 R2R output represented as PCM16; not unrounded q*128.",
+    "source_adaptive": "Residuals, reconstructed history and gains are selected by the same bounded search for each source; built-in model coefficients and ANS table are not refitted by this API."
+  },
+  "model_provenance": {
+    "trained_on_song": true,
+    "source_independent_training_corpus": false,
+    "song": "Stay with us, boy / In the Blue Sea, in the White Foam",
+    "excerpt_seconds": [
+      56,
+      71
+    ],
+    "sample_rate": 25000,
+    "training_samples": 375000,
+    "features": [
+      "q1",
+      "q1-q2",
+      "q1-2*q2+q3",
+      "q1-3*q2+3*q3-q4"
+    ],
+    "fit": "Ordinary least squares, target=reference/128-q1; no intercept or ridge; separately nearest-even rounded table rows.",
+    "coefficients": [
+      -0.03965039152806261,
+      0.8990253695520664,
+      0.463045998278022,
+      0.26278664629475357
+    ],
+    "training_fan2_sha256": "8cbc8c0079752c2c2e86359372ba0b0cd9428df674606c41d76b0d36ab61857a",
+    "training_q_sha256": "42afa1edc87d54737ff3aa1c6e7cf6b1b8b10bdc9b71dd671fb72e5adaf2b6ff",
+    "training_reference_sha256": "cc26f695ab5b0aa954e40886f11d8707434859779eeb77971d7d5f6343065a21",
+    "actual_training_run_repeated": false
+  },
+  "timing": {
+    "source_documentation_only": true,
+    "predictor_tstates": 401,
+    "parser_tstates": 399,
+    "sample_tstates": 800,
+    "clock_hz": 20000000,
+    "sample_rate": 25000,
+    "native_repeated_by_this_audit": false,
+    "zx_448t_port_proved": false,
+    "note": "Source firmware timing is reported from the retained project; it is not our Spectrum player, a lower bound on a redesigned implementation, or a native proof performed here."
+  },
+  "decision": "Use fixed defaults as a separately labelled codec baseline if benchmarked. Do not call its predictive PCM16 buffer full-16-bit precision, infer source-independent training, or transfer its 25-kHz R2R SER to the current 8-kHz EAR disk. A raw-q9 adapter changes the loss target and needs its own controlled measurement.",
+  "references": {
+    "public_state": {
+      "path": "audio/lib/dha-codec/include/dha_codec.h",
+      "line": 43,
+      "end_line": 43,
+      "excerpt": "typedef struct { int16_t q; int8_t d1,d2,d3; } dha_predictor_state;"
+    },
+    "public_rounding": {
+      "path": "audio/lib/dha-codec/include/dha_codec.h",
+      "line": 118,
+      "end_line": 120,
+      "excerpt": " * DHA uses the exact unsigned8 R2R rounding (((q+257)/2)-128)*256;\n * PCM fallback preserves all PCM16 bits. No floating point or allocation. */\nDHA_API int dha_decoder_next(dha_decoder *decoder, int16_t *pcm);"
+    },
+    "q_range": {
+      "path": "audio/lib/dha-codec/src/dha_decode.c",
+      "line": 102,
+      "end_line": 103,
+      "excerpt": "        if (prediction < -256 || prediction > 254 || q < -256 || q > 254)\n            return fail(decoder, DHA_E_PROFILE);"
+    },
+    "returned_pcm": {
+      "path": "audio/lib/dha-codec/src/dha_decode.c",
+      "line": 124,
+      "end_line": 124,
+      "excerpt": "        value = (((q + 257) / 2) - 128) * 256;"
+    },
+    "raw_fallback": {
+      "path": "audio/lib/dha-codec/src/dha_decode.c",
+      "line": 71,
+      "end_line": 77,
+      "excerpt": "    if (decoder->frame.kind == DHA_FRAME_PCM16) {\n        /* frame_read proved a two-byte word exists for every sample. Decode\n           its sign explicitly so raw PCM16 is preserved on either endian host. */\n        unsigned word = dha_get16(decoder->payload + 2u * decoder->position);\n        value = word < 32768u ? (int)word : (int)word - 65536;\n        decoder->bit_position += 16u;\n    } else if (decoder->frame.kind == DHA_FRAME_DHA) {"
+    },
+    "q_commit": {
+      "path": "audio/lib/dha-codec/src/dha_decode.c",
+      "line": 116,
+      "end_line": 120,
+      "excerpt": "        decoder->state.q = (int16_t)q;\n        decoder->state.d1 = (int8_t)d1;\n        decoder->state.d2 = (int8_t)d2;\n        decoder->state.d3 = (int8_t)d3;\n        decoder->ans_state = next_state;"
+    },
+    "pdm_state": {
+      "path": "audio/lib/dha-codec/include/dha_codec.h",
+      "line": 65,
+      "end_line": 65,
+      "excerpt": "typedef struct { uint8_t accumulator; } dha_pdm_state;"
+    },
+    "pdm_algorithm": {
+      "path": "audio/lib/dha-codec/src/dha_decode.c",
+      "line": 186,
+      "end_line": 188,
+      "excerpt": "    sum = (unsigned)state->accumulator + pcm8;\n    state->accumulator = (uint8_t)sum;\n    return (uint8_t)(sum >> 8);"
+    },
+    "encoder_objective": {
+      "path": "audio/lib/dha-codec/src/dha_encode.c",
+      "line": 239,
+      "end_line": 242,
+      "excerpt": "    difference=(((q+257)/2)-128)*256-(int)target;\n    if (difference < -ENC_CAP_PCM16 || difference > ENC_CAP_PCM16) return 0;\n    *error=difference/128.0;\n    return 1;"
+    },
+    "encoder_defaults": {
+      "path": "audio/lib/dha-codec/src/dha_encode.c",
+      "line": 56,
+      "end_line": 60,
+      "excerpt": "    options->beam_width=64;\n    options->gain_candidates=8;\n    options->lookahead=2;\n    options->allow_pcm_fallback=1;\n    options->rate_penalty=82.0;"
+    },
+    "copied_tables": {
+      "path": "audio/lib/dha-codec/src/dha_common.c",
+      "line": 89,
+      "end_line": 91,
+      "excerpt": "    memcpy(info->model,dha_default_model,sizeof(info->model));\n    memcpy(info->ans,dha_default_ans,sizeof(info->ans));\n    return dha_stream_validate(info);"
+    },
+    "raw_q_api": {
+      "path": "audio/lib/dha-codec/include/dha_codec.h",
+      "line": 148,
+      "end_line": 155,
+      "excerpt": " * exact signed predictor outputs, before R2R/PDM rounding. Success returns\n * DHA_OK and commits final_state; failure may partially modify the arrays but\n * leaves final_state unchanged. NULL options selects defaults; the fallback\n * flag is validated but ignored. This host-only call allocates search scratch.\n * To continue, pass final_state as the next initial state. Every nonfinal\n * chunk must contain a multiple of256 samples so gain blocks stay aligned.\n * No filtering, resampling, fade, level adjustment or PCM fallback occurs. */\nDHA_API int dha_encode_trajectory(const dha_stream_info *info,"
+    },
+    "training_input": {
+      "path": "audio/music/sea-foam/recorded-difference-history/src/probe.py",
+      "line": 31,
+      "end_line": 34,
+      "excerpt": "    folder=ROOT/'build/audio/capacity-stage25-five-ans-full';data=(folder/'refit15s-p64/recording.fan2').read_bytes();raw=(folder/'reference.pcm16').read_bytes();q,_,_=module.unpack(data)\n    assert sha(data)=='8cbc8c0079752c2c2e86359372ba0b0cd9428df674606c41d76b0d36ab61857a'\n    assert sha(q.tobytes())=='42afa1edc87d54737ff3aa1c6e7cf6b1b8b10bdc9b71dd671fb72e5adaf2b6ff'\n    assert sha(raw)=='cc26f695ab5b0aa954e40886f11d8707434859779eeb77971d7d5f6343065a21'"
+    },
+    "training_fit": {
+      "path": "audio/music/sea-foam/recorded-difference-history/src/probe.py",
+      "line": 35,
+      "end_line": 48,
+      "excerpt": "    h=np.zeros((len(q),4),float)\n    for k in range(4):h[k+1:,k]=q[:-k-1]\n    x=np.column_stack((h[:,0],h[:,0]-h[:,1],h[:,0]-2*h[:,1]+h[:,2],h[:,0]-3*h[:,1]+3*h[:,2]-h[:,3]));reference=np.frombuffer(raw,'<i2').astype(float)/128\n    coefficients,residuals,rank,singular=np.linalg.lstsq(x,reference-h[:,0],rcond=None)\n    domains=[np.r_[256,np.arange(1,256)]]+[np.arange(-128,128)]*3\n    model=np.stack([np.rint(c*d).astype(np.int8) for c,d in zip(coefficients,domains)])\n    assert sha(model.tobytes())==MODEL_SHA\n    prediction=h[:,0].copy();history_q=h[:,0].astype(int)\n    correction=model[0,np.abs(history_q)&255].astype(int)*np.sign(history_q);prediction+=correction\n    for k in range(1,4):prediction+=model[k,x[:,k].astype(int)+128]\n    provenance=dict(coefficients=coefficients.tolist(),ordinary_ls_rank=int(rank),singular_values=singular.tolist(),rounding='nearest-even, each stored row independently',intercept=0,ridge=0,\n        training_fan2_sha256=sha(data),training_q_sha256=sha(q.tobytes()),training_reference_sha256=sha(raw),model_sha256=sha(model.tobytes()),model_bytes=model.nbytes,\n        feature_ranges=[[int(x[:,k].min()),int(x[:,k].max())] for k in range(4)],row_ranges=[[int(row.min()),int(row.max())] for row in model],\n        frozen_history_innovation_mse_q=float(np.mean((reference-prediction)**2)),frozen_history_prediction_outside_strict_q=int(np.sum((prediction < -256)|(prediction >254))),frozen_history_only=True)"
+    },
+    "training_excerpt": {
+      "path": "audio/music/sea-foam/recorded-difference-history/README.md",
+      "line": 3,
+      "end_line": 9,
+      "excerpt": "The selected example plays the complete **15 seconds**, source56\u201371s, of\n\u201c\u041e\u0441\u0442\u0430\u0432\u0430\u0439\u0441\u044f, \u043c\u0430\u043b\u044c\u0447\u0438\u043a \u0441 \u043d\u0430\u043c\u0438, \u0431\u0443\u0434\u0435\u0448\u044c \u043d\u0430\u0448\u0438\u043c \u043a\u043e\u0440\u043e\u043b\u0451\u043c\u201d from *\u0412 \u0441\u0438\u043d\u0435\u043c \u043c\u043e\u0440\u0435, \u0432\n\u0431\u0435\u043b\u043e\u0439 \u043f\u0435\u043d\u0435* at native **25,000 Hz**, through an unsigned8-bit R2R DAC.\nAll375000 physical outputs measure **25.283306618dB SER**, peak/RMS error\n**6.041091688** and maximum error **15.7421875 DAC steps** (4030PCM16).\nThere is no gain/delay fit, fade, omitted sample or error-removing filter.\nThe15-second capacity goal is met digitally; a physical board is not measured."
+    },
+    "documented_training_scope": {
+      "path": "audio/music/sea-foam/recorded-difference-history/README.md",
+      "line": 198,
+      "end_line": 206,
+      "excerpt": "An independent least-squares fit uses all 375,000 samples of the existing\nfull-refit q history and its native 25-kHz reference, minimizing\n`reference/128 - q1 - c*features`. The coefficients are\n\n```text\n[-0.03965039152806261,\n  0.8990253695520664,\n  0.463045998278022,\n  0.26278664629475357]"
+    },
+    "source_clock": {
+      "path": "audio/music/sea-foam/recorded-difference-history/README.md",
+      "line": 44,
+      "end_line": 48,
+      "excerpt": "**800 T at20MHz**:399T parser plus401T synthesis. The code uses registers\nand ROM reads; SP is arithmetic state and is never a memory stack.\nBC and D/E/IXL hold q and differences, IXH holds gain and IY the residual\nhandler; I retains8 free canary bits. The selected decoder no longer claims\nthe older32-bit spare-register contract."
+    },
+    "library_quality_scope": {
+      "path": "audio/lib/dha-codec/README.md",
+      "line": 238,
+      "end_line": 239,
+      "excerpt": "files and the complete saved Z80 trajectory. No analog or SNR/SER assessment\nis part of this library integration."
+    },
+    "container_scope": {
+      "path": "audio/lib/dha-codec/FORMAT.md",
+      "line": 3,
+      "end_line": 8,
+      "excerpt": "DHAF stores the existing DHA1 difference predictor and five-symbol tabled ANS\nin an independent-frame PC container. The arithmetic, default tables and PCM8\nrounding match the selected Z80 R2R/PDM firmware. The file is **not** a64-KiB\nROM or the old monolithic `DHA1` research container. Frame sizes and gain\nplacement replace the board's compiled-first sample and timed gain prefetch.\nNo assembler, ROM emitter or external replay file is needed for playback."
+    }
+  }
+}

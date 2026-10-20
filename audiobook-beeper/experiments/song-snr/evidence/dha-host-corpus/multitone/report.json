@@ -1,0 +1,129 @@
+{
+  "complete": true,
+  "source": "multitone",
+  "source_u8_sha256": "ce41aa7d8037a5354c0e40dc59f0b56fcd94a5c700e1d5770e1c8168c25a14d6",
+  "source_wav_sha256": "dc969170018a0f8f6c4c32943f94bcfefc2a68d041fb1a10858dd3e60d6cf92a",
+  "source_pcm16_sha256": "632edae809ea32356810cd77536f4f5bd72b17bbcfe172f8bd5c5523214946be",
+  "decoded_pcm16_sha256": "632edae809ea32356810cd77536f4f5bd72b17bbcfe172f8bd5c5523214946be",
+  "sample_rate_hz": 8000,
+  "channels": 1,
+  "input_samples": 16896,
+  "decoded_samples": 16896,
+  "prepared_source_unmodified": true,
+  "conversion": "Exact PCM16=(prepared_unsigned8-128)*256; no resampling/filter/gain normalization",
+  "source_content_duration_seconds": 2.112,
+  "settings": {
+    "frame_samples": 4096,
+    "beam_width": 64,
+    "gain_candidates": 8,
+    "lookahead": 2,
+    "rate_penalty": 82,
+    "allow_pcm_fallback": true
+  },
+  "container": "DHAFv1 host independent-frame container; NOT compiled-first Z80 wire or playable TRD",
+  "default_model_training": "Unchanged predictor tables trained on selected15s sea-foam25kHz trajectory; this song alone cannot establish source-independent benefit",
+  "predictive_output_precision": "DHA frames emit PCM8-rounded signedPCM16; fallback retains originalPCM16",
+  "file_bytes": 34536,
+  "file_sha256": "f281ce55e1e7c718fdd2188587a87e51fcc289def9d79c80bdd98022603c36b6",
+  "file_header_bytes": 1572,
+  "frame_header_total_bytes": 160,
+  "payload_bits": 262425,
+  "payload_bytes": 32804,
+  "original_pcm16_bytes": 33792,
+  "prepared_pcm8_bytes": 16896,
+  "IMA4_raw_reference_bytes": 8448,
+  "DHAF_bits_per_sample": 16.352272727272727,
+  "ratio_to_PCM16": 1.0220170454545454,
+  "dha_frames": 1,
+  "pcm16_fallback_frames": 4,
+  "channel_frames": 5,
+  "frames": [
+    {
+      "sequence": 0,
+      "file_offset": 1572,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 1,
+      "file_offset": 9796,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 2,
+      "file_offset": 18020,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 3,
+      "file_offset": 26244,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 4,
+      "file_offset": 34468,
+      "packet_bytes": 68,
+      "samples": 512,
+      "kind": "DHA",
+      "payload_bits": 281,
+      "payload_bytes": 36
+    }
+  ],
+  "CLI_info_fully_validated": true,
+  "DLL_decode_matches_every_CLI_sample": true,
+  "DLL_stream_info": {
+    "sample_rate": 8000,
+    "channels": 1,
+    "declared_samples": 16896
+  },
+  "encode": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-host-scratch\\build\\dha.exe",
+      "encode",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host-corpus\\multitone\\source-pcm16.wav",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host-corpus\\multitone\\audio.dhaf"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.5076727999839932
+  },
+  "info": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-host-scratch\\build\\dha.exe",
+      "info",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host-corpus\\multitone\\audio.dhaf"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.03636009996989742
+  },
+  "decode": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-host-scratch\\build\\dha.exe",
+      "decode",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host-corpus\\multitone\\audio.dhaf",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host-corpus\\multitone\\decoded.wav"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.02223580004647374
+  },
+  "model_sha256": "70582ffa6ec234742248acd008bda13795f5243a884681f496af87bd6609260f",
+  "ANS_sha256": "af7cef130c9edf04d1da1944678314a4cd5e2c7d6957ded64f0cc5f028fa7ce8",
+  "no_SNR_or_reconstruction_filter_measurement": true,
+  "no_Z80_CPU_or_disk_player_proof": true,
+  "release_accepted": false,
+  "physical_hardware_tested": false
+}

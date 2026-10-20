@@ -1,0 +1,497 @@
+{
+  "complete": true,
+  "source": "speech",
+  "input_samples": 186880,
+  "decoded_samples": 186880,
+  "sample_rate_hz": 8000,
+  "source_u8_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+  "source_pcm16_sha256": "68a87668a607a2eed4d8c6eab82e512d4ff8125ffe6803bf303e8e6dd9154427",
+  "source_wav_sha256": "6dfd92aac774283ffd96e7549cfa42eaeb833439570ec51f9ca1c69d36bedde0",
+  "decoded_pcm16_sha256": "bde71ea4ab61f0b01eb43250b445f94435b41a695e8b792ffc20d7e8568b427f",
+  "settings": {
+    "frame_samples": 4096,
+    "beam_width": 64,
+    "gain_candidates": 8,
+    "lookahead": 2,
+    "rate_penalty": 82,
+    "allow_pcm_fallback": true
+  },
+  "model_sha256": "199a17a9967bfbb941099039f32a47192af8933faf37cf015047abb51bfb9a7b",
+  "ANS_sha256": "af7cef130c9edf04d1da1944678314a4cd5e2c7d6957ded64f0cc5f028fa7ce8",
+  "common_model_frozen_before_holdout": true,
+  "model_training_names": [
+    "speech",
+    "entertainer"
+  ],
+  "source_is_training_member": true,
+  "adapter_compiler": {
+    "command": "cmd /d /s /c \"call \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x64 >nul && cl /nologo /O2 /std:c11 /fp:strict /MT /I \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\include\" /I \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\" /DDHA_HAS_ENCODER=1 \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\\dha_common.c\" \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\\dha_decode.c\" \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\\dha_encode.c\" \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\dha_common_host.c\" /link /OUT:dha_common_host.exe\"",
+    "returncode": 0,
+    "elapsed_seconds": 2.8161192999687046,
+    "executable_sha256": "dc55cf53a08f068aa87044a35f2b3c6b9a908152713e0c6715d84c39221e213b",
+    "adapter_sha256": "4e35b2a7bcb3f72cb3522e310a279e5f2d6c820c943de6c13077d8ff7342a6e0",
+    "compiler": "Installed MSVC x64 /O2 /std:c11 /fp:strict /MT",
+    "pinned_snapshot": "../../dha-host/producer-source",
+    "original_library_unchanged": true
+  },
+  "pilot": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-common-native\\dha_common_host.exe",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\model.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\speech\\pilot-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\speech\\pilot-first-frame\\audio.dhaf",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\speech\\pilot-first-frame\\decoded-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\speech\\pilot-first-frame\\frames.jsonl"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 4.12041799997678
+  },
+  "encode_and_C_decode": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-common-native\\dha_common_host.exe",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\model.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\speech\\source-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\speech\\full\\audio.dhaf",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\speech\\full\\decoded-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\speech\\full\\frames.jsonl"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 84.7858410999761
+  },
+  "container": "DHAFv1 independent-frame host container; not Spectrum/player wire",
+  "no_source_gain_clock_delay_fit": true,
+  "no_SNR_measurement": true,
+  "no_Z80_or_TRD_proof": true,
+  "release_accepted": false,
+  "physical_hardware_tested": false,
+  "file_bytes": 211803,
+  "file_sha256": "3ad3f04322f886f31226a4fca24ef811f51ffbbacd970957ec5d614dfdd3c631",
+  "frames": [
+    {
+      "sequence": 0,
+      "file_offset": 1572,
+      "packet_bytes": 653,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 4964,
+      "payload_bytes": 621
+    },
+    {
+      "sequence": 1,
+      "file_offset": 2225,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 2,
+      "file_offset": 10449,
+      "packet_bytes": 524,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 3929,
+      "payload_bytes": 492
+    },
+    {
+      "sequence": 3,
+      "file_offset": 10973,
+      "packet_bytes": 712,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 5438,
+      "payload_bytes": 680
+    },
+    {
+      "sequence": 4,
+      "file_offset": 11685,
+      "packet_bytes": 799,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 6129,
+      "payload_bytes": 767
+    },
+    {
+      "sequence": 5,
+      "file_offset": 12484,
+      "packet_bytes": 723,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 5528,
+      "payload_bytes": 691
+    },
+    {
+      "sequence": 6,
+      "file_offset": 13207,
+      "packet_bytes": 673,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 5123,
+      "payload_bytes": 641
+    },
+    {
+      "sequence": 7,
+      "file_offset": 13880,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 8,
+      "file_offset": 22104,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 9,
+      "file_offset": 30328,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 10,
+      "file_offset": 38552,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 11,
+      "file_offset": 46776,
+      "packet_bytes": 456,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 3387,
+      "payload_bytes": 424
+    },
+    {
+      "sequence": 12,
+      "file_offset": 47232,
+      "packet_bytes": 508,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 3808,
+      "payload_bytes": 476
+    },
+    {
+      "sequence": 13,
+      "file_offset": 47740,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 14,
+      "file_offset": 55964,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 15,
+      "file_offset": 64188,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 16,
+      "file_offset": 72412,
+      "packet_bytes": 488,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 3641,
+      "payload_bytes": 456
+    },
+    {
+      "sequence": 17,
+      "file_offset": 72900,
+      "packet_bytes": 338,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 2444,
+      "payload_bytes": 306
+    },
+    {
+      "sequence": 18,
+      "file_offset": 73238,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 19,
+      "file_offset": 81462,
+      "packet_bytes": 651,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 4946,
+      "payload_bytes": 619
+    },
+    {
+      "sequence": 20,
+      "file_offset": 82113,
+      "packet_bytes": 639,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 4850,
+      "payload_bytes": 607
+    },
+    {
+      "sequence": 21,
+      "file_offset": 82752,
+      "packet_bytes": 644,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 4892,
+      "payload_bytes": 612
+    },
+    {
+      "sequence": 22,
+      "file_offset": 83396,
+      "packet_bytes": 477,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 3555,
+      "payload_bytes": 445
+    },
+    {
+      "sequence": 23,
+      "file_offset": 83873,
+      "packet_bytes": 495,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 3700,
+      "payload_bytes": 463
+    },
+    {
+      "sequence": 24,
+      "file_offset": 84368,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 25,
+      "file_offset": 92592,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 26,
+      "file_offset": 100816,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 27,
+      "file_offset": 109040,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 28,
+      "file_offset": 117264,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 29,
+      "file_offset": 125488,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 30,
+      "file_offset": 133712,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 31,
+      "file_offset": 141936,
+      "packet_bytes": 607,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 4596,
+      "payload_bytes": 575
+    },
+    {
+      "sequence": 32,
+      "file_offset": 142543,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 33,
+      "file_offset": 150767,
+      "packet_bytes": 743,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 5684,
+      "payload_bytes": 711
+    },
+    {
+      "sequence": 34,
+      "file_offset": 151510,
+      "packet_bytes": 563,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 4243,
+      "payload_bytes": 531
+    },
+    {
+      "sequence": 35,
+      "file_offset": 152073,
+      "packet_bytes": 389,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 2853,
+      "payload_bytes": 357
+    },
+    {
+      "sequence": 36,
+      "file_offset": 152462,
+      "packet_bytes": 397,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 2913,
+      "payload_bytes": 365
+    },
+    {
+      "sequence": 37,
+      "file_offset": 152859,
+      "packet_bytes": 767,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 5873,
+      "payload_bytes": 735
+    },
+    {
+      "sequence": 38,
+      "file_offset": 153626,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 39,
+      "file_offset": 161850,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 40,
+      "file_offset": 170074,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 41,
+      "file_offset": 178298,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 42,
+      "file_offset": 186522,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 43,
+      "file_offset": 194746,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 44,
+      "file_offset": 202970,
+      "packet_bytes": 8224,
+      "samples": 4096,
+      "kind": "PCM16",
+      "payload_bits": 65536,
+      "payload_bytes": 8192
+    },
+    {
+      "sequence": 45,
+      "file_offset": 211194,
+      "packet_bytes": 609,
+      "samples": 2560,
+      "kind": "DHA",
+      "payload_bits": 4609,
+      "payload_bytes": 577
+    }
+  ],
+  "dha_frames": 22,
+  "pcm16_fallback_frames": 24,
+  "payload_bits": 1669969,
+  "payload_bytes": 208759,
+  "DLL_decode_matches_every_C_adapter_sample": true,
+  "DLL_stream_info": {
+    "sample_rate": 8000,
+    "channels": 1,
+    "declared_samples": 186880
+  },
+  "all_PCM16_fallback_samples_exact": true,
+  "all_C_progress_rows_match_serialized_frames": true
+}

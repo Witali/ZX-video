@@ -1,0 +1,128 @@
+{
+  "complete": true,
+  "source": "silence",
+  "input_samples": 16896,
+  "decoded_samples": 16896,
+  "sample_rate_hz": 8000,
+  "source_u8_sha256": "a3c4877ba41e7f790c57962977bdac3901e53b2f337fef956521c5ec9346affc",
+  "source_pcm16_sha256": "904cc818da7f8339cc5ea26ae49ec7f7d33bbca04f63902ea9c2bcd6012532a7",
+  "source_wav_sha256": "31ea58dae2106f52873cb3ff752ff97a2426b75bdb0b8fa8b4859cda6f641f76",
+  "decoded_pcm16_sha256": "904cc818da7f8339cc5ea26ae49ec7f7d33bbca04f63902ea9c2bcd6012532a7",
+  "settings": {
+    "frame_samples": 4096,
+    "beam_width": 64,
+    "gain_candidates": 8,
+    "lookahead": 2,
+    "rate_penalty": 82,
+    "allow_pcm_fallback": true
+  },
+  "model_sha256": "199a17a9967bfbb941099039f32a47192af8933faf37cf015047abb51bfb9a7b",
+  "ANS_sha256": "af7cef130c9edf04d1da1944678314a4cd5e2c7d6957ded64f0cc5f028fa7ce8",
+  "common_model_frozen_before_holdout": true,
+  "model_training_names": [
+    "speech",
+    "entertainer"
+  ],
+  "source_is_training_member": false,
+  "adapter_compiler": {
+    "command": "cmd /d /s /c \"call \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x64 >nul && cl /nologo /O2 /std:c11 /fp:strict /MT /I \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\include\" /I \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\" /DDHA_HAS_ENCODER=1 \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\\dha_common.c\" \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\\dha_decode.c\" \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-host\\producer-source\\src\\dha_encode.c\" \"C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\dha_common_host.c\" /link /OUT:dha_common_host.exe\"",
+    "returncode": 0,
+    "elapsed_seconds": 2.8161192999687046,
+    "executable_sha256": "dc55cf53a08f068aa87044a35f2b3c6b9a908152713e0c6715d84c39221e213b",
+    "adapter_sha256": "4e35b2a7bcb3f72cb3522e310a279e5f2d6c820c943de6c13077d8ff7342a6e0",
+    "compiler": "Installed MSVC x64 /O2 /std:c11 /fp:strict /MT",
+    "pinned_snapshot": "../../dha-host/producer-source",
+    "original_library_unchanged": true
+  },
+  "pilot": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-common-native\\dha_common_host.exe",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\model.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\silence\\pilot-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\silence\\pilot-first-frame\\audio.dhaf",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\silence\\pilot-first-frame\\decoded-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\silence\\pilot-first-frame\\frames.jsonl"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 3.012390000047162
+  },
+  "encode_and_C_decode": {
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\.tmp\\dha-common-native\\dha_common_host.exe",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\model.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\silence\\source-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\silence\\full\\audio.dhaf",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\silence\\full\\decoded-pcm16.bin",
+      "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\dha-common-host\\silence\\full\\frames.jsonl"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 13.052468899986707
+  },
+  "container": "DHAFv1 independent-frame host container; not Spectrum/player wire",
+  "no_source_gain_clock_delay_fit": true,
+  "no_SNR_measurement": true,
+  "no_Z80_or_TRD_proof": true,
+  "release_accepted": false,
+  "physical_hardware_tested": false,
+  "file_bytes": 2892,
+  "file_sha256": "16d950e3948f1129207684f236ef121f41087db1cdf72111210fe3812d1bb533",
+  "frames": [
+    {
+      "sequence": 0,
+      "file_offset": 1572,
+      "packet_bytes": 313,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 2248,
+      "payload_bytes": 281
+    },
+    {
+      "sequence": 1,
+      "file_offset": 1885,
+      "packet_bytes": 313,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 2248,
+      "payload_bytes": 281
+    },
+    {
+      "sequence": 2,
+      "file_offset": 2198,
+      "packet_bytes": 313,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 2248,
+      "payload_bytes": 281
+    },
+    {
+      "sequence": 3,
+      "file_offset": 2511,
+      "packet_bytes": 313,
+      "samples": 4096,
+      "kind": "DHA",
+      "payload_bits": 2248,
+      "payload_bytes": 281
+    },
+    {
+      "sequence": 4,
+      "file_offset": 2824,
+      "packet_bytes": 68,
+      "samples": 512,
+      "kind": "DHA",
+      "payload_bits": 281,
+      "payload_bytes": 36
+    }
+  ],
+  "dha_frames": 5,
+  "pcm16_fallback_frames": 0,
+  "payload_bits": 9273,
+  "payload_bytes": 1160,
+  "DLL_decode_matches_every_C_adapter_sample": true,
+  "DLL_stream_info": {
+    "sample_rate": 8000,
+    "channels": 1,
+    "declared_samples": 16896
+  },
+  "all_PCM16_fallback_samples_exact": true,
+  "all_C_progress_rows_match_serialized_frames": true
+}

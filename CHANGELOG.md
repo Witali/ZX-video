@@ -1,5 +1,60 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — DHA C codec tried on the full corpus; quality/storage tradeoff retained
+
+- **Objective/baseline:** Follow the user's2026-10-19 request to try the codec
+  in `C:/Work/z80-tester`, preserving original8k prepared sources, old C/Python
+  encoders, player and deliveredb96763ca disk. Encoding completed2026-10-19;
+  final quality/audit work resumed2026-10-20 after a usage-limit interruption.
+  The separate interrupted PCM16 experiment is preserved by9879e8a9.
+- **C integration and complete controls:** Snapshot the unmodified DHA C
+  library, CLI, model/ANS and training provenance. Original CLI/library tests
+  and separate decoder DLL pass. Default and one shared8k model both encode
+  all9 complete sources,1195520 samples each, with exact counts/CRCs/fallback
+  samples and independent decoding parity. Shared training uses only speech
+  and Entertainer; song and6 synthetics remain holdouts. The tester's default
+  model was trained on a15s25k excerpt of the same song, explicitly disclosed.
+  Beam64/gains8/lookahead2/penalty82/frame4096/fallback are otherwise unchanged.
+- **Direct8k result:** Default/common full-song files1418393/1411268B versus
+  IMA360192B, with172/171 rawPCM16 fallback frames out of176. Encoding takes
+  19.5597/10.634s. Ideal multilevel-DAC SNR38.0952/37.9248 dB versus IMA22.1492
+  is chiefly raw fallback, not improved compression. Quiet440 default/common
+  8.6878/6.5393 dB versus IMA30.3591; quiet9970.00145/0.00057 versus23.8340.
+  Common speech23.3205 versus25.5923, Entertainer16.3624 versus27.5445 despite
+  smaller37817B. Silence is exact; several loud/transient controls are exact
+  after fixed edges through fallback. Reject both direct configurations.
+- **Bounded helper-lattice control:** Preserve all original sample positions
+  at even coded indexes, inserting midpoint helpers without changing the8k
+  physical reference. C/Python mapping is exact for all720384 original samples.
+  The16384-physical/32768-coded pilot uses5903B,8 predictive/0 raw frames and
+  21.0323s, but scores16.4125 dB versus IMA22.6552. Changing only penalty82->0
+  scores25.21597 dB, +2.56078 over IMA, but costs15475B versus8192 IMA payload
+  bytes,28.15865s including C decoding. All helper/header bytes are charged;
+  no whole-song helper encode is launched or inferred from this2.048s pilot.
+- **Precision/CPU scope:** DHA predictive output rounds to8 effective PCM
+  bits despite its PCM16 API. Authenticate the test-board375000-sample packed
+  wire/retained native trace and current800T parser+predictor/R2R path, not
+  the historical340T component. Pentagon8k has448T for all work. A separate
+  90B residentPCM8 first-order kernel proves8x56T pulses/448T samples on
+  655368 actual native outputs (65536 input/phase pairs plus16383 samples).
+  Relative to ordinary449T period this is-1T, or0 against optional448, with
+  different pulse positions. It covers one bank, not a full player. Decoded
+  song720384B can fit1024K in principle, not512K; no bank/EOF/clone/loader proof.
+  Initial missing-reference architecture failure is retained; the board's
+  separate25.2833-dB R2R scalar uses retained sums, not fresh missing PCM.
+- **Verification/decision:** Keep exact source clocks/gain/filter/100ms edges;
+  scores here use an ideal DAC, not actual beeper output or an artifact gate.
+  Final audits authenticate immutable manifests, producer identities, all9
+  common scores and original source/disk hashes without repeating encodes.
+  Independent86-check audit passes29 manifests/667 artifacts and29 archived
+  producer identities; a separate39-file portable audit retains all8 successful
+  common-quality terminal exits and the unchanged song record. All18 complete
+  containers are independently decoded again; filtered audio is authenticated,
+  not rerendered. Original sources matchf009fb18/9879e8a9 and diskSHA b96763ca.
+  Complete this bounded codec investigation without replacing IMA or building
+  an unverified DHA TRD. General-source noise, full RAM timing and actual full
+  playback acceptance remain open. [Reproduction and results](audiobook-beeper/DHA_TRIAL.md).
+
 ## 2026-10-19 — Uniform PCM16 arithmetic proved; host quality run interrupted
 
 - **Objective/baseline:** Continue the reconstructed-PCM16 precision mechanism

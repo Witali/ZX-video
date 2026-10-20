@@ -1,0 +1,79 @@
+{
+  "complete": true,
+  "source": "multitone",
+  "source_samples": 16896,
+  "sample_rate": 8000,
+  "source_PCM8_sha256": "ce41aa7d8037a5354c0e40dc59f0b56fcd94a5c700e1d5770e1c8168c25a14d6",
+  "source_WAV_sha256": "dc969170018a0f8f6c4c32943f94bcfefc2a68d041fb1a10858dd3e60d6cf92a",
+  "DHA_WAV_sha256": "e0b9393f71d8b5cc00b9245b18e45a6378b2197c6a45f53582f28ac0effa5500",
+  "DHA_file_sha256": "f281ce55e1e7c718fdd2188587a87e51fcc289def9d79c80bdd98022603c36b6",
+  "container": {
+    "file_bytes": 34536,
+    "model_sha256": "70582ffa6ec234742248acd008bda13795f5243a884681f496af87bd6609260f",
+    "ans_sha256": "af7cef130c9edf04d1da1944678314a4cd5e2c7d6957ded64f0cc5f028fa7ce8",
+    "frames": 5,
+    "predictive_frames": 1,
+    "PCM16_fallback_frames": 4,
+    "predictive_samples": 512,
+    "PCM16_fallback_samples": 16384,
+    "meaningful_payload_bits": 262425,
+    "all_header_frame_CRCs_and_counts_exact": true,
+    "every_fallback_sample_matches_original": true
+  },
+  "frozen_IMA4_bytes": 8448,
+  "frozen_IMA4_sha256": "5d37096901b5a7b766fe9d06b5127037722033c19f4fd4c582e7468732f37558",
+  "DHA_size_fraction_of_IMA4": 4.088068181818182,
+  "rows": [
+    {
+      "codec": "IMA4",
+      "samples": 16896,
+      "PCM16_sha256": "92f09220af5a6c90c974d2834dfa08ee8a75c9f8819f5d62e6ae8778333f3307",
+      "unfiltered": {
+        "snr_db": 20.194716006263327,
+        "bit_exact_after_edges": false,
+        "error_rms_PCM8_units": 3.7508820850351747,
+        "maximum_absolute_error_PCM8_units": 13.70703125,
+        "scope": "Original8kPCM, fixed100-ms edges, no fitted gain/delay/clock"
+      },
+      "filtered": {
+        "snr_db": 21.24456511725555,
+        "signal_rms": 0.280073285956921,
+        "error_rms": 0.0242685277642682,
+        "error_power": 0.0005889614398450565,
+        "error_power_field_component": 1.135784980015999e-05,
+        "field_hz": 50,
+        "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+      }
+    },
+    {
+      "codec": "DHA",
+      "samples": 16896,
+      "PCM16_sha256": "632edae809ea32356810cd77536f4f5bd72b17bbcfe172f8bd5c5523214946be",
+      "unfiltered": {
+        "snr_db": null,
+        "bit_exact_after_edges": true,
+        "error_rms_PCM8_units": 0.0,
+        "maximum_absolute_error_PCM8_units": 0.0,
+        "scope": "Original8kPCM, fixed100-ms edges, no fitted gain/delay/clock"
+      },
+      "filtered": {
+        "snr_db": null,
+        "signal_rms": 0.280073285956921,
+        "error_rms": 0.0,
+        "error_power": 0.0,
+        "error_power_field_component": 0.0,
+        "field_hz": 50,
+        "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+      }
+    }
+  ],
+  "filter_intermediate_hz": 768000,
+  "filter_output_hz": 44100,
+  "scope": "Complete original uniform8k source, ideal multilevel DAC only; fixed100-ms edges and unchanged listening filter. No actual one-bit output or ZX timing/player claim.",
+  "score_source_clock_fitted": false,
+  "gain_delay_or_bandwidth_fitted": false,
+  "precision": "DHA predictive mode returns PCM8 rounded into PCM16; fallback preserves originalPCM16",
+  "training_overlap": "Original DHA default model was fitted to a25kHz15s portion of this song; common-model trial must identify its separate training inputs.",
+  "player_or_release_accepted": false,
+  "producer_sha256": "823abcd6e79937709192046561e461075949c885bf4644810188bd7ba8929fab"
+}
