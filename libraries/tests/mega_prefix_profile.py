@@ -12,7 +12,7 @@ PHASES=(1,3,5,7)
 def after(phase):return phase-2 if phase>1 else 7
 
 
-def build(*,origin=0x8000,prefix_cap=127,allow_oversize=False):
+def build(*,origin=0x8000,prefix_cap=127,allow_oversize=False,share_minimum=0):
     """Keep ordinary copies; specialize only proven gamma lower bounds.
 
     A gamma count of at least K permits K-1 initial LDI instructions, leaving
@@ -25,16 +25,31 @@ def build(*,origin=0x8000,prefix_cap=127,allow_oversize=False):
     source=Path(__file__).resolve().parents[1]/'zx0/src/zx0/asm/dzx0_mega.asm'
     original=[' '.join(line.split(';')[0].strip().split()).replace(', ', ',') for line in source.read_text().splitlines()]
     original=[line for line in original if line]
+    if share_minimum not in (0,3,7,15,31,63):raise ValueError(share_minimum)
+    if share_minimum and prefix_cap<127:raise ValueError('shared suffix screen requires cap >=127')
     lines=[];prefixes={};dead_stages=[];word_joins=[];shared_literals={}
+    shared_jumps=[];direct_aliases={}
     def copy(family,phase,lower):
         label=f'max_copy_{family}_{phase}_{lower}'
         prefix=min(prefix_cap,lower-1)
         prefixes[label]=dict(family=family,phase=phase,minimum_count=lower,prefix_bytes=prefix,
                              extra_offset_load_tstates=6 if family=='reuse' and phase==7 else 0)
+        if share_minimum and share_minimum<=prefix<127 and family=='literals' and lower==4:
+            # This entry is reached only by a conditional JP, so redirect it
+            # straight into the suffix without an additional runtime jump.
+            direct_aliases[label]=f'shared_ldi_{family}_{phase}_{prefix}'
+            return []
         result=[label+':']
         if family!='literals':result+=['push hl','ld hl,(dzx0m_last_offset+1)','add hl,de']
         if lower==128 and prefix_cap>127:result+=[f'max_suffix_{family}_{phase}_128:']
-        return result+['ldi']*prefix+[f'jp tail_{family}_{phase}']
+        if share_minimum and share_minimum<=prefix<127:
+            jump=f'shared_entry_{family}_{phase}_{lower}';shared_jumps.append(jump)
+            return result+[jump+':',f'jp shared_ldi_{family}_{phase}_{prefix}']
+        for remaining in range(prefix,0,-1):
+            if share_minimum and lower==128 and share_minimum<=remaining<127 and remaining in (3,7,15,31,63):
+                result.append(f'shared_ldi_{family}_{phase}_{remaining}:')
+            result.append('ldi')
+        return result+[f'jp tail_{family}_{phase}']
     def stage(family,phase,level):
         name=f'max_gamma_{family}_{phase}_{level}'
         result=[name+':','add a,a','rl c']
@@ -120,6 +135,7 @@ def build(*,origin=0x8000,prefix_cap=127,allow_oversize=False):
                 a.emit({'bc':0x01,'hl':0x21,'c':0x0e}[dest]);(a.word if dest in ('bc','hl') else a.emit)(value)
         else:raise ValueError(line)
     for name,(label,offset) in aliases.items():a.labels[name]=a.labels[label]+offset
+    for name,target in direct_aliases.items():a.labels[name]=a.labels[target]
     blob=a.resolve();assert allow_oversize or len(blob)+4<=10000
     return [(origin,blob)],a.labels,dict(entry='dzx0_mega',variant='mega-prefix-test',
         code_bytes=len(blob),workspace_bytes=len(blob)+4,max_decoder_stack_bytes=4,
@@ -127,4 +143,5 @@ def build(*,origin=0x8000,prefix_cap=127,allow_oversize=False):
         source_sha256=sha(source.read_bytes()),prefix_cap=prefix_cap,prefixes=prefixes,
         removed_word_shift_stages=dead_stages,word_copy_joins=word_joins,
         shared_literal_suffixes=shared_literals,
+        shared_prefix_minimum=share_minimum,shared_entry_jumps=shared_jumps,
         coroutine_supported=False,test_only=True)

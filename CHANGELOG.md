@@ -1,5 +1,31 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Screen selective ZX0 LDI sharing and retain its speed penalty
+
+- **Objective/baseline:** First authorized follow-up from `b99dd123`: shrink
+  the fastest resident Maximum by sharing LDI suffixes. Compare unchanged
+  417-block/364-real inputs with cap127/228, counting all service memory and
+  excluding input/output/history as authorized.
+- **Changed parameters/results:** Screen minimum shared prefixes 3/15/31/63
+  at both caps. The representative cap127/min15 uses 4,910 B instead of 7,526,
+  but 140,193,198 ->140,421,498 real T (+228,300, about 0.163%). Versus fastest
+  cap228 it saves 5,080 B and adds 251,530 T. Each newly shared entry adds
+  one 10-T JP; direct literal4 aliases add zero. All 364 real cases slow
+  against the same-cap baseline. Keep every case and eight-profile totals in
+  [the screen](libraries/SHARED_PREFIX_SCREEN.md).
+- **Verification:** All eight profiles pass complete plain native main-corpus
+  replays and exact per-block jump-cost reconciliation. Cap127/min15 also
+  passes 417 main and 56 high-word cases with IRQ and relocation, including
+  legal long counts and overlapping match history. Four plain stack bytes;
+  diagnostic IRQ code/headroom counted separately. No coroutine/player claim.
+  [Reproducer](libraries/tests/measure_shared_prefix.py),
+  [main proof](libraries/evidence/shared_prefix_native.json.gz),
+  [high-word proof](libraries/evidence/shared_prefix_high_word.json.gz).
+- **Decision:** Retain as a test-only intermediate tradeoff; reject it as a
+  same-speed shrink. Public decoder code/default instruction delta remains
+  0 T. The separately bounded continuation-cloning candidate follows this
+  completed experiment; do not infer its result from this report.
+
 ## 2026-10-20 — Document decoder choices with function links and original Fast comparisons
 
 - **Objective/scope:** Save the user's variant table with direct function/file
