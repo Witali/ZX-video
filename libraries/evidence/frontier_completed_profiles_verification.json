@@ -1,0 +1,5906 @@
+{
+  "date": "2026-10-20",
+  "complete": true,
+  "release": false,
+  "goal_achieved": false,
+  "scope": "Combined public profile byte equivalence to saved complete native replays, plus current regression/package checks",
+  "baseline_revision": "f5a0362c",
+  "service_limit_bytes": 10000,
+  "input_output_history_excluded": true,
+  "default_profiles_exact": 31,
+  "upstream_resources_exact": 6,
+  "library_tests": 56,
+  "toolkit_tests": 67,
+  "profiles": {
+    "zx0-small-fast": {
+      "codec": "zx0",
+      "kind": "block",
+      "real_blocks": 364,
+      "real_baseline_tstates": 156012520,
+      "real_candidate_tstates": 153706279,
+      "real_delta_tstates": -2306241,
+      "gain_percent": 1.4782409770702998,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 193,
+          "sha256": "c3a85be5104724cc0169258404217422eaa8f2df8c79bd538f8f12506c0384c2"
+        }
+      ],
+      "code_table_alignment_state_bytes": 193,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 197,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 216,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [
+        "literal-1",
+        "match-128",
+        "match-8192"
+      ],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "ten_percent_tuned_branches.json",
+        "profile": "zx0-block",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "raw_bytes": 3204723,
+          "baseline_tstates": 161515003,
+          "candidate_tstates": 159203052,
+          "delta_tstates": -2311951,
+          "real_baseline_tstates": 156012520,
+          "real_candidate_tstates": 153706279,
+          "real_delta_tstates": -2306241,
+          "slower_blocks": 3,
+          "slower_slices": 0,
+          "injected_interrupts": 1368
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-compact-block": {
+      "codec": "zx0",
+      "kind": "block",
+      "real_blocks": 364,
+      "real_baseline_tstates": 156012520,
+      "real_candidate_tstates": 152776831,
+      "real_delta_tstates": -3235689,
+      "gain_percent": 2.0739931641383658,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 198,
+          "sha256": "eb227a88524937f25a44443d49e5d39aeff9f9686de7f52ce17879d3d91aeb1e"
+        }
+      ],
+      "code_table_alignment_state_bytes": 198,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 202,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 221,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [
+        "literal-1"
+      ],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "compact_frontier.json",
+        "profile": "zx0-block",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "raw_bytes": 3204723,
+          "baseline_tstates": 161515003,
+          "candidate_tstates": 158269654,
+          "delta_tstates": -3245349,
+          "real_baseline_tstates": 156012520,
+          "real_candidate_tstates": 152776831,
+          "real_delta_tstates": -3235689,
+          "slower_blocks": 1,
+          "slower_slices": 0,
+          "injected_interrupts": 1360,
+          "real_slower_blocks": 0,
+          "real_slower_slices": 0,
+          "real_gain_percent": 2.0739931641383658
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-compact-coroutine": {
+      "codec": "zx0",
+      "kind": "coroutine",
+      "real_blocks": 364,
+      "real_baseline_tstates": 180610040,
+      "real_candidate_tstates": 178029731,
+      "real_delta_tstates": -2580309,
+      "gain_percent": 1.4286631020069551,
+      "emitted_regions": [
+        {
+          "address": 31744,
+          "bytes": 131,
+          "sha256": "10b3f6fdd3afdeea27cf393ec5758c70d063622177691263c2f01325a5b711ff"
+        },
+        {
+          "address": 32768,
+          "bytes": 290,
+          "sha256": "b3d1fa3244bbaf23f06533d7feb1e532c18384c455766437d3b279c238fe669c"
+        }
+      ],
+      "code_table_alignment_state_bytes": 421,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 10,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 12,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 437,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 462,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [
+        "literal-1",
+        "literal-2",
+        "literal-3",
+        "literal-7",
+        "literal-8",
+        "literal-15",
+        "literal-16",
+        "literal-127",
+        "literal-128",
+        "literal-255",
+        "literal-256",
+        "literal-257",
+        "literal-8192",
+        "literal-15872",
+        "match-1",
+        "match-2",
+        "match-127",
+        "match-128",
+        "match-255",
+        "match-256",
+        "match-8192",
+        "random-3",
+        "random-7",
+        "random-8",
+        "random-13",
+        "random-14",
+        "random-15",
+        "random-17",
+        "random-18",
+        "random-19",
+        "random-25",
+        "random-26",
+        "random-28",
+        "random-29",
+        "random-31"
+      ],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "compact_frontier.json",
+        "profile": "zx0-coroutine",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "raw_bytes": 3204723,
+          "baseline_tstates": 186463469,
+          "candidate_tstates": 183896776,
+          "delta_tstates": -2566693,
+          "real_baseline_tstates": 180610040,
+          "real_candidate_tstates": 178029731,
+          "real_delta_tstates": -2580309,
+          "slower_blocks": 35,
+          "slower_slices": 942,
+          "injected_interrupts": 1638,
+          "real_slower_blocks": 0,
+          "real_slower_slices": 145,
+          "real_gain_percent": 1.4286631020069551
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-compact-coroutine-smaller": {
+      "codec": "zx0",
+      "kind": "coroutine",
+      "real_blocks": 364,
+      "real_baseline_tstates": 180610040,
+      "real_candidate_tstates": 178298032,
+      "real_delta_tstates": -2312008,
+      "gain_percent": 1.28011045233144,
+      "emitted_regions": [
+        {
+          "address": 31744,
+          "bytes": 125,
+          "sha256": "2c187cb8643337848593c2f9893b0ec303a11fbca6fb29f215a385415254d172"
+        },
+        {
+          "address": 32768,
+          "bytes": 266,
+          "sha256": "851c75b98491c3f5e9e15d5deb1421b77b7684d77f9008ab4085803dc7e2067c"
+        }
+      ],
+      "code_table_alignment_state_bytes": 391,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 8,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 12,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 407,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 432,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [
+        "literal-1",
+        "match-128"
+      ],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "ten_percent_tail_refill.json",
+        "profile": "coroutine-branch-tuned",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "raw_bytes": 3204723,
+          "baseline_tstates": 184504082,
+          "candidate_tstates": 184144114,
+          "delta_tstates": -359968,
+          "real_baseline_tstates": 178657995,
+          "real_candidate_tstates": 178298032,
+          "real_delta_tstates": -359963,
+          "slower_blocks": 0,
+          "slower_slices": 0,
+          "injected_interrupts": 1640
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-tuned-mega": {
+      "codec": "zx0",
+      "kind": "block",
+      "real_blocks": 364,
+      "real_baseline_tstates": 156012520,
+      "real_candidate_tstates": 145701295,
+      "real_delta_tstates": -10311225,
+      "gain_percent": 6.609229182375875,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 670,
+          "sha256": "aa0823f48bf1e9201ccafd3951db929bef83a6f89362c208b34530f5f39a3d32"
+        }
+      ],
+      "code_table_alignment_state_bytes": 670,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 674,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 693,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "ten_percent_mega_offset.json",
+        "profile": "combined",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "raw_bytes": 3204723,
+          "baseline_tstates": 151878711,
+          "candidate_tstates": 151153149,
+          "delta_tstates": -725562,
+          "real_baseline_tstates": 146421546,
+          "real_candidate_tstates": 145701295,
+          "real_delta_tstates": -720251,
+          "slower_blocks": 0,
+          "slower_slices": 0,
+          "injected_interrupts": 1301
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-maximum-31": {
+      "codec": "zx0",
+      "kind": "block",
+      "real_blocks": 364,
+      "real_baseline_tstates": 156012520,
+      "real_candidate_tstates": 141618798,
+      "real_delta_tstates": -14393722,
+      "gain_percent": 9.226004425798651,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 4450,
+          "sha256": "6b9cd8bfa1c231e587559aa9aa62d93a035a0a281068c103e02740ba730bf473"
+        }
+      ],
+      "code_table_alignment_state_bytes": 4450,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 4454,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 4473,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "ten_percent_maximum.json",
+        "profile": "31",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "raw_bytes": 3204723,
+          "baseline_tstates": 151153149,
+          "candidate_tstates": 146946342,
+          "delta_tstates": -4206807,
+          "real_baseline_tstates": 145701295,
+          "real_candidate_tstates": 141618798,
+          "real_delta_tstates": -4082497,
+          "slower_blocks": 0,
+          "slower_slices": 0,
+          "injected_interrupts": 1267,
+          "gain_vs_goal_fast_percent": 9.226004425798648
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-maximum-63": {
+      "codec": "zx0",
+      "kind": "block",
+      "real_blocks": 364,
+      "real_baseline_tstates": 156012520,
+      "real_candidate_tstates": 140680558,
+      "real_delta_tstates": -15331962,
+      "gain_percent": 9.82739205802201,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 5986,
+          "sha256": "130c273560b31eae89fa8055cd4cdff7aed7ce7437043a8e7f32deec8a24cba9"
+        }
+      ],
+      "code_table_alignment_state_bytes": 5986,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 5990,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 6009,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "ten_percent_maximum.json",
+        "profile": "63",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "raw_bytes": 3204723,
+          "baseline_tstates": 151153149,
+          "candidate_tstates": 145932902,
+          "delta_tstates": -5220247,
+          "real_baseline_tstates": 145701295,
+          "real_candidate_tstates": 140680558,
+          "real_delta_tstates": -5020737,
+          "slower_blocks": 0,
+          "slower_slices": 0,
+          "injected_interrupts": 1259,
+          "gain_vs_goal_fast_percent": 9.82739205802201
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-maximum-127": {
+      "codec": "zx0",
+      "kind": "block",
+      "real_blocks": 364,
+      "real_baseline_tstates": 156012520,
+      "real_candidate_tstates": 140193198,
+      "real_delta_tstates": -15819322,
+      "gain_percent": 10.139777243518665,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 7522,
+          "sha256": "397d95917f588ebe50255c19fcec6f24780728a5fe310ba8d1823a7ea32db221"
+        }
+      ],
+      "code_table_alignment_state_bytes": 7522,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 7526,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 7545,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "ten_percent_maximum.json",
+        "profile": "127",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "raw_bytes": 3204723,
+          "baseline_tstates": 151153149,
+          "candidate_tstates": 145354022,
+          "delta_tstates": -5799127,
+          "real_baseline_tstates": 145701295,
+          "real_candidate_tstates": 140193198,
+          "real_delta_tstates": -5508097,
+          "slower_blocks": 0,
+          "slower_slices": 0,
+          "injected_interrupts": 1256,
+          "gain_vs_goal_fast_percent": 10.13977724351866
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-maximum-227": {
+      "codec": "zx0",
+      "kind": "block",
+      "real_blocks": 364,
+      "real_baseline_tstates": 156012520,
+      "real_candidate_tstates": 140170198,
+      "real_delta_tstates": -15842322,
+      "gain_percent": 10.154519650089622,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 9962,
+          "sha256": "9653b9961244b7fa80bb1719f211fc66170344c6a1d87d81fa94ba136f719f92"
+        }
+      ],
+      "code_table_alignment_state_bytes": 9962,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 9966,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 9985,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "ten_percent_maximum_word_prefix.json",
+        "profile": "227",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "raw_bytes": 3204723,
+          "baseline_tstates": 151153149,
+          "candidate_tstates": 145283522,
+          "delta_tstates": -5869627,
+          "real_baseline_tstates": 145701295,
+          "real_candidate_tstates": 140170198,
+          "real_delta_tstates": -5531097,
+          "slower_blocks": 0,
+          "slower_slices": 0,
+          "injected_interrupts": 1256,
+          "gain_vs_goal_fast_percent": 10.15451965008962
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-maximum-228": {
+      "codec": "zx0",
+      "kind": "block",
+      "real_blocks": 364,
+      "real_baseline_tstates": 156012520,
+      "real_candidate_tstates": 140169968,
+      "real_delta_tstates": -15842552,
+      "gain_percent": 10.154667074155332,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 9986,
+          "sha256": "edfb49cb0f704ecc71c663a61f4fca3a96bc5f773628500d02609bc0dcd486ca"
+        }
+      ],
+      "code_table_alignment_state_bytes": 9986,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 9990,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 10009,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "ten_percent_maximum_word_prefix.json",
+        "profile": "228",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "raw_bytes": 3204723,
+          "baseline_tstates": 151153149,
+          "candidate_tstates": 145282817,
+          "delta_tstates": -5870332,
+          "real_baseline_tstates": 145701295,
+          "real_candidate_tstates": 140169968,
+          "real_delta_tstates": -5531327,
+          "slower_blocks": 0,
+          "slower_slices": 0,
+          "injected_interrupts": 1256,
+          "gain_vs_goal_fast_percent": 10.15466707415533
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "lzsa-small-fast": {
+      "codec": "lzsa2",
+      "kind": "block",
+      "real_blocks": 21,
+      "real_baseline_tstates": 17765094,
+      "real_candidate_tstates": 17724654,
+      "real_delta_tstates": -40440,
+      "gain_percent": 0.22763741075617627,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 218,
+          "sha256": "2e0f085e369c1af31aeb9e2a63ed48b925ef9cc6da2a07211225155b167d82f2"
+        }
+      ],
+      "code_table_alignment_state_bytes": 218,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 222,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 241,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [
+        "literal-1",
+        "literal-2",
+        "literal-256",
+        "literal-257",
+        "literal-511",
+        "literal-800",
+        "literal-4096",
+        "literal-15872",
+        "match-1",
+        "match-2",
+        "match-32",
+        "match-33",
+        "match-511",
+        "match-512",
+        "match-8705",
+        "single-nibble-eof-A",
+        "single-nibble-eof-empty"
+      ],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "compact_branches_native.json",
+        "profile": "block1",
+        "summary": {
+          "cases": 97,
+          "real_blocks": 21,
+          "raw_bytes": 619481,
+          "baseline_tstates": 24295766,
+          "candidate_tstates": 24254839,
+          "delta_tstates": -40927,
+          "real_baseline_tstates": 17765094,
+          "real_candidate_tstates": 17724654,
+          "real_delta_tstates": -40440,
+          "slower_blocks": 17,
+          "slower_slices": 0,
+          "injected_interrupts": 206
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "lzsa-compact-block": {
+      "codec": "lzsa2",
+      "kind": "block",
+      "real_blocks": 21,
+      "real_baseline_tstates": 17765094,
+      "real_candidate_tstates": 17635500,
+      "real_delta_tstates": -129594,
+      "gain_percent": 0.7294867114128412,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 224,
+          "sha256": "3605f063aeb52250e0e75e695248fe5caf3463a51f86043c8a3236766beff35e"
+        }
+      ],
+      "code_table_alignment_state_bytes": 224,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 228,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 247,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [
+        "literal-1",
+        "literal-2",
+        "match-511",
+        "match-512",
+        "match-8705",
+        "single-nibble-eof-A",
+        "single-nibble-eof-empty"
+      ],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "compact_frontier.json",
+        "profile": "lzsa2-block",
+        "summary": {
+          "cases": 97,
+          "real_blocks": 21,
+          "raw_bytes": 619481,
+          "baseline_tstates": 24295766,
+          "candidate_tstates": 24161945,
+          "delta_tstates": -133821,
+          "real_baseline_tstates": 17765094,
+          "real_candidate_tstates": 17635500,
+          "real_delta_tstates": -129594,
+          "slower_blocks": 7,
+          "slower_slices": 0,
+          "injected_interrupts": 205,
+          "real_slower_blocks": 0,
+          "real_slower_slices": 0,
+          "real_gain_percent": 0.7294867114128412
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "lzsa-compact_branches-coroutine": {
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "real_blocks": 21,
+      "real_baseline_tstates": 19407004,
+      "real_candidate_tstates": 19252552,
+      "real_delta_tstates": -154452,
+      "gain_percent": 0.7958570009054422,
+      "emitted_regions": [
+        {
+          "address": 31744,
+          "bytes": 129,
+          "sha256": "dc35787245d00f9653fd1a92cc52b9d42d342dd1d9626f3e9ffdddf6cc097aea"
+        },
+        {
+          "address": 32768,
+          "bytes": 255,
+          "sha256": "df36daf3e343228dd01bb425edc6f3911d831e437c002f10a57d529bd6cc96c2"
+        }
+      ],
+      "code_table_alignment_state_bytes": 384,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 4,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 14,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 402,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 427,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "compact_branches_native.json",
+        "profile": "coroutine2",
+        "summary": {
+          "cases": 97,
+          "real_blocks": 21,
+          "raw_bytes": 619481,
+          "baseline_tstates": 26198735,
+          "candidate_tstates": 26157808,
+          "delta_tstates": -40927,
+          "real_baseline_tstates": 19292992,
+          "real_candidate_tstates": 19252552,
+          "real_delta_tstates": -40440,
+          "slower_blocks": 17,
+          "slower_slices": 124,
+          "injected_interrupts": 230
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "lzsa-branch_tuned-coroutine": {
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "real_blocks": 21,
+      "real_baseline_tstates": 19407004,
+      "real_candidate_tstates": 19242382,
+      "real_delta_tstates": -164622,
+      "gain_percent": 0.8482607619393456,
+      "emitted_regions": [
+        {
+          "address": 31744,
+          "bytes": 129,
+          "sha256": "4eb802fc83f1605de594c95a28b438ce8223ebbeb558448731858136a26a9c82"
+        },
+        {
+          "address": 32768,
+          "bytes": 257,
+          "sha256": "d3ac5b5639e5ad167fe8425ddf1a227ee8f18d1b66be834574270a40d71312f7"
+        }
+      ],
+      "code_table_alignment_state_bytes": 386,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 4,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 14,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 404,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 429,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "compact_sync_native.json",
+        "profile": "tuned",
+        "summary": {
+          "cases": 97,
+          "real_blocks": 21,
+          "raw_bytes": 619481,
+          "baseline_tstates": 26214269,
+          "candidate_tstates": 26147357,
+          "delta_tstates": -66912,
+          "real_baseline_tstates": 19277410,
+          "real_candidate_tstates": 19242382,
+          "real_delta_tstates": -35028,
+          "slower_blocks": 0,
+          "slower_slices": 0,
+          "injected_interrupts": 230
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "lzsa-wide-block": {
+      "codec": "lzsa2",
+      "kind": "block",
+      "real_blocks": 21,
+      "real_baseline_tstates": 17765094,
+      "real_candidate_tstates": 15623953,
+      "real_delta_tstates": -2141141,
+      "gain_percent": 12.052517144012864,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 6998,
+          "sha256": "233c435c3c1902c5ef651cc2fbc1d566604a44bc509dd5f32c7287aa0c270d8a"
+        }
+      ],
+      "code_table_alignment_state_bytes": 6998,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 6,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 7004,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 7023,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [
+        "literal-3",
+        "literal-17",
+        "literal-18",
+        "literal-237",
+        "literal-238",
+        "literal-239",
+        "literal-255",
+        "literal-256",
+        "literal-257",
+        "literal-511",
+        "literal-800",
+        "literal-4096",
+        "literal-15872",
+        "word-literal-3",
+        "word-literal-4",
+        "word-literal-15",
+        "word-literal-16",
+        "word-literal-17",
+        "word-literal-18",
+        "word-literal-24",
+        "word-literal-255"
+      ],
+      "additional_directed_proof": {
+        "cases": 580,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {
+          "cases": 580,
+          "all_256_token_values_both_cache_phases": true,
+          "all_64_offset_nibble_forms": true,
+          "single_nibble_eof": true,
+          "word_literal_1_and_2": true,
+          "inputs_sha256": "2517993cb27f1c0133993a105601ab565565474b8e71f4c71e39a13210a12709",
+          "injected_interrupts": 576,
+          "relocated_exact": true,
+          "exact": true
+        },
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "ten_percent_full_token_dispatch.json",
+        "profile": "expanded",
+        "summary": {
+          "cases": 95,
+          "real_blocks": 21,
+          "real_raw_bytes": 323940,
+          "real_baseline_tstates": 17765094,
+          "real_candidate_tstates": 15623953,
+          "real_delta_tstates": -2141141,
+          "real_percent_saved": 12.05251714401286,
+          "all_delta_tstates": -2171408,
+          "slower_blocks": [
+            "literal-3",
+            "literal-17",
+            "literal-18",
+            "literal-237",
+            "literal-238",
+            "literal-239",
+            "literal-255",
+            "literal-256",
+            "literal-257",
+            "literal-511",
+            "literal-800",
+            "literal-4096",
+            "literal-15872",
+            "word-literal-3",
+            "word-literal-4",
+            "word-literal-15",
+            "word-literal-16",
+            "word-literal-17",
+            "word-literal-18",
+            "word-literal-24",
+            "word-literal-255"
+          ],
+          "maximum_regression_tstates": 20,
+          "injected_interrupts": 184
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "lzsa-wide-coroutine": {
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "real_blocks": 21,
+      "real_baseline_tstates": 19407004,
+      "real_candidate_tstates": 17265863,
+      "real_delta_tstates": -2141141,
+      "gain_percent": 11.032826086911719,
+      "emitted_regions": [
+        {
+          "address": 31744,
+          "bytes": 134,
+          "sha256": "b1a76102bb811d32e4fdb1a71baf965a0118c4a28d1b3b481283c47aa102982d"
+        },
+        {
+          "address": 32768,
+          "bytes": 7031,
+          "sha256": "36eb08e45eb79096d8d1d286495ef9a49d1f5c491d34ddabc6f03186cc0ed2af"
+        }
+      ],
+      "code_table_alignment_state_bytes": 7165,
+      "embedded_state_bytes_already_in_regions": 15,
+      "patched_operand_bytes_already_in_regions": 4,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 16,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 7185,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 7210,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [
+        "literal-3",
+        "literal-17",
+        "literal-18",
+        "literal-237",
+        "literal-238",
+        "literal-239",
+        "literal-255",
+        "literal-256",
+        "literal-257",
+        "literal-511",
+        "literal-800",
+        "literal-4096",
+        "literal-15872",
+        "word-literal-3",
+        "word-literal-4",
+        "word-literal-15",
+        "word-literal-16",
+        "word-literal-17",
+        "word-literal-18",
+        "word-literal-24",
+        "word-literal-255"
+      ],
+      "additional_directed_proof": {
+        "cases": 580,
+        "slower_cases_vs_original_proof_baseline": [
+          {
+            "case": "word-literal-1",
+            "delta_tstates": 20
+          },
+          {
+            "case": "word-literal-2",
+            "delta_tstates": 20
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "delta_tstates": 1
+          }
+        ],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "wide_coroutine.json",
+        "profile": "wide-coroutine",
+        "summary": {
+          "cases": 95,
+          "directed_cases": 580,
+          "real_blocks": 21,
+          "baseline_tstates": 19407004,
+          "candidate_tstates": 17265863,
+          "delta_tstates": -2141141,
+          "percent_saved": 11.032826086911715,
+          "slower_blocks": [
+            "literal-3",
+            "literal-17",
+            "literal-18",
+            "literal-237",
+            "literal-238",
+            "literal-239",
+            "literal-255",
+            "literal-256",
+            "literal-257",
+            "literal-511",
+            "literal-800",
+            "literal-4096",
+            "literal-15872",
+            "word-literal-3",
+            "word-literal-4",
+            "word-literal-15",
+            "word-literal-16",
+            "word-literal-17",
+            "word-literal-18",
+            "word-literal-24",
+            "word-literal-255"
+          ],
+          "slower_slices": 21,
+          "real_slower_slices": 0,
+          "maximum_slice_delta": 20,
+          "actual_caller_stack_bytes": 4,
+          "actual_private_stack_bytes": 16,
+          "directed_injected_interrupts": 576,
+          "publication_offsets_exact": true,
+          "directed_slower_blocks": [
+            "word-literal-1",
+            "word-literal-2",
+            "single-nibble-eof-empty"
+          ],
+          "directed_slower_slices": 3,
+          "directed_maximum_slice_delta": 20
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "lzsa-wide-shared-block": {
+      "codec": "lzsa2",
+      "kind": "block",
+      "real_blocks": 21,
+      "real_baseline_tstates": 17765094,
+      "real_candidate_tstates": 15869483,
+      "real_delta_tstates": -1895611,
+      "gain_percent": 10.67042482297026,
+      "emitted_regions": [
+        {
+          "address": 32768,
+          "bytes": 3446,
+          "sha256": "42026f90d505ee0ec5c6e15a3448380062b9005daa242662c0a21e5c27ba6a68"
+        }
+      ],
+      "code_table_alignment_state_bytes": 3446,
+      "embedded_state_bytes_already_in_regions": 0,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 6,
+      "private_stack_bytes": 0,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 3452,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 3471,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [
+        "literal-1",
+        "literal-3",
+        "literal-17",
+        "literal-18",
+        "literal-237",
+        "literal-238",
+        "literal-239",
+        "literal-255",
+        "literal-256",
+        "literal-257",
+        "literal-511",
+        "literal-800",
+        "literal-4096",
+        "literal-15872",
+        "word-literal-3",
+        "word-literal-4",
+        "word-literal-15",
+        "word-literal-16",
+        "word-literal-17",
+        "word-literal-18",
+        "word-literal-24",
+        "word-literal-255"
+      ],
+      "additional_directed_proof": {
+        "cases": 580,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {
+          "cases": 580,
+          "all_256_token_values_both_cache_phases": true,
+          "all_64_offset_nibble_forms": true,
+          "single_nibble_eof": true,
+          "word_literal_1_and_2": true,
+          "inputs_sha256": "2517993cb27f1c0133993a105601ab565565474b8e71f4c71e39a13210a12709",
+          "injected_interrupts": 576,
+          "relocated_exact": true,
+          "exact": true
+        },
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "ten_percent_full_token_dispatch.json",
+        "profile": "shared-literal-bodies",
+        "summary": {
+          "cases": 95,
+          "real_blocks": 21,
+          "real_raw_bytes": 323940,
+          "real_baseline_tstates": 17765094,
+          "real_candidate_tstates": 15869483,
+          "real_delta_tstates": -1895611,
+          "real_percent_saved": 10.670424822970258,
+          "all_delta_tstates": -1917778,
+          "slower_blocks": [
+            "literal-1",
+            "literal-3",
+            "literal-17",
+            "literal-18",
+            "literal-237",
+            "literal-238",
+            "literal-239",
+            "literal-255",
+            "literal-256",
+            "literal-257",
+            "literal-511",
+            "literal-800",
+            "literal-4096",
+            "literal-15872",
+            "word-literal-3",
+            "word-literal-4",
+            "word-literal-15",
+            "word-literal-16",
+            "word-literal-17",
+            "word-literal-18",
+            "word-literal-24",
+            "word-literal-255"
+          ],
+          "maximum_regression_tstates": 30,
+          "injected_interrupts": 186
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "lzsa-wide-shared-coroutine": {
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "real_blocks": 21,
+      "real_baseline_tstates": 19407004,
+      "real_candidate_tstates": 17511393,
+      "real_delta_tstates": -1895611,
+      "gain_percent": 9.767664292747092,
+      "emitted_regions": [
+        {
+          "address": 31744,
+          "bytes": 134,
+          "sha256": "b1a76102bb811d32e4fdb1a71baf965a0118c4a28d1b3b481283c47aa102982d"
+        },
+        {
+          "address": 32768,
+          "bytes": 3479,
+          "sha256": "9a37fd20a0dbc14a63174202b94b69b78db407800ee9555b7fcab96c0a212420"
+        }
+      ],
+      "code_table_alignment_state_bytes": 3613,
+      "embedded_state_bytes_already_in_regions": 15,
+      "patched_operand_bytes_already_in_regions": 4,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 16,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": false,
+      "library_service_bytes": 3633,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 3658,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [
+        "literal-1",
+        "literal-3",
+        "literal-17",
+        "literal-18",
+        "literal-237",
+        "literal-238",
+        "literal-239",
+        "literal-255",
+        "literal-256",
+        "literal-257",
+        "literal-511",
+        "literal-800",
+        "literal-4096",
+        "literal-15872",
+        "word-literal-3",
+        "word-literal-4",
+        "word-literal-15",
+        "word-literal-16",
+        "word-literal-17",
+        "word-literal-18",
+        "word-literal-24",
+        "word-literal-255"
+      ],
+      "additional_directed_proof": {
+        "cases": 580,
+        "slower_cases_vs_original_proof_baseline": [
+          {
+            "case": "word-literal-1",
+            "delta_tstates": 30
+          },
+          {
+            "case": "word-literal-2",
+            "delta_tstates": 30
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "delta_tstates": 5
+          }
+        ],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "wide_coroutine.json",
+        "profile": "wide-shared-coroutine",
+        "summary": {
+          "cases": 95,
+          "directed_cases": 580,
+          "real_blocks": 21,
+          "baseline_tstates": 19407004,
+          "candidate_tstates": 17511393,
+          "delta_tstates": -1895611,
+          "percent_saved": 9.767664292747092,
+          "slower_blocks": [
+            "literal-1",
+            "literal-3",
+            "literal-17",
+            "literal-18",
+            "literal-237",
+            "literal-238",
+            "literal-239",
+            "literal-255",
+            "literal-256",
+            "literal-257",
+            "literal-511",
+            "literal-800",
+            "literal-4096",
+            "literal-15872",
+            "word-literal-3",
+            "word-literal-4",
+            "word-literal-15",
+            "word-literal-16",
+            "word-literal-17",
+            "word-literal-18",
+            "word-literal-24",
+            "word-literal-255"
+          ],
+          "slower_slices": 28,
+          "real_slower_slices": 0,
+          "maximum_slice_delta": 30,
+          "actual_caller_stack_bytes": 4,
+          "actual_private_stack_bytes": 16,
+          "directed_injected_interrupts": 576,
+          "publication_offsets_exact": true,
+          "directed_slower_blocks": [
+            "word-literal-1",
+            "word-literal-2",
+            "single-nibble-eof-empty",
+            "single-nibble-eof-one"
+          ],
+          "directed_slower_slices": 324,
+          "directed_maximum_slice_delta": 30
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-maximum-coroutine-31": {
+      "codec": "zx0",
+      "kind": "coroutine",
+      "real_blocks": 364,
+      "real_baseline_tstates": 180610040,
+      "real_candidate_tstates": 167431057,
+      "real_delta_tstates": -13178983,
+      "gain_percent": 7.29692712542448,
+      "emitted_regions": [
+        {
+          "address": 28672,
+          "bytes": 159,
+          "sha256": "35ecd4628428cf8c941348b3805cc1f3bcbd18fc0fd532384254c7e1609f3d7d"
+        },
+        {
+          "address": 32768,
+          "bytes": 4726,
+          "sha256": "158f6f6ce20b953568ca13f84b4e23d5651cd308cc4db6ceea415d472b04cf82"
+        }
+      ],
+      "code_table_alignment_state_bytes": 4885,
+      "embedded_state_bytes_already_in_regions": 20,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 12,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": true,
+      "library_service_bytes": 4901,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 4926,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "maximum_coroutine/maximum-coroutine-native.json.gz",
+        "profile": "31",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "baseline_tstates": 186463469,
+          "candidate_tstates": 173123225,
+          "real_baseline_tstates": 180610040,
+          "real_candidate_tstates": 167431057,
+          "slower_blocks": 0,
+          "slower_real_blocks": 0,
+          "slices": 12542,
+          "slower_slices": 32,
+          "maximum_slice_delta": 348
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true,
+      "high_word_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-maximum-coroutine-63": {
+      "codec": "zx0",
+      "kind": "coroutine",
+      "real_blocks": 364,
+      "real_baseline_tstates": 180610040,
+      "real_candidate_tstates": 166492817,
+      "real_delta_tstates": -14117223,
+      "gain_percent": 7.816410981360722,
+      "emitted_regions": [
+        {
+          "address": 28672,
+          "bytes": 159,
+          "sha256": "35ecd4628428cf8c941348b3805cc1f3bcbd18fc0fd532384254c7e1609f3d7d"
+        },
+        {
+          "address": 32768,
+          "bytes": 6262,
+          "sha256": "12f82e20a707fd9924f6ea53abf798191dd1c1a248a979f4ba19db09a2c59a24"
+        }
+      ],
+      "code_table_alignment_state_bytes": 6421,
+      "embedded_state_bytes_already_in_regions": 20,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 12,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": true,
+      "library_service_bytes": 6437,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 6462,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "maximum_coroutine/maximum-coroutine-native.json.gz",
+        "profile": "63",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "baseline_tstates": 186463469,
+          "candidate_tstates": 172109785,
+          "real_baseline_tstates": 180610040,
+          "real_candidate_tstates": 166492817,
+          "slower_blocks": 0,
+          "slower_real_blocks": 0,
+          "slices": 12542,
+          "slower_slices": 18,
+          "maximum_slice_delta": 188
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true,
+      "high_word_generated_regions_equal_complete_native_proof": true
+    },
+    "zx0-maximum-coroutine-127": {
+      "codec": "zx0",
+      "kind": "coroutine",
+      "real_blocks": 364,
+      "real_baseline_tstates": 180610040,
+      "real_candidate_tstates": 166005457,
+      "real_delta_tstates": -14604583,
+      "gain_percent": 8.086252015668672,
+      "emitted_regions": [
+        {
+          "address": 28672,
+          "bytes": 159,
+          "sha256": "35ecd4628428cf8c941348b3805cc1f3bcbd18fc0fd532384254c7e1609f3d7d"
+        },
+        {
+          "address": 32768,
+          "bytes": 7798,
+          "sha256": "fab313850790d524e3bd29085b6a8b9d2d5952ab6abb312c4834329bd724f3d7"
+        }
+      ],
+      "code_table_alignment_state_bytes": 7957,
+      "embedded_state_bytes_already_in_regions": 20,
+      "patched_operand_bytes_already_in_regions": 2,
+      "caller_stack_bytes": 4,
+      "private_stack_bytes": 12,
+      "extra_required_service_bytes": 0,
+      "requires_undocumented_ix_halves": true,
+      "library_service_bytes": 7973,
+      "alignment_padding_bytes": 0,
+      "service_with_sample_irq_bytes": 7998,
+      "sample_irq_is_separate_application_contract": true,
+      "slower_complete_corpus_cases_vs_goal": [],
+      "additional_directed_proof": {
+        "cases": 0,
+        "slower_cases_vs_original_proof_baseline": [],
+        "summary": {},
+        "exact": true,
+        "comparison_scope": "additional directed rows retain their original native-proof baseline"
+      },
+      "native_proof": {
+        "file": "maximum_coroutine/maximum-coroutine-native.json.gz",
+        "profile": "127",
+        "summary": {
+          "cases": 417,
+          "real_blocks": 364,
+          "baseline_tstates": 186463469,
+          "candidate_tstates": 171530905,
+          "real_baseline_tstates": 180610040,
+          "real_candidate_tstates": 166005457,
+          "slower_blocks": 0,
+          "slower_real_blocks": 0,
+          "slices": 12542,
+          "slower_slices": 12,
+          "maximum_slice_delta": 71
+        },
+        "slice_comparison": "original proof baseline; do not relabel as goal-baseline slices"
+      },
+      "input_output_history_excluded": true,
+      "payload_delta_bytes": 0,
+      "current_generated_regions_equal_complete_native_proof": true,
+      "high_word_generated_regions_equal_complete_native_proof": true
+    },
+    "lzsa-wide-call-guarded": {
+      "codec": "lzsa2",
+      "kind": "guarded",
+      "real_blocks": 21,
+      "real_baseline_tstates": 23961774,
+      "real_candidate_tstates": 21822661,
+      "real_delta_tstates": -2139113,
+      "gain_percent": 8.92718961459198,
+      "emitted_regions": [
+        {
+          "address": 28672,
+          "bytes": 276,
+          "sha256": "bff3f729a95549efe6084e6068110220b90c5c7cb1baf59c62d62baf43972cb8"
+        },
+        {
+          "address": 40960,
+          "bytes": 7040,
+          "sha256": "ebab0be4f37db1346d0336301421e838f20f12821c5ab1df27ada7fd7b6d3060"
+        }
+      ],
+      "library_consumer_service_bytes": 7344,
+      "consumer_scope": "consumer decoder only, including embedded guard helper and required decoder/caller stacks; input supplier and IRQ resources are additional",
+      "required_reference_carry_bytes": 256,
+      "full_reference_service_with_workspace_and_irq_bytes": 9881,
+      "full_reference_scope": "aligned consumer plus retained supplier, carry, I/O code/state,1280-byte workspace and explicit IRQ/stacks",
+      "memory_inventory": [
+        {
+          "address": 28672,
+          "bytes": 276,
+          "purpose": "consumer region"
+        },
+        {
+          "address": 40960,
+          "bytes": 7040,
+          "purpose": "consumer region"
+        },
+        {
+          "address": 32080,
+          "bytes": 281,
+          "sha256": "ea11bdeafde5a62824943c4d4289070f4ac2fe65a29ffc6f6bcbf3733a74a408"
+        },
+        {
+          "address": 30755,
+          "bytes": 113,
+          "sha256": "d32b5a350fab8a4b165ee27b22d9a634bd713b142815fc45a24a6315b8f8ee1f"
+        },
+        {
+          "address": 31488,
+          "bytes": 74,
+          "sha256": "4f3705e4814f5f019f3356d4799f4c349131890d09e0669c050dc4d646fa7b7e"
+        },
+        {
+          "address": 28948,
+          "bytes": 111,
+          "sha256": "98fc82b3b17f6fa81cfefb6a8122fe2154c673a054722fee0c87f4e5f051ce53"
+        },
+        {
+          "address": 24576,
+          "bytes": 235,
+          "purpose": "reference disk adapter code/state"
+        },
+        {
+          "address": 39568,
+          "bytes": 89,
+          "purpose": "reference cached-seek code"
+        },
+        {
+          "address": 38784,
+          "bytes": 21,
+          "purpose": "reference atomic paging code/state"
+        },
+        {
+          "address": 38848,
+          "bytes": 12,
+          "purpose": "reference atomic paging code/state"
+        },
+        {
+          "address": 32768,
+          "bytes": 8,
+          "purpose": "reference descriptor/clock words"
+        },
+        {
+          "address": 48128,
+          "bytes": 256,
+          "purpose": "shared-sector carry"
+        },
+        {
+          "address": 56,
+          "bytes": 13,
+          "purpose": "flat native IM1 probe handler; actual application IRQ/vector placement is additional"
+        },
+        {
+          "address": 23296,
+          "bytes": 1280,
+          "purpose": "conservative reference workspace reservation"
+        },
+        {
+          "address": 31682,
+          "bytes": 30,
+          "purpose": "private stack including six IRQ bytes"
+        },
+        {
+          "address": 40416,
+          "bytes": 16,
+          "purpose": "caller stack including six IRQ bytes"
+        },
+        {
+          "address": 39910,
+          "bytes": 26,
+          "purpose": "disk stack including six IRQ bytes"
+        }
+      ],
+      "proof_summary": {
+        "real_decoder_baseline_tstates": 23961774,
+        "real_decoder_candidate_tstates": 21822661,
+        "real_decoder_delta_tstates": -2139113,
+        "real_decoder_percent_saved": 8.927189614591974,
+        "native_slower_placements": [
+          {
+            "case": "literal-3",
+            "offset": 0,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-3",
+            "offset": 1,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-3",
+            "offset": 252,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-3",
+            "offset": 253,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-3",
+            "offset": 254,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-3",
+            "offset": 255,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 0,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 1,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 252,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 253,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 254,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 255,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-18",
+            "offset": 0,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-18",
+            "offset": 1,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-18",
+            "offset": 252,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-18",
+            "offset": 253,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-18",
+            "offset": 254,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-18",
+            "offset": 255,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 0,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 1,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 252,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 253,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 254,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 255,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 0,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 1,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 252,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 253,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 254,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 255,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 0,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 1,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 252,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 253,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 254,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 255,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 0,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 1,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 252,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 253,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 254,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 255,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-256",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-256",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-256",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-256",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-256",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-256",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 0,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 1,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 252,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 253,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 254,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 255,
+            "delta_tstates": 1
+          }
+        ],
+        "native_slower_slices": 4394,
+        "native_maximum_slice_delta": 43,
+        "actual_native_private_stack_bytes": 24,
+        "actual_native_caller_stack_bytes": 4,
+        "reference_slower_blocks": [
+          "literal-3",
+          "literal-17",
+          "literal-18",
+          "literal-237",
+          "literal-238",
+          "literal-239",
+          "literal-255",
+          "literal-256",
+          "literal-257",
+          "literal-511",
+          "literal-800",
+          "literal-4096",
+          "literal-15872",
+          "word-literal-3",
+          "word-literal-4",
+          "word-literal-15",
+          "word-literal-16",
+          "word-literal-17",
+          "word-literal-18",
+          "word-literal-24",
+          "word-literal-255"
+        ],
+        "reference_slower_slices": 26,
+        "reference_maximum_slice_delta": 43,
+        "input_waits_publications_producer_sectors_exact": true
+      },
+      "main_and_directed_cases": 675,
+      "native_placements_per_case": 6,
+      "live_code_relocation_bytes": -512,
+      "current_generated_regions_equal_complete_native_proof": true,
+      "sector_reads": 772,
+      "physical_rom_disk_latency_measured": false,
+      "input_output_history_excluded": true
+    },
+    "lzsa-wide-direct-guarded": {
+      "codec": "lzsa2",
+      "kind": "guarded",
+      "real_blocks": 21,
+      "real_baseline_tstates": 21756088,
+      "real_candidate_tstates": 19616975,
+      "real_delta_tstates": -2139113,
+      "gain_percent": 9.832250172917112,
+      "emitted_regions": [
+        {
+          "address": 28672,
+          "bytes": 271,
+          "sha256": "e4730d91b371c9f2566d8a60a5364dbb056f0a642c2c6e0b0086dca5811de1f9"
+        },
+        {
+          "address": 40960,
+          "bytes": 7037,
+          "sha256": "7c33c4799b6a8c30593a6375b0757640ee2481ff5439073ae2d2b83920f2db3a"
+        }
+      ],
+      "library_consumer_service_bytes": 7336,
+      "consumer_scope": "consumer decoder only, including embedded guard helper and required decoder/caller stacks; input supplier and IRQ resources are additional",
+      "required_reference_carry_bytes": 256,
+      "full_reference_service_with_workspace_and_irq_bytes": 9870,
+      "full_reference_scope": "aligned consumer plus retained supplier, carry, I/O code/state,1280-byte workspace and explicit IRQ/stacks",
+      "memory_inventory": [
+        {
+          "address": 28672,
+          "bytes": 271,
+          "purpose": "consumer region"
+        },
+        {
+          "address": 40960,
+          "bytes": 7037,
+          "purpose": "consumer region"
+        },
+        {
+          "address": 32080,
+          "bytes": 281,
+          "sha256": "c014761be92c74525c691194e5d64ca3626bfd31d6c0df2746f34e3e20a6a3a6"
+        },
+        {
+          "address": 30755,
+          "bytes": 113,
+          "sha256": "d32b5a350fab8a4b165ee27b22d9a634bd713b142815fc45a24a6315b8f8ee1f"
+        },
+        {
+          "address": 31488,
+          "bytes": 74,
+          "sha256": "4f3705e4814f5f019f3356d4799f4c349131890d09e0669c050dc4d646fa7b7e"
+        },
+        {
+          "address": 28943,
+          "bytes": 108,
+          "sha256": "3a9581985ac4491e31047b6a6139114fd852961c7511c4a98de5f5175b012f6c"
+        },
+        {
+          "address": 24576,
+          "bytes": 235,
+          "purpose": "reference disk adapter code/state"
+        },
+        {
+          "address": 39568,
+          "bytes": 89,
+          "purpose": "reference cached-seek code"
+        },
+        {
+          "address": 38784,
+          "bytes": 21,
+          "purpose": "reference atomic paging code/state"
+        },
+        {
+          "address": 38848,
+          "bytes": 12,
+          "purpose": "reference atomic paging code/state"
+        },
+        {
+          "address": 32768,
+          "bytes": 8,
+          "purpose": "reference descriptor/clock words"
+        },
+        {
+          "address": 48128,
+          "bytes": 256,
+          "purpose": "shared-sector carry"
+        },
+        {
+          "address": 56,
+          "bytes": 13,
+          "purpose": "flat native IM1 probe handler; actual application IRQ/vector placement is additional"
+        },
+        {
+          "address": 23296,
+          "bytes": 1280,
+          "purpose": "conservative reference workspace reservation"
+        },
+        {
+          "address": 31682,
+          "bytes": 30,
+          "purpose": "private stack including six IRQ bytes"
+        },
+        {
+          "address": 40416,
+          "bytes": 16,
+          "purpose": "caller stack including six IRQ bytes"
+        },
+        {
+          "address": 39910,
+          "bytes": 26,
+          "purpose": "disk stack including six IRQ bytes"
+        }
+      ],
+      "proof_summary": {
+        "real_decoder_baseline_tstates": 21756088,
+        "real_decoder_candidate_tstates": 19616975,
+        "real_decoder_delta_tstates": -2139113,
+        "real_decoder_percent_saved": 9.832250172917117,
+        "native_slower_placements": [
+          {
+            "case": "literal-3",
+            "offset": 0,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-3",
+            "offset": 1,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-3",
+            "offset": 252,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-3",
+            "offset": 253,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-3",
+            "offset": 254,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-3",
+            "offset": 255,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 0,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 1,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 252,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 253,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 254,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-17",
+            "offset": 255,
+            "delta_tstates": 11
+          },
+          {
+            "case": "literal-18",
+            "offset": 0,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-18",
+            "offset": 1,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-18",
+            "offset": 252,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-18",
+            "offset": 253,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-18",
+            "offset": 254,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-18",
+            "offset": 255,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 0,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 1,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 252,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 253,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 254,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-237",
+            "offset": 255,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 0,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 1,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 252,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 253,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 254,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-238",
+            "offset": 255,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 0,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 1,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 252,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 253,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 254,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-239",
+            "offset": 255,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 0,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 1,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 252,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 253,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 254,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-255",
+            "offset": 255,
+            "delta_tstates": 28
+          },
+          {
+            "case": "literal-256",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-256",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-256",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-256",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-256",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-256",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-257",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-511",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-800",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-4096",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 0,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 1,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 252,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 253,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 254,
+            "delta_tstates": 17
+          },
+          {
+            "case": "literal-15872",
+            "offset": 255,
+            "delta_tstates": 17
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 0,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 1,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 252,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 253,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 254,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 255,
+            "delta_tstates": 1
+          }
+        ],
+        "native_slower_slices": 4394,
+        "native_maximum_slice_delta": 43,
+        "actual_native_private_stack_bytes": 24,
+        "actual_native_caller_stack_bytes": 4,
+        "reference_slower_blocks": [
+          "literal-3",
+          "literal-17",
+          "literal-18",
+          "literal-237",
+          "literal-238",
+          "literal-239",
+          "literal-255",
+          "literal-256",
+          "literal-257",
+          "literal-511",
+          "literal-800",
+          "literal-4096",
+          "literal-15872",
+          "word-literal-3",
+          "word-literal-4",
+          "word-literal-15",
+          "word-literal-16",
+          "word-literal-17",
+          "word-literal-18",
+          "word-literal-24",
+          "word-literal-255"
+        ],
+        "reference_slower_slices": 26,
+        "reference_maximum_slice_delta": 43,
+        "input_waits_publications_producer_sectors_exact": true
+      },
+      "main_and_directed_cases": 675,
+      "native_placements_per_case": 6,
+      "live_code_relocation_bytes": -512,
+      "current_generated_regions_equal_complete_native_proof": true,
+      "sector_reads": 772,
+      "physical_rom_disk_latency_measured": false,
+      "input_output_history_excluded": true
+    },
+    "lzsa-wide-shared-call-guarded": {
+      "codec": "lzsa2",
+      "kind": "guarded",
+      "real_blocks": 21,
+      "real_baseline_tstates": 23961774,
+      "real_candidate_tstates": 22068191,
+      "real_delta_tstates": -1893583,
+      "gain_percent": 7.902515898864582,
+      "emitted_regions": [
+        {
+          "address": 28672,
+          "bytes": 276,
+          "sha256": "bff3f729a95549efe6084e6068110220b90c5c7cb1baf59c62d62baf43972cb8"
+        },
+        {
+          "address": 40960,
+          "bytes": 3488,
+          "sha256": "668bc6933b011b9f22cb18e95017e9fa98f467d0c3b96c7c35829353faaadfbe"
+        }
+      ],
+      "library_consumer_service_bytes": 3792,
+      "consumer_scope": "consumer decoder only, including embedded guard helper and required decoder/caller stacks; input supplier and IRQ resources are additional",
+      "required_reference_carry_bytes": 256,
+      "full_reference_service_with_workspace_and_irq_bytes": 6329,
+      "full_reference_scope": "aligned consumer plus retained supplier, carry, I/O code/state,1280-byte workspace and explicit IRQ/stacks",
+      "memory_inventory": [
+        {
+          "address": 28672,
+          "bytes": 276,
+          "purpose": "consumer region"
+        },
+        {
+          "address": 40960,
+          "bytes": 3488,
+          "purpose": "consumer region"
+        },
+        {
+          "address": 32080,
+          "bytes": 281,
+          "sha256": "ea11bdeafde5a62824943c4d4289070f4ac2fe65a29ffc6f6bcbf3733a74a408"
+        },
+        {
+          "address": 30755,
+          "bytes": 113,
+          "sha256": "d32b5a350fab8a4b165ee27b22d9a634bd713b142815fc45a24a6315b8f8ee1f"
+        },
+        {
+          "address": 31488,
+          "bytes": 74,
+          "sha256": "4f3705e4814f5f019f3356d4799f4c349131890d09e0669c050dc4d646fa7b7e"
+        },
+        {
+          "address": 28948,
+          "bytes": 111,
+          "sha256": "98fc82b3b17f6fa81cfefb6a8122fe2154c673a054722fee0c87f4e5f051ce53"
+        },
+        {
+          "address": 24576,
+          "bytes": 235,
+          "purpose": "reference disk adapter code/state"
+        },
+        {
+          "address": 39568,
+          "bytes": 89,
+          "purpose": "reference cached-seek code"
+        },
+        {
+          "address": 38784,
+          "bytes": 21,
+          "purpose": "reference atomic paging code/state"
+        },
+        {
+          "address": 38848,
+          "bytes": 12,
+          "purpose": "reference atomic paging code/state"
+        },
+        {
+          "address": 32768,
+          "bytes": 8,
+          "purpose": "reference descriptor/clock words"
+        },
+        {
+          "address": 48128,
+          "bytes": 256,
+          "purpose": "shared-sector carry"
+        },
+        {
+          "address": 56,
+          "bytes": 13,
+          "purpose": "flat native IM1 probe handler; actual application IRQ/vector placement is additional"
+        },
+        {
+          "address": 23296,
+          "bytes": 1280,
+          "purpose": "conservative reference workspace reservation"
+        },
+        {
+          "address": 31682,
+          "bytes": 30,
+          "purpose": "private stack including six IRQ bytes"
+        },
+        {
+          "address": 40416,
+          "bytes": 16,
+          "purpose": "caller stack including six IRQ bytes"
+        },
+        {
+          "address": 39910,
+          "bytes": 26,
+          "purpose": "disk stack including six IRQ bytes"
+        }
+      ],
+      "proof_summary": {
+        "real_decoder_baseline_tstates": 23961774,
+        "real_decoder_candidate_tstates": 22068191,
+        "real_decoder_delta_tstates": -1893583,
+        "real_decoder_percent_saved": 7.902515898864583,
+        "native_slower_placements": [
+          {
+            "case": "literal-1",
+            "offset": 0,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-1",
+            "offset": 1,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-1",
+            "offset": 252,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-1",
+            "offset": 253,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-1",
+            "offset": 254,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-1",
+            "offset": 255,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-3",
+            "offset": 0,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-3",
+            "offset": 1,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-3",
+            "offset": 252,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-3",
+            "offset": 253,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-3",
+            "offset": 254,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-3",
+            "offset": 255,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 0,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 1,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 252,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 253,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 254,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 255,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-18",
+            "offset": 0,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-18",
+            "offset": 1,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-18",
+            "offset": 252,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-18",
+            "offset": 253,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-18",
+            "offset": 254,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-18",
+            "offset": 255,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 0,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 1,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 252,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 253,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 254,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 255,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 0,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 1,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 252,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 253,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 254,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 255,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 0,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 1,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 252,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 253,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 254,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 255,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 0,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 1,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 252,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 253,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 254,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 255,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-256",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-256",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-256",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-256",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-256",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-256",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "match-33",
+            "offset": 0,
+            "delta_tstates": 5
+          },
+          {
+            "case": "match-33",
+            "offset": 1,
+            "delta_tstates": 5
+          },
+          {
+            "case": "match-33",
+            "offset": 252,
+            "delta_tstates": 5
+          },
+          {
+            "case": "match-33",
+            "offset": 253,
+            "delta_tstates": 5
+          },
+          {
+            "case": "match-33",
+            "offset": 254,
+            "delta_tstates": 5
+          },
+          {
+            "case": "match-33",
+            "offset": 255,
+            "delta_tstates": 5
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 0,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 1,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 252,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 253,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 254,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 255,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 0,
+            "delta_tstates": 5
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 1,
+            "delta_tstates": 5
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 252,
+            "delta_tstates": 5
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 253,
+            "delta_tstates": 5
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 254,
+            "delta_tstates": 5
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 255,
+            "delta_tstates": 5
+          }
+        ],
+        "native_slower_slices": 4586,
+        "native_maximum_slice_delta": 43,
+        "actual_native_private_stack_bytes": 24,
+        "actual_native_caller_stack_bytes": 4,
+        "reference_slower_blocks": [
+          "literal-1",
+          "literal-3",
+          "literal-17",
+          "literal-18",
+          "literal-237",
+          "literal-238",
+          "literal-239",
+          "literal-255",
+          "literal-256",
+          "literal-257",
+          "literal-511",
+          "literal-800",
+          "literal-4096",
+          "literal-15872",
+          "match-33",
+          "word-literal-3",
+          "word-literal-4",
+          "word-literal-15",
+          "word-literal-16",
+          "word-literal-17",
+          "word-literal-18",
+          "word-literal-24",
+          "word-literal-255"
+        ],
+        "reference_slower_slices": 29,
+        "reference_maximum_slice_delta": 43,
+        "input_waits_publications_producer_sectors_exact": true
+      },
+      "main_and_directed_cases": 675,
+      "native_placements_per_case": 6,
+      "live_code_relocation_bytes": -512,
+      "current_generated_regions_equal_complete_native_proof": true,
+      "sector_reads": 772,
+      "physical_rom_disk_latency_measured": false,
+      "input_output_history_excluded": true
+    },
+    "lzsa-wide-shared-direct-guarded": {
+      "codec": "lzsa2",
+      "kind": "guarded",
+      "real_blocks": 21,
+      "real_baseline_tstates": 21756088,
+      "real_candidate_tstates": 19862505,
+      "real_delta_tstates": -1893583,
+      "gain_percent": 8.703692502071148,
+      "emitted_regions": [
+        {
+          "address": 28672,
+          "bytes": 271,
+          "sha256": "e4730d91b371c9f2566d8a60a5364dbb056f0a642c2c6e0b0086dca5811de1f9"
+        },
+        {
+          "address": 40960,
+          "bytes": 3485,
+          "sha256": "dbf9a09b4f9848753c91c6398064b975d1da3ca6ed7222e8dbc8f790d8d46c34"
+        }
+      ],
+      "library_consumer_service_bytes": 3784,
+      "consumer_scope": "consumer decoder only, including embedded guard helper and required decoder/caller stacks; input supplier and IRQ resources are additional",
+      "required_reference_carry_bytes": 256,
+      "full_reference_service_with_workspace_and_irq_bytes": 6318,
+      "full_reference_scope": "aligned consumer plus retained supplier, carry, I/O code/state,1280-byte workspace and explicit IRQ/stacks",
+      "memory_inventory": [
+        {
+          "address": 28672,
+          "bytes": 271,
+          "purpose": "consumer region"
+        },
+        {
+          "address": 40960,
+          "bytes": 3485,
+          "purpose": "consumer region"
+        },
+        {
+          "address": 32080,
+          "bytes": 281,
+          "sha256": "c014761be92c74525c691194e5d64ca3626bfd31d6c0df2746f34e3e20a6a3a6"
+        },
+        {
+          "address": 30755,
+          "bytes": 113,
+          "sha256": "d32b5a350fab8a4b165ee27b22d9a634bd713b142815fc45a24a6315b8f8ee1f"
+        },
+        {
+          "address": 31488,
+          "bytes": 74,
+          "sha256": "4f3705e4814f5f019f3356d4799f4c349131890d09e0669c050dc4d646fa7b7e"
+        },
+        {
+          "address": 28943,
+          "bytes": 108,
+          "sha256": "3a9581985ac4491e31047b6a6139114fd852961c7511c4a98de5f5175b012f6c"
+        },
+        {
+          "address": 24576,
+          "bytes": 235,
+          "purpose": "reference disk adapter code/state"
+        },
+        {
+          "address": 39568,
+          "bytes": 89,
+          "purpose": "reference cached-seek code"
+        },
+        {
+          "address": 38784,
+          "bytes": 21,
+          "purpose": "reference atomic paging code/state"
+        },
+        {
+          "address": 38848,
+          "bytes": 12,
+          "purpose": "reference atomic paging code/state"
+        },
+        {
+          "address": 32768,
+          "bytes": 8,
+          "purpose": "reference descriptor/clock words"
+        },
+        {
+          "address": 48128,
+          "bytes": 256,
+          "purpose": "shared-sector carry"
+        },
+        {
+          "address": 56,
+          "bytes": 13,
+          "purpose": "flat native IM1 probe handler; actual application IRQ/vector placement is additional"
+        },
+        {
+          "address": 23296,
+          "bytes": 1280,
+          "purpose": "conservative reference workspace reservation"
+        },
+        {
+          "address": 31682,
+          "bytes": 30,
+          "purpose": "private stack including six IRQ bytes"
+        },
+        {
+          "address": 40416,
+          "bytes": 16,
+          "purpose": "caller stack including six IRQ bytes"
+        },
+        {
+          "address": 39910,
+          "bytes": 26,
+          "purpose": "disk stack including six IRQ bytes"
+        }
+      ],
+      "proof_summary": {
+        "real_decoder_baseline_tstates": 21756088,
+        "real_decoder_candidate_tstates": 19862505,
+        "real_decoder_delta_tstates": -1893583,
+        "real_decoder_percent_saved": 8.703692502071144,
+        "native_slower_placements": [
+          {
+            "case": "literal-1",
+            "offset": 0,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-1",
+            "offset": 1,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-1",
+            "offset": 252,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-1",
+            "offset": 253,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-1",
+            "offset": 254,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-1",
+            "offset": 255,
+            "delta_tstates": 5
+          },
+          {
+            "case": "literal-3",
+            "offset": 0,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-3",
+            "offset": 1,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-3",
+            "offset": 252,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-3",
+            "offset": 253,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-3",
+            "offset": 254,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-3",
+            "offset": 255,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 0,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 1,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 252,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 253,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 254,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-17",
+            "offset": 255,
+            "delta_tstates": 21
+          },
+          {
+            "case": "literal-18",
+            "offset": 0,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-18",
+            "offset": 1,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-18",
+            "offset": 252,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-18",
+            "offset": 253,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-18",
+            "offset": 254,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-18",
+            "offset": 255,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 0,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 1,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 252,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 253,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 254,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-237",
+            "offset": 255,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 0,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 1,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 252,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 253,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 254,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-238",
+            "offset": 255,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 0,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 1,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 252,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 253,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 254,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-239",
+            "offset": 255,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 0,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 1,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 252,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 253,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 254,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-255",
+            "offset": 255,
+            "delta_tstates": 38
+          },
+          {
+            "case": "literal-256",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-256",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-256",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-256",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-256",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-256",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-257",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-511",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-800",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-4096",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 0,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 1,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 252,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 253,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 254,
+            "delta_tstates": 27
+          },
+          {
+            "case": "literal-15872",
+            "offset": 255,
+            "delta_tstates": 27
+          },
+          {
+            "case": "match-33",
+            "offset": 0,
+            "delta_tstates": 5
+          },
+          {
+            "case": "match-33",
+            "offset": 1,
+            "delta_tstates": 5
+          },
+          {
+            "case": "match-33",
+            "offset": 252,
+            "delta_tstates": 5
+          },
+          {
+            "case": "match-33",
+            "offset": 253,
+            "delta_tstates": 5
+          },
+          {
+            "case": "match-33",
+            "offset": 254,
+            "delta_tstates": 5
+          },
+          {
+            "case": "match-33",
+            "offset": 255,
+            "delta_tstates": 5
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-3",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-4",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-15",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-16",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-17",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-18",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-24",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-255",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-1",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 0,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 1,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 252,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 253,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 254,
+            "delta_tstates": 37
+          },
+          {
+            "case": "word-literal-2",
+            "offset": 255,
+            "delta_tstates": 37
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 0,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 1,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 252,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 253,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 254,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-empty",
+            "offset": 255,
+            "delta_tstates": 1
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 0,
+            "delta_tstates": 5
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 1,
+            "delta_tstates": 5
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 252,
+            "delta_tstates": 5
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 253,
+            "delta_tstates": 5
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 254,
+            "delta_tstates": 5
+          },
+          {
+            "case": "single-nibble-eof-one",
+            "offset": 255,
+            "delta_tstates": 5
+          }
+        ],
+        "native_slower_slices": 4586,
+        "native_maximum_slice_delta": 43,
+        "actual_native_private_stack_bytes": 24,
+        "actual_native_caller_stack_bytes": 4,
+        "reference_slower_blocks": [
+          "literal-1",
+          "literal-3",
+          "literal-17",
+          "literal-18",
+          "literal-237",
+          "literal-238",
+          "literal-239",
+          "literal-255",
+          "literal-256",
+          "literal-257",
+          "literal-511",
+          "literal-800",
+          "literal-4096",
+          "literal-15872",
+          "match-33",
+          "word-literal-3",
+          "word-literal-4",
+          "word-literal-15",
+          "word-literal-16",
+          "word-literal-17",
+          "word-literal-18",
+          "word-literal-24",
+          "word-literal-255"
+        ],
+        "reference_slower_slices": 29,
+        "reference_maximum_slice_delta": 43,
+        "input_waits_publications_producer_sectors_exact": true
+      },
+      "main_and_directed_cases": 675,
+      "native_placements_per_case": 6,
+      "live_code_relocation_bytes": -512,
+      "current_generated_regions_equal_complete_native_proof": true,
+      "sector_reads": 772,
+      "physical_rom_disk_latency_measured": false,
+      "input_output_history_excluded": true
+    }
+  },
+  "native_proof_sha256": {
+    "ten_percent_tuned_branches.json": "6389909d64a30549098803bdbdfce7ded803fe6f015dace81ec72cc758e2dcf7",
+    "compact_frontier.json": "6ef47b77f85ab0d1ddd5a5a662c86f20eaf08f89386419fec391c2d99698ba95",
+    "ten_percent_tail_refill.json": "81426e701fe6feb0268806757f3caa0c485f442433df5c89f68cb9cf4a00ab80",
+    "ten_percent_mega_offset.json": "6dda0902753a4a67e1e1b2801e7ec306cda6794f5dedaf251d5cc2470210c320",
+    "ten_percent_maximum.json": "3fd6d026f06d81d66622a321279ab72309bc10b80d47e3ae0c2287d2e892d2a1",
+    "ten_percent_maximum_word_prefix.json": "739225b31c04281e42609363da7cb4c94e9ec26beb84ec93c771457f56655230",
+    "compact_branches_native.json": "15df987a8768951674c71de9ae8049b1ce9f54b375c3a7a940b6e75ee8bd1050",
+    "compact_sync_native.json": "a69a006e82f05efa2af8c1379f4b25ce7666adf3e401b3dc0f19ff092c051b74",
+    "ten_percent_full_token_dispatch.json": "ca6cf044ed69d6d1b5d8f1bec4973b7d7409c648d11f88e0205ee732a9c4dc1c",
+    "wide_coroutine.json": "2c62111a6955b242fd4a07e306cabbfda41732d3404a439aec3a0a5ac001efc7",
+    "maximum_coroutine/maximum-coroutine-native.json.gz": "a45f8f887745eb10a709a97516ad20dfc59b6acca8f87f3db0fe8afb44751035",
+    "maximum_coroutine/maximum-coroutine-high-word.json.gz": "d70cbfe0003e44b4c688867b095122b10a48aa86ff34414e02d5501126a63c12",
+    "maximum_coroutine/maximum-coroutine-demands.json.gz": "769c92b73364b47607d30bb93c3a9171068d46fe695353ed2c339c854b0092fc",
+    "maximum_coroutine_verification.json": "306528439dbc003ee39cd31167741bc432d4e3205f62393e6312eb58910c8df7",
+    "wide_guarded_native.json.gz": "a685b79d4cc1484035569a21f5b0224f7184bf21cc1a1b9d03a7184b8c6f7bec",
+    "wide_guarded_relocation.json.gz": "8f6861df07cc37f1571f1b448a26aaf1ca3477a995a5506c9725c55453f5ebb5",
+    "wide_guarded_verification.json": "8d789306af92d1fa1e09bb8818d9757d28c32ae3b467a264eb96c2b88601522a"
+  },
+  "wheels": {
+    "zx0": {
+      "sha256": "df64db4b807eed7c6b9968f1c608749bf867fcecb0af29d0a0410e543fa56a2f",
+      "exact_members": [
+        {
+          "file": "zx0/__init__.py",
+          "sha256": "f1cac84d7bf6e4fca5dcb3abdf3170416c7760bc47655eab0aae86da927feef3"
+        },
+        {
+          "file": "zx0/__main__.py",
+          "sha256": "38503e3100bda52637a7da0034e6221f7574f3799615ba95b27fbb78b71c8c17"
+        },
+        {
+          "file": "zx0/_branch_tuning.py",
+          "sha256": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54"
+        },
+        {
+          "file": "zx0/_z80.py",
+          "sha256": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d"
+        },
+        {
+          "file": "zx0/asm/dzx0_fast.asm",
+          "sha256": "bb4c0d8f359091522958d7ffc12b841629412a91a81ebd7eb03f824877bf5fd4"
+        },
+        {
+          "file": "zx0/asm/dzx0_mega.asm",
+          "sha256": "6a3774508bf8d0f7a6cf08851a22e836aaedccf56dc1ef119b3e04e0f79fb23a"
+        },
+        {
+          "file": "zx0/asm/dzx0_standard.asm",
+          "sha256": "95b5dde1cfb334cb09d8be566728662bd94eb867f8c2f5437c31d78f2f4647b0"
+        },
+        {
+          "file": "zx0/asm/dzx0_turbo.asm",
+          "sha256": "9de7ca474bf03bdb4fe773f0eb1327744fae5558c285d5e670388b8ba20bc39d"
+        },
+        {
+          "file": "zx0/bank_local.py",
+          "sha256": "90b2b4f74d323b5b1c6883f957151c7bb2a3864cf3f7a473d388b685e5b0e102"
+        },
+        {
+          "file": "zx0/banked.py",
+          "sha256": "6535d8405b79fa8a1001ac39309e7198d4adfe40441fcfa9486a10a8657d381f"
+        },
+        {
+          "file": "zx0/block.py",
+          "sha256": "cad29f8ffa3b104d012787d87ca78adf2d81b6bc5de2ffece605f51320ed2c46"
+        },
+        {
+          "file": "zx0/codec.py",
+          "sha256": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91"
+        },
+        {
+          "file": "zx0/compressor.py",
+          "sha256": "80e11256c842bfaaa71ae30658355df99ba15601d33c915ad63ed8bcfa85e5d3"
+        },
+        {
+          "file": "zx0/export.py",
+          "sha256": "9bdf6fcc82346fedfad9ad3638e88a8964ef93a4de99b2d7e5b62a5258acf01f"
+        },
+        {
+          "file": "zx0/incremental.py",
+          "sha256": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a"
+        },
+        {
+          "file": "zx0/inplace.py",
+          "sha256": "57693ad1d72805bb251daac1a3ed8afec365fb64fd6403519c67c761a9ac72dc"
+        },
+        {
+          "file": "zx0/LICENSE",
+          "sha256": "1c4474030e6090708b35f3dce1569709744a800312ae367194b3b079bf458ecf"
+        },
+        {
+          "file": "zx0/maximum.py",
+          "sha256": "dde6a340e9aa99b0b44f278b473e7164b2da1d4c917227add91815b184252dbe"
+        },
+        {
+          "file": "zx0/maximum_coroutine.py",
+          "sha256": "3c14dafba5efac6696e6e96a5947012285cab490d07164ba70de7f5b5d580139"
+        },
+        {
+          "file": "zx0/resumable.py",
+          "sha256": "f2a614b3ef6c9b4b9977c0e56fe0ef533ef41019ac1bf5617a521757205d6ddd"
+        },
+        {
+          "file": "zx0/selection.py",
+          "sha256": "027011ca7929f33a1d875350bf5f9e4ccd3282c0fbc311b3c58935a5472763e6"
+        },
+        {
+          "file": "zx0/split_bank2.py",
+          "sha256": "0d8b24c3d4c4540b0111ad1dc77f34854e045897490423ef877f1d00a9852e07"
+        },
+        {
+          "file": "zx0/split_streaming.py",
+          "sha256": "f01968bdf9f95d96b9b470dee8a3efb525313c8258b13a39fb48bc7af03c2527"
+        },
+        {
+          "file": "zx0/streaming.py",
+          "sha256": "15b9659b03d27b57f989c1400a903ed5889bcfb7604438efe8defc91e1e1a234"
+        },
+        {
+          "file": "zx0/streaming_inline.py",
+          "sha256": "e4d3b169b2e0075c7dce7565ab29e248f22f14a04444bdba20173c4f5dec4bd3"
+        },
+        {
+          "file": "zx0/tokens.py",
+          "sha256": "48555eea40aa0d8fc4a9be67a5263a75c2cf6231b7879b17780afae803e46268"
+        }
+      ],
+      "smoke": {
+        "package": "zx0",
+        "independent_wheel": true,
+        "custom_layout": true,
+        "cli_export": true,
+        "resources": true,
+        "exact_round_trip": true,
+        "external_encoder": false,
+        "resident_profiles": [
+          {
+            "variant": "standard",
+            "bytes": 68,
+            "exact_export": true
+          },
+          {
+            "variant": "turbo",
+            "bytes": 126,
+            "exact_export": true
+          },
+          {
+            "variant": "fast",
+            "bytes": 207,
+            "exact_export": true
+          },
+          {
+            "variant": "mega",
+            "bytes": 673,
+            "exact_export": true
+          }
+        ],
+        "fast_jump_profiles": [
+          {
+            "variant": "standard",
+            "bytes": 70,
+            "exact_export": true
+          },
+          {
+            "variant": "turbo",
+            "bytes": 127,
+            "exact_export": true
+          },
+          {
+            "variant": "mega",
+            "bytes": 674,
+            "exact_export": true
+          },
+          {
+            "variant": "fast",
+            "bytes": 207,
+            "exact_export": true
+          }
+        ],
+        "branch_tuned_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 193,
+            "exact_export": true
+          }
+        ],
+        "literal_prefix_profiles": [
+          {
+            "resident": true,
+            "bytes": 195,
+            "exact_export": true
+          },
+          {
+            "resident": false,
+            "bytes": 418,
+            "exact_export": true
+          }
+        ],
+        "inline_tail_refill_profiles": [
+          {
+            "resident": false,
+            "bytes": 391
+          },
+          {
+            "resident": true,
+            "bytes": 196
+          }
+        ],
+        "combined_profiles": [
+          {
+            "resident": true,
+            "bytes": 198,
+            "exact_export": true,
+            "options": {
+              "branch_tuned": true,
+              "literal_prefix": true,
+              "inline_tail_refill": true
+            }
+          },
+          {
+            "resident": false,
+            "bytes": 421,
+            "exact_export": true,
+            "options": {
+              "branch_tuned": true,
+              "literal_prefix": true,
+              "inline_tail_refill": true
+            }
+          }
+        ],
+        "wide_profiles": [],
+        "mega_tuned_profiles": [
+          {
+            "fast_jumps": false,
+            "bytes": 669
+          },
+          {
+            "fast_jumps": true,
+            "bytes": 670
+          }
+        ],
+        "maximum_profiles": [
+          {
+            "prefix_cap": 31,
+            "bytes": 4450,
+            "irq_code_bytes": 13,
+            "irq_extra_stack_bytes": 6,
+            "service_with_selected_irq_bytes": 4473,
+            "exact_export": true
+          },
+          {
+            "prefix_cap": 63,
+            "bytes": 5986,
+            "irq_code_bytes": 13,
+            "irq_extra_stack_bytes": 6,
+            "service_with_selected_irq_bytes": 6009,
+            "exact_export": true
+          },
+          {
+            "prefix_cap": 127,
+            "bytes": 7522,
+            "irq_code_bytes": 13,
+            "irq_extra_stack_bytes": 6,
+            "service_with_selected_irq_bytes": 7545,
+            "exact_export": true
+          },
+          {
+            "prefix_cap": 227,
+            "bytes": 9962,
+            "irq_code_bytes": 13,
+            "irq_extra_stack_bytes": 6,
+            "service_with_selected_irq_bytes": 9985,
+            "exact_export": true
+          },
+          {
+            "prefix_cap": 228,
+            "bytes": 9986,
+            "irq_code_bytes": 3,
+            "irq_extra_stack_bytes": 2,
+            "service_with_selected_irq_bytes": 9995,
+            "exact_export": true
+          }
+        ],
+        "compact_policy_profiles": [],
+        "maximum_coroutine_profiles": [
+          {
+            "prefix_cap": 31,
+            "service_with_selected_irq_bytes": 4926,
+            "requires_undocumented_ix_halves": true,
+            "exact_export": true
+          },
+          {
+            "prefix_cap": 63,
+            "service_with_selected_irq_bytes": 6462,
+            "requires_undocumented_ix_halves": true,
+            "exact_export": true
+          },
+          {
+            "prefix_cap": 127,
+            "service_with_selected_irq_bytes": 7998,
+            "requires_undocumented_ix_halves": true,
+            "exact_export": true
+          }
+        ]
+      }
+    },
+    "lzsa": {
+      "sha256": "0956e322b3546494fa3bb1a8f47a83d0817b0e905ffbcee219072c832736ff59",
+      "exact_members": [
+        {
+          "file": "lzsa/__init__.py",
+          "sha256": "dfad484c1a07ca2f6e3a759b5ac53763808b47e69d5997e645a152250fb20a9b"
+        },
+        {
+          "file": "lzsa/__main__.py",
+          "sha256": "64dfba46a7dcbec7c3e7bf2c7b82f4c79fa05d1a0d22a156c7c13de1d521201d"
+        },
+        {
+          "file": "lzsa/_branch_tuning.py",
+          "sha256": "5a209f6251f5b39bb33a950656c6c6e7acb07d2b4299e6e8eddf648d4b1db3aa"
+        },
+        {
+          "file": "lzsa/_z80.py",
+          "sha256": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d"
+        },
+        {
+          "file": "lzsa/asm/unlzsa2_fast.asm",
+          "sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071"
+        },
+        {
+          "file": "lzsa/asm/unlzsa2_small.asm",
+          "sha256": "862882a4ba95de2b7a9cf1246c5c070b6b70ced60be68cd91f4ea4d3a5d7450b"
+        },
+        {
+          "file": "lzsa/author.py",
+          "sha256": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b"
+        },
+        {
+          "file": "lzsa/block.py",
+          "sha256": "f909370ee4c475ae7115bd47b1011c9482e70aa20811286f74783c9e673dac0a"
+        },
+        {
+          "file": "lzsa/budget.py",
+          "sha256": "5ae4458bf5bbc6c0f81d9daf064cc555b480a6e3dd6962d7b3b9689291afcf06"
+        },
+        {
+          "file": "lzsa/codec.py",
+          "sha256": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775"
+        },
+        {
+          "file": "lzsa/compact.py",
+          "sha256": "0d382910264a4341002c751845420e795ed1357c94989db10974514722cd6676"
+        },
+        {
+          "file": "lzsa/compressor.py",
+          "sha256": "524e91046757a255f418f4a5e4d64669ac51b704b8bb76d063e54e4e3e6db088"
+        },
+        {
+          "file": "lzsa/distance_cost.py",
+          "sha256": "a5d4cc55fd9861229fa609d9609f06ceda660395715a49c178e99fd98eb70af6"
+        },
+        {
+          "file": "lzsa/distances.py",
+          "sha256": "553ff5d6934d60a0bd5f71188b24d6f240e7b1624f38625682c326b58d5e6e95"
+        },
+        {
+          "file": "lzsa/export.py",
+          "sha256": "6b2e558f92a505f35a9cd5ceee230c04776c75bcd126196f8fd40866c0e86a7e"
+        },
+        {
+          "file": "lzsa/LICENSE",
+          "sha256": "656e18178a11644dc6f34867949214112233c200794d1f64b8cd9ededcfde137"
+        },
+        {
+          "file": "lzsa/native.py",
+          "sha256": "536c5a202b16988b280d0627a0e973f10d942caf76c2ae2ed810c8949194010e"
+        },
+        {
+          "file": "lzsa/oracle.py",
+          "sha256": "039654e7a86477f5c8cf34755a68a8cb474053c87108ce6a7e6cc29c75564c5b"
+        },
+        {
+          "file": "lzsa/resumable.py",
+          "sha256": "bd6a4559e30b66d65c483e458348589b99497539001f4f1de1a1f98651bd0f40"
+        },
+        {
+          "file": "lzsa/streaming.py",
+          "sha256": "8cdf842acc989b253c31bf7d0dc2e5e238afd6e975436f8a988002eb15c80aaa"
+        },
+        {
+          "file": "lzsa/wide.py",
+          "sha256": "01a6b768af0f3f94d8cc63f01893a2354a53da1cc002ad3a7de9d31162c80234"
+        },
+        {
+          "file": "lzsa/wide_coroutine.py",
+          "sha256": "02bd6b2e041534e658a8ff4c4dbc133c62db83711f5e010fd1dcccda884cfd30"
+        }
+      ],
+      "smoke": {
+        "package": "lzsa",
+        "independent_wheel": true,
+        "custom_layout": true,
+        "cli_export": true,
+        "resources": true,
+        "exact_round_trip": true,
+        "external_encoder": false,
+        "resident_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 218,
+            "exact_export": true
+          },
+          {
+            "variant": "small",
+            "bytes": 137,
+            "exact_export": true
+          }
+        ],
+        "fast_jump_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 219,
+            "exact_export": true
+          }
+        ],
+        "branch_tuned_profiles": [
+          {
+            "variant": "fast",
+            "bytes": 219,
+            "exact_export": true
+          }
+        ],
+        "literal_prefix_profiles": [],
+        "inline_tail_refill_profiles": [],
+        "combined_profiles": [
+          {
+            "resident": true,
+            "bytes": 224,
+            "exact_export": true,
+            "options": {
+              "branch_tuned": true,
+              "fast_jumps": true,
+              "nibble_prefill": true
+            }
+          },
+          {
+            "resident": false,
+            "bytes": 391,
+            "exact_export": true,
+            "options": {
+              "branch_tuned": true,
+              "fast_jumps": true,
+              "nibble_prefill": true
+            }
+          }
+        ],
+        "wide_profiles": [
+          {
+            "variant": "wide",
+            "code_bytes": 6998,
+            "service_memory_bytes": 7004,
+            "exact_export": true
+          },
+          {
+            "variant": "wide-shared",
+            "code_bytes": 3446,
+            "service_memory_bytes": 3452,
+            "exact_export": true
+          },
+          {
+            "variant": "wide-coroutine-guarded-call",
+            "code_bytes": 7316,
+            "service_memory_bytes": 7344,
+            "exact_export": true
+          },
+          {
+            "variant": "wide-coroutine-guarded-direct",
+            "code_bytes": 7308,
+            "service_memory_bytes": 7336,
+            "exact_export": true
+          },
+          {
+            "variant": "wide-shared-coroutine-guarded-call",
+            "code_bytes": 3764,
+            "service_memory_bytes": 3792,
+            "exact_export": true
+          },
+          {
+            "variant": "wide-shared-coroutine-guarded-direct",
+            "code_bytes": 3756,
+            "service_memory_bytes": 3784,
+            "exact_export": true
+          },
+          {
+            "variant": "wide-coroutine",
+            "code_bytes": 7165,
+            "service_memory_bytes": 7185,
+            "exact_export": true
+          },
+          {
+            "variant": "wide-shared-coroutine",
+            "code_bytes": 3613,
+            "service_memory_bytes": 3633,
+            "exact_export": true
+          }
+        ],
+        "mega_tuned_profiles": [],
+        "maximum_profiles": [],
+        "compact_policy_profiles": [
+          {
+            "resident": true,
+            "policy": "compact_branches",
+            "options": {
+              "fast_jumps": true,
+              "nibble_prefill": true,
+              "compact_branches": true
+            },
+            "code_bytes": 222,
+            "exact_export": true
+          },
+          {
+            "resident": true,
+            "policy": "branch_tuned",
+            "options": {
+              "fast_jumps": true,
+              "nibble_prefill": true,
+              "branch_tuned": true
+            },
+            "code_bytes": 224,
+            "exact_export": true
+          },
+          {
+            "resident": false,
+            "policy": "compact_branches",
+            "options": {
+              "fast_jumps": true,
+              "nibble_prefill": true,
+              "compact_branches": true,
+              "compact_sync": true
+            },
+            "code_bytes": 384,
+            "exact_export": true
+          },
+          {
+            "resident": false,
+            "policy": "branch_tuned",
+            "options": {
+              "fast_jumps": true,
+              "nibble_prefill": true,
+              "branch_tuned": true,
+              "compact_sync": true
+            },
+            "code_bytes": 386,
+            "exact_export": true
+          }
+        ],
+        "maximum_coroutine_profiles": []
+      }
+    }
+  },
+  "archived_logs_sha256": {
+    "frontier-integration-library.log.gz": "9df11642445d9c23d06c5ac9112bbde6817f8fea9f75dca80d81ed20b1046992",
+    "frontier-integration-toolkit.log.gz": "d585a3ae9cd7e470cd123444c52a43b6a7069b1b8e9daf615c9a4e62cf73200a"
+  },
+  "source_sha256_lf": {
+    "libraries/zx0/src/zx0/banked.py": "6535d8405b79fa8a1001ac39309e7198d4adfe40441fcfa9486a10a8657d381f",
+    "libraries/zx0/src/zx0/bank_local.py": "90b2b4f74d323b5b1c6883f957151c7bb2a3864cf3f7a473d388b685e5b0e102",
+    "libraries/zx0/src/zx0/block.py": "cad29f8ffa3b104d012787d87ca78adf2d81b6bc5de2ffece605f51320ed2c46",
+    "libraries/zx0/src/zx0/codec.py": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91",
+    "libraries/zx0/src/zx0/compressor.py": "80e11256c842bfaaa71ae30658355df99ba15601d33c915ad63ed8bcfa85e5d3",
+    "libraries/zx0/src/zx0/export.py": "9bdf6fcc82346fedfad9ad3638e88a8964ef93a4de99b2d7e5b62a5258acf01f",
+    "libraries/zx0/src/zx0/incremental.py": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a",
+    "libraries/zx0/src/zx0/inplace.py": "57693ad1d72805bb251daac1a3ed8afec365fb64fd6403519c67c761a9ac72dc",
+    "libraries/zx0/src/zx0/maximum.py": "dde6a340e9aa99b0b44f278b473e7164b2da1d4c917227add91815b184252dbe",
+    "libraries/zx0/src/zx0/maximum_coroutine.py": "3c14dafba5efac6696e6e96a5947012285cab490d07164ba70de7f5b5d580139",
+    "libraries/zx0/src/zx0/resumable.py": "f2a614b3ef6c9b4b9977c0e56fe0ef533ef41019ac1bf5617a521757205d6ddd",
+    "libraries/zx0/src/zx0/selection.py": "027011ca7929f33a1d875350bf5f9e4ccd3282c0fbc311b3c58935a5472763e6",
+    "libraries/zx0/src/zx0/split_bank2.py": "0d8b24c3d4c4540b0111ad1dc77f34854e045897490423ef877f1d00a9852e07",
+    "libraries/zx0/src/zx0/split_streaming.py": "f01968bdf9f95d96b9b470dee8a3efb525313c8258b13a39fb48bc7af03c2527",
+    "libraries/zx0/src/zx0/streaming.py": "15b9659b03d27b57f989c1400a903ed5889bcfb7604438efe8defc91e1e1a234",
+    "libraries/zx0/src/zx0/streaming_inline.py": "e4d3b169b2e0075c7dce7565ab29e248f22f14a04444bdba20173c4f5dec4bd3",
+    "libraries/zx0/src/zx0/tokens.py": "48555eea40aa0d8fc4a9be67a5263a75c2cf6231b7879b17780afae803e46268",
+    "libraries/zx0/src/zx0/_branch_tuning.py": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54",
+    "libraries/zx0/src/zx0/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/zx0/src/zx0/__init__.py": "f1cac84d7bf6e4fca5dcb3abdf3170416c7760bc47655eab0aae86da927feef3",
+    "libraries/zx0/src/zx0/__main__.py": "38503e3100bda52637a7da0034e6221f7574f3799615ba95b27fbb78b71c8c17",
+    "libraries/lzsa/src/lzsa/author.py": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b",
+    "libraries/lzsa/src/lzsa/block.py": "f909370ee4c475ae7115bd47b1011c9482e70aa20811286f74783c9e673dac0a",
+    "libraries/lzsa/src/lzsa/budget.py": "5ae4458bf5bbc6c0f81d9daf064cc555b480a6e3dd6962d7b3b9689291afcf06",
+    "libraries/lzsa/src/lzsa/codec.py": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775",
+    "libraries/lzsa/src/lzsa/compact.py": "0d382910264a4341002c751845420e795ed1357c94989db10974514722cd6676",
+    "libraries/lzsa/src/lzsa/compressor.py": "524e91046757a255f418f4a5e4d64669ac51b704b8bb76d063e54e4e3e6db088",
+    "libraries/lzsa/src/lzsa/distances.py": "553ff5d6934d60a0bd5f71188b24d6f240e7b1624f38625682c326b58d5e6e95",
+    "libraries/lzsa/src/lzsa/distance_cost.py": "a5d4cc55fd9861229fa609d9609f06ceda660395715a49c178e99fd98eb70af6",
+    "libraries/lzsa/src/lzsa/export.py": "6b2e558f92a505f35a9cd5ceee230c04776c75bcd126196f8fd40866c0e86a7e",
+    "libraries/lzsa/src/lzsa/native.py": "536c5a202b16988b280d0627a0e973f10d942caf76c2ae2ed810c8949194010e",
+    "libraries/lzsa/src/lzsa/oracle.py": "039654e7a86477f5c8cf34755a68a8cb474053c87108ce6a7e6cc29c75564c5b",
+    "libraries/lzsa/src/lzsa/resumable.py": "bd6a4559e30b66d65c483e458348589b99497539001f4f1de1a1f98651bd0f40",
+    "libraries/lzsa/src/lzsa/streaming.py": "8cdf842acc989b253c31bf7d0dc2e5e238afd6e975436f8a988002eb15c80aaa",
+    "libraries/lzsa/src/lzsa/wide.py": "01a6b768af0f3f94d8cc63f01893a2354a53da1cc002ad3a7de9d31162c80234",
+    "libraries/lzsa/src/lzsa/wide_coroutine.py": "02bd6b2e041534e658a8ff4c4dbc133c62db83711f5e010fd1dcccda884cfd30",
+    "libraries/lzsa/src/lzsa/_branch_tuning.py": "5a209f6251f5b39bb33a950656c6c6e7acb07d2b4299e6e8eddf648d4b1db3aa",
+    "libraries/lzsa/src/lzsa/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/lzsa/src/lzsa/__init__.py": "dfad484c1a07ca2f6e3a759b5ac53763808b47e69d5997e645a152250fb20a9b",
+    "libraries/lzsa/src/lzsa/__main__.py": "64dfba46a7dcbec7c3e7bf2c7b82f4c79fa05d1a0d22a156c7c13de1d521201d",
+    "libraries/tests/verify_frontier_integration.py": "ea1bfcf5f2c7a2f12b58e203e2b8d767e57181cb0f0d0ec7a11048ad95349cfc",
+    "libraries/tests/smoke_install.py": "33bcd901d69830c5d50486ba1d157cf2bd993b2a85fd4dd208f9c174da9618da",
+    "libraries/tests/native_block.py": "94bb095d918546ee3e54af1088e814f8442ca26ce65efd519574e72f1f104b3e"
+  },
+  "limits": [
+    "A finite measured frontier; global optimality is not established.",
+    "Original native source/wheel authentication remains historical; this report binds current emitted code to it.",
+    "Coroutine and guarded features are separate comparisons; raw gains do not prove guarded performance.",
+    "Application IRQ code/headroom is additional; cap228 with the 13-byte/6-stack probe exceeds10,000.",
+    "Maximum ZX0 coroutine explicitly requires Spectrum-style undocumented CP IXH/IXL and live-IX preservation in IRQ.",
+    "No physical disk/ROM/ULA timing or player/movie publication qualification."
+  ]
+}

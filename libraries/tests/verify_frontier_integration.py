@@ -31,7 +31,8 @@ lc=partial(lc,core=0x8000,core_limit=0x8400)
 
 
 def load(name):
-    data=json.loads((EVIDENCE/name).read_text(encoding='utf-8'))
+    raw=(EVIDENCE/name).read_bytes()
+    data=json.loads(gzip.decompress(raw) if name.endswith('.gz') else raw)
     assert data['complete'],name
     return data
 
@@ -41,6 +42,7 @@ def main():
     parser.add_argument('--directory',type=Path,default=ROOT/'.tmp')
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--library-tests',type=int,required=True)
+    parser.add_argument('--extended',action='store_true',help='also bind completed guarded/maximum-coroutine profiles')
     args=parser.parse_args()
     assert profiles()==json.loads((ROOT/'libraries/tests/decoder_baseline.json').read_text())['profiles']
     resources=json.loads((ROOT/'libraries/second_pass_verification.json').read_text())
@@ -55,7 +57,7 @@ def main():
     def record(name,codec,kind,profile,proof_name,proof_key,caller,private,*,extra=0):
         proof=load(proof_name);item=proof['profiles'][proof_key]
         regions,labels,meta=profile
-        frozen=item.get('candidate',item)
+        frozen=item.get('candidate',item.get('layout',item))
         actual=[dict(address=at,bytes=len(blob),sha256=sha(blob)) for at,blob in regions]
         expected=[{k:region[k] for k in ('address','bytes','sha256')} for region in frozen['regions']]
         assert actual==expected,(name,'generated regions differ from native replay')
@@ -85,6 +87,7 @@ def main():
             embedded_state_bytes_already_in_regions=meta.get('state_bytes',0),
             patched_operand_bytes_already_in_regions=len(set(meta.get('patched_addresses',[]))),
             caller_stack_bytes=caller,private_stack_bytes=private,extra_required_service_bytes=extra,
+            requires_undocumented_ix_halves=meta.get('requires_undocumented_ix_halves',False),
             library_service_bytes=service,alignment_padding_bytes=meta.get('alignment_padding',0),
             service_with_sample_irq_bytes=service+13+6*stack_count,
             sample_irq_is_separate_application_contract=True,
@@ -127,11 +130,81 @@ def main():
         name+='-coroutine'
         record('lzsa-'+name,'lzsa2','coroutine',lwc(shared_literals=shared),'wide_coroutine.json',name,4,16)
 
-    archived={};destination=EVIDENCE/'frontier_integration';destination.mkdir(exist_ok=True)
+    if args.extended:
+        from zx0.maximum_coroutine import build as maximum_coroutine
+        for cap in (31,63,127):
+            record('zx0-maximum-coroutine-'+str(cap),'zx0','coroutine',maximum_coroutine(prefix_cap=cap),
+                   'maximum_coroutine/maximum-coroutine-native.json.gz',str(cap),4,12)
+        high=load('maximum_coroutine/maximum-coroutine-high-word.json.gz')
+        demands=load('maximum_coroutine/maximum-coroutine-demands.json.gz')
+        assert all(high['profiles'][str(cap)]['summary']['cases']==56 for cap in (31,63,127))
+        for cap in (31,63,127):
+            item=high['profiles'][str(cap)]
+            public=maximum_coroutine(core=0x0800,core_limit=0x2a00,prefix=0x2b00,prefix_limit=0x2c00,
+                                     stack=0x2af0,output_base=0x3000,prefix_cap=cap)
+            expected=[{k:region[k] for k in ('address','bytes','sha256')} for region in item['layout']['regions']]
+            assert [dict(address=at,bytes=len(blob),sha256=sha(blob)) for at,blob in public[0]]==expected
+            assert all(row['exact'] and row['relocated_exact'] and row['same_fast_return_cursors']
+                       and row['same_fast_eof_states'] for row in item['blocks'])
+            results['zx0-maximum-coroutine-'+str(cap)]['high_word_generated_regions_equal_complete_native_proof']=True
+        assert len(demands['inplace_minimum_start_cases'])==417
+        for case in demands['inplace_minimum_start_cases']:
+            assert len(case['profiles'])==3
+            assert all(item['exact'] and item['every_fast_return_exact'] and item['unread_input_never_overwritten']
+                       for item in case['profiles'].values())
+        assert len(demands['forced_all_phase_comparisons'])==12 and demands['all_caller_ix_iy_alternate_pairs_preserved']
+        for name in ('maximum_coroutine/maximum-coroutine-high-word.json.gz',
+                     'maximum_coroutine/maximum-coroutine-demands.json.gz','maximum_coroutine_verification.json'):
+            proofs[name]=sha((EVIDENCE/name).read_bytes())
+        guarded=load('wide_guarded_native.json.gz')
+        relocated=load('wide_guarded_relocation.json.gz')
+        audited=load('wide_guarded_verification.json')
+        for shared in (False,True):
+            for direct in (False,True):
+                key=('wide-shared-' if shared else 'wide-')+('direct' if direct else 'call')
+                item=guarded['profiles'][key];audit=audited['profiles'][key]
+                kwargs=dict(core=0xa000,core_limit=0xbc00,prefix=0x7000,prefix_limit=0x7400,
+                    stack=0x7be0,shared_literals=shared,streaming=True,direct_header=direct)
+                profile=lwc(**kwargs);regions,labels,meta=profile
+                actual=[dict(address=at,bytes=len(blob),sha256=sha(blob)) for at,blob in regions]
+                assert actual==item['regions'],key
+                moved=lwc(**dict(kwargs,core=0x9e00))
+                assert [dict(address=at,bytes=len(blob),sha256=sha(blob)) for at,blob in moved[0]]==relocated['profiles'][key]['regions']
+                assert relocated['profiles'][key]['live_code_shift_bytes']==-512
+                assert meta['consumer_service_memory_bytes']==meta['service_memory_bytes']==audit['consumer_bytes']
+                assert sum(len(blob) for _,blob in regions)+4+24==audit['consumer_bytes']
+                full=audit['aligned_with_reference_workspace_and_probe_irq_example_bytes']
+                assert sum(region['bytes'] for region in audit['reserved_region_inventory'])==full<=10000
+                rows=item['reference_producer_blocks'];real=[row for row in rows if row['case'].startswith('real-')]
+                for row in rows:
+                    assert row['candidate']['exact']
+                    for field in ('producer_tstates','input_pointer','payload_sha256','raw_sha256','sectors','carry_copy_bytes','input_waits'):
+                        assert row['baseline'][field]==row['candidate'][field],(key,row['case'],field)
+                before=sum(row['baseline']['decoder_tstates'] for row in real)
+                after=sum(row['candidate']['decoder_tstates'] for row in real)
+                assert (before,after)==(item['summary']['real_decoder_baseline_tstates'],item['summary']['real_decoder_candidate_tstates'])
+                results['lzsa-'+key+'-guarded']=dict(codec='lzsa2',kind='guarded',real_blocks=len(real),
+                    real_baseline_tstates=before,real_candidate_tstates=after,real_delta_tstates=after-before,
+                    gain_percent=100*(1-after/before),emitted_regions=actual,
+                    library_consumer_service_bytes=audit['consumer_bytes'],
+                    consumer_scope=meta['service_memory_scope'],
+                    required_reference_carry_bytes=audit['required_reference_carry_bytes'],
+                    full_reference_service_with_workspace_and_irq_bytes=full,
+                    full_reference_scope='aligned consumer plus retained supplier, carry, I/O code/state,1280-byte workspace and explicit IRQ/stacks',
+                    memory_inventory=audit['reserved_region_inventory'],
+                    proof_summary=item['summary'],main_and_directed_cases=len(item['native_blocks']),
+                    native_placements_per_case=guarded['native_placements_per_case'] if 'native_placements_per_case' in guarded else len(guarded['placements']),
+                    live_code_relocation_bytes=-512,current_generated_regions_equal_complete_native_proof=True,
+                    sector_reads=item['reference_producer_summary']['sector_reads'],
+                    physical_rom_disk_latency_measured=False,input_output_history_excluded=True)
+        for name in ('wide_guarded_native.json.gz','wide_guarded_relocation.json.gz','wide_guarded_verification.json'):
+            proofs[name]=sha((EVIDENCE/name).read_bytes())
+
+    logs=[]
     for name,count in (('frontier-integration-library.log',args.library_tests),('frontier-integration-toolkit.log',67)):
         raw=(args.directory/name).read_bytes();text=raw.decode('utf-8',errors='replace')
         assert re.search(rf'Ran {count} tests in ',text) and text.rstrip().endswith('OK'),name
-        p=destination/(name+'.gz');p.write_bytes(gzip.compress(raw,mtime=0));archived[p.name]=sha(p.read_bytes())
+        logs.append((name,raw))
     wheels={}
     for package in ('zx0','lzsa'):
         wheel=next((args.directory/'frontier-integration-wheels').glob(f'zxvideo_{package}-*.whl'))
@@ -139,6 +212,9 @@ def main():
         assert smoke['independent_wheel'] and len(smoke['combined_profiles'])==2
         if package=='lzsa':assert len(smoke['compact_policy_profiles'])==4
         else:assert len(smoke['maximum_profiles'])==5
+        if args.extended:
+            if package=='lzsa':assert len(smoke['wide_profiles'])==8
+            else:assert len(smoke['maximum_coroutine_profiles'])==3
         exact=[]
         with ZipFile(wheel) as archive:
             for source in sorted((ROOT/'libraries'/package/'src'/package).rglob('*')):
@@ -147,6 +223,11 @@ def main():
                     assert archive.read(member)==source.read_bytes(),member
                     exact.append(dict(file=member,sha256=sha(source.read_bytes())))
         wheels[package]=dict(sha256=sha(wheel.read_bytes()),exact_members=exact,smoke=smoke)
+    archived={}
+    destination=EVIDENCE/('frontier_completed_profiles' if args.extended else 'frontier_integration')
+    destination.mkdir(exist_ok=True)
+    for name,raw in logs:
+        p=destination/(name+'.gz');p.write_bytes(gzip.compress(raw,mtime=0));archived[p.name]=sha(p.read_bytes())
     sources=[p for package in ('zx0','lzsa') for p in (ROOT/'libraries'/package/'src'/package).rglob('*.py')]
     sources += [Path(__file__),ROOT/'libraries/tests/smoke_install.py',ROOT/'libraries/tests/native_block.py']
     report=dict(date=date.today().isoformat(),complete=True,release=False,goal_achieved=False,
@@ -159,6 +240,7 @@ def main():
                 'Original native source/wheel authentication remains historical; this report binds current emitted code to it.',
                 'Coroutine and guarded features are separate comparisons; raw gains do not prove guarded performance.',
                 'Application IRQ code/headroom is additional; cap228 with the 13-byte/6-stack probe exceeds10,000.',
+                'Maximum ZX0 coroutine explicitly requires Spectrum-style undocumented CP IXH/IXL and live-IX preservation in IRQ.',
                 'No physical disk/ROM/ULA timing or player/movie publication qualification.'])
     args.output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(dict(complete=True,profiles=len(results),library_tests=args.library_tests,toolkit_tests=67)))

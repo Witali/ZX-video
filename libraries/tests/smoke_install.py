@@ -239,6 +239,24 @@ if name=='zx0':
     runpy.run_module(name+'.__main__',run_name='__main__')
     assert json.loads((destination/'maximum-cli/metadata.json').read_text())['service_memory_bytes']==9995
     assert not any(n.startswith(('toolkit','tests','cv2','numpy')) for n in sys.modules)
+maximum_coroutine=[]
+if name=='zx0':
+    maximum_coroutine_build=importlib.import_module(name+'.maximum_coroutine').build
+    for cap in (31,63,127):
+        regions,labels,metadata=maximum_coroutine_build(core=0x9103,prefix_cap=cap,
+                                                       irq_code_bytes=13,irq_stack_bytes=6)
+        at=destination/('maximum-coroutine-'+str(cap))
+        export(at,regions,labels,metadata)
+        assert metadata['service_memory_bytes']==metadata['code_bytes']+4+12+13+12<=10000
+        assert metadata['requires_undocumented_ix_halves'] and metadata['caller_stack_bytes']==4
+        assert 'REQUIRES undocumented CP IXH / CP IXL, 8 T' in (at/'decoder.asm').read_text()
+        sys.argv=[name,'build','--variant','maximum-coroutine','--prefix-cap',str(cap),
+                  '--core','0x9103','--irq-code-bytes','13','--irq-stack-bytes','6',
+                  '--output',str(at/'cli')]
+        runpy.run_module(name+'.__main__',run_name='__main__')
+        assert json.loads((at/'metadata.json').read_text())['regions']==json.loads((at/'cli/metadata.json').read_text())['regions']
+        maximum_coroutine.append(dict(prefix_cap=cap,service_with_selected_irq_bytes=metadata['service_memory_bytes'],
+                                      requires_undocumented_ix_halves=True,exact_export=True))
 assert not any(n.startswith(('toolkit','cv2','numpy')) for n in sys.modules)
 if encoder:
     assert package.decompress(package.compress(raw,executable=encoder),limit=len(raw))==raw
@@ -246,6 +264,7 @@ report=dict(package=name,independent_wheel=True,custom_layout=True,cli_export=Tr
             resources=True,exact_round_trip=True,external_encoder=bool(encoder),resident_profiles=resident,
             fast_jump_profiles=fast_jumps,branch_tuned_profiles=tuned,literal_prefix_profiles=literal_prefix,
             inline_tail_refill_profiles=tail_refill,combined_profiles=combined_profiles,wide_profiles=wide,
-            mega_tuned_profiles=mega_tuned,maximum_profiles=maximum,compact_policy_profiles=compact_policies)
+            mega_tuned_profiles=mega_tuned,maximum_profiles=maximum,compact_policy_profiles=compact_policies,
+            maximum_coroutine_profiles=maximum_coroutine)
 (destination/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report))

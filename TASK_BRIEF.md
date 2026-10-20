@@ -24,7 +24,7 @@ code size alone. Keep slower blocks/slices explicit; do not claim a global
 optimum from the tested candidates. Earlier ten-percent code-growth preferences
 and size-based rejection are historical, superseded by these three directions.
 Continue in `.worktree/codec-speed-pass3`,
-branch `codex/codec-speed-pass3`, from `f5a0362c`. The earlier item30 gain is
+branch `codex/codec-speed-pass3`, from `f5a0362c`. The earlier item 30 gain is
 already in this baseline and does not count toward this goal. Compare against
 current Fast resident/coroutine profiles with the same features and frozen
 real inputs; also track the strongest existing ZX0 Mega profile. Do not claim
@@ -37,25 +37,38 @@ The full 10%-per-library objective remains active until verified; smaller
 intermediate gains do not complete it. Movie/player qualification and the
 repository migration remain separate tasks.
 
-Current integrated18-profile checkpoint: [FRONTIER.md](libraries/FRONTIER.md)
-and [full authentication](libraries/evidence/frontier_integration_verification.json).
-ZX0 Maximum defaultprefix228 uses9,990 intrinsic service bytes/140,169,968realT,
-10.154667% vsFast but only3.796347% beyond separately tunedMega. Prefix127
-uses7,526 B/140,193,198 T, almost the same speed; prefix228 with the13+6-byte
-testIRQ totals10,009 B, outsidecap. Prefix227 fits thatIRQ at9,985 B; actual
-minimal3+2IRQ makes228total9,995. All417+56high-word cases, relocation andIRQ
-pass. LZSA2 Wide expanded/shared raw uses7,004/3,452 B and gains12.052517%/
-10.670425%; ordinary coroutine7,185/3,633 B and11.032826%/9.767664%. Each
-passes95+580cases, relocation,IRQ and exactquota cursors. Arbitrary Wide
-alignment adds up to255 B. Compact LZSA2 ordinary gains another cold-wrapper
-step: tuned+nibble+compact_sync+jumps404 B/19,242,382T (0.848261% vsFast).
-Smaller/faster Fast and other intermediates remain available, with directed
-block/slice regressions retained. All18public emitted profiles match complete
-saved native proofs;50library+67toolkit tests,31exactdefaults/sixresources and
-both isolated installed wheels pass. Historical proof/source hashes remain
-dated separately. Guarded Wide and same-quota maximumZX0 experiments continue
-in the existing authorized worktrees; raw-only speed does not establish them.
-The full objective remains active, without player/default/format promotion.
+Current completed 25-profile milestone: [FRONTIER.md](libraries/FRONTIER.md)
+and [full authentication](libraries/evidence/frontier_completed_profiles_verification.json).
+ZX0 Maximum resident defaults to prefix 228: 9,990 intrinsic service bytes,
+140,169,968 real T, 10.154667% vs Fast but only 3.796347% beyond tuned Mega.
+Prefix 127 uses 7,526 B/140,193,198 T, almost the same speed. Prefix 228 plus
+the 13+6-byte IRQ example totals 10,009 B, outside the cap; prefix 227 fits
+that IRQ at 9,985 B, while the verified minimal 3+2-byte IRQ makes 228 total
+9,995 B. All 417+56 high-word cases, relocation and IRQ pass.
+The separate Maximum coroutine defaults to prefix 127: 7,973 intrinsic B,
+166,005,457 real T, 8.086252% vs same-quota Fast. It explicitly requires
+Spectrum undocumented CP IXH/IXL and IRQ preservation of live IX; caller IX
+is restored at every return. All main/high-word and 1,251 minimum-safe
+in-place comparisons, 25,918 repeated-demand returns and 198,374 IRQs pass.
+No complete block slows; 12 slices (two real) slow at most 71 T.
+LZSA2 expanded/shared Wide raw uses 7,004/3,452 B and gains 12.052517%/
+10.670425%; ordinary coroutine 7,185/3,633 B and 11.032826%/9.767664%.
+Each passes 95+580 cases, relocation, IRQ and exact quota cursors. Arbitrary
+Wide alignment adds up to 255 B. Both guarded modes also pass all 675 cases
+at six input placements, genuine -512-byte live-code relocation and the
+original 63-case/772-sector producer. Expanded CALL/direct gains 8.927190%/
+9.832250%, shared 7.902516%/8.703693%; all real blocks improve, but slices
+can slow by 22 real/43 all-case T. Consumer-only versus supplier/carry/I/O/
+workspace/IRQ service is explicit; aligned full references total 9,881/9,870/
+6,329/6,318 B. Do not hide the separate 256-byte in-place carry or assume
+unaligned full examples fit. Physical disk/ROM/movie timing remains separate.
+All 25 public profiles match complete saved native proofs. All 56 library
+and 67 toolkit tests,31 exact defaults/six resources and both current isolated
+wheels pass. The new integration also tests valid output ending atFFFFh.
+All component experiments are committed; no subagent experiment remains
+unfinished. Keep the broader goal active and unachieved, particularly another
+10% beyond strong Mega and strict 10% for every guarded/coroutine feature set.
+No player/default/format promotion or main merge/push is part of this milestone.
 
 First implementation step: optional `branch_tuned=True` / `--branch-tuned`
 preserves data and coroutine features while improving Fast resident real CPU

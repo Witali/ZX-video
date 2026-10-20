@@ -1,5 +1,45 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Complete integration of guarded LZSA2 and same-quota Maximum ZX0
+
+- **Objective/baseline:** Finish the authorized optional-profile milestone in
+  `.worktree/codec-speed-pass3`, branch`codex/codec-speed-pass3`, from`70bbbb48`.
+  Retain `f5a0362c` same-feature Fast baselines and the stronger Mega comparison;
+  input/output/history remain separate from all code/state/table/padding/stack
+  and internal-buffer service bytes.
+- **Integrated result:** Current generators match 25 complete saved native
+  profile proofs exactly, including the newer raw word-prefix behavior and
+  default 228, ordinary Maximum default 127, all compact flags and both input
+  guards. Maximum ZX0 coroutine uses 7,957 emitted +4 caller +12 private bytes
+  =7,973 B,180,610,040 ->166,005,457 realT (8.086252%). Its explicit Spectrum
+  CP IXH/IXL requirement and live-IX IRQ contract appear in metadata, docs and
+  exported assembly. No complete block slows; retain 12 slower slices, maximum
+  +71 T (two real). Parent integration preserves the independently proved
+  417+56 per-cap,1,251 in-place,25,918 repeated-return/198,374 IRQ coverage.
+- **Guarded service/CPU:** Expanded CALL/direct real decoder 23,961,774 ->
+  21,822,661 T (8.927190%) /21,756,088 ->19,616,975 (9.832250%). Shared
+  gains 7.902516%/8.703693%. The aligned full reference service inventories
+  total 9,881/9,870/6,329/6,318 B, including actual supplier/carry 256/I/O 365/
+  workspace 1280 and all stated stacks/IRQ. Consumer-only 7344/7336/3792/3784
+  totals are explicitly narrower. Arbitrary placement may need more memory.
+  Keep native real-slice regressions up to 22 T/all-case 43 T; no physical disk,
+  actual ROM workspace, full movie timing or global optimum is established.
+- **Additional boundary regression:** Add 12 candidate comparisons across four
+  literal/new-offset/reuse cases and three caps ending exactly atFFFFh, with
+  zero/repeated/final targets and forced IX-clobbering IRQs. Fast output/EOF
+  states match. This checks collision with the internal FFFF quota sentinel;
+  no decoder change is needed. Existing default code/instruction delta is 0 T.
+- **Final verification/decision:** All 56 library and 67 toolkit regressions pass
+  after integration;31 legacy layouts/six pinned resources remain exact.
+  Both freshly built isolated wheels exercise all five raw/three coroutine
+  Maximum profiles, all eight Wide profiles and compact combinations through
+  API/CLI/export. Archive new integration logs separately rather than replacing
+  the 18-profile checkpoint. Accept the optional finite measured frontier and
+  update[FRONTIER.md](libraries/FRONTIER.md); the broader 10%-per-feature goal
+  remains unachieved. No main merge/push or player/default promotion.
+  [Extended reproducer](libraries/tests/verify_frontier_integration.py),
+  [current source/proof/wheel/log authentication](libraries/evidence/frontier_completed_profiles_verification.json).
+
 ## 2026-10-20 — Authenticate integrated service-memory frontier and reject ignored resident layout flags
 
 - **Objective/baseline:** Continue in`codex/codec-speed-pass3` from`f947b226`,

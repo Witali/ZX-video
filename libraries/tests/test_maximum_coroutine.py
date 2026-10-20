@@ -70,5 +70,24 @@ class MaximumCoroutineTests(unittest.TestCase):
             for flags in (['--branch-tuned'],['--inline-tail-refill'],['--mega-tuned'],['--fast-jumps'],['--prefix-cap','228'],['--service-limit','10001']):
                 self.assertNotEqual(cli(args+flags).returncode,0,flags)
 
+    def test_exact_ffff_output_end_and_repeated_final_demand(self):
+        # FFFFh is also the internal final-quota sentinel. Valid output may
+        # end there without wrapping, so EOF must finish before any new yield.
+        from maximum_coroutine_native import execute
+        from zx0.tokens import Token,encode
+        cases=((b'A',[Token(0,1)]),
+               (bytes(range(255)),[Token(0,255)]),
+               (b'A'*255,[Token(0,1),Token(1,254,1)]),
+               (b'AB'*128,[Token(0,2),Token(2,2,2),Token(4,252,2)]))
+        for raw,tokens in cases:
+            payload=encode(raw,tokens);base=0xffff-len(raw)
+            targets=[0,0,1,len(raw),len(raw)]
+            before=execute(fast(core=0x8000,core_limit=0x8400,output_base=base),payload,raw,targets=targets)
+            for cap in (31,63,127):
+                after=execute(build(prefix_cap=cap,output_base=base),payload,raw,targets=targets,
+                              interrupts=True,force_irq=True,irq_clobber_ix=True)
+                self.assertEqual(after['output_cursors'],before['output_cursors'])
+                self.assertEqual(after['finished_states'],before['finished_states'])
+
 
 if __name__=='__main__':unittest.main()
