@@ -1,6 +1,6 @@
 # Focused optimization task
 
-Updated 2026-10-19. Use this brief to continue the project in this or a new
+Updated 2026-10-20. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
 Timing desk reference: [Z80 instruction T-states](libraries/Z80_TIMINGS.md).
@@ -37,18 +37,25 @@ The full 10%-per-library objective remains active until verified; smaller
 intermediate gains do not complete it. Movie/player qualification and the
 repository migration remain separate tasks.
 
-Current integrated compact checkpoint: [FRONTIER.md](libraries/FRONTIER.md)
-and [full authentication](libraries/evidence/compact_frontier_verification.json).
-Tuned+literal-prefix+tail ZX0 resident uses202 service bytes and gains2.073993%;
-ordinary coroutine437 service bytes/gain1.428663%. Tuned+nibble-prefill LZSA2
-resident228 service bytes/gain0.729487%; coroutine409/gain0.667769%. Counts
-include code/state and plain caller/private stack; the documented sample IRQ
-adds separately counted code/headroom. All real blocks improve, while directed
-blocks/slices can slow. 1,028 full comparisons/4,112 native runs, identical
-quota cursors,34+67 tests and both isolated wheels pass. Maximum-size profiles
-and stronger compact/intermediate candidates continue in the three explicitly
-authorized agent worktrees. Historical size-based rejection of the6998-byte
-LZSA2 raw prototype is superseded; service-cap/public-feature checks still apply.
+Current integrated18-profile checkpoint: [FRONTIER.md](libraries/FRONTIER.md)
+and [full authentication](libraries/evidence/frontier_integration_verification.json).
+ZX0 Maximum defaultprefix228 uses9,990 intrinsic service bytes/140,169,968realT,
+10.154667% vsFast but only3.796347% beyond separately tunedMega. Prefix127
+uses7,526 B/140,193,198 T, almost the same speed; prefix228 with the13+6-byte
+testIRQ totals10,009 B, outsidecap. Prefix227 fits thatIRQ at9,985 B; actual
+minimal3+2IRQ makes228total9,995. All417+56high-word cases, relocation andIRQ
+pass. LZSA2 Wide expanded/shared raw uses7,004/3,452 B and gains12.052517%/
+10.670425%; ordinary coroutine7,185/3,633 B and11.032826%/9.767664%. Each
+passes95+580cases, relocation,IRQ and exactquota cursors. Arbitrary Wide
+alignment adds up to255 B. Compact LZSA2 ordinary gains another cold-wrapper
+step: tuned+nibble+compact_sync+jumps404 B/19,242,382T (0.848261% vsFast).
+Smaller/faster Fast and other intermediates remain available, with directed
+block/slice regressions retained. All18public emitted profiles match complete
+saved native proofs;50library+67toolkit tests,31exactdefaults/sixresources and
+both isolated installed wheels pass. Historical proof/source hashes remain
+dated separately. Guarded Wide and same-quota maximumZX0 experiments continue
+in the existing authorized worktrees; raw-only speed does not establish them.
+The full objective remains active, without player/default/format promotion.
 
 First implementation step: optional `branch_tuned=True` / `--branch-tuned`
 preserves data and coroutine features while improving Fast resident real CPU

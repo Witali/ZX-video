@@ -1,6 +1,127 @@
 # Codec speed and total service-memory frontier
 
-Updated 2026-10-19. The user's current goal has three directions:
+Updated 2026-10-20. The cap is **10,000 bytes of library service memory**:
+all emitted hot/cold code, mutable state, tables, alignment, required caller
+and private stacks, scratch and internal buffers. Count embedded operands
+once. The user excludes compressed input and decoded output/history, which
+must be reported separately. Application IRQ requirements are additional.
+
+Compare unchanged data and the same ABI. The goal baseline is `f5a0362c`
+Fast, with the earlier `fast_jumps` included for LZSA2. Counts below are
+complete deterministic CPU T-states on the frozen real corpus; IRQ execution,
+ULA contention, ROM and physical disk latency are separate. Ordinary
+coroutines use256-byte demands and preserve every publication cursor.
+
+## Current resident choices
+
+| Codec/profile | Total service | Real CPU T | Gain vs Fast |
+| --- | ---: | ---: | ---: |
+| ZX0 Fast tuned | **197 B** | 153,706,279 | 1.478241% |
+| ZX0 Fast tuned +literal prefix +tail refill | **202 B** | 152,776,831 | 2.073993% |
+| ZX0 Mega tuned +fast jumps | **674 B** | 145,701,295 | 6.609229% |
+| ZX0 Maximum prefix31 | **4,454 B** | 141,618,798 | 9.226004% |
+| ZX0 Maximum prefix63 | **5,990 B** | 140,680,558 | 9.827392% |
+| ZX0 Maximum prefix127 | **7,526 B** | 140,193,198 | 10.139777% |
+| ZX0 Maximum prefix227 | **9,966 B** | 140,170,198 | 10.154520% |
+| ZX0 Maximum prefix228 | **9,990 B** | 140,169,968 | 10.154667% |
+| LZSA2 Fast jumps +compact branches | **222 B** | 17,724,654 | 0.227637% |
+| LZSA2 Fast jumps +tuned branches +nibble prefill | **228 B** | 17,635,500 | 0.729487% |
+| LZSA2 Wide shared | **3,452 B** | 15,869,483 | 10.670425% |
+| LZSA2 Wide expanded | **7,004 B** | 15,623,953 | 12.052517% |
+
+Baselines:156,012,520 T /364 real ZX0 blocks and17,765,094 T /21 real LZSA2
+blocks. Totals include four caller-stack bytes, except raw Wide needs six;
+the caller return counts. All static state,512-byte Wide tables and alignment
+padding already emitted in the code regions count once. Wide totals above
+assume aligned code; arbitrary alignment adds at most255 B (3,707/7,259 B).
+
+The197-byte ZX0 and222-byte LZSA2 profiles are smaller and faster than their
+211/223-service-byte Fast baselines. The compact combinations spend a few
+more bytes for further gains. Tuned Mega and shared Wide are useful middle
+choices. Prefix127 keeps almost all tested ZX0 maximum speed with2,474 B
+left under the cap. Prefix228 spends2,464 more bytes to save23,230 T beyond
+prefix127, only0.016570%. Expanded Wide is the fastest measured resident
+LZSA2 profile. A finite measured frontier does not prove global optimality.
+
+Maximum API/CLI defaults to prefix228. Its9,986 code/embedded-state bytes
+plus four stack bytes fit the service cap. The13-byte AF/AF' preserving IRQ
+example plus six extra stack bytes raises its total to **10,009 B**;
+prefix227 fits that example at **9,985 B**. An actually replayed minimal
+`EI; RETI` handler adds three code/two hardware-stack bytes, giving prefix228
+**9,995 B**. Declare the actual application's handler requirements through
+`irq_code_bytes`/`irq_stack_bytes`; the builder checks the combined reservation.
+
+The historical Mega used673 code bytes/146,422,274 real T, or674/146,421,546
+with its old startup jump. Its old advantage over Fast is not a new gain.
+The best Maximum improves the separately tuned Mega145,701,295 baseline
+by **3.796347%**, so the10.154667% Fast comparison does not establish another
+10% over the strongest existing Mega. [Mega audit](MEGA_OFFSET_AUDIT.md),
+[Maximum phases/prefixes](ZX0_MAXIMUM.md), [word suffix and IRQ limits](ZX0_WORD_PREFIX.md).
+
+## Current ordinary coroutine choices
+
+| Profile | Total service | Real CPU T | Gain vs same-feature Fast |
+| --- | ---: | ---: | ---: |
+| ZX0 tuned +tail refill | **407 B** | 178,298,032 | 1.280110% |
+| ZX0 tuned +literal prefix +tail refill | **437 B** | 178,029,731 | 1.428663% |
+| LZSA2 compact branches +prefill +compact sync +jumps | **402 B** | 19,252,552 | 0.795857% |
+| LZSA2 tuned branches +prefill +compact sync +jumps | **404 B** | 19,242,382 | 0.848261% |
+| LZSA2 Wide shared | **3,633 B** | 17,511,393 | 9.767664% |
+| LZSA2 Wide expanded | **7,185 B** | 17,265,863 | 11.032826% |
+
+Baselines:180,610,040 T ZX0 /19,407,004 T LZSA2. Totals include all wrappers,
+state, four caller-stack bytes and12 ZX0/14 compact LZSA2/16 Wide private
+stack bytes. Wide arbitrary alignment adds up to255 B:3,888/7,440 worst
+totals. The sample13-byte IRQ with six extra bytes on each active stack
+adds25 B to an ordinary coroutine. Other handlers need separate accounting.
+
+Keep slower cases explicit. Maximum has no slower complete case across417
+normal and56 high-word cases against retained Fast/tuned Mega. The compact
+ZX0 combination has one slower directed resident block and35 directed
+coroutine blocks, plus942 slower slices (145 real); all real complete blocks
+improve. Literal prefix alone slows two real blocks by617/17 T. Expanded/shared
+Wide have21/22 slower directed corpus blocks (max20/30 T),21/28 ordinary
+corpus slices and3/324 additional probe slices; no real ordinary slice slows.
+The original per-profile reports retain every case and their own comparison
+baseline; do not relabel a compact-sync-only slice delta as a goal-baseline delta.
+
+## Current integration verification
+
+The combined generators match18 saved complete native profile proofs exactly,
+including emitted regions, labels/patch locations where recorded, and unchanged
+input hashes. Original source/wheel authentication remains historical; the
+new report binds current generated code separately. All50 library and67
+toolkit/player regression tests pass. All31 legacy layouts and six pinned
+resources remain exact. Both isolated installed wheels exercise API/CLI/export,
+five Maximum profiles, both Wide modes and compact branch/sync combinations
+without converter imports.
+
+Normal corpora need at most15,878 resident compressed-input bytes and15,872
+output/history bytes separately. Maximum's high-word supplement deliberately
+tests much larger output, including49,151-byte matches. These are tested
+maxima, not universal format limits or a promise that arbitrary buffers fit
+in64 KiB. Guarded input has its own mandatory patcher/carry/supplier/stacks
+accounting; resident/ordinary evidence does not establish those extra features.
+Maximum ZX0's resident gain likewise does not prove a coroutine gain.
+The broader approximately ten-percent objective remains active.
+
+[Current integration authentication](evidence/frontier_integration_verification.json),
+[persistent instruction timing reference](Z80_TIMINGS.md).
+
+```powershell
+python libraries/tests/verify_frontier_integration.py --library-tests 50 --output libraries/evidence/frontier_integration_verification.json
+```
+
+The verifier consumes `.tmp/frontier-integration-{library,toolkit}.log`, wheels
+in `.tmp/frontier-integration-wheels/`, and isolated reports in
+`.tmp/frontier-integration-smoke-{zx0,lzsa}/`. No default player, format,
+release disk, or physical playback qualification changes here.
+
+## Archived compact checkpoint — 2026-10-19
+
+The following retains the earlier checkpoint and its dated evidence. Its
+future-work statements describe that point in time; current options are above.
+The user's three directions at that checkpoint were:
 
 1. Maximum speed within **10,000 bytes of total service memory**.
 2. Faster execution together with less service memory.

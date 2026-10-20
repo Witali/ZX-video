@@ -62,6 +62,13 @@ class WideProfileTests(unittest.TestCase):
                     elif line.startswith('db '):rebuilt[-1][1].extend(int(v[1:],16) for v in line[3:].split(','))
                 self.assertEqual([(at,bytes(data)) for at,data in rebuilt],
                                  build(variant,core=0x9103,core_limit=0xb000)[0])
+                # Explicit defaults are still unsupported; never silently ignore
+                # a caller's requested layout for a resident decoder.
+                for flag,value in (('--prefix','0x7c00'),('--prefix-limit','0x7d50'),
+                                   ('--stack','0x7be0'),('--output-base','0xc000')):
+                    rejected=code.replace(repr(argv),repr(argv+[flag,value]))
+                    result=subprocess.run([sys.executable,'-I','-c',rejected],capture_output=True)
+                    self.assertEqual(result.returncode,2,(variant,flag))
 
 
 if __name__ == '__main__':

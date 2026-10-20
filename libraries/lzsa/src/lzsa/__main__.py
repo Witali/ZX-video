@@ -33,7 +33,8 @@ def main():
                           help='pre-normalize low-nibble cache; +3 T refill, -7 T cached, +4 bytes')
     for name, default in (('core',0x8de0),('core-limit',0x8ef7),('prefix',0x7c00),
                           ('prefix-limit',0x7d50),('stack',0x7be0),('output-base',0xc000)):
-        assembly.add_argument('--'+name, type=lambda value:int(value,0), default=default)
+        assembly.add_argument('--'+name, type=lambda value:int(value,0),
+                              default=default if name in ('core','core-limit') else argparse.SUPPRESS)
     encoder = commands.add_parser('compress')
     encoder.add_argument('input', type=Path)
     encoder.add_argument('output', type=Path)
@@ -44,6 +45,10 @@ def main():
     decoder.add_argument('--limit', type=int, required=True)
     args = parser.parse_args()
     if args.command == 'build':
+        coroutine_defaults=dict(prefix=0x7c00,prefix_limit=0x7d50,stack=0x7be0,output_base=0xc000)
+        supplied_coroutine_layout=set(coroutine_defaults)&set(vars(args))
+        for name,value in coroutine_defaults.items():
+            if name not in supplied_coroutine_layout:setattr(args,name,value)
         if args.branch_tuned and args.compact_branches:parser.error('select one conditional branch policy')
         if args.profile in ('wide-coroutine','wide-shared-coroutine'):
             if (args.streaming or args.direct_header or args.word_state_init or args.restore_compare or
@@ -55,6 +60,8 @@ def main():
                 prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base,
                 shared_literals=args.profile=='wide-shared-coroutine')
         elif args.profile!='coroutine':
+            if supplied_coroutine_layout:
+                parser.error('resident-block profile does not use --prefix/--prefix-limit/--stack/--output-base')
             if args.streaming or args.direct_header or args.word_state_init or args.restore_compare or args.compact_sync:
                 parser.error('resident-block profile has no streaming/state wrapper')
             from .block import build as block_build

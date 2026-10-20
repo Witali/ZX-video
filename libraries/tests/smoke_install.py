@@ -133,6 +133,25 @@ for is_resident in (True,False):
     sys.argv=[name,'build',*cli,'--branch-tuned','--core','0x6000','--core-limit','0x6400','--output',str(at/'cli')]
     runpy.run_module(name+'.__main__',run_name='__main__')
     combined_profiles.append(dict(resident=is_resident,bytes=sum(len(data) for _,data in profile[0]),exact_export=True,options=options))
+compact_policies=[]
+if name=='lzsa':
+    for is_resident in (True,False):
+        for policy in ('compact_branches','branch_tuned'):
+            builder=importlib.import_module(name+'.'+('block' if is_resident else 'resumable')).build
+            options=dict(fast_jumps=True,nibble_prefill=True,**{policy:True})
+            if not is_resident:options['compact_sync']=True
+            profile=builder(core=0x6000,core_limit=0x6400,**options)
+            at=destination/(policy+('-block' if is_resident else '-coroutine'))
+            export(at,*profile)
+            cli=['--profile','fast-block'] if is_resident else ['--compact-sync']
+            sys.argv=[name,'build',*cli,'--fast-jumps','--nibble-prefill','--'+policy.replace('_','-'),
+                      '--core','0x6000','--core-limit','0x6400','--output',str(at/'cli')]
+            runpy.run_module(name+'.__main__',run_name='__main__')
+            api=json.loads((at/'metadata.json').read_text())
+            command=json.loads((at/'cli/metadata.json').read_text())
+            assert api['regions']==command['regions'] and api[policy]
+            compact_policies.append(dict(resident=is_resident,policy=policy,options=options,
+                                         code_bytes=sum(len(blob) for _,blob in profile[0]),exact_export=True))
 wide=[]
 if name=='lzsa':
     for variant in ('wide','wide-shared'):
@@ -209,6 +228,6 @@ report=dict(package=name,independent_wheel=True,custom_layout=True,cli_export=Tr
             resources=True,exact_round_trip=True,external_encoder=bool(encoder),resident_profiles=resident,
             fast_jump_profiles=fast_jumps,branch_tuned_profiles=tuned,literal_prefix_profiles=literal_prefix,
             inline_tail_refill_profiles=tail_refill,combined_profiles=combined_profiles,wide_profiles=wide,
-            mega_tuned_profiles=mega_tuned,maximum_profiles=maximum)
+            mega_tuned_profiles=mega_tuned,maximum_profiles=maximum,compact_policy_profiles=compact_policies)
 (destination/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report))

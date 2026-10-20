@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Authenticate integrated service-memory frontier and reject ignored resident layout flags
+
+- **Objective/baseline:** Continue in`codex/codec-speed-pass3` from`f947b226`,
+  comparing unchanged real inputs with`f5a0362c` Fast and retaining the stronger
+  historical Mega baseline separately. Apply the user's10,000-byte service cap
+  to all code/state/tables/padding/stacks/internal buffers; input/output separate.
+- **Change/results:** Bind18current public profiles byte-for-byte to their
+  complete saved native proofs, without relabeling historical source/wheel
+  authentication. Publish resident/ordinary compact, middle and maximum choices
+  in[FRONTIER.md](libraries/FRONTIER.md). ZX0 best9,990serviceB/140,169,968realT
+  is10.154667% vsFast,3.796347% beyond tunedMega; prefix127keeps nearly all
+  that speed at7,526B. LZSA2 expanded/shared raw7,004/3,452B gives12.052517%/
+  10.670425%; ordinary7,185/3,633B gives11.032826%/9.767664%. Compact ordinary
+  tuned+prefill+compact-sync+jumps404B/19,242,382T gives0.848261%. Complete
+  per-case regressions retain their actual original comparison baseline.
+- **Independent review/repair:** Reject explicit coroutine-only prefix/stack/
+  output-layout arguments for resident LZSA2 instead of silently ignoring them,
+  including values equal to defaults; add both Wide CLI regression checks.
+  Separate main-corpus and580additional directed rows in the aggregation so
+  legal short-word/EOF slowdowns are not omitted from a purported full list.
+  Library decoder bytes and default instruction paths are unchanged (0 T delta);
+  this CLI/verification repair has no new player hot path.
+- **Verification/decision:** All50library and67toolkit/player regressions pass;
+  31legacy layouts/six pinned resources remain exact. Both isolated installed
+  wheels pass public API/CLI/export, all five Maximum profiles, both Wide modes
+  and four compact branch/sync combinations without converter imports. Account
+  explicitly for cap228+diagnosticIRQ10,009B (outsidecap), cap227+thatIRQ9,985B,
+  cap228+minimalverifiedIRQ9,995B. Keep the optional finite measured frontier;
+  no new native replay or globaloptimum claim is made by byte-equivalence
+  authentication itself. Guarded/maximum-coroutine work and broader10% goal
+  remain active; no format/default/player/disk-release promotion.
+  [Reproducer](libraries/tests/verify_frontier_integration.py),
+  [current source/proof/wheel/log hashes](libraries/evidence/frontier_integration_verification.json).
+
 ## 2026-10-19 — Clarify service-memory frontier and verify compact feature integration
 
 - **User scope:** Keep existing compressed-data compatibility while pursuing
