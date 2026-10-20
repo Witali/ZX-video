@@ -1,5 +1,33 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Document decoder choices with function links and original Fast comparisons
+
+- **Objective/scope:** Save the user's variant table with direct function/file
+  links and exact selection arguments in `codex/codec-speed-pass3`, from
+  `fb994a6f`. Cover resident, ordinary coroutine and guarded-input choices,
+  including the smallest valid ZX0 Standard/LZSA2 Small implementations.
+- **Baselines/results:** [Decoder variants](libraries/DECODER_VARIANTS.md)
+  records 35 public calls, service memory and saved real-corpus CPU totals.
+  Show both pre-policy adapted project Fast (all optional tuning off) and
+  `f5a0362c` Fast (LZSA2 includes fast jumps). These are same-ABI, unchanged-input
+  comparisons, not measurements of an unmodified upstream executable.
+  Compute each CPU-time delta with Decimal as `100 * (candidate/reference - 1)`;
+  negative means faster. Preserve separate consumer/full-reference guarded
+  memory, input/output exclusions and IRQ/alignment/runtime restrictions.
+- **Verification:** The [reproducer](libraries/tests/document_decoder_variants.py)
+  builds all 35 documented calls and byte-compares every ORG/DB export with
+  its generated regions. Authenticate current profiles against saved native
+  evidence, validate source-function anchors/local links and bind the original
+  guarded counts to authenticated recordings of the same 63-case stream.
+  [Validation report](libraries/evidence/decoder_variants_verification.json)
+  records exact calls, memory arithmetic, both references and provenance hashes.
+- **Decision/limits:** Publish the table and link it from the README/frontier
+  and task brief. Reuse complete saved timings; no new native benchmark,
+  player/default/format change or release qualification is claimed. Decoder
+  code and instruction delta are 0 T. The previous 56 library/67 toolkit
+  regressions remain historical evidence; this documentation change does not
+  rerun or relabel them. No main merge or push is part of this change.
+
 ## 2026-10-20 — Complete integration of guarded LZSA2 and same-quota Maximum ZX0
 
 - **Objective/baseline:** Finish the authorized optional-profile milestone in

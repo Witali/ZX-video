@@ -39,6 +39,11 @@ repository migration remain separate tasks.
 
 Current completed 25-profile milestone: [FRONTIER.md](libraries/FRONTIER.md)
 and [full authentication](libraries/evidence/frontier_completed_profiles_verification.json).
+The follow-up [variant table](libraries/DECODER_VARIANTS.md) documents 35 exact
+builder calls with function/file links, all service memory and CPU deltas
+against both original adapted Fast and the pass baseline. Its
+[reproducer](libraries/tests/document_decoder_variants.py) validates current
+calls/exports against saved evidence; it does not run new native benchmarks.
 ZX0 Maximum resident defaults to prefix 228: 9,990 intrinsic service bytes,
 140,169,968 real T, 10.154667% vs Fast but only 3.796347% beyond tuned Mega.
 Prefix 127 uses 7,526 B/140,193,198 T, almost the same speed. Prefix 228 plus

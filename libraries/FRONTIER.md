@@ -12,6 +12,11 @@ complete deterministic CPU T-states on the frozen real corpus; IRQ execution,
 ULA contention, ROM and physical disk latency are separate. Ordinary
 coroutines use 256-byte demands and preserve every publication cursor.
 
+For direct links to each public builder and implementation file, copyable
+selection arguments and comparisons with both original Fast and this pass's
+baseline, see [Decoder variants](DECODER_VARIANTS.md). That table also retains
+the slower Standard/Small choices with the lowest measured service memory.
+
 ## Current resident choices
 
 | Codec/profile | Total service | Real CPU T | Gain vs Fast |

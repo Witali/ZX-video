@@ -1,0 +1,1199 @@
+{
+  "date": "2026-10-20",
+  "complete": true,
+  "documentation_only": true,
+  "native_benchmark_rerun": false,
+  "metric": "100*(candidate_CPU_T/reference_CPU_T-1); negative is faster",
+  "original_reference": "adapted Fast before optional policies, same features/corpus",
+  "pass_reference": "f5a0362c Fast; LZSA2 includes fast_jumps",
+  "document_sha256": "f9704390362b1287a2bc3d4527466e8a7425f3e457be3d3f817b9ff7ab4bf6bc",
+  "checked_public_calls_and_exact_exports": 35,
+  "checked_local_links": 53,
+  "references": [
+    {
+      "codec": "zx0",
+      "kind": "block",
+      "original_fast_cpu_tstates": 156012520,
+      "pass_baseline_cpu_tstates": 156012520
+    },
+    {
+      "codec": "zx0",
+      "kind": "coroutine",
+      "original_fast_cpu_tstates": 180610040,
+      "pass_baseline_cpu_tstates": 180610040
+    },
+    {
+      "codec": "lzsa2",
+      "kind": "block",
+      "original_fast_cpu_tstates": 17767606,
+      "pass_baseline_cpu_tstates": 17765094
+    },
+    {
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "original_fast_cpu_tstates": 19412006,
+      "pass_baseline_cpu_tstates": 19407004
+    },
+    {
+      "codec": "lzsa2",
+      "kind": "guarded-call",
+      "original_fast_cpu_tstates": 23966776,
+      "pass_baseline_cpu_tstates": 23961774
+    },
+    {
+      "codec": "lzsa2",
+      "kind": "guarded-direct",
+      "original_fast_cpu_tstates": 21761090,
+      "pass_baseline_cpu_tstates": 21756088
+    }
+  ],
+  "profiles": [
+    {
+      "name": "ZX0 Standard (minimum)",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "standard"
+      },
+      "display_call": "zx0.block.build(**SMALL, variant='standard')",
+      "source_file": "zx0/src/zx0/block.py",
+      "source_line": 7,
+      "code_state_table_padding_bytes": 68,
+      "service_bytes": 74,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 201490104,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "29.14995796491204680239765370",
+      "delta_time_vs_original_percent": "29.14995796491204680239765370",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 68,
+          "sha256": "31bd3ab5925774a364ead81ea1e27e9d5bb4adf26dacce2cc3b1a4e0f188d2c8"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Turbo",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "turbo"
+      },
+      "display_call": "zx0.block.build(**SMALL, variant='turbo')",
+      "source_file": "zx0/src/zx0/block.py",
+      "source_line": 7,
+      "code_state_table_padding_bytes": 126,
+      "service_bytes": 130,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 160653056,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "2.974463844311982140920485100",
+      "delta_time_vs_original_percent": "2.974463844311982140920485100",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 126,
+          "sha256": "a9e31b3d78214b99a485fc7664cce77ab3938f425513c68df4d41e5b6c3e8609"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Fast (original and pass baseline)",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "fast"
+      },
+      "display_call": "zx0.block.build(**SMALL, variant='fast')",
+      "source_file": "zx0/src/zx0/block.py",
+      "source_line": 7,
+      "code_state_table_padding_bytes": 207,
+      "service_bytes": 211,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 156012520,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "0",
+      "delta_time_vs_original_percent": "0",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 207,
+          "sha256": "15bc6545e15141dd3783cc05d4c0d973cff5c8c1018a0f38b8eb53e2d9d99cb5"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Mega (original)",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "mega"
+      },
+      "display_call": "zx0.block.build(**SMALL, variant='mega')",
+      "source_file": "zx0/src/zx0/block.py",
+      "source_line": 7,
+      "code_state_table_padding_bytes": 673,
+      "service_bytes": 677,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 146422274,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-6.147100245544396052316826880",
+      "delta_time_vs_original_percent": "-6.147100245544396052316826880",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 673,
+          "sha256": "8281d55d07b4314de9896b3efa52b713c7bd0d6bc04b6ce058dfcba73cb897e3"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Fast tuned",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "branch_tuned": true
+      },
+      "display_call": "zx0.block.build(**SMALL, branch_tuned=True)",
+      "source_file": "zx0/src/zx0/block.py",
+      "source_line": 7,
+      "code_state_table_padding_bytes": 193,
+      "service_bytes": 197,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 153706279,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-1.478240977070301793727836710",
+      "delta_time_vs_original_percent": "-1.478240977070301793727836710",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 193,
+          "sha256": "c3a85be5104724cc0169258404217422eaa8f2df8c79bd538f8f12506c0384c2"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Fast tuned +prefix +tail",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "branch_tuned": true,
+        "literal_prefix": true,
+        "inline_tail_refill": true
+      },
+      "display_call": "zx0.block.build(**SMALL, branch_tuned=True, literal_prefix=True, inline_tail_refill=True)",
+      "source_file": "zx0/src/zx0/block.py",
+      "source_line": 7,
+      "code_state_table_padding_bytes": 198,
+      "service_bytes": 202,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 152776831,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-2.073993164138365305553682490",
+      "delta_time_vs_original_percent": "-2.073993164138365305553682490",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 198,
+          "sha256": "eb227a88524937f25a44443d49e5d39aeff9f9686de7f52ce17879d3d91aeb1e"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Mega tuned",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "mega",
+        "mega_tuned": true,
+        "fast_jumps": true
+      },
+      "display_call": "zx0.block.build(**SMALL, variant='mega', mega_tuned=True, fast_jumps=True)",
+      "source_file": "zx0/src/zx0/block.py",
+      "source_line": 7,
+      "code_state_table_padding_bytes": 670,
+      "service_bytes": 674,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 145701295,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-6.609229182375875987388704450",
+      "delta_time_vs_original_percent": "-6.609229182375875987388704450",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 670,
+          "sha256": "aa0823f48bf1e9201ccafd3951db929bef83a6f89362c208b34530f5f39a3d32"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum 31",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum.build",
+      "kwargs": {
+        "prefix_cap": 31
+      },
+      "display_call": "zx0.maximum.build(prefix_cap=31)",
+      "source_file": "zx0/src/zx0/maximum.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 4450,
+      "service_bytes": 4454,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 141618798,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-9.226004425798647441884792320",
+      "delta_time_vs_original_percent": "-9.226004425798647441884792320",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4450,
+          "sha256": "6b9cd8bfa1c231e587559aa9aa62d93a035a0a281068c103e02740ba730bf473"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum 63",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum.build",
+      "kwargs": {
+        "prefix_cap": 63
+      },
+      "display_call": "zx0.maximum.build(prefix_cap=63)",
+      "source_file": "zx0/src/zx0/maximum.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 5986,
+      "service_bytes": 5990,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 140680558,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-9.827392058022010028425923770",
+      "delta_time_vs_original_percent": "-9.827392058022010028425923770",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 5986,
+          "sha256": "130c273560b31eae89fa8055cd4cdff7aed7ce7437043a8e7f32deec8a24cba9"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum 127",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum.build",
+      "kwargs": {
+        "prefix_cap": 127
+      },
+      "display_call": "zx0.maximum.build(prefix_cap=127)",
+      "source_file": "zx0/src/zx0/maximum.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 7522,
+      "service_bytes": 7526,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 140193198,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-10.13977724351866119462720043",
+      "delta_time_vs_original_percent": "-10.13977724351866119462720043",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 7522,
+          "sha256": "397d95917f588ebe50255c19fcec6f24780728a5fe310ba8d1823a7ea32db221"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum 227",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum.build",
+      "kwargs": {
+        "prefix_cap": 227
+      },
+      "display_call": "zx0.maximum.build(prefix_cap=227)",
+      "source_file": "zx0/src/zx0/maximum.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 9962,
+      "service_bytes": 9966,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 140170198,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-10.15451965008962101246746094",
+      "delta_time_vs_original_percent": "-10.15451965008962101246746094",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9962,
+          "sha256": "9653b9961244b7fa80bb1719f211fc66170344c6a1d87d81fa94ba136f719f92"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum 228",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum.build",
+      "kwargs": {
+        "prefix_cap": 228
+      },
+      "display_call": "zx0.maximum.build(prefix_cap=228)",
+      "source_file": "zx0/src/zx0/maximum.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 9986,
+      "service_bytes": 9990,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 140169968,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-10.15466707415533061064586355",
+      "delta_time_vs_original_percent": "-10.15466707415533061064586355",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9986,
+          "sha256": "edfb49cb0f704ecc71c663a61f4fca3a96bc5f773628500d02609bc0dcd486ca"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Fast (original)",
+      "codec": "lzsa2",
+      "kind": "block",
+      "builder": "lzsa.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": false
+      },
+      "display_call": "lzsa.block.build(**SMALL, fast_jumps=False)",
+      "source_file": "lzsa/src/lzsa/block.py",
+      "source_line": 5,
+      "code_state_table_padding_bytes": 218,
+      "service_bytes": 222,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 17767606,
+      "pass_baseline_cpu_tstates": 17765094,
+      "original_fast_cpu_tstates": 17767606,
+      "delta_time_vs_pass_percent": "0.014140088422836377899267000",
+      "delta_time_vs_original_percent": "0",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 218,
+          "sha256": "87c0687ecd704ca0328215e620d66a17ebb274e84c9626fc82e49b20a584d8d7"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Fast (pass baseline)",
+      "codec": "lzsa2",
+      "kind": "block",
+      "builder": "lzsa.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true
+      },
+      "display_call": "lzsa.block.build(**SMALL, fast_jumps=True)",
+      "source_file": "lzsa/src/lzsa/block.py",
+      "source_line": 5,
+      "code_state_table_padding_bytes": 219,
+      "service_bytes": 223,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 17765094,
+      "pass_baseline_cpu_tstates": 17765094,
+      "original_fast_cpu_tstates": 17767606,
+      "delta_time_vs_pass_percent": "0",
+      "delta_time_vs_original_percent": "-0.0141380892845102485951118000",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 219,
+          "sha256": "dcd41d0d4bc0b650c7fd99eed23531afecea2849453f3fbfd9fa6ebecc36fd15"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Small (minimum)",
+      "codec": "lzsa2",
+      "kind": "block",
+      "builder": "lzsa.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "small"
+      },
+      "display_call": "lzsa.block.build(**SMALL, variant='small')",
+      "source_file": "lzsa/src/lzsa/block.py",
+      "source_line": 5,
+      "code_state_table_padding_bytes": 137,
+      "service_bytes": 145,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 20423546,
+      "pass_baseline_cpu_tstates": 17765094,
+      "original_fast_cpu_tstates": 17767606,
+      "delta_time_vs_pass_percent": "14.96446908752635927510431410",
+      "delta_time_vs_original_percent": "14.94821530824130161373456840",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 137,
+          "sha256": "768649a26470989e971e111ad7926ad615ffe3149e913e0e55eb2a4d9e4085db"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Fast compact branches",
+      "codec": "lzsa2",
+      "kind": "block",
+      "builder": "lzsa.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true,
+        "compact_branches": true
+      },
+      "display_call": "lzsa.block.build(**SMALL, fast_jumps=True, compact_branches=True)",
+      "source_file": "lzsa/src/lzsa/block.py",
+      "source_line": 5,
+      "code_state_table_padding_bytes": 218,
+      "service_bytes": 222,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 17724654,
+      "pass_baseline_cpu_tstates": 17765094,
+      "original_fast_cpu_tstates": 17767606,
+      "delta_time_vs_pass_percent": "-0.2276374107561716250980715300",
+      "delta_time_vs_original_percent": "-0.2417433164603042188125963600",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 218,
+          "sha256": "2e0f085e369c1af31aeb9e2a63ed48b925ef9cc6da2a07211225155b167d82f2"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Fast tuned +prefill",
+      "codec": "lzsa2",
+      "kind": "block",
+      "builder": "lzsa.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true,
+        "branch_tuned": true,
+        "nibble_prefill": true
+      },
+      "display_call": "lzsa.block.build(**SMALL, fast_jumps=True, branch_tuned=True, nibble_prefill=True)",
+      "source_file": "lzsa/src/lzsa/block.py",
+      "source_line": 5,
+      "code_state_table_padding_bytes": 224,
+      "service_bytes": 228,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 17635500,
+      "pass_baseline_cpu_tstates": 17765094,
+      "original_fast_cpu_tstates": 17767606,
+      "delta_time_vs_pass_percent": "-0.7294867114128413843461790900",
+      "delta_time_vs_original_percent": "-0.7435216652147734478128342100",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 224,
+          "sha256": "3605f063aeb52250e0e75e695248fe5caf3463a51f86043c8a3236766beff35e"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Wide shared",
+      "codec": "lzsa2",
+      "kind": "block",
+      "builder": "lzsa.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "variant": "wide-shared"
+      },
+      "display_call": "lzsa.block.build(**WIDE, variant='wide-shared')",
+      "source_file": "lzsa/src/lzsa/block.py",
+      "source_line": 5,
+      "code_state_table_padding_bytes": 3446,
+      "service_bytes": 3452,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 15869483,
+      "pass_baseline_cpu_tstates": 17765094,
+      "original_fast_cpu_tstates": 17767606,
+      "delta_time_vs_pass_percent": "-10.67042482297025841799654986",
+      "delta_time_vs_original_percent": "-10.68305431806626058682300812",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 3446,
+          "sha256": "42026f90d505ee0ec5c6e15a3448380062b9005daa242662c0a21e5c27ba6a68"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Wide expanded",
+      "codec": "lzsa2",
+      "kind": "block",
+      "builder": "lzsa.block.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "variant": "wide"
+      },
+      "display_call": "lzsa.block.build(**WIDE, variant='wide')",
+      "source_file": "lzsa/src/lzsa/block.py",
+      "source_line": 5,
+      "code_state_table_padding_bytes": 6998,
+      "service_bytes": 7004,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 15623953,
+      "pass_baseline_cpu_tstates": 17765094,
+      "original_fast_cpu_tstates": 17767606,
+      "delta_time_vs_pass_percent": "-12.05251714401286027532418348",
+      "delta_time_vs_original_percent": "-12.06495123766251908107372485",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 6998,
+          "sha256": "233c435c3c1902c5ef651cc2fbc1d566604a44bc509dd5f32c7287aa0c270d8a"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Fast (original and pass baseline)",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "builder": "zx0.resumable.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792
+      },
+      "display_call": "zx0.resumable.build(**SMALL)",
+      "source_file": "zx0/src/zx0/resumable.py",
+      "source_line": 21,
+      "code_state_table_padding_bytes": 401,
+      "service_bytes": 417,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 180610040,
+      "pass_baseline_cpu_tstates": 180610040,
+      "original_fast_cpu_tstates": 180610040,
+      "delta_time_vs_pass_percent": "0",
+      "delta_time_vs_original_percent": "0",
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 125,
+          "sha256": "8a7c5376d9fe5e188ab6ff60cf0f4e6ff4c3eff78e950c8e3ea32ff8b145da5b"
+        },
+        {
+          "address": 32768,
+          "bytes": 276,
+          "sha256": "fd0db8c3c0c6d2c5aa538ed25fdc0b20671b9a45ad1dd589ccedcf87e16da391"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 tuned +tail",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "builder": "zx0.resumable.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "branch_tuned": true,
+        "inline_tail_refill": true
+      },
+      "display_call": "zx0.resumable.build(**SMALL, branch_tuned=True, inline_tail_refill=True)",
+      "source_file": "zx0/src/zx0/resumable.py",
+      "source_line": 21,
+      "code_state_table_padding_bytes": 391,
+      "service_bytes": 407,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 178298032,
+      "pass_baseline_cpu_tstates": 180610040,
+      "original_fast_cpu_tstates": 180610040,
+      "delta_time_vs_pass_percent": "-1.280110452331442925321316580",
+      "delta_time_vs_original_percent": "-1.280110452331442925321316580",
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 125,
+          "sha256": "2c187cb8643337848593c2f9893b0ec303a11fbca6fb29f215a385415254d172"
+        },
+        {
+          "address": 32768,
+          "bytes": 266,
+          "sha256": "851c75b98491c3f5e9e15d5deb1421b77b7684d77f9008ab4085803dc7e2067c"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 tuned +prefix +tail",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "builder": "zx0.resumable.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "branch_tuned": true,
+        "literal_prefix": true,
+        "inline_tail_refill": true
+      },
+      "display_call": "zx0.resumable.build(**SMALL, branch_tuned=True, literal_prefix=True, inline_tail_refill=True)",
+      "source_file": "zx0/src/zx0/resumable.py",
+      "source_line": 21,
+      "code_state_table_padding_bytes": 421,
+      "service_bytes": 437,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 178029731,
+      "pass_baseline_cpu_tstates": 180610040,
+      "original_fast_cpu_tstates": 180610040,
+      "delta_time_vs_pass_percent": "-1.428663102006953766246881960",
+      "delta_time_vs_original_percent": "-1.428663102006953766246881960",
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 131,
+          "sha256": "10b3f6fdd3afdeea27cf393ec5758c70d063622177691263c2f01325a5b711ff"
+        },
+        {
+          "address": 32768,
+          "bytes": 290,
+          "sha256": "b3d1fa3244bbaf23f06533d7feb1e532c18384c455766437d3b279c238fe669c"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum coroutine 31",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "builder": "zx0.maximum_coroutine.build",
+      "kwargs": {
+        "prefix_cap": 31
+      },
+      "display_call": "zx0.maximum_coroutine.build(prefix_cap=31)",
+      "source_file": "zx0/src/zx0/maximum_coroutine.py",
+      "source_line": 6,
+      "code_state_table_padding_bytes": 4885,
+      "service_bytes": 4901,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 167431057,
+      "pass_baseline_cpu_tstates": 180610040,
+      "original_fast_cpu_tstates": 180610040,
+      "delta_time_vs_pass_percent": "-7.296927125424478063345758630",
+      "delta_time_vs_original_percent": "-7.296927125424478063345758630",
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 159,
+          "sha256": "35ecd4628428cf8c941348b3805cc1f3bcbd18fc0fd532384254c7e1609f3d7d"
+        },
+        {
+          "address": 32768,
+          "bytes": 4726,
+          "sha256": "158f6f6ce20b953568ca13f84b4e23d5651cd308cc4db6ceea415d472b04cf82"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum coroutine 63",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "builder": "zx0.maximum_coroutine.build",
+      "kwargs": {
+        "prefix_cap": 63
+      },
+      "display_call": "zx0.maximum_coroutine.build(prefix_cap=63)",
+      "source_file": "zx0/src/zx0/maximum_coroutine.py",
+      "source_line": 6,
+      "code_state_table_padding_bytes": 6421,
+      "service_bytes": 6437,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 166492817,
+      "pass_baseline_cpu_tstates": 180610040,
+      "original_fast_cpu_tstates": 180610040,
+      "delta_time_vs_pass_percent": "-7.816410981360726125745833400",
+      "delta_time_vs_original_percent": "-7.816410981360726125745833400",
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 159,
+          "sha256": "35ecd4628428cf8c941348b3805cc1f3bcbd18fc0fd532384254c7e1609f3d7d"
+        },
+        {
+          "address": 32768,
+          "bytes": 6262,
+          "sha256": "12f82e20a707fd9924f6ea53abf798191dd1c1a248a979f4ba19db09a2c59a24"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum coroutine 127",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "builder": "zx0.maximum_coroutine.build",
+      "kwargs": {
+        "prefix_cap": 127
+      },
+      "display_call": "zx0.maximum_coroutine.build(prefix_cap=127)",
+      "source_file": "zx0/src/zx0/maximum_coroutine.py",
+      "source_line": 6,
+      "code_state_table_padding_bytes": 7957,
+      "service_bytes": 7973,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 166005457,
+      "pass_baseline_cpu_tstates": 180610040,
+      "original_fast_cpu_tstates": 180610040,
+      "delta_time_vs_pass_percent": "-8.086252015668674897585981380",
+      "delta_time_vs_original_percent": "-8.086252015668674897585981380",
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 159,
+          "sha256": "35ecd4628428cf8c941348b3805cc1f3bcbd18fc0fd532384254c7e1609f3d7d"
+        },
+        {
+          "address": 32768,
+          "bytes": 7798,
+          "sha256": "fab313850790d524e3bd29085b6a8b9d2d5952ab6abb312c4834329bd724f3d7"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Fast (original)",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "builder": "lzsa.resumable.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": false
+      },
+      "display_call": "lzsa.resumable.build(**SMALL, fast_jumps=False)",
+      "source_file": "lzsa/src/lzsa/resumable.py",
+      "source_line": 15,
+      "code_state_table_padding_bytes": 384,
+      "service_bytes": 402,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 19412006,
+      "pass_baseline_cpu_tstates": 19407004,
+      "original_fast_cpu_tstates": 19412006,
+      "delta_time_vs_pass_percent": "0.025774199871345417355507300",
+      "delta_time_vs_original_percent": "0",
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 134,
+          "sha256": "ec1d7b085ecaea6ecec676f8aa36da1966a430b20e949449653ee12a80268be1"
+        },
+        {
+          "address": 32768,
+          "bytes": 250,
+          "sha256": "079fcdfa6907f1af556055ca0a24dc5c719674340de7a908b0944d838d5679bf"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Fast (pass baseline)",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "builder": "lzsa.resumable.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true
+      },
+      "display_call": "lzsa.resumable.build(**SMALL, fast_jumps=True)",
+      "source_file": "lzsa/src/lzsa/resumable.py",
+      "source_line": 15,
+      "code_state_table_padding_bytes": 386,
+      "service_bytes": 404,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 19407004,
+      "pass_baseline_cpu_tstates": 19407004,
+      "original_fast_cpu_tstates": 19412006,
+      "delta_time_vs_pass_percent": "0",
+      "delta_time_vs_original_percent": "-0.0257675584893184145935252600",
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 134,
+          "sha256": "c6cb2f69cba9429ccae03204cbdbff0be74279481212d40184c26ba2d2f84bd5"
+        },
+        {
+          "address": 32768,
+          "bytes": 252,
+          "sha256": "344431004c4ddb2bb0337240dd0d41a4072d9bea6a7765e227cbd6f9220d12e4"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Fast compact_branches +prefill +sync",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "builder": "lzsa.resumable.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true,
+        "nibble_prefill": true,
+        "compact_sync": true,
+        "compact_branches": true
+      },
+      "display_call": "lzsa.resumable.build(**SMALL, fast_jumps=True, nibble_prefill=True, compact_sync=True, compact_branches=True)",
+      "source_file": "lzsa/src/lzsa/resumable.py",
+      "source_line": 15,
+      "code_state_table_padding_bytes": 384,
+      "service_bytes": 402,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 19252552,
+      "pass_baseline_cpu_tstates": 19407004,
+      "original_fast_cpu_tstates": 19412006,
+      "delta_time_vs_pass_percent": "-0.7958570009054463017578602000",
+      "delta_time_vs_original_percent": "-0.8214194864765650700911590500",
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 129,
+          "sha256": "dc35787245d00f9653fd1a92cc52b9d42d342dd1d9626f3e9ffdddf6cc097aea"
+        },
+        {
+          "address": 32768,
+          "bytes": 255,
+          "sha256": "df36daf3e343228dd01bb425edc6f3911d831e437c002f10a57d529bd6cc96c2"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Fast branch_tuned +prefill +sync",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "builder": "lzsa.resumable.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true,
+        "nibble_prefill": true,
+        "compact_sync": true,
+        "branch_tuned": true
+      },
+      "display_call": "lzsa.resumable.build(**SMALL, fast_jumps=True, nibble_prefill=True, compact_sync=True, branch_tuned=True)",
+      "source_file": "lzsa/src/lzsa/resumable.py",
+      "source_line": 15,
+      "code_state_table_padding_bytes": 386,
+      "service_bytes": 404,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 19242382,
+      "pass_baseline_cpu_tstates": 19407004,
+      "original_fast_cpu_tstates": 19412006,
+      "delta_time_vs_pass_percent": "-0.8482607619393493194518844800",
+      "delta_time_vs_original_percent": "-0.8738097443406930741727568000",
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 129,
+          "sha256": "4eb802fc83f1605de594c95a28b438ce8223ebbeb558448731858136a26a9c82"
+        },
+        {
+          "address": 32768,
+          "bytes": 257,
+          "sha256": "d3ac5b5639e5ad167fe8425ddf1a227ee8f18d1b66be834574270a40d71312f7"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Wide shared",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "builder": "lzsa.wide_coroutine.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "shared_literals": true
+      },
+      "display_call": "lzsa.wide_coroutine.build(**WIDE, shared_literals=True)",
+      "source_file": "lzsa/src/lzsa/wide_coroutine.py",
+      "source_line": 16,
+      "code_state_table_padding_bytes": 3613,
+      "service_bytes": 3633,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 17511393,
+      "pass_baseline_cpu_tstates": 19407004,
+      "original_fast_cpu_tstates": 19412006,
+      "delta_time_vs_pass_percent": "-9.767664292747092750637862500",
+      "delta_time_vs_original_percent": "-9.790914962626737288253465410",
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 134,
+          "sha256": "b1a76102bb811d32e4fdb1a71baf965a0118c4a28d1b3b481283c47aa102982d"
+        },
+        {
+          "address": 32768,
+          "bytes": 3479,
+          "sha256": "9a37fd20a0dbc14a63174202b94b69b78db407800ee9555b7fcab96c0a212420"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Wide expanded",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "builder": "lzsa.wide_coroutine.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "shared_literals": false
+      },
+      "display_call": "lzsa.wide_coroutine.build(**WIDE, shared_literals=False)",
+      "source_file": "lzsa/src/lzsa/wide_coroutine.py",
+      "source_line": 16,
+      "code_state_table_padding_bytes": 7165,
+      "service_bytes": 7185,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 17265863,
+      "pass_baseline_cpu_tstates": 19407004,
+      "original_fast_cpu_tstates": 19412006,
+      "delta_time_vs_pass_percent": "-11.03282608691171496641109571",
+      "delta_time_vs_original_percent": "-11.05575075548606362474851904",
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 134,
+          "sha256": "b1a76102bb811d32e4fdb1a71baf965a0118c4a28d1b3b481283c47aa102982d"
+        },
+        {
+          "address": 32768,
+          "bytes": 7031,
+          "sha256": "36eb08e45eb79096d8d1d286495ef9a49d1f5c491d34ddabc6f03186cc0ed2af"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Wide expanded call",
+      "codec": "lzsa2",
+      "kind": "guarded-call",
+      "builder": "lzsa.wide_coroutine.build",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "stack": 31712,
+        "output_base": 49152,
+        "streaming": true,
+        "direct_header": false,
+        "shared_literals": false
+      },
+      "display_call": "lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=False, shared_literals=False)",
+      "source_file": "lzsa/src/lzsa/wide_coroutine.py",
+      "source_line": 16,
+      "code_state_table_padding_bytes": 7316,
+      "service_bytes": 7344,
+      "full_reference_service_bytes": 9881,
+      "real_cpu_tstates": 21822661,
+      "pass_baseline_cpu_tstates": 23961774,
+      "original_fast_cpu_tstates": 23966776,
+      "delta_time_vs_pass_percent": "-8.927189614591974701038412260",
+      "delta_time_vs_original_percent": "-8.946197018739608531410315680",
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 276,
+          "sha256": "bff3f729a95549efe6084e6068110220b90c5c7cb1baf59c62d62baf43972cb8"
+        },
+        {
+          "address": 40960,
+          "bytes": 7040,
+          "sha256": "ebab0be4f37db1346d0336301421e838f20f12821c5ab1df27ada7fd7b6d3060"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Wide expanded direct",
+      "codec": "lzsa2",
+      "kind": "guarded-direct",
+      "builder": "lzsa.wide_coroutine.build",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "stack": 31712,
+        "output_base": 49152,
+        "streaming": true,
+        "direct_header": true,
+        "shared_literals": false
+      },
+      "display_call": "lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=True, shared_literals=False)",
+      "source_file": "lzsa/src/lzsa/wide_coroutine.py",
+      "source_line": 16,
+      "code_state_table_padding_bytes": 7308,
+      "service_bytes": 7336,
+      "full_reference_service_bytes": 9870,
+      "real_cpu_tstates": 19616975,
+      "pass_baseline_cpu_tstates": 21756088,
+      "original_fast_cpu_tstates": 21761090,
+      "delta_time_vs_pass_percent": "-9.832250172917116349226018940",
+      "delta_time_vs_original_percent": "-9.852976114707489376681039410",
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 271,
+          "sha256": "e4730d91b371c9f2566d8a60a5364dbb056f0a642c2c6e0b0086dca5811de1f9"
+        },
+        {
+          "address": 40960,
+          "bytes": 7037,
+          "sha256": "7c33c4799b6a8c30593a6375b0757640ee2481ff5439073ae2d2b83920f2db3a"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Wide shared call",
+      "codec": "lzsa2",
+      "kind": "guarded-call",
+      "builder": "lzsa.wide_coroutine.build",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "stack": 31712,
+        "output_base": 49152,
+        "streaming": true,
+        "direct_header": false,
+        "shared_literals": true
+      },
+      "display_call": "lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=False, shared_literals=True)",
+      "source_file": "lzsa/src/lzsa/wide_coroutine.py",
+      "source_line": 16,
+      "code_state_table_padding_bytes": 3764,
+      "service_bytes": 3792,
+      "full_reference_service_bytes": 6329,
+      "real_cpu_tstates": 22068191,
+      "pass_baseline_cpu_tstates": 23961774,
+      "original_fast_cpu_tstates": 23966776,
+      "delta_time_vs_pass_percent": "-7.902515898864583231608811600",
+      "delta_time_vs_original_percent": "-7.921737158139250769481886090",
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 276,
+          "sha256": "bff3f729a95549efe6084e6068110220b90c5c7cb1baf59c62d62baf43972cb8"
+        },
+        {
+          "address": 40960,
+          "bytes": 3488,
+          "sha256": "668bc6933b011b9f22cb18e95017e9fa98f467d0c3b96c7c35829353faaadfbe"
+        }
+      ]
+    },
+    {
+      "name": "LZSA2 Wide shared direct",
+      "codec": "lzsa2",
+      "kind": "guarded-direct",
+      "builder": "lzsa.wide_coroutine.build",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "stack": 31712,
+        "output_base": 49152,
+        "streaming": true,
+        "direct_header": true,
+        "shared_literals": true
+      },
+      "display_call": "lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=True, shared_literals=True)",
+      "source_file": "lzsa/src/lzsa/wide_coroutine.py",
+      "source_line": 16,
+      "code_state_table_padding_bytes": 3756,
+      "service_bytes": 3784,
+      "full_reference_service_bytes": 6318,
+      "real_cpu_tstates": 19862505,
+      "pass_baseline_cpu_tstates": 21756088,
+      "original_fast_cpu_tstates": 21761090,
+      "delta_time_vs_pass_percent": "-8.703692502071144407946869860",
+      "delta_time_vs_original_percent": "-8.724677853912648677065349210",
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 271,
+          "sha256": "e4730d91b371c9f2566d8a60a5364dbb056f0a642c2c6e0b0086dca5811de1f9"
+        },
+        {
+          "address": 40960,
+          "bytes": 3485,
+          "sha256": "dbf9a09b4f9848753c91c6398064b975d1da3ca6ed7222e8dbc8f790d8d46c34"
+        }
+      ]
+    }
+  ],
+  "evidence_sha256": {
+    "evidence/frontier_completed_profiles_verification.json": "07949dfacf37c5cab7f35a23c4d06a34ad56b549f2ef860fec8ab519596f57d6",
+    "evidence/trick_23.json": "8df00ca5a655a5ff29d447bb6289897306e72acdad4f2451bc248ba6516ab9b6",
+    "evidence/trick_29.json": "13a479847d660b7cfefe670597cb6e69411a7d230290906652a2804d4649e9d2",
+    "evidence/fast_jumps.json": "95f2a71a0bdc2225365fc520ad41e541ed19bb56f5f226d370289b28f5083fc0",
+    "evidence/compact_frontier.json": "6ef47b77f85ab0d1ddd5a5a662c86f20eaf08f89386419fec391c2d99698ba95",
+    "evidence/wide_guarded_native.json.gz": "a685b79d4cc1484035569a21f5b0224f7184bf21cc1a1b9d03a7184b8c6f7bec",
+    "evidence/fast_jumps_verification.json": "d886368449e861043677e154ab190130d0aa745c32e069f4968d5d35fa253f1d",
+    "second_pass_verification.json": "f159ef38fe0c91f5ee6f96e315d7980d0707999d42029372ffc5241ef96a6db0",
+    "evidence/fast_jumps_streaming/fast-jumps-call-before.json.gz": "14393b61d1de789ef6db4fe80a1b6b46328484e59421758029c8ad57d52156c5",
+    "evidence/fast_jumps_streaming/fast-jumps-call-after.json.gz": "7c35c9423070738bfc9915ee44adbe819ba19760745a176399f29b249f82699b",
+    "evidence/fast_jumps_streaming/fast-jumps-direct-before.json.gz": "353c665bc6dd5b94586263660b8d362004b39417bdb841f7b2c10f598496ea9f",
+    "evidence/fast_jumps_streaming/fast-jumps-direct-after.json.gz": "7f3bc3cacefbf85a1bd3d857f1bb105e581c7b39cefad331a3ea686042063058"
+  },
+  "source_sha256_lf": {
+    "zx0/src/zx0/block.py": "cad29f8ffa3b104d012787d87ca78adf2d81b6bc5de2ffece605f51320ed2c46",
+    "zx0/src/zx0/maximum.py": "dde6a340e9aa99b0b44f278b473e7164b2da1d4c917227add91815b184252dbe",
+    "lzsa/src/lzsa/block.py": "f909370ee4c475ae7115bd47b1011c9482e70aa20811286f74783c9e673dac0a",
+    "zx0/src/zx0/resumable.py": "f2a614b3ef6c9b4b9977c0e56fe0ef533ef41019ac1bf5617a521757205d6ddd",
+    "zx0/src/zx0/maximum_coroutine.py": "3c14dafba5efac6696e6e96a5947012285cab490d07164ba70de7f5b5d580139",
+    "lzsa/src/lzsa/resumable.py": "bd6a4559e30b66d65c483e458348589b99497539001f4f1de1a1f98651bd0f40",
+    "lzsa/src/lzsa/wide_coroutine.py": "02bd6b2e041534e658a8ff4c4dbc133c62db83711f5e010fd1dcccda884cfd30",
+    "zx0/src/zx0/codec.py": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91",
+    "lzsa/src/lzsa/compact.py": "0d382910264a4341002c751845420e795ed1357c94989db10974514722cd6676",
+    "lzsa/src/lzsa/wide.py": "01a6b768af0f3f94d8cc63f01893a2354a53da1cc002ad3a7de9d31162c80234"
+  },
+  "reproducer_sha256_lf": "dfedef21d5a0e343ea5ccfffcbf905a225a1a403862b7cbb48b4b587e1882fc1",
+  "default_code_delta_bytes": 0,
+  "default_instruction_delta_tstates": 0
+}

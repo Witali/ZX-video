@@ -10,6 +10,11 @@ targets: maximum speed under 10,000 service bytes, faster AND smaller, and
 intermediate tradeoffs. Count code, variables, tables, padding and required
 stacks/buffers together; compressed input/output are explicitly separate.
 
+[Decoder variants and function links](DECODER_VARIANTS.md) lists the measured
+choices, exact builder calls and implementation files, with CPU comparisons
+against both the original adapted Fast and the latest optimization baseline.
+It also includes the smallest retained valid Standard/Small implementations.
+
 These are two independently installable libraries extracted from ZX-video.
 Copy either directory to another project or install it from this checkout:
 
