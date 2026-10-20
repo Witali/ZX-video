@@ -207,3 +207,24 @@ comparison with originalFast includes the oldMega advantage and must not be
 described as entirely new. No coroutine or global optimum is established.
 [Current frontier, absolute counts, memory contract and reproduction](../ZX0_WORD_PREFIX.md),
 [initial three-profile evidence](../ZX0_MAXIMUM.md).
+
+
+## Optional maximum-speed ordinary coroutine
+
+`zx0.maximum_coroutine.build()` / CLI `--variant maximum-coroutine` retains
+ordinary Fast's complete-input quota contract and every published return
+cursor, including zero/repeated/final demands. This explicit Spectrum Z80
+profile requires undocumented `CP IXH` / `CP IXL` (8 T). It saves caller IX
+per entry, borrows IX for the quota while decoding, and restores it before
+every return. IRQ must preserve live IX, AF/AF' and other decoder registers.
+Other CPU clones require their own opcode qualification. Defaults stay exact.
+
+Caps 31/63/127 use 4901/6437/7973 total service bytes, including every emitted
+wrapper/state byte, caller 4/private 12 stack bytes and no other scratch/buffers.
+The sample 13-byte IRQ plus six bytes in each stack gives 4926/6462/7998 bytes.
+Real Fast coroutine 180,610,040 T becomes 167,431,057 /166,492,817 /166,005,457 T:
+best 8.086252%, with identical input data/features. All complete blocks improve;
+cap 127 has 12 slower slices, maximum +71 T. Internal source/count preparation
+can suspend earlier; public input_pointer and output quotas retain their ABI.
+There is no partial-input supplier in this ordinary complete-input profile.
+[Full proof, instruction costs, rejected approaches and reproduction](../ZX0_MAXIMUM_COROUTINE.md).

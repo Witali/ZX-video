@@ -94,6 +94,16 @@ wheel checks pass. Retain slower directed blocks/slices and original dated
 interrupted evidence. [Complete memory, CPU and reproduction](libraries/COMPACT_BRANCHES.md).
 This component result leaves the broader goal active and unachieved.
 
+On 2026-10-20, an optional public Maximum ordinary coroutine closes the raw-only
+feature gap: same Fast quotas/return cursors/EOF, including zero/repeated/final
+demands. Explicit Spectrum Z80 undocumented CP IXH/IXL contract; caller IX is
+saved/restored on every entry/return and IRQ preserves live IX. Caps 31/63/127
+use 4901/6437/7973 required service bytes and gain 7.296927 /7.816411 /8.086252%
+against same-feature Fast coroutine 180,610,040 T. Cap 127 keeps 12 slower slices
+(two real), maximum+71 T; no complete block slows. All main/high-word/IRQ/
+relocation/per-op/forced-demand/wheel checks pass. [Complete bounded result](libraries/ZX0_MAXIMUM_COROUTINE.md).
+The broad approximately 10% goal remains active and unachieved.
+
 ## Codec speed pass 3 — unconditional branches (2026-10-19)
 
 The user requests continued ZX0/LZSA optimization in a separate worktree.

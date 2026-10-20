@@ -75,23 +75,41 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
                             slice_long_fast='Copy the first literal: HL source, DE output, BC>=2; no quota wrapper.',
                             slice_fast='Shared resident literal LDIR with nonzero BC; no deferred AF restore.')
     if metadata.get('measured_frontier'):
-        lines += [f'; Measured maximum-speed direction: prefix cap {metadata["prefix_cap"]}; no coroutine ABI.',
+        lines += [f'; Measured maximum-speed direction: prefix cap {metadata["prefix_cap"]}; '
+                  + ('ordinary complete-input coroutine.' if metadata.get('coroutine_supported') else 'no coroutine ABI.'),
                   '; Gamma depth proves count >= K; inline LDI copies at most K-1 bytes, then positive LDIR.',
                   '; BC high-byte shifts are delayed until the eighth data bit; full word loops remain.',
                   '; Forward copies retain overlapping history. No tables, alignment, scratch or internal buffers.',
                   f'; Complete service reservation: {metadata["service_memory_bytes"]} bytes, cap {metadata["service_limit_bytes"]}.',
-                  '; Includes code/embedded offset, caller return, live source PUSH and declared IRQ code/extra stack.',
+                  ('; Includes all core/wrapper/state bytes, required caller/private stacks and declared IRQ code/headroom.' if metadata.get('coroutine_supported') else
+                   '; Includes code/embedded offset, caller return, live source PUSH and declared IRQ code/extra stack.'),
                   '; Input/output/history are separate. Count the actual caller IRQ implementation explicitly.',
                   '; Frontier is measured on the retained corpus; global optimality is not established.', '']
         if metadata['prefix_cap']>127:
             extra=metadata['prefix_cap']-127
             lines += [f'; Word counts >=256 copy {extra} initial bytes, then share the existing 127-LDI suffix.',
                       f'; Match setup runs once. The shared suffix retains BC>={256-extra} and a positive LDIR tail.', '']
+    if metadata.get('variant')=='maximum-coroutine':
+        lines += ['; Optional Spectrum Z80 profile REQUIRES undocumented CP IXH / CP IXL, 8 T each.',
+                  '; IX holds the quota only while decoding: caller IX is saved on entry and restored at every return.',
+                  '; Preserve live IX and AF/AF\' in IRQ. Other Z80 clones require their own opcode qualification.',
+                  '; Phase checks precede command preparation; published output cursors match ordinary Fast.',
+                  '; Complete resident input is required. Internal input/count preparation can suspend earlier.',
+                  '; Final quotas use FFFF internally so raw EOF is consumed before finish; caller targets stay exact.', '']
+    if metadata.get('variant')=='maximum-coroutine':
+        routines.update(dzx0_mega='Initialize the shared negative offset and enter phase-specific decoding on the private stack.',
+            slice_sync_target='Normalize final demand to FFFF in quota_target, preserving the real caller target; BC/HL/AF are scratch.',
+            slice_resume='Save caller IX, install the normalized quota in IX, restore the private AF/BC/DE/HL frame and continuation.',
+            slice_yield='Save DE output and AF/BC/DE/HL continuation on the private stack; restore caller IX and SP before returning.',
+            slice_finished='Verify DE equals block_end after raw EOF, set finished, restore caller IX/SP and return.',
+            begin='Save caller IX/SP, install IX quota and private finish return, initialize HL/DE and enter the phased core.')
+        for site in metadata.get('quota_sites',[]):
+            routines[site['name']+'_check']='Before '+site['command']+': AF reservoir is parked in AF\'; compare output DE with IX quota using CP IXH/IXL. No output precedes quota validation.'
     for name,info in metadata.get('prefixes',{}).items():
         routines[name]=(f'Gamma-proven {info["family"]} count >= {info["minimum_count"]}; '
                             f'copy {info["prefix_bytes"]} bytes with LDI, leave positive BC for LDIR. '
                             + ('HL is resident input.' if info['family']=='literals' else
-                               'Save source HL on caller stack; use patched negative offset for forward history.'))
+                               'Save source HL on '+('private decoder' if metadata.get('coroutine_supported') else 'caller')+' stack; use patched negative offset for forward history.'))
     if metadata.get('measured_frontier'):
         for name in labels:
             if name.startswith('max_gamma_'):

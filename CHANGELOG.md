@@ -255,6 +255,41 @@
   [high-word supplement](libraries/evidence/ten_percent_maximum_word_prefix_high_word.json),
   [authentication](libraries/evidence/ten_percent_maximum_word_prefix_verification.json).
 
+## 2026-10-20 — Add a same-quota ZX0 maximum coroutine under the service cap
+
+- Objective/baseline: close the resident-only feature gap from `6759dedf`;
+  compare every ordinary coroutine return with original Fast `f5a0362c`,
+  180,610,040 real T. Retain complete resident input and all existing formats,
+  EOF/overlap, zero/repeated demands, caller clobbers, relocation and IRQ ABI.
+- Selected bounded result: new explicit `zx0.maximum_coroutine.build` / CLI
+  `--variant maximum-coroutine` checks 12 phase-specific command entries and
+  saves/restores caller IX while borrowing it for quota comparisons. It
+  explicitly requires Spectrum Z80 undocumented CP IXH/IXL,8 T, and preserving
+  live IX in IRQ. No existing documented-opcode default is broadened.
+- Caps 31/63/127: real 167,431,057 /166,492,817 /166,005,457 T, gains 7.296927 /
+  7.816411 /8.086252%; complete required service 4901/6437/7973 bytes. Counts
+  include emitted core/wrapper/state, caller 4/private 12 stacks; sample IRQ13
+  plus 6 headroom in each stack gives 4926/6462/7998. No tables/padding/scratch
+  or internal buffers; external input/output/history excluded. All complete
+  cases improve. Cap 127 has 12 slower slices, two real, maximum +71 T.
+- Preserve rejected alternatives:12-site patched mode 8019 bytes /
+  168,105,346 real T,16 slower blocks/616 slices(max+308); alternate-DE
+  mode 8005 bytes /168,919,725 T, zero slower blocks/21 slices(max+99).
+  IX is smaller and faster in aggregate. No further design was opened.
+- Full proof:1251 main +168 high-word comparisons, each with IRQ/relocation,
+  exact every-return output/EOF states and independently observed per-op
+  wrapper/check deltas. Additional 417 cases check 25,918 zero/repeated/final
+  demands and 198,374 preserving IX-clobber IRQs at all 12 phase comparisons.
+  Another 1251 comparisons verify host-proved minimum-safe in-place input,
+  without overwriting unread source bytes, at all three caps.
+  35 library tests, isolated installed wheel/API/CLI/ORG-DB exports,31 default
+  profiles and six upstream resources pass. Raw caps 31/63/127 remain exact.
+- Decision: accept an optional same-feature coroutine frontier. Numeric gain
+  is 8.086252%, below the active approximately 10% goal; raw-only 10.139777% is
+  not claimed for coroutine. No physical clone/disk/ROM/ULA or movie release.
+  [ABI, all costs, memory and reproduction](libraries/ZX0_MAXIMUM_COROUTINE.md),
+  [authenticated reports and archives](libraries/evidence/maximum_coroutine_verification.json).
+
 ## 2026-10-20 — Compatible ZX0 maximum-speed resident frontier under total-service cap
 
 - **Objective/baseline:** Resume interrupted work in the existing

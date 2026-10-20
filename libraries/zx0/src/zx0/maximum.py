@@ -18,7 +18,8 @@ def _after(phase):
 
 
 def build(*, core=0x8000, core_limit=None, prefix_cap=228,
-          irq_code_bytes=0, irq_stack_bytes=0, service_limit=10000):
+          irq_code_bytes=0, irq_stack_bytes=0, service_limit=10000,
+          _quota_hook=None, _external_labels=None):
     """Return absolute regions, labels and complete service-memory metadata.
 
     Call dzx0_mega with HL=complete resident input, DE=nonwrapping output and
@@ -112,7 +113,19 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228,
             match = re.fullmatch(r'dzx0m_(length|literals|reuse)([1357])', label)
             if match:
                 copy_context = (match[1], int(match[2]))
-            lines.append(line); continue
+            lines.append(line)
+            if _quota_hook is not None and re.fullmatch(r'dzx0m_literals[0246]',label):
+                lines.append('@quota '+label)
+            continue
+        # The ordinary coroutine checks output before preparing a command,
+        # never within a proven LDI prefix. New-offset EOF is tested first;
+        # literal/reuse gamma preparation can be suspended before reading its
+        # count because complete input is resident and only DE is published.
+        if _quota_hook is not None:
+            if line=='ret z':
+                lines += [line,'@quota '+last_label];continue
+            if line=='inc c' and re.fullmatch(r'dzx0m_literals[1357]',last_label):
+                lines.append('@quota reuse_after_'+last_label)
         # Offset B is overwritten by LD B,C. In first long-count stages B is
         # zero and no bit can reach it yet. Later word loops keep RL B.
         if line == 'rl b' and (active or last_label.startswith('dzx0m_elias_offset')):
@@ -156,6 +169,8 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228,
               'rl c': (0xcb, 0x11), 'ret z': (0xc8,)}
     aliases = {}
     for line in lines:
+        if line.startswith('@quota '):
+            _quota_hook(a,line.split(' ',1)[1]);continue
         if line.endswith(':'):
             a.label(line[:-1]); continue
         if line in simple:
@@ -188,7 +203,7 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228,
     service_bytes = sum(service.values())
     if service_bytes > service_limit:
         raise ValueError(f'total service memory {service_bytes} exceeds {service_limit} bytes')
-    blob = a.resolve()
+    blob = a.resolve(_external_labels)
     return [(core, blob)], a.labels, dict(
         entry='dzx0_mega', variant='maximum-block', one_shot=True,
         code_bytes=code_bytes, core_end=a.pc, state_bytes=0, private_stack_bytes=0,

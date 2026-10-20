@@ -397,3 +397,18 @@ real-3 slice8 costs+3 T. Full-case maximum regression is43 T. Every individual
 delta and actual stack peak is retained. [Native/producer evidence](evidence/wide_guarded_native.json.gz),
 [live table/handler relocation](evidence/wide_guarded_relocation.json.gz),
 [service inventory and package proof](evidence/wide_guarded_verification.json).
+
+## Same-quota ZX0 Maximum coroutine (2026-10-20)
+
+Explicit optional Spectrum IX-half profile: CP IXH/IXL is 8 T versus immediate
+CP7 T; retain caller IX per entry and restore at every return. High/low-ready
+checks 29/57 ->30/59 T; sync 112 ->97 regular/102 final; begin 216 ->258/263;
+resume 279 ->304/309; no-op demand 195 ->180/185; yield 114 ->134; finish 95 ->135.
+Every native block proves raw Maximum T plus every actual added instruction.
+Cap 127 real 140,193,198 raw +25,812,259 wrapper/check =166,005,457 T, versus
+same-feature Fast coroutine 180,610,040 T (-8.086252%). No raw-only gain claim.
+Caps 31/63 real 167,431,057 /166,492,817 T. All complete cases improve, while
+32/18/12 of 12,542 main slices slow(max 348/188/71 T). Service 4901/6437/7973
+bytes includes all code/state/caller 4/private 12; sample IRQ totals 4926/6462/7998.
+The explicit undocumented-IX contract is absent from existing default profiles.
+[Full costs, rejected strategies and native proofs](ZX0_MAXIMUM_COROUTINE.md).

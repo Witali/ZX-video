@@ -565,3 +565,17 @@ expanded guarded sites would add about2,940 bytes and exceed the consumer cap.
 These are unmeasured estimates only. Select sites using real frequencies,
 count the entire required service and rerun complete compatibility/guarded
 proof before acceptance. No implementation of this proposal is started here.
+
+## ZX0 maximum ordinary coroutine (2026-10-20)
+
+**Decision: accept an optional same-quota complete-input profile.** Twelve
+phase-specific checks, full AF continuation and saved/restored caller IX retain
+every Fast output cursor and EOF status. This explicitly targets Spectrum
+undocumented CP IXH/IXL; defaults and old raw maximum caps remain exact.
+Real Fast coroutine 180,610,040 T becomes 166,005,457 T (8.086252%),7973 required
+service bytes /7998 with the sample IRQ and headroom. Keep 12 slower main
+slices(max 71 T), two real, despite zero slower complete blocks. Smaller caps
+31/63 use 4901/6437 service bytes at 7.296927 /7.816411% gains. Preserve earlier
+patched/alternate-DE strategies and all proof. The broad approximately 10%
+goal remains incomplete; no raw-only or movie-release claim.
+[ABI, timing and full verification](ZX0_MAXIMUM_COROUTINE.md).
