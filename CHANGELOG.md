@@ -1,5 +1,23 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Define the decoder testing sequence and strict acceptance gate
+
+- **Objective/baseline:** Make the requested testing plan executable against
+  fixed `9c28b01f`, preserving the existing worktree and all frozen inputs.
+- **Plan:** Add an E00..E07 question/deliverable matrix, bounded alternatives,
+  dependencies and a final completion audit to
+  [NEXT_TRICKS_PLAN.md](libraries/NEXT_TRICKS_PLAN.md). E00 baseline observers
+  are in progress; no candidate implementation or new speed result is claimed.
+- **Acceptance:** Apply the current goal's simultaneous reduction of real
+  decode CPU and all service memory, excluding input/output/history. Keep
+  exact per-case regressions, IRQ/overlap/relocation, same-feature wrappers
+  and the 10,000-byte cap. Explicitly reject faster/larger clones or cap255
+  growth for promotion unless the complete candidate also shrinks memory.
+- **Verification/decision:** Check document links, stage coverage and
+  consistency with the task brief. This focused change is documentation
+  only; decoder/default instruction delta is 0 T. E00 baseline validation
+  and every implementation decision remain separate evidence-bearing work.
+
 ## 2026-10-20 — Research and plan the next Z80 decoder trick tests
 
 - **Objective/baseline:** Answer the user's internet-research and testing-plan

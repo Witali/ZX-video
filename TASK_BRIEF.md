@@ -16,6 +16,15 @@ Elias lookahead, hybrid refitting and separate wrapper qualification. These
 are planned hypotheses; no new candidate or timing is qualified by the plan.
 Complete one bounded experiment and its focused commit before the next.
 
+Current execution acceptance (2026-10-20) is stricter than the historical
+frontier search below: retain a new implementation only if it strictly
+reduces both complete real-input decode CPU and total service memory against
+the immediately preceding accepted same-feature version. Exclude compressed
+input and output/history; include code, variables, tables, padding, scratch
+and required stacks. Keep the 10,000-byte cap and publish all slower cases.
+Faster/larger or smaller/slower experiments remain evidence, not promoted
+modes in this pass. E00 observers are in progress; E01..E07 remain pending.
+
 ## Active codec goal — speed/service-memory frontier (2026-10-19)
 
 The user requests roughly another 10% speed improvement for each library,
