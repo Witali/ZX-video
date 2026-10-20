@@ -2,9 +2,13 @@
 
 Research and testing plan, 2026-10-20. Baseline: `9c28b01f`, branch
 `codex/codec-speed-pass3`, worktree `.worktree/codec-speed-pass3`.
-Status: **E00 baseline profiling in progress; E01..E07 pending**.
+Status: **E00 complete; E01..E07 pending**.
 No candidate below has been implemented or benchmarked. Baseline observer
 runs and predicted deltas do not qualify an optimization.
+[E00 evidence and selected hypotheses](NEXT_E00_BASELINE.md) authenticate
+the fixed inputs, all target layouts and a new minimum-safe overlap runner.
+The additionally requested local Spectrum/C-core test platform is a separate
+infrastructure qualification before it supplies candidate evidence.
 The user requested additional internet research and a concrete testing plan.
 The proposed applications are our deductions from the sources and current
 generators, not measured improvements or claims made by their authors.

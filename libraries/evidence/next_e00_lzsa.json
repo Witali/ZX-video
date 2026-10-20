@@ -1,0 +1,711 @@
+{
+  "date": "2026-10-20",
+  "stage": "E00",
+  "complete": true,
+  "release": false,
+  "baseline_revision": "9c28b01f",
+  "public_decoder_changes": 0,
+  "corpus_cases": 95,
+  "directed_cases": 580,
+  "evidence_sha256": {
+    "libraries/evidence/wide_hybrid/wide_hybrid_experiment_short.json.gz": "9ad2515b61c27662615b568da777a4fe27ab54863db50cfd85971a5a128d7c16",
+    "libraries/evidence/wide_hybrid_experiment_selectors.json": "2d0ca50560b5173e370db869914af48ab34e4576eacafef683ab3c7b17ea470f",
+    "libraries/evidence/hybrid_public_verification.json": "7cd02f0aed406633cd8531ef86de11f7dbb3f0688f1420d7a55dc89aa3b7d77f"
+  },
+  "proposed_E01_sets": [],
+  "E01_conditional_decision": "No JP-to-JR site wins on the real corpus and shrinks code.",
+  "source_sha256_lf": {
+    "libraries/lzsa/src/lzsa/hybrid.py": "9e22de4c44815b02c35cc65170ee2517e124d5eb45ff66d8277c3a38dbc6e861",
+    "libraries/lzsa/src/lzsa/wide.py": "188efef8c09d09a637e1fd8eff4ac203059bd5ae6a7f1234875cb94323404326",
+    "libraries/lzsa/src/lzsa/_wide_kernels.py": "cdd98fd57309335948d23b64ce88bba80efcc6e33862a3efe3dc60001e46c114",
+    "libraries/lzsa/src/lzsa/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/tests/native_block.py": "94bb095d918546ee3e54af1088e814f8442ca26ce65efd519574e72f1f104b3e",
+    "libraries/tests/profile_branch_mix.py": "e0721a08dfa090ac160a879bb6e4a63815428d1cda29f6582b8ba6519318c9ac",
+    "libraries/tests/profile_next_lzsa.py": "f480b696eb404691152e5a8a1779717b2d4784a9c14c34f5329a86d39a3bd70b",
+    "libraries/Z80_TIMINGS.md": "bc99e811aaa00f50754e44c2e5b51eb1cd4a42bbdcae2a4cc01e216c0fdad18d"
+  },
+  "public_source_matches_9c28_proof": {
+    "libraries/lzsa/src/lzsa/hybrid.py": true,
+    "libraries/lzsa/src/lzsa/wide.py": true,
+    "libraries/lzsa/src/lzsa/_wide_kernels.py": true,
+    "libraries/lzsa/src/lzsa/_z80.py": true
+  },
+  "limitations": [
+    "Baseline observers only; no decoder candidate or E01/E02/E03 experiment implemented.",
+    "All675 watched CPU totals match frozen native proof; previous IRQ/relocation runs are reused unchanged.",
+    "Real and synthetic/direct cases are separate; an all-cases-only JP/JR gain cannot hide a real-corpus slowdown.",
+    "Timing excludes IRQ service, ULA/WAIT, ROM/disk latency and movie publication timing."
+  ],
+  "native_observer_run_profiler_sha256_lf": "6efa59e2b0ef5b0e2fcc258c44f9a74c9d94ed55a41d04aac9c5138737e71a16",
+  "formatting_note": "After the completed native run, only report summarization was added; observer logic is unchanged. The native-run whole-file hash and final source hash are recorded separately.",
+  "future_E01_leads": [
+    {
+      "profile": "fast",
+      "status": "unimplemented analytical E01 lead",
+      "change": "Move the extended match-length block intact after done RET; invert the initial JP C into JR NC and let short matches fall through.",
+      "predicted_code_delta_bytes": -1,
+      "predicted_real_cpu_delta_tstates": -18123,
+      "predicted_all_cpu_delta_tstates": -16651,
+      "assumptions": "JR reaches the moved block; no extra exit jump; unchanged extended exits and MatchUseC-to-ReadToken fallthrough.",
+      "acceptance": "Requires future native correctness, actual final service bytes and complete per-case CPU verification; no gain is accepted here."
+    },
+    {
+      "profile": "balanced",
+      "status": "unimplemented analytical E01 lead",
+      "change": "Move the extended match-length block intact after done RET; invert the initial JP C into JR NC and let short matches fall through.",
+      "predicted_code_delta_bytes": -1,
+      "predicted_real_cpu_delta_tstates": -18123,
+      "predicted_all_cpu_delta_tstates": -16651,
+      "assumptions": "JR reaches the moved block; no extra exit jump; unchanged extended exits and MatchUseC-to-ReadToken fallthrough.",
+      "acceptance": "Requires future native correctness, actual final service bytes and complete per-case CPU verification; no gain is accepted here."
+    },
+    {
+      "profile": "compact",
+      "status": "unimplemented analytical E01 lead",
+      "change": "Move the extended match-length block intact after done RET; invert the initial JP C into JR NC and let short matches fall through.",
+      "predicted_code_delta_bytes": -1,
+      "predicted_real_cpu_delta_tstates": -18123,
+      "predicted_all_cpu_delta_tstates": -16651,
+      "assumptions": "JR reaches the moved block; no extra exit jump; unchanged extended exits and MatchUseC-to-ReadToken fallthrough.",
+      "acceptance": "Requires future native correctness, actual final service bytes and complete per-case CPU verification; no gain is accepted here."
+    }
+  ],
+  "observation_head": "6b1cba5c91197a2285fd033488031d8cc434ff5e",
+  "baseline_note": "Decoder proof is fixed at 9c28b01f; observation_head also includes later documentation commits.",
+  "profiles": {
+    "fast": {
+      "builder": "lzsa.hybrid.build",
+      "kwargs": {
+        "profile": "fast"
+      },
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9494,
+          "sha256": "9d25fccf551fa821c6894356e01dc4c9e1328b3ff20da15f4534cbec37101abd"
+        }
+      ],
+      "relocated_regions": [
+        {
+          "address": 37123,
+          "bytes": 9747,
+          "sha256": "8ef445c67a509635bf44b6a5d6dc56dcd8731d1e47d6d4c8bc016bd4214a444f"
+        }
+      ],
+      "labels_sha256": "d3f9caf9fd946fda21d0e13d80a899c384b7e4c5545e06963842ef550de28e42",
+      "service_memory": {
+        "code_tables_alignment_bytes": 9494,
+        "embedded_mutable_bytes": 2,
+        "external_state_bytes": 0,
+        "caller_stack_bytes": 6,
+        "scratch_bytes": 0,
+        "internal_buffer_bytes": 0
+      },
+      "intrinsic_service_bytes": 9500,
+      "actual_probe_irq_code_bytes": 13,
+      "actual_probe_irq_stack_headroom_bytes": 6,
+      "worst_alignment_bytes": 255,
+      "external_input_max": 15878,
+      "external_output_history_max": 15872,
+      "all_case_tstates": 130839328,
+      "real_tstates": 14944429,
+      "instruction_sites": 5683,
+      "static_conditional_sites": 128,
+      "watch_sites": 1074,
+      "reused_frozen_coverage": {
+        "cases": 675,
+        "relocation": true,
+        "irq": true,
+        "input_output_exact": true
+      },
+      "real": {
+        "token_count": 45247,
+        "ll3_calls": 4870,
+        "ll3_path_calls": {
+          "byte": 169,
+          "nibble": 4701,
+          "word": 0
+        },
+        "ll3_call_ret_overhead_tstates": 131490,
+        "top3_ll3_contexts": [
+          {
+            "context": "body_224_1",
+            "calls": 500,
+            "literal_bytes": 3499,
+            "total_call_helper_ret_tstates": 113700,
+            "path_calls": {
+              "nibble": 483,
+              "byte": 17
+            }
+          },
+          {
+            "context": "body_231_1",
+            "calls": 381,
+            "literal_bytes": 2261,
+            "total_call_helper_ret_tstates": 78435,
+            "path_calls": {
+              "nibble": 369,
+              "byte": 12
+            }
+          },
+          {
+            "context": "body_32_2",
+            "calls": 282,
+            "literal_bytes": 1925,
+            "total_call_helper_ret_tstates": 63356,
+            "path_calls": {
+              "nibble": 281,
+              "byte": 1
+            }
+          }
+        ],
+        "nibble_totals": {
+          "cached": 19752,
+          "refill": 19760,
+          "reads": 39512,
+          "cpu_tstates": 1837464,
+          "cached_tstates": 27,
+          "refill_tstates": 66
+        },
+        "top3_nibble_sites": [
+          {
+            "address": 33292,
+            "context": "LongerMatch",
+            "cached": 3249,
+            "refill": 3267,
+            "total": 6516,
+            "cpu_tstates": 303345,
+            "hot_contexts": [
+              [
+                "body_167_0",
+                1011
+              ],
+              [
+                "body_135_0",
+                901
+              ],
+              [
+                "body_231_0",
+                589
+              ]
+            ]
+          },
+          {
+            "address": 33355,
+            "context": "LongLiterals",
+            "cached": 2451,
+            "refill": 2419,
+            "total": 4870,
+            "cpu_tstates": 225831,
+            "hot_contexts": [
+              [
+                "body_224_1",
+                500
+              ],
+              [
+                "body_231_1",
+                381
+              ],
+              [
+                "body_32_2",
+                282
+              ]
+            ]
+          },
+          {
+            "address": 40786,
+            "context": "body_167_0",
+            "cached": 514,
+            "refill": 497,
+            "total": 1011,
+            "cpu_tstates": 46680,
+            "hot_contexts": [
+              [
+                "body_167_0",
+                1011
+              ]
+            ]
+          }
+        ],
+        "setup_exit_hits": {
+          "CopyMatchA": 6495,
+          "LongLiterals": 4870,
+          "LongerMatch": 6516,
+          "ManyLiterals": 169,
+          "MatchUseC": 9544,
+          "ReadToken": 45247,
+          "done": 21,
+          "start": 21
+        },
+        "setup_tstates_per_block": 44,
+        "exit_tstates_per_block": 28,
+        "eligible_jp_to_jr_sites": []
+      },
+      "all": {
+        "cases": 675,
+        "nibble_totals": {
+          "cached": 21442,
+          "refill": 21801,
+          "reads": 43243,
+          "cpu_tstates": 2017800,
+          "cached_tstates": 27,
+          "refill_tstates": 66
+        },
+        "ll3_calls": 6201,
+        "ll3_path_calls": {
+          "byte": 496,
+          "nibble": 4965,
+          "word": 740
+        },
+        "eligible_jp_to_jr_sites": [
+          {
+            "address": 33314,
+            "opcode_hex": "d22f82",
+            "kind": "jp",
+            "condition_index": 2,
+            "condition": "NC",
+            "target": 33327,
+            "target_labels": [
+              "CopyMatchA"
+            ],
+            "current_relative_span": 11,
+            "single_jp_shrink_relative_span": 10,
+            "single_jp_shrink_fits": true,
+            "context": "LongerMatch",
+            "taken": 511,
+            "not_taken": 834,
+            "taken_probability": 0.37992565055762084,
+            "observed_tstates": 13450,
+            "alternative_delta_tstates": -1480,
+            "alternative_code_delta_bytes": -1,
+            "jp_to_jr_strictly_faster_and_smaller": true
+          }
+        ]
+      }
+    },
+    "balanced": {
+      "builder": "lzsa.hybrid.build",
+      "kwargs": {
+        "profile": "balanced"
+      },
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 6494,
+          "sha256": "79b37ae3c5bee81646974096a6c005775b391a04bea43e227840bb94c4c87124"
+        }
+      ],
+      "relocated_regions": [
+        {
+          "address": 37123,
+          "bytes": 6747,
+          "sha256": "2c13b4d21dbef75c1b280f9cd1ee509c3184df3b15537769a1387e8f6b99c92c"
+        }
+      ],
+      "labels_sha256": "ad05e9c7f788636367b89ab1ce347f297329c2c63adc80598b5fea3e8c9bd48d",
+      "service_memory": {
+        "code_tables_alignment_bytes": 6494,
+        "embedded_mutable_bytes": 2,
+        "external_state_bytes": 0,
+        "caller_stack_bytes": 6,
+        "scratch_bytes": 0,
+        "internal_buffer_bytes": 0
+      },
+      "intrinsic_service_bytes": 6500,
+      "actual_probe_irq_code_bytes": 13,
+      "actual_probe_irq_stack_headroom_bytes": 6,
+      "worst_alignment_bytes": 255,
+      "external_input_max": 15878,
+      "external_output_history_max": 15872,
+      "all_case_tstates": 130884838,
+      "real_tstates": 14983119,
+      "instruction_sites": 3700,
+      "static_conditional_sites": 80,
+      "watch_sites": 891,
+      "reused_frozen_coverage": {
+        "cases": 675,
+        "relocation": true,
+        "irq": true,
+        "input_output_exact": true
+      },
+      "real": {
+        "token_count": 45247,
+        "ll3_calls": 4870,
+        "ll3_path_calls": {
+          "byte": 169,
+          "nibble": 4701,
+          "word": 0
+        },
+        "ll3_call_ret_overhead_tstates": 131490,
+        "top3_ll3_contexts": [
+          {
+            "context": "body_224_1",
+            "calls": 500,
+            "literal_bytes": 3499,
+            "total_call_helper_ret_tstates": 113700,
+            "path_calls": {
+              "nibble": 483,
+              "byte": 17
+            }
+          },
+          {
+            "context": "body_231_1",
+            "calls": 381,
+            "literal_bytes": 2261,
+            "total_call_helper_ret_tstates": 78435,
+            "path_calls": {
+              "nibble": 369,
+              "byte": 12
+            }
+          },
+          {
+            "context": "body_32_2",
+            "calls": 282,
+            "literal_bytes": 1925,
+            "total_call_helper_ret_tstates": 63356,
+            "path_calls": {
+              "nibble": 281,
+              "byte": 1
+            }
+          }
+        ],
+        "nibble_totals": {
+          "cached": 19752,
+          "refill": 19760,
+          "reads": 39512,
+          "cpu_tstates": 1837464,
+          "cached_tstates": 27,
+          "refill_tstates": 66
+        },
+        "top3_nibble_sites": [
+          {
+            "address": 33292,
+            "context": "LongerMatch",
+            "cached": 3249,
+            "refill": 3267,
+            "total": 6516,
+            "cpu_tstates": 303345,
+            "hot_contexts": [
+              [
+                "body_167_0",
+                1011
+              ],
+              [
+                "body_135_0",
+                901
+              ],
+              [
+                "body_231_0",
+                589
+              ]
+            ]
+          },
+          {
+            "address": 33355,
+            "context": "LongLiterals",
+            "cached": 2451,
+            "refill": 2419,
+            "total": 4870,
+            "cpu_tstates": 225831,
+            "hot_contexts": [
+              [
+                "body_224_1",
+                500
+              ],
+              [
+                "body_231_1",
+                381
+              ],
+              [
+                "body_32_2",
+                282
+              ]
+            ]
+          },
+          {
+            "address": 38226,
+            "context": "body_167_0",
+            "cached": 514,
+            "refill": 497,
+            "total": 1011,
+            "cpu_tstates": 46680,
+            "hot_contexts": [
+              [
+                "body_167_0",
+                1011
+              ]
+            ]
+          }
+        ],
+        "setup_exit_hits": {
+          "CopyMatchA": 6495,
+          "LongLiterals": 4870,
+          "LongerMatch": 6516,
+          "ManyLiterals": 169,
+          "MatchUseC": 9544,
+          "ReadToken": 45247,
+          "done": 21,
+          "start": 21
+        },
+        "setup_tstates_per_block": 44,
+        "exit_tstates_per_block": 28,
+        "eligible_jp_to_jr_sites": []
+      },
+      "all": {
+        "cases": 675,
+        "nibble_totals": {
+          "cached": 21442,
+          "refill": 21801,
+          "reads": 43243,
+          "cpu_tstates": 2017800,
+          "cached_tstates": 27,
+          "refill_tstates": 66
+        },
+        "ll3_calls": 6201,
+        "ll3_path_calls": {
+          "byte": 496,
+          "nibble": 4965,
+          "word": 740
+        },
+        "eligible_jp_to_jr_sites": [
+          {
+            "address": 33314,
+            "opcode_hex": "d22f82",
+            "kind": "jp",
+            "condition_index": 2,
+            "condition": "NC",
+            "target": 33327,
+            "target_labels": [
+              "CopyMatchA"
+            ],
+            "current_relative_span": 11,
+            "single_jp_shrink_relative_span": 10,
+            "single_jp_shrink_fits": true,
+            "context": "LongerMatch",
+            "taken": 511,
+            "not_taken": 834,
+            "taken_probability": 0.37992565055762084,
+            "observed_tstates": 13450,
+            "alternative_delta_tstates": -1480,
+            "alternative_code_delta_bytes": -1,
+            "jp_to_jr_strictly_faster_and_smaller": true
+          }
+        ]
+      }
+    },
+    "compact": {
+      "builder": "lzsa.hybrid.build",
+      "kwargs": {
+        "profile": "compact"
+      },
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4993,
+          "sha256": "78bb1bd440ac23d95d8bd7c6337c075c47d68fe10ac36435c15c2c1d09ce2e51"
+        }
+      ],
+      "relocated_regions": [
+        {
+          "address": 37123,
+          "bytes": 5246,
+          "sha256": "fbea00d2dcdf1e7f31780be13dc2aa211753d9b07d42be34b4c343c7779bd62f"
+        }
+      ],
+      "labels_sha256": "a2cd827505215a1a9831658da7e7dc092934b57bad687a2bd7c6d8bf8cc721de",
+      "service_memory": {
+        "code_tables_alignment_bytes": 4993,
+        "embedded_mutable_bytes": 2,
+        "external_state_bytes": 0,
+        "caller_stack_bytes": 6,
+        "scratch_bytes": 0,
+        "internal_buffer_bytes": 0
+      },
+      "intrinsic_service_bytes": 4999,
+      "actual_probe_irq_code_bytes": 13,
+      "actual_probe_irq_stack_headroom_bytes": 6,
+      "worst_alignment_bytes": 255,
+      "external_input_max": 15878,
+      "external_output_history_max": 15872,
+      "all_case_tstates": 130959108,
+      "real_tstates": 15048469,
+      "instruction_sites": 2693,
+      "static_conditional_sites": 53,
+      "watch_sites": 787,
+      "reused_frozen_coverage": {
+        "cases": 675,
+        "relocation": true,
+        "irq": true,
+        "input_output_exact": true
+      },
+      "real": {
+        "token_count": 45247,
+        "ll3_calls": 4870,
+        "ll3_path_calls": {
+          "byte": 169,
+          "nibble": 4701,
+          "word": 0
+        },
+        "ll3_call_ret_overhead_tstates": 131490,
+        "top3_ll3_contexts": [
+          {
+            "context": "body_224_1",
+            "calls": 500,
+            "literal_bytes": 3499,
+            "total_call_helper_ret_tstates": 113700,
+            "path_calls": {
+              "nibble": 483,
+              "byte": 17
+            }
+          },
+          {
+            "context": "body_231_1",
+            "calls": 381,
+            "literal_bytes": 2261,
+            "total_call_helper_ret_tstates": 78435,
+            "path_calls": {
+              "nibble": 369,
+              "byte": 12
+            }
+          },
+          {
+            "context": "body_32_2",
+            "calls": 282,
+            "literal_bytes": 1925,
+            "total_call_helper_ret_tstates": 63356,
+            "path_calls": {
+              "nibble": 281,
+              "byte": 1
+            }
+          }
+        ],
+        "nibble_totals": {
+          "cached": 19752,
+          "refill": 19760,
+          "reads": 39512,
+          "cpu_tstates": 1837464,
+          "cached_tstates": 27,
+          "refill_tstates": 66
+        },
+        "top3_nibble_sites": [
+          {
+            "address": 33292,
+            "context": "LongerMatch",
+            "cached": 3249,
+            "refill": 3267,
+            "total": 6516,
+            "cpu_tstates": 303345,
+            "hot_contexts": [
+              [
+                "body_167_0",
+                1011
+              ],
+              [
+                "body_135_0",
+                901
+              ],
+              [
+                "body_167_1",
+                742
+              ]
+            ]
+          },
+          {
+            "address": 33355,
+            "context": "LongLiterals",
+            "cached": 2451,
+            "refill": 2419,
+            "total": 4870,
+            "cpu_tstates": 225831,
+            "hot_contexts": [
+              [
+                "body_224_1",
+                500
+              ],
+              [
+                "body_231_1",
+                381
+              ],
+              [
+                "body_32_2",
+                282
+              ]
+            ]
+          },
+          {
+            "address": 36849,
+            "context": "body_166_0",
+            "cached": 561,
+            "refill": 565,
+            "total": 1126,
+            "cpu_tstates": 52437,
+            "hot_contexts": [
+              [
+                "body_166_0",
+                1126
+              ]
+            ]
+          }
+        ],
+        "setup_exit_hits": {
+          "CopyMatchA": 6495,
+          "LongLiterals": 4870,
+          "LongerMatch": 6516,
+          "ManyLiterals": 169,
+          "MatchUseC": 9544,
+          "ReadToken": 45247,
+          "done": 21,
+          "start": 21
+        },
+        "setup_tstates_per_block": 44,
+        "exit_tstates_per_block": 28,
+        "eligible_jp_to_jr_sites": []
+      },
+      "all": {
+        "cases": 675,
+        "nibble_totals": {
+          "cached": 21442,
+          "refill": 21801,
+          "reads": 43243,
+          "cpu_tstates": 2017800,
+          "cached_tstates": 27,
+          "refill_tstates": 66
+        },
+        "ll3_calls": 6201,
+        "ll3_path_calls": {
+          "byte": 496,
+          "nibble": 4965,
+          "word": 740
+        },
+        "eligible_jp_to_jr_sites": [
+          {
+            "address": 33314,
+            "opcode_hex": "d22f82",
+            "kind": "jp",
+            "condition_index": 2,
+            "condition": "NC",
+            "target": 33327,
+            "target_labels": [
+              "CopyMatchA"
+            ],
+            "current_relative_span": 11,
+            "single_jp_shrink_relative_span": 10,
+            "single_jp_shrink_fits": true,
+            "context": "LongerMatch",
+            "taken": 511,
+            "not_taken": 834,
+            "taken_probability": 0.37992565055762084,
+            "observed_tstates": 13450,
+            "alternative_delta_tstates": -1480,
+            "alternative_code_delta_bytes": -1,
+            "jp_to_jr_strictly_faster_and_smaller": true
+          }
+        ]
+      }
+    }
+  },
+  "full_evidence": {
+    "path": "libraries/evidence/next_e00_lzsa_full.json.gz",
+    "sha256": "77fc0cb9fb485e1dfb68a676696965857b61422966c7d41fb6770f212e98e2b5"
+  }
+}

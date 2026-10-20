@@ -1,5 +1,31 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Authenticate E00 baselines and actual compressed overlap
+
+- **Objective/baseline:** Complete E00 against `9c28b01f` before changing
+  ZX0 Maximum/shared or LZSA2 fixed Hybrid decoders. Frozen input bytes and
+  old public/default layouts remain unchanged.
+- **Baseline/hotspots:** Authenticate49 saved source hashes,11 public calls,
+  31 legacy layouts and1,280 alignment builds. Fresh observers replay946
+  ZX0 and2,025 LZSA2 complete cases, matching every saved CPU count. Real
+  ZX0 shared228/127 remains139,892,818/139,916,508 T; LZSA2 fast/balanced/
+  compact remains14,944,429/14,983,119/15,048,469 T. Save branch outcomes,
+  Elias phases/prefix counts, LL3 contexts and nibble cache/refill values.
+- **Overlap verification:** New protected raw runner passes473 ZX0 +675
+  LZSA2 cases each plain/IRQ/relocated (3,444 replays), exact host minima and
+  per-write input-cursor digests. Every nonempty case truly overlaps compressed
+  input/output; EOF-only has no output. IRQ injections1,407/760 and peak
+  plain/IRQ stacks4/10 B and6/12 B. Five directed tests pass, including
+  minimum-minus-one, EOF-overread and code-write rejection. Correct an initial
+  standalone-test import-path failure; retain executed/reporting identities
+  separately for post-run metadata/test-path changes.
+- **Decision:** E00 complete; decoder/default instruction delta0 T. Select
+  three ZX0 branch policies (predicted -61/-13/-3 B and-339,934/-214,864/
+  -970 real T) and one LZSA2 cold-layout inversion (predicted-1 B/-18,123 T)
+  for E01, without presenting them as implemented gains. The user-requested
+  local Spectrum C-core adaptation is a separately qualified host test tool.
+  [Full scope, reproduction and linked evidence](libraries/NEXT_E00_BASELINE.md).
+
 ## 2026-10-20 — Define the decoder testing sequence and strict acceptance gate
 
 - **Objective/baseline:** Make the requested testing plan executable against

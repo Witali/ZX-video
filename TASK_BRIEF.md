@@ -23,7 +23,23 @@ the immediately preceding accepted same-feature version. Exclude compressed
 input and output/history; include code, variables, tables, padding, scratch
 and required stacks. Keep the 10,000-byte cap and publish all slower cases.
 Faster/larger or smaller/slower experiments remain evidence, not promoted
-modes in this pass. E00 observers are in progress; E01..E07 remain pending.
+modes in this pass. [E00](libraries/NEXT_E00_BASELINE.md) is complete:
+946 ZX0 + 2,025 LZSA2 observer runs and 3,444 actual compressed-overlap
+plain/IRQ/relocation runs reproduce all frozen per-case counts. E01..E07
+remain pending; branch-selection gains are predictions only.
+
+The user additionally requests using/adapting the C CPU from
+`C:/Work/z80-tester` for Spectrum and developing it inside this project.
+Build the headless Spectrum128 test platform under `emulator/` in this same
+worktree, with pinned upstream license/provenance, RAM/ROM/7FFD, frame IRQ
+and explicit contention mode. Preserve the existing native backend as an
+independent reference, authenticate CPU/T/ABI/guard equivalence and measure
+host test acceleration before using it for optimization evidence. Experiments
+may continue on the existing qualified backend while the new platform is
+developed independently; do not mix unqualified backend results into proofs. Host
+emulator memory is separate from the target decoder's service inventory.
+Finish the bounded test-platform qualification before adopting that backend; no GUI,
+disk/movie qualification or main merge/push is implied.
 
 ## Active codec goal — speed/service-memory frontier (2026-10-19)
 
