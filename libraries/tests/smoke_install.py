@@ -172,6 +172,24 @@ if name=='lzsa':
         wide.append(dict(variant=variant,code_bytes=metadata['code_bytes'],
                          service_memory_bytes=metadata['service_memory_bytes'],exact_export=True))
     for shared in (False,True):
+        for direct in (False,True):
+            variant='wide-shared-coroutine' if shared else 'wide-coroutine'
+            suffix=variant+('-guarded-direct' if direct else '-guarded-call')
+            builder=importlib.import_module(name+'.wide_coroutine').build
+            regions,labels,metadata=builder(shared_literals=shared,streaming=True,direct_header=direct)
+            assert metadata['service_memory_bytes']==metadata['code_bytes']+24+4<=10000
+            assert 'update_guards' in labels and metadata['guard_update_code_bytes'] in (54,57)
+            at=destination/suffix
+            export(at,regions,labels,metadata)
+            sys.argv=[name,'build','--profile',variant,'--streaming','--core','0x8000',
+                      '--core-limit','0xb000','--output',str(destination/(suffix+'-cli'))]
+            if direct:sys.argv+=['--direct-header']
+            runpy.run_module(name+'.__main__',run_name='__main__')
+            cli=json.loads((destination/(suffix+'-cli')/'metadata.json').read_text())
+            assert cli['regions']==json.loads((at/'metadata.json').read_text())['regions']
+            wide.append(dict(variant=suffix,code_bytes=metadata['code_bytes'],
+                             service_memory_bytes=metadata['service_memory_bytes'],exact_export=True))
+    for shared in (False,True):
         variant='wide-shared-coroutine' if shared else 'wide-coroutine'
         builder=importlib.import_module(name+'.wide_coroutine').build
         regions,labels,metadata=builder(shared_literals=shared)

@@ -97,10 +97,62 @@ Every returned output cursor matches ordinary Fast on the complete corpus and
 580 directed cases. Expanded/shared slow 21/28 directed slices, at most
 20/30 T; no real slice slows. The additional580 probes have3/4 slower blocks
 and3/324 slower slices (at most20/30 T); every timing is retained. Complete
-resident input is required: these
-profiles reject streaming and independent Fast layout flags. Guarded input,
-physical delivery and player publication timing remain separate work.
+resident input is required in ordinary mode. Independent Fast layout flags
+remain unsupported; guarded input is available through the option below.
+Physical delivery and player publication timing require application checks.
 [Coroutine native/package proof](../evidence/wide_coroutine_verification.json).
+
+For partial page supply, add `streaming=True`; `direct_header=True` selects
+the existing direct header guard instead of the call guard. CLI adds
+`--streaming` and optionally `--direct-header` to either wide coroutine:
+
+```powershell
+python -m lzsa build --profile wide-coroutine --streaming --direct-header --core 0x8000 --core-limit 0xb000 --output build/lzsa-wide-guarded
+```
+
+Supply whole readable pages while suspended. Publish `input_high`,
+`header_frontier` and `literal_frontier` as the exclusive high-byte frontier,
+then set `all_loaded` and call `update_guards` with A=`all_loaded`. Only mark
+complete after the final page and shared-sector tail have been saved. The
+helper restores guarded destinations on a new partial block and bypasses them
+after completion. The call/direct layouts retain the original 32-byte token
+prefix and long-literal extent+7 guards; legal short word forms retain LDIR.
+Output-demand returns, unavailable-input returns, `input_needed`, `finished`
+and exact EOD have the same contract as the existing Fast guarded coroutine.
+
+Guarded call/direct service is **7,344 /7,336 bytes** expanded or
+**3,792 /3,784 bytes** shared at an aligned core. This includes the 57/54-byte
+callable guard patcher, 19 embedded state bytes, all mutable operands, a
+24-byte private stack and four-byte caller stack. Add at most255 alignment
+bytes. The in-place reference producer additionally requires its code/state,
+256-byte shared-sector carry and measured caller/disk stacks; those complete
+component totals are reported with the guard evidence. Count actual IRQ code
+and headroom on every stack it can interrupt, as well as the selected input
+supplier's service RAM. Complete output/history and compressed input remain
+separate buffers.
+`service_memory_bytes` is explicitly consumer-only metadata. The decoder has
+no internal input buffer; the256-byte carry belongs to the retained in-place
+supplier. A supplier that retains incrementally published input separately
+does not intrinsically need that carry.
+
+The retained in-place producer proof uses `prefix=0x7000,
+prefix_limit=0x7400, core=0xa000, core_limit=0xbc00, stack=0x7be0` and
+C000h output. This preserves the fixed7D50h sector producer,9DF0h caller
+stack andBC00h carry; its complete region inventory is in the evidence.
+
+On the unchanged real21 fixture, call guards improve23,961,774 ->21,822,661 T
+expanded (8.927190%) or22,068,191 T shared (7.902516%). Direct improves
+21,756,088 ->19,616,975 /19,862,505 T (9.832250% /8.703693%). Including the
+identical producer costs, savings are8.473294% /7.500719% call and9.287650% /
+8.221602% direct. All675 native cases/six placements per profile and the
+original63-case/772-sector producer replay pass. All complete real blocks
+improve; individual slices can slow (native real maximum22 T; shared real-3
+producer slice8 +3 T). The full corpus maximum is43 T. The complete aligned
+reference service inventory, including carry, I/O helpers, a conservative
+workspace reservation and the stated IRQ example, is9,881 /9,870 bytes
+expanded or6,329 /6,318 shared. Count additional alignment/application work
+against the10,000-byte cap. These guarded gains remain below a strict10%
+target. [Full proof, individual regressions and resource inventory](../evidence/wide_guarded_verification.json).
 
 ```python
 from lzsa import compress, decompress, trace

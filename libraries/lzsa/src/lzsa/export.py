@@ -100,12 +100,18 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
         })
         if metadata.get('coroutine'):
             lines += ['; Wide coroutine: minimum output quota is checked between complete tokens.',
-                      '; The complete resident input/history is required; no partial-input guard.',
-                      '; Service includes sixteen private-stack and four caller-stack bytes.',
+                      ('; Guarded pages:32-byte token prefix, long literal extent+7, exact final-input bypass.'
+                       if metadata.get('streaming') else '; Complete resident input/history required; no partial-input guard.'),
+                      '; Service includes '+str(metadata['private_stack_bytes'])+' private-stack and four caller-stack bytes.',
                       '; Caller may overwrite working registers during suspension; final demand still reads EOD.', '']
             routines['ReadToken']='Check token-boundary quota; if ready, perform the 58-T dispatch. Final demand requires exact EOD.'
+            routines['Token']='Enter complete-token lookup after any header guard; AF is dead and AF\' retains the cached low nibble.'
             routines['done']='Restore the saved initial HL\' and return to the finish wrapper on the private stack.'
-            routines['finished']='Verify exact DE=block_end, publish the final cursor and restore caller SP; a mismatch halts.'
+            if not metadata.get('streaming'):
+                routines['finished']='Verify exact DE=block_end, publish the final cursor and restore caller SP; a mismatch halts.'
+            routines['update_guards']='A=all_loaded; after publishing frontiers while suspended, restore guards or bypass them after final input/tail is saved. AF/HL clobbered; BC/DE/AF\' retained.'
+            routines['guard_long8']='BC=18..255, HL=literal source; wait for complete extent+7 before the original forward LDIR.'
+            routines['guard_long16']='BC=legal word count (including1/2), HL=literal source; wait for extent+7 without assuming count>=256.'
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')

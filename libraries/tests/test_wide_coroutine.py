@@ -44,6 +44,45 @@ class WideCoroutineTests(unittest.TestCase):
                     self.assertNotEqual(result.returncode,0)
 
     @unittest.skipUnless(importlib.util.find_spec('z80'),'install lzsa[native]')
+    def test_guarded_memory_and_embedded_patcher(self):
+        from z80 import Z80Machine
+        from lzsa.native import put_word
+        for shared in (False,True):
+            for direct in (False,True):
+                regions,z,metadata=build(shared_literals=shared,streaming=True,direct_header=direct)
+                expected=(3792 if shared else 7344)-(8 if direct else 0)
+                self.assertEqual(metadata['service_memory_bytes'],expected)
+                self.assertEqual(metadata['consumer_service_memory_bytes'],expected)
+                self.assertEqual(metadata['reference_inplace_input_supplier']['shared_sector_carry_bytes'],256)
+                self.assertFalse(metadata['reference_inplace_input_supplier']['included_in_consumer_service'])
+                self.assertEqual(metadata['service_memory']['internal_buffer_bytes'],0)
+                self.assertEqual(metadata['private_stack_bytes'],24)
+                self.assertEqual(metadata['state_bytes'],19)
+                self.assertEqual(metadata['guard_update_code_bytes'],54 if direct else 57)
+                self.assertLessEqual(expected+255+256,10000)
+                for low in range(256):
+                    moved=build(shared_literals=shared,streaming=True,direct_header=direct,core=0x8000+low)
+                    self.assertEqual(moved[2]['service_memory_bytes'],expected+(-low)%256)
+                machine=Z80Machine()
+                for at,blob in regions:machine.set_memory_block(at,blob)
+                machine.set_breakpoint(0x100)
+                for complete in (0,1,0):
+                    machine.af=complete<<8;machine.pc=z['update_guards'];machine.sp=0xbfee
+                    put_word(machine,0xbfee,0x100);machine.ticks_to_stop=10000
+                    while machine.pc!=0x100:machine.run()
+                    for target,partial,full in (
+                        ('token_high_target','token_guard','token_body'),
+                        ('token_low_target','token_guard','token_body'),
+                        ('token_end_target','token_guard','token_body'),
+                        ('long8_target','guard_long8','long8_complete'),
+                        ('long16_target','guard_long16','long16_complete')):
+                        at=z[target]
+                        self.assertEqual(int.from_bytes(machine.memory[at:at+2],'little'),z[full if complete else partial])
+                with self.assertRaises(ValueError):
+                    build(streaming=True,shared_literals=False,core=0xa003,core_limit=0xbc00)
+        with self.assertRaises(ValueError):build(direct_header=True)
+
+    @unittest.skipUnless(importlib.util.find_spec('z80'),'install lzsa[native]')
     def test_publication_cursor_and_actual_stacks(self):
         from lzsa import encode
         from lzsa.native import execute

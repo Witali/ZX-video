@@ -340,3 +340,60 @@ application is explicitly outside10,000B; use227for that handler. Cap255
 assembly gives10634code+4stack, outside the library cap, no nativequalification.
 All473cases×2caps also pass twoIRQ handlers/relocation; all deltas match
 instruction observers. [Full service accounting and proof](ZX0_WORD_PREFIX.md).
+
+## Guarded wide coroutine paths (2026-10-20)
+
+`streaming=True` retains the existing32-byte token prefix and long-literal
+extent+7 guards. `direct_header=True` uses the same dead-AF direct header
+guard as Fast; AF' retains its nibble. The ready header costs96 T with CALL
+or46 T direct, exactly as before. The literal guard's ready CALL path costs
+135 T: CALL17, PUSH AF11/PUSH HL11, ADD HL,BC11, untaken carry JR7,
+LD/ADD/LD/ADC22, untaken carry JR7, CP7/taken ready JR12,
+POP HL10/POP AF10/RET10. New wide long-literal JP hooks cost10 T each
+when executed; all are included in complete-block totals. The original
+58-T dispatch, token-boundary comparisons and37-T saved-HL' block overhead
+remain intact. No original raw or ordinary coroutine machine bytes change.
+
+| Aligned profile | Code/table/embedded state | Private stack | Caller stack | Consumer service |
+| --- | ---: | ---: | ---: | ---: |
+| wide guarded call | 7,316 | 24 | 4 | 7,344 |
+| wide guarded direct | 7,308 | 24 | 4 | 7,336 |
+| wide-shared guarded call | 3,764 | 24 | 4 | 3,792 |
+| wide-shared guarded direct | 3,756 | 24 | 4 | 3,784 |
+
+Relative to ordinary wide/shared, guarded code adds151 bytes call or143
+direct, including the57/54-byte callable `update_guards` helper. Private
+stack adds8 bytes for the nested literal-helper/guard/input-wait continuation;
+caller stack stays4 bytes. State grows15 ->19 bytes, already embedded in
+the code total. Code contains18 mutable guard/offset/frontier bytes in call
+mode or17 direct; do not add them again. The maximum alignment padding is255.
+The service cap applies to all required work: add the actual supplier's
+code/state/carry/stacks, IRQ code/vectors/headroom and other required scratch.
+The separate reference inventory counts its unchanged inline patcher even
+though the consumer also exports a callable copy. Compressed input and
+complete output/history are the explicit separate buffers.
+
+The replay counts deterministic instructions separately from mocked TR-DOS
+ROM service, physical disk delay and ULA contention. A reserved workspace
+range demonstrates available RAM; it does not measure ROM execution or its
+stack use. No movie publication/cadence claim follows from this component.
+
+| Real21 guarded mode | Baseline decoder T | Expanded T /saved | Shared T /saved |
+| --- | ---: | ---: | ---: |
+| call | 23,961,774 | 21,822,661 /8.927190% | 22,068,191 /7.902516% |
+| direct | 21,756,088 | 19,616,975 /9.832250% | 19,862,505 /8.703693% |
+
+Real producer work is unchanged at1,283,578 T call or1,275,713 direct.
+Including it gives25,245,352 ->23,106,239 /23,351,769 T call, and23,031,801
+->20,892,688 /21,138,218 T direct. All63 original producer cases preserve772
+once-only reads, waits, carry and protected banks. Each mode also passes675
+native cases at six placements with exact publication cursors, relocation
+and IRQ. Native real slices can slow12 times expanded or18 shared (max22 T).
+The separate9E00h core proof moves live tables/handlers down512 bytes;
+the9F03h probe independently covers253 alignment bytes. Both preserve exact
+publication/input waits and flat T-states on all675 cases per mode.
+The original producer stream has no slower real expanded slice; shared
+real-3 slice8 costs+3 T. Full-case maximum regression is43 T. Every individual
+delta and actual stack peak is retained. [Native/producer evidence](evidence/wide_guarded_native.json.gz),
+[live table/handler relocation](evidence/wide_guarded_relocation.json.gz),
+[service inventory and package proof](evidence/wide_guarded_verification.json).

@@ -14,7 +14,7 @@ CALLER_STACK_BYTES = 6
 
 
 def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
-          _boundary=None, _external_labels=None):
+          _boundary=None, _external_labels=None, _literal_guards=False):
     """Return resident regions/labels/metadata; no input or output bounds checks.
 
     Call start with HL=input, DE=output and a valid caller stack. AF/AF'/BC/
@@ -75,8 +75,16 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
     emit(0x3c);jr(0x28, 'ManyLiterals');emit(0xd6, 238, 0x4f)
     ldi();ldi();ldir();emit(0xc9)
     a.label('ManyLiterals');emit(0x3e, 18, 0x86);inc()
-    jr(0x38, 'WordLiterals');emit(0x4f);ldir();emit(0xc9)
-    a.label('WordLiterals');emit(0x4e);inc();emit(0x46);inc();ldir();emit(0xc9)
+    jr(0x38, 'WordLiterals');emit(0x4f)
+    if _literal_guards:
+        # The token prefix protects <=17 literals. Byte/word long forms
+        # suspend with BC=count and HL=literal source until extent+7 is read.
+        a.labels['long8_target']=a.pc+1;jp(0xc3, 'guard_long8')
+    a.label('long8_complete');ldir();emit(0xc9)
+    a.label('WordLiterals');emit(0x4e);inc();emit(0x46);inc()
+    if _literal_guards:
+        a.labels['long16_target']=a.pc+1;jp(0xc3, 'guard_long16')
+    a.label('long16_complete');ldir();emit(0xc9)
     handlers = [None]*256
     def literal_prefix(literal, cls):
         if literal in (1, 2):

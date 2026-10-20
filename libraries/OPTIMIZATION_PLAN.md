@@ -509,3 +509,59 @@ or per-library-goal completion.31library tests/default31/resources6and isolated
 five-profile wheel/API/CLI exports pass. Preserve all earlier reports.
 [Full audit/reproduction](ZX0_WORD_PREFIX.md),
 [authenticated evidence](evidence/ten_percent_maximum_word_prefix_verification.json).
+
+## Guarded wide coroutine milestone (2026-10-20)
+
+The wide coroutine now accepts `streaming=True` and both original header
+guard modes. The same32-byte header/extent+7 rules, finished/input-needed
+flags, caller clobbers, token-boundary quota and exact EOD remain intact.
+The embedded57/54-byte `update_guards` helper is included in consumer RAM;
+the original producer's inline copy and required256-byte carry are counted
+as well. Consumer service is7,344 /7,336 bytes expanded,3,792 /3,784 shared,
+including private24/caller4 stacks and all19 embedded state bytes. The
+aligned reference pipeline with every required component, observed stacks,
+conservative5B00..5FFF workspace reserve and stated IRQ example totals
+9,881 /9,870 or6,329 /6,318 bytes. Additional application work/alignment must
+stay within the hard10,000-byte cap; real ROM execution remains unqualified.
+
+Matched real21 call CPU23,961,774 ->21,822,661 /22,068,191 T (8.927190% /
+7.902516%); direct21,756,088 ->19,616,975 /19,862,505 (9.832250% /8.703693%).
+Including the identical producer reduces those percentage gains to8.473294% /
+7.500719% call or9.287650% /8.221602% direct. Preserve the active joint goal.
+All675 native cases/six placements per mode pass, plus relocated/IRQ replays;
+the original63-case producer stream retains772 once-only reads and exact
+input/output cursors, waits, carry, banks and producer instruction costs.
+31 library tests,31 exact defaults/six resources, all256 core alignments and
+the independent installed wheel/API/CLI exports pass.
+The9F03h origin probe covers253 alignment bytes. A separate full675-case
+flat/IRQ proof at9E00h shifts live tables/handlers down512 bytes at the same
+service size. Consumer-only runtime metadata and supplier-owned carry are
+explicit; their final clarification changes0 machine bytes/0 T and retains
+the executed source snapshot with current-byte reauthentication.
+
+Retain all slower cases: expanded144 native placements/4,394 slices; shared
+162 /4,586, maximum43 T. All real blocks improve, with12/18 slower native
+real slices (max22 T). The original producer has21/23 slower blocks and26/29
+slices; shared real-3 slice8 is+3 T. Preserve the correctly rejected A003h
+carry overlap and both corrected histogram-audit attempts. Ordinary/raw bytes
+remain exact. [Complete native proof](evidence/wide_guarded_native.json.gz),
+[resource/package authentication](evidence/wide_guarded_verification.json).
+Reproduce `tests/measure_wide_guarded.py --output evidence/wide_guarded_native.json.gz`,
+then `tests/verify_wide_guarded_relocation.py --output evidence/wide_guarded_relocation.json.gz`,
+then `tests/summarize_wide_guarded.py --directory ../.tmp --output
+evidence/wide_guarded_verification.json` after the31-test library run and
+isolated `guarded-wheels` /`guarded-installed` /`guarded-smoke` checks.
+
+### Unimplemented next proposal: selected fixed new-offset matches
+
+An instruction-table estimate suggests storing the cached BC offset as
+before, then PUSH input HL; LD H,B/LD L,C; ADD HL,DE; initialize B=0/C=count;
+unroll2..8 LDIs; POP input HL; JP ReadToken. The old entry/new exit jumps
+cancel. The offset load would cost8 T rather than10 and fixed-copy unrolling
+would save5 T per byte beyond two: estimated2..32 T per eligible match, with
+unchanged forward overlap and BC=0 afterward. Estimated growth is9..21 bytes
+per selected handler, approximately735 bytes for49 shared bodies; all196
+expanded guarded sites would add about2,940 bytes and exceed the consumer cap.
+These are unmeasured estimates only. Select sites using real frequencies,
+count the entire required service and rerun complete compatibility/guarded
+proof before acceptance. No implementation of this proposal is started here.

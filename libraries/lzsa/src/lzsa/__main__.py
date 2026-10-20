@@ -51,14 +51,15 @@ def main():
             if name not in supplied_coroutine_layout:setattr(args,name,value)
         if args.branch_tuned and args.compact_branches:parser.error('select one conditional branch policy')
         if args.profile in ('wide-coroutine','wide-shared-coroutine'):
-            if (args.streaming or args.direct_header or args.word_state_init or args.restore_compare or
+            if (args.word_state_init or args.restore_compare or
                     args.long_copy or args.near_literals or args.fast_jumps or args.branch_tuned or
                     args.compact_sync or args.nibble_prefill or args.compact_branches):
-                parser.error('wide coroutine has its own layout and requires complete resident input')
+                parser.error('wide coroutine uses its own copy/state/branch layout')
             from .wide_coroutine import build as wide_build
             regions,labels,metadata=wide_build(core=args.core,core_limit=args.core_limit,
                 prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base,
-                shared_literals=args.profile=='wide-shared-coroutine')
+                shared_literals=args.profile=='wide-shared-coroutine',
+                streaming=args.streaming,direct_header=args.direct_header)
         elif args.profile!='coroutine':
             if supplied_coroutine_layout:
                 parser.error('resident-block profile does not use --prefix/--prefix-limit/--stack/--output-base')
