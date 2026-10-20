@@ -152,6 +152,20 @@ if name=='lzsa':
         assert [(address,bytes(data)) for address,data in rebuilt]==regions
         wide.append(dict(variant=variant,code_bytes=metadata['code_bytes'],
                          service_memory_bytes=metadata['service_memory_bytes'],exact_export=True))
+    for shared in (False,True):
+        variant='wide-shared-coroutine' if shared else 'wide-coroutine'
+        builder=importlib.import_module(name+'.wide_coroutine').build
+        regions,labels,metadata=builder(shared_literals=shared)
+        assert metadata['service_memory_bytes']==metadata['code_bytes']+16+4<=10000
+        at=destination/variant
+        export(at,regions,labels,metadata)
+        sys.argv=[name,'build','--profile',variant,'--core','0x8000','--core-limit','0xb000',
+                  '--output',str(destination/(variant+'-cli'))]
+        runpy.run_module(name+'.__main__',run_name='__main__')
+        cli=json.loads((destination/(variant+'-cli')/'metadata.json').read_text())
+        assert cli['regions']==json.loads((at/'metadata.json').read_text())['regions']
+        wide.append(dict(variant=variant,code_bytes=metadata['code_bytes'],
+                         service_memory_bytes=metadata['service_memory_bytes'],exact_export=True))
 assert not any(n.startswith(('toolkit','cv2','numpy')) for n in sys.modules)
 mega_tuned=[]
 if name=='zx0':

@@ -74,15 +74,17 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
                   '; Carry phase is unchanged. Unpaired refill +3 T; complete pair -4 T, +4 code bytes.', '']
 
     if metadata.get('full_token_dispatch'):
-        lines += ['; Wide raw profile: 256 token handlers; 512-byte low/high target table.',
+        lines += ['; Wide raw-v2 token core: 256 token handlers; 512-byte low/high target table.',
                   '; EXX lends HL\' for lookup; every handler restores main registers before data access.',
                   '; IRQ must preserve both main and alternate register sets while dispatch is live.',
-                  '; Raw entry/EOF retain caller HL\'; six stack bytes include the caller return word.',
-                  '; Code + tables + alignment + six stack bytes stay within 10000 bytes.',
+                  '; Decoder entry/EOF retain the saved HL\'; stack ownership follows the selected wrapper.',
+                  '; Code + tables + alignment + embedded state + required stacks stay within 10000 bytes.',
                   '; Compressed source and complete output/history are separate caller buffers.',
                   '; Add actual hardware-return/IRQ-handler stack headroom separately.',
                   '; Fixed one/two literal LDIs may wrap BC before a new-offset parser replaces B/C.',
                   '; Repeat-offset tokens retain B=0; short escaped word lengths use bounded LDIR.', '']
+        if metadata.get('one_shot'):
+            lines += ['; Raw caller-stack peak is six bytes including the return word.', '']
         routines.update({
             'dispatch_low':'256 immutable low bytes of token targets; indexed by the complete token.',
             'dispatch_high':'256 immutable high bytes, exactly one page above dispatch_low.',
@@ -93,6 +95,14 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
             'LongLiterals':'Parse LL=3 literal length; keep legal one/two-byte word escapes on LDIR.',
             'done':'Restore caller HL\' and return with exact input/output cursors and caller SP.',
         })
+        if metadata.get('coroutine'):
+            lines += ['; Wide coroutine: minimum output quota is checked between complete tokens.',
+                      '; The complete resident input/history is required; no partial-input guard.',
+                      '; Service includes sixteen private-stack and four caller-stack bytes.',
+                      '; Caller may overwrite working registers during suspension; final demand still reads EOD.', '']
+            routines['ReadToken']='Check token-boundary quota; if ready, perform the 58-T dispatch. Final demand requires exact EOD.'
+            routines['done']='Restore the saved initial HL\' and return to the finish wrapper on the private stack.'
+            routines['finished']='Verify exact DE=block_end, publish the final cursor and restore caller SP; a mismatch halts.'
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')

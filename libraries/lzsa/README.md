@@ -67,6 +67,41 @@ stay unchanged. Wide variants use their own branch/copy layouts and reject
 the independent Fast tuning flags. They provide no coroutine/partial-input
 checks or new player timing qualification. [Full native/package evidence](../evidence/wide_profiles_verification.json).
 
+For output-demand suspension with complete resident input, use the separate
+wide coroutine wrapper:
+
+```python
+from lzsa.wide_coroutine import build
+regions, labels, metadata = build(core=0x8000, core_limit=0xb000)
+# shared_literals=True selects the smaller intermediate token layout.
+```
+
+CLI profiles are `wide-coroutine` and `wide-shared-coroutine`, with the same
+explicit `--core 0x8000 --core-limit 0xb000` reservation. Configure
+`input_pointer`, `block_end` and `slice_target`; call `begin`, then
+`slice_until`. Like ordinary Fast, quotas are minimums checked between tokens;
+the final demand still reads exact EOD. Caller registers may be overwritten
+while suspended, and caller SP is restored on return. Keep both main and
+alternate live register sets intact in IRQ handlers.
+
+At 8000h the expanded/shared coroutine uses 7,165 /3,613 code/table/state
+bytes, plus a measured 16-byte private stack and four-byte caller stack
+(return plus `sync` call): **7,185 /3,633 service bytes**. All 256 possible
+alignments fit the cap; worst service sizes are 7,440 /3,888 bytes. The 15
+state bytes and four mutable operand bytes are already inside the code/state
+regions. Data buffers and actual IRQ code/stack headroom remain separate.
+
+On the same complete real fixture with 256-byte demands, CPU is
+19,407,004 ->17,265,863 /17,511,393 T: **11.032826% /9.767664% less CPU**.
+Every returned output cursor matches ordinary Fast on the complete corpus and
+580 directed cases. Expanded/shared slow 21/28 directed slices, at most
+20/30 T; no real slice slows. The additional580 probes have3/4 slower blocks
+and3/324 slower slices (at most20/30 T); every timing is retained. Complete
+resident input is required: these
+profiles reject streaming and independent Fast layout flags. Guarded input,
+physical delivery and player publication timing remain separate work.
+[Coroutine native/package proof](../evidence/wide_coroutine_verification.json).
+
 ```python
 from lzsa import compress, decompress, trace
 

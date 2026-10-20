@@ -216,6 +216,50 @@
   [native evidence](libraries/evidence/ten_percent_tail_refill.json),
   [verification](libraries/evidence/ten_percent_tail_refill_verification.json).
 
+## 2026-10-20 — Publish complete-input wide LZSA2 coroutines with exact quota cursors
+
+- **Scope/baseline:** Continue the newly authorized maximum-speed and
+  intermediate profiles under 10,000 service bytes. Build in
+  `.worktree/codec-lzsa-wide-coroutine` from `e44abb56`; retain complete resident
+  input and the ordinary `f5a0362c` Fast +fast_jumps output-demand contract.
+  Partial-input guards are a separate following milestone.
+- **Change/ABI:** Add independent `lzsa.wide_coroutine.build` and CLI
+  `wide-coroutine` /`wide-shared-coroutine`. Reuse the raw token generator with
+  the original high/low quota checks before dispatch. Save decoder registers,
+  AF' and continuation on a private stack; accept caller clobbers while
+  suspended. Final output demand still reads exact EOD. Count actual stack
+  writes and return every publication cursor in the native verifier.
+- **Measured CPU/memory:** On all real21 /323,940 output bytes, 256-byte
+  demands cost 19,407,004 ->17,265,863 T expanded (-2,141,141;11.032826%), or
+  ->17,511,393 T shared (-1,895,611;9.767664%). Code/table/embedded state is
+  7,165 /3,613 bytes. Actual private-stack peak is 16 and caller peak four
+  bytes, including the return word and `sync` call: total **7,185 /3,633**
+  service bytes, worst alignments **7,440 /3,888**. The first caller-stack
+  estimate omitted `CALL sync`; protected native write accounting caught
+  four bytes before acceptance. No scratch or internal buffers; 15 state
+  bytes and four mutable operand bytes are embedded and counted once.
+- **Verification/regressions:** Both profiles pass all95 complete cases
+  plus580 directed token/cache/offset/EOF cases, with relocation/IRQ probes.
+  Every returned output cursor equals ordinary Fast; slice counts and output
+  overshoot semantics match. Expanded/shared slow21/22 directed blocks and
+  21/28 slices, maximum +20/+30 T; no real block or slice slows. Custom
+  The additional580 probes include3/4 slower blocks and3/324 slower slices,
+  maximum +20/+30 T, all saved individually. Shared can slow a slice while
+  improving its complete block. Custom placement and demands1,2,255,256,257/full
+  also match publication cursors. Retain the original19 October run in
+  [historical evidence](libraries/evidence/wide_coroutine/history-2026-10-19).
+  All30 library tests pass with31 exact defaults and six upstream resources.
+  The installed independent wheel contains both wrappers and exports all four
+  wide API/CLI profiles; no converter/other-codec import is introduced.
+- **Decision/limits:** Accept explicit complete-input coroutine options.
+  Original raw bytes/defaults remain exact. Add actual IRQ code/stack headroom
+  separately (tested13 code+6 stack); input/output/history remain separate
+  caller buffers (all95 maxima15,878 /15,872 bytes). No guarded producer,
+  physical disk/ROM/ULA timing or movie publication claim. The joint objective
+  remains incomplete. [Native proof](libraries/evidence/wide_coroutine.json),
+  [package/service/default authentication](libraries/evidence/wide_coroutine_verification.json),
+  [reproducer](libraries/tests/measure_wide_coroutine.py).
+
 ## 2026-10-19 — Distinguish real and full-corpus wide decoder buffer requirements
 
 - **Scope/result:** The wide decoder's published 8,198-byte input maximum is

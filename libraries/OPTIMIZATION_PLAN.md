@@ -427,3 +427,38 @@ claimed. Most of its advantage over Fast was already present
 in Mega and cannot count as a new gain. [Full audit](MEGA_OFFSET_AUDIT.md),
 [native evidence](evidence/ten_percent_mega_offset.json),
 [authentication](evidence/ten_percent_mega_offset_verification.json).
+
+## Ordinary wide coroutine milestone (2026-10-20)
+
+`lzsa.wide_coroutine.build(shared_literals=False)` and CLI `wide-coroutine`
+provide the full output-demand coroutine contract for the expanded token
+layout; `shared_literals=True` /`wide-shared-coroutine` is intermediate. Input
+and complete output/history remain resident. Keep the existing token-boundary
+minimum target, final-EOD requirement, private continuation and caller-clobber
+semantics. The raw token generator accepts an internal boundary emitter;
+default raw bytes remain identical to the independent frozen prototype.
+
+Real21 CPU with256-byte demands: 19,407,004 ->17,265,863 /17,511,393 T,
+saving11.032826% /9.767664%. Service bytes at8000h are7,185 /3,633, including
+all code/table/alignment/embedded variables/state, measured private stack16
+and caller stack4. Initial reasoning missed the nested `sync` caller return;
+the new protected-write accounting measured four before acceptance. Worst
+alignment sizes7,440 /3,888 stay below10,000. Fifteen state bytes and four
+patched bytes are subsets of code/state regions. IRQ code/stack and data
+buffers are separately reported.
+
+All95 cases and580 directed cases per profile pass relocation/IRQ and exactly
+match every ordinary Fast publication cursor. Another custom-placement quota
+test covers demands1,2,255,256,257/full. There are21/22 slower directed blocks,
+21/28 slower slices, max20/30 T; no real slice slows. The additional580
+token/cache probes contain3/4 slower blocks and3/324 slower slices, max20/30 T;
+their per-case timing and stack results are saved. All30 library tests and
+isolated installed-wheel API/CLI exports pass;31 defaults/six resources stay
+exact. These options reject partial-input/independent Fast flags. Guarded
+producer equivalents and physical playback qualification remain unfinished.
+
+Reproduce `tests/measure_wide_coroutine.py --output evidence/wide_coroutine.json`
+then `tests/summarize_wide_coroutine.py --directory ../.tmp --output
+evidence/wide_coroutine_verification.json` from `libraries/`, after the30-test
+library run and isolated wheel smoke. [Native counts](evidence/wide_coroutine.json),
+[service/package verification](evidence/wide_coroutine_verification.json).

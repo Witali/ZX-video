@@ -13,7 +13,8 @@ STORAGE_BUDGET = 10000
 CALLER_STACK_BYTES = 6
 
 
-def build(*, core=0x8000, core_limit=0xc000, shared_literals=False):
+def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
+          _boundary=None, _external_labels=None):
     """Return resident regions/labels/metadata; no input or output bounds checks.
 
     Call start with HL=input, DE=output and a valid caller stack. AF/AF'/BC/
@@ -60,6 +61,8 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False):
     a.labels['offset'] = a.pc+1;emit(0x21, 0, 0, 0x19)
     ldi();ldir();emit(0xe1)
     a.label('ReadToken')
+    if _boundary is not None: _boundary(a)
+    a.label('token_body')
     # Lookup: 54 T including token fetch/advance, followed by handler EXX 4 T.
     # Only HL' is scratch. Two pages contain the target low and high bytes.
     emit(0x7e);inc();emit(0xd9, 0x6f, 0x26, table>>8,
@@ -128,7 +131,7 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False):
         raise ValueError('wide LZSA2 exceeds core-limit; reserve table and handler code explicitly')
     if a.pc-core+CALLER_STACK_BYTES > STORAGE_BUDGET:
         raise ValueError('wide LZSA2 exceeds the total 10000-byte code/table/alignment/stack budget')
-    blob = bytearray(a.resolve())
+    blob = bytearray(a.resolve(_external_labels))
     for token, target in enumerate(handlers):
         blob[table-core+token] = target&255
         blob[table-core+256+token] = target>>8

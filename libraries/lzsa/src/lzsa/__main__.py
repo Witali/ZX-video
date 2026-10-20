@@ -10,7 +10,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     assembly = commands.add_parser('build')
-    assembly.add_argument('--profile',choices=('coroutine','fast-block','small-block','wide-block','wide-shared-block'),default='coroutine',
+    assembly.add_argument('--profile',choices=('coroutine','fast-block','small-block','wide-block','wide-shared-block',
+                                             'wide-coroutine','wide-shared-coroutine'),default='coroutine',
                           help='wide profiles need explicit larger --core/--core-limit reservations')
     assembly.add_argument('--output', type=Path, required=True)
     assembly.add_argument('--namespace', default='lzsa2')
@@ -42,7 +43,16 @@ def main():
     decoder.add_argument('--limit', type=int, required=True)
     args = parser.parse_args()
     if args.command == 'build':
-        if args.profile!='coroutine':
+        if args.profile in ('wide-coroutine','wide-shared-coroutine'):
+            if (args.streaming or args.direct_header or args.word_state_init or args.restore_compare or
+                    args.long_copy or args.near_literals or args.fast_jumps or args.branch_tuned or
+                    args.compact_sync or args.nibble_prefill):
+                parser.error('wide coroutine has its own layout and requires complete resident input')
+            from .wide_coroutine import build as wide_build
+            regions,labels,metadata=wide_build(core=args.core,core_limit=args.core_limit,
+                prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base,
+                shared_literals=args.profile=='wide-shared-coroutine')
+        elif args.profile!='coroutine':
             if args.streaming or args.direct_header or args.word_state_init or args.restore_compare or args.compact_sync:
                 parser.error('resident-block profile has no streaming/state wrapper')
             from .block import build as block_build

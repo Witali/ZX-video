@@ -86,6 +86,7 @@ def execute(regions, labels, layout, payload, expected, interrupts=False, *, sou
         for name in ('af','bc','de','hl','alt_af','alt_bc','alt_de','alt_hl'):
             setattr(m,name,0x9797)
     assert bytes(m.memory[output:high])==expected and high==output+len(expected)
-    return dict(tstates=sum(slices),slices=slices,output_cursors=output_cursors,exact=True,injected_interrupts=irqs,
+    return dict(tstates=sum(slices),slices=slices,output_cursors=output_cursors,publication_offsets=output_cursors,
+                exact=True,injected_interrupts=irqs,
                 private_stack_bytes=private_stack-private_low,caller_stack_bytes=stack-caller_low,
                 unavailable_interrupt_events=unavailable_irqs)

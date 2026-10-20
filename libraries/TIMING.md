@@ -267,3 +267,38 @@ included); exampleIRQ adds6stack/13handler code for693bytes. Input/output
 history is separate, as authorized by the user.
 Do not count the old Mega gain toward the new goal or claim movie/player
 qualification. [Full audit and reproduction](MEGA_OFFSET_AUDIT.md).
+
+## Ordinary wide coroutine timing and service memory (2026-10-20)
+
+The token-boundary quota comparisons and cold continuation preserve ordinary
+Fast's complete-input feature set. CPU deltas from f5a0362c match the raw
+decoder deltas; there is no quota removal or input-format change. The hot
+boundary uses the same LD/CP/JP/JR paths as Fast +fast_jumps, including JP10
+after suspension. The 58-T table lookup and 37-T alternate-HL block overhead
+retain the preceding derivation.
+
+| Profile, real21 /256-byte demands | CPU T | Difference | Code/table/state bytes | Private stack | Caller stack | Service bytes |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Fast +fast_jumps baseline | 19,407,004 | 0 | 386 | unchanged baseline | unchanged baseline | separately retained baseline |
+| wide-coroutine | 17,265,863 | -2,141,141 (-11.032826%) | 7,165 | 16 | 4 | 7,185 |
+| wide-shared-coroutine | 17,511,393 | -1,895,611 (-9.767664%) | 3,613 | 16 | 4 | 3,633 |
+
+The wrapper and quota code add167 region bytes to either raw profile. Fifteen
+state bytes/four mutable operands are already inside those regions. Caller
+peak four includes the return word and CALL sync's return; private peak16
+includes the saved raw HL', yield return and live register frame. Both are
+measured by protected stack writes, not inferred from the maximum output case.
+At9103h add253 alignment bytes: service7,438 /3,886. Worst alignment adds255:
+7,440 /3,888, below10,000. Actual IRQ headroom is separate (test handler13
+code bytes and6 stack bytes); input/output/history are also separate.
+
+All95 full cases and580 directed cases per profile pass. Returned output
+cursors match baseline for every demand, including relocation/IRQ and custom
+target granularity. Expanded/shared have21/28 slower directed slices, max
++20/+30 T; none is real. The additional580 token/cache probes contain3/4
+slower blocks and3/324 slower slices, also at most +20/+30 T; their individual
+counts are retained. Thirty library tests and isolated-wheel export checks
+retain31 old default profiles/six resources. Flat CPU excludes injected IRQ,
+ROM/ULA/disk latency and publication scheduling. Partial-input/guarded producer
+integration is not implemented by this milestone. [Native evidence](evidence/wide_coroutine.json),
+[service/package authentication](evidence/wide_coroutine_verification.json).

@@ -1,0 +1,290 @@
+{
+  "date": "2026-10-19",
+  "complete": true,
+  "release": false,
+  "goal_achieved": false,
+  "scope": "Ordinary complete-input wide coroutine with exact publication cursors and bounded service memory.",
+  "storage_budget_bytes": 10000,
+  "external_input_output_history_separate": true,
+  "profiles": {
+    "wide-coroutine": {
+      "code_tables_alignment_state_bytes": 7165,
+      "service_bytes": 7185,
+      "relocated_service_bytes": 7438,
+      "worst_alignment_service_bytes": 7440,
+      "private_stack_bytes": 16,
+      "caller_stack_bytes": 4,
+      "embedded_state_bytes": 15,
+      "actual_irq_handler_code_bytes": 13,
+      "actual_irq_stack_headroom_bytes": 6,
+      "maximum_corpus_input_bytes": 15878,
+      "maximum_corpus_output_history_bytes": 15872,
+      "summary": {
+        "cases": 95,
+        "directed_cases": 580,
+        "real_blocks": 21,
+        "baseline_tstates": 19407004,
+        "candidate_tstates": 17265863,
+        "delta_tstates": -2141141,
+        "percent_saved": 11.032826086911715,
+        "slower_blocks": [
+          "literal-3",
+          "literal-17",
+          "literal-18",
+          "literal-237",
+          "literal-238",
+          "literal-239",
+          "literal-255",
+          "literal-256",
+          "literal-257",
+          "literal-511",
+          "literal-800",
+          "literal-4096",
+          "literal-15872",
+          "word-literal-3",
+          "word-literal-4",
+          "word-literal-15",
+          "word-literal-16",
+          "word-literal-17",
+          "word-literal-18",
+          "word-literal-24",
+          "word-literal-255"
+        ],
+        "slower_slices": 21,
+        "real_slower_slices": 0,
+        "maximum_slice_delta": 20,
+        "actual_caller_stack_bytes": 4,
+        "actual_private_stack_bytes": 16,
+        "directed_injected_interrupts": 576,
+        "publication_offsets_exact": true
+      }
+    },
+    "wide-shared-coroutine": {
+      "code_tables_alignment_state_bytes": 3613,
+      "service_bytes": 3633,
+      "relocated_service_bytes": 3886,
+      "worst_alignment_service_bytes": 3888,
+      "private_stack_bytes": 16,
+      "caller_stack_bytes": 4,
+      "embedded_state_bytes": 15,
+      "actual_irq_handler_code_bytes": 13,
+      "actual_irq_stack_headroom_bytes": 6,
+      "maximum_corpus_input_bytes": 15878,
+      "maximum_corpus_output_history_bytes": 15872,
+      "summary": {
+        "cases": 95,
+        "directed_cases": 580,
+        "real_blocks": 21,
+        "baseline_tstates": 19407004,
+        "candidate_tstates": 17511393,
+        "delta_tstates": -1895611,
+        "percent_saved": 9.767664292747092,
+        "slower_blocks": [
+          "literal-1",
+          "literal-3",
+          "literal-17",
+          "literal-18",
+          "literal-237",
+          "literal-238",
+          "literal-239",
+          "literal-255",
+          "literal-256",
+          "literal-257",
+          "literal-511",
+          "literal-800",
+          "literal-4096",
+          "literal-15872",
+          "word-literal-3",
+          "word-literal-4",
+          "word-literal-15",
+          "word-literal-16",
+          "word-literal-17",
+          "word-literal-18",
+          "word-literal-24",
+          "word-literal-255"
+        ],
+        "slower_slices": 28,
+        "real_slower_slices": 0,
+        "maximum_slice_delta": 30,
+        "actual_caller_stack_bytes": 4,
+        "actual_private_stack_bytes": 16,
+        "directed_injected_interrupts": 576,
+        "publication_offsets_exact": true
+      }
+    }
+  },
+  "library_tests": 30,
+  "default_profiles": 31,
+  "upstream_resources": 6,
+  "native_sha256": "367a2683be38188138b66849a6047e5eae05b0730278cce8ff3c084b00c6d6aa",
+  "source_sha256_lf": {
+    "libraries/lzsa/src/lzsa/wide.py": "76703777d48aef6715924574dc6d5c80d59a4acfd0f5877ead9a3956e69027d9",
+    "libraries/lzsa/src/lzsa/wide_coroutine.py": "51471c8dcf96839e4bc79bed2f073cc0c20315988fe87446a85154f09ae32ec4",
+    "libraries/lzsa/src/lzsa/native.py": "90d78878eb1ff5283fd95c9a1d3fb6b6af39d2c6aa5651e78155831aba6aa7fa",
+    "libraries/tests/measure_wide_coroutine.py": "4f243145ab802ce559a7a4bc55db6673a5044c3a97ebb300c2000d70600ccb23"
+  },
+  "unit_log": {
+    "path": "libraries/evidence/wide_coroutine/library-tests.log.gz",
+    "sha256": "16ed2e2acaa433357cbcd2060843dfe340ae9d80af3991fb6501fb3a4974c031"
+  },
+  "wheel": {
+    "filename": "zxvideo_lzsa-0.1.0-py3-none-any.whl",
+    "sha256": "bebdacf4b3c199a120a53fa81eb76e5ce07c3b6e88ca8c871ac0a47afae11e1c",
+    "members": [
+      {
+        "path": "lzsa/LICENSE",
+        "sha256": "656e18178a11644dc6f34867949214112233c200794d1f64b8cd9ededcfde137"
+      },
+      {
+        "path": "lzsa/__init__.py",
+        "sha256": "dfad484c1a07ca2f6e3a759b5ac53763808b47e69d5997e645a152250fb20a9b"
+      },
+      {
+        "path": "lzsa/__main__.py",
+        "sha256": "0a11566b7290519e73709603368372a93d9dfcefe6beb8a55c84664ba9acfc3e"
+      },
+      {
+        "path": "lzsa/_branch_tuning.py",
+        "sha256": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54"
+      },
+      {
+        "path": "lzsa/_z80.py",
+        "sha256": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d"
+      },
+      {
+        "path": "lzsa/author.py",
+        "sha256": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b"
+      },
+      {
+        "path": "lzsa/block.py",
+        "sha256": "0a8f95334a46a2ef8599b673bb05183a8e2920aacf8d786b0f32339e42f885ff"
+      },
+      {
+        "path": "lzsa/budget.py",
+        "sha256": "5ae4458bf5bbc6c0f81d9daf064cc555b480a6e3dd6962d7b3b9689291afcf06"
+      },
+      {
+        "path": "lzsa/codec.py",
+        "sha256": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775"
+      },
+      {
+        "path": "lzsa/compact.py",
+        "sha256": "0d382910264a4341002c751845420e795ed1357c94989db10974514722cd6676"
+      },
+      {
+        "path": "lzsa/compressor.py",
+        "sha256": "524e91046757a255f418f4a5e4d64669ac51b704b8bb76d063e54e4e3e6db088"
+      },
+      {
+        "path": "lzsa/distance_cost.py",
+        "sha256": "a5d4cc55fd9861229fa609d9609f06ceda660395715a49c178e99fd98eb70af6"
+      },
+      {
+        "path": "lzsa/distances.py",
+        "sha256": "553ff5d6934d60a0bd5f71188b24d6f240e7b1624f38625682c326b58d5e6e95"
+      },
+      {
+        "path": "lzsa/export.py",
+        "sha256": "a62f192c1d808c1457005dd18f822bd604b03046d62ff8017a02c470a741f775"
+      },
+      {
+        "path": "lzsa/native.py",
+        "sha256": "90d78878eb1ff5283fd95c9a1d3fb6b6af39d2c6aa5651e78155831aba6aa7fa"
+      },
+      {
+        "path": "lzsa/oracle.py",
+        "sha256": "039654e7a86477f5c8cf34755a68a8cb474053c87108ce6a7e6cc29c75564c5b"
+      },
+      {
+        "path": "lzsa/resumable.py",
+        "sha256": "d896b3bd987644a930891ad7f934620f3f061365e9ccfa0524d139c019a72a46"
+      },
+      {
+        "path": "lzsa/streaming.py",
+        "sha256": "8cdf842acc989b253c31bf7d0dc2e5e238afd6e975436f8a988002eb15c80aaa"
+      },
+      {
+        "path": "lzsa/wide.py",
+        "sha256": "76703777d48aef6715924574dc6d5c80d59a4acfd0f5877ead9a3956e69027d9"
+      },
+      {
+        "path": "lzsa/wide_coroutine.py",
+        "sha256": "51471c8dcf96839e4bc79bed2f073cc0c20315988fe87446a85154f09ae32ec4"
+      },
+      {
+        "path": "lzsa/asm/unlzsa2_fast.asm",
+        "sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071"
+      },
+      {
+        "path": "lzsa/asm/unlzsa2_small.asm",
+        "sha256": "862882a4ba95de2b7a9cf1246c5c070b6b70ced60be68cd91f4ea4d3a5d7450b"
+      }
+    ],
+    "smoke": {
+      "package": "lzsa",
+      "independent_wheel": true,
+      "custom_layout": true,
+      "cli_export": true,
+      "resources": true,
+      "exact_round_trip": true,
+      "external_encoder": false,
+      "resident_profiles": [
+        {
+          "variant": "fast",
+          "bytes": 218,
+          "exact_export": true
+        },
+        {
+          "variant": "small",
+          "bytes": 137,
+          "exact_export": true
+        }
+      ],
+      "fast_jump_profiles": [
+        {
+          "variant": "fast",
+          "bytes": 219,
+          "exact_export": true
+        }
+      ],
+      "branch_tuned_profiles": [
+        {
+          "variant": "fast",
+          "bytes": 219,
+          "exact_export": true
+        }
+      ],
+      "wide_profiles": [
+        {
+          "variant": "wide",
+          "code_bytes": 6998,
+          "service_memory_bytes": 7004,
+          "exact_export": true
+        },
+        {
+          "variant": "wide-shared",
+          "code_bytes": 3446,
+          "service_memory_bytes": 3452,
+          "exact_export": true
+        },
+        {
+          "variant": "wide-coroutine",
+          "code_bytes": 7165,
+          "service_memory_bytes": 7185,
+          "exact_export": true
+        },
+        {
+          "variant": "wide-shared-coroutine",
+          "code_bytes": 3613,
+          "service_memory_bytes": 3633,
+          "exact_export": true
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Complete input required; partial-input guarded variants are not implemented.",
+    "IRQ code/headroom and data buffers are reported separately from decoder service.",
+    "No physical delivery, ROM/ULA timing or movie publication deadline claim."
+  ]
+}
