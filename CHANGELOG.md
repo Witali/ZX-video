@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Measure fixed hybrid LZSA2 handlers and combine short kernels
+
+- **Objective/baseline:** Complete the third authorized direction: partition
+  all four LL forms per XYZ/MMM body between shared and expanded handlers.
+  Use the frozen 21-real-block corpus and public Shared/Expanded bookends
+  (3,452/7,004 B; 15,869,483/15,623,953 real T). Keep every legal token form.
+- **Parameters/results:** A bounded offline selector picks LL fallthroughs
+  and one through four body copies, with no runtime profiler or new table.
+  Basic finalists use 3,452/4,499/5,500 B and
+  15,822,353/15,683,583/15,643,493 T. Combining the independently verified
+  short kernels gives 4,999/6,500/9,500 B and
+  15,048,469/14,983,119/14,944,429 T. The largest is 679,524 T faster than
+  old Expanded; the 4,999-byte point is both smaller and faster.
+- **Verification:** Six finalists each pass all 95+580 cases with IRQ and
+  9103h relocation. All 675 cases independently reconcile
+  `Expanded - short-kernel savings + 10 * shared hits`; source/region hashes
+  and frozen selector vectors reconstruct both placements exactly. Plain/
+  diagnostic-IRQ stack <=6/12 B. Largest relocated service plus test IRQ
+  is 9,772 B; count actual application IRQ allocations separately.
+  Preserve every regression against both bookends: the 9,500-byte point
+  slows only four directed cases by 4 T versus Expanded, none versus Shared;
+  all real blocks improve. Smaller kernel points retain 208/83 directed
+  regressions, maximum196/14 T. Screens retain dominated/simple layouts too.
+- **Decision/limits:** Accept fixed measured raw-only selectors for separate
+  optional public integration. These private reports do not qualify coroutine,
+  guarded producer, physical-disk or movie timing. Existing public/default
+  decoder delta in this experiment is 0 T; changing data/omitting cold forms
+  is not part of the method.
+  [Algorithm/results](libraries/WIDE_HYBRID_EXPERIMENT.md),
+  [reproducer](libraries/tests/measure_wide_hybrid.py),
+  [selector vectors](libraries/evidence/wide_hybrid_experiment_selectors.json),
+  [authenticated compressed reports](libraries/evidence/wide_hybrid_experiment_archives.json).
+
 ## 2026-10-20 — Verify LZSA2 Wide short-match kernels
 
 - **Objective/baseline:** Execute the authorized short-copy follow-up against
