@@ -1,5 +1,26 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Mark the measured research leaders
+
+- **Objective/scope:** Identify minimum-service, maximum-speed and recommended
+  balance selections in the existing 75-call research results at `d4af390b`.
+  Reuse saved real-input timings including initialization; no new experiment,
+  target instruction, public API or native measurement is introduced.
+- **Selections:** Minimum ZX0 Standard74 B / LZSA2 Small compact EOF144 B;
+  fastest ZX0 cap255-fast8165 B/139,546,674 T and LZSA2 Hot combined9545 B/
+  14,905,725 T. Recommended balance remains ZX0 cap127-fast5053 B and LZSA2
+  Hybrid compact+cold4998 B, saving3112/4547 B for0.0214%/0.8361% more CPU
+  time than the respective speed leaders. Balance is an explicit practical
+  recommendation, not another unique optimum.
+- **Change/verification:** The generator adds visible badges, a six-selection
+  summary with function/file links, and machine-readable roles. All 75 public
+  calls/exports, saved timing/memory/region identities and local links pass;
+  every preceding selection and initialization audit identity are preserved.
+  The overview also corrects its stale fastest-LZSA2 sentence. Native tests
+  are not rerun for these documentation/annotation changes.
+  [Results and leaders](libraries/DECODER_VARIANTS.md#research-leaders),
+  [generator](libraries/tests/document_decoder_variants.py).
+
 ## 2026-10-20 — Qualify the larger ZX0 cap255 speed endpoint
 
 - **Objective/baseline:** Complete bounded E04 with one resident candidate,

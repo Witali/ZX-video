@@ -399,6 +399,23 @@ def main():
             row['resident_real_frontier']=not dominated
             if not dominated:keep.append(row)
         frontier[codec]=sorted(keep,key=lambda row:(row['service_bytes'],row['real_cpu_tstates']))
+    # Size and speed awards follow measured extrema. Balance is an explicit
+    # practical recommendation from the frontier, not a unique optimum.
+    distinctions={'minimum-service':'MINIMUM SERVICE', 'maximum-speed':'MAXIMUM SPEED',
+                  'recommended-balance':'RECOMMENDED BALANCE'}
+    balance_names={'zx0':'ZX0 Maximum branches 127 fast',
+                   'lzsa2':'LZSA2 Hybrid compact +cold extension'}
+    leaders={};fastest={}
+    for row in records:
+        row['research_leader_roles']=[]
+    for codec,points in frontier.items():
+        fastest[codec]=min(points,key=lambda row:(row['real_cpu_tstates'],row['service_bytes']))
+        leaders[codec]={'minimum-service':min(points,key=lambda row:(row['service_bytes'],row['real_cpu_tstates'])),
+            'maximum-speed':fastest[codec],
+            'recommended-balance':next(row for row in points if row['name']==balance_names[codec])}
+        for role,row in leaders[codec].items():
+            assert row['resident_real_frontier'] and row['kind']=='block' and row['service_bytes']<=10000
+            row['research_leader_roles'].append(role)
     for row in records:
         row['real_total_benchmark_tstates']=row['real_cpu_tstates']
         if row['kind'].startswith('guarded-'):
@@ -429,6 +446,9 @@ def main():
     def percent(value):
         value=Decimal(value)
         return '0.0000%' if value==0 else f'{value:+.4f}%'
+    def marked_name(row):
+        name='LZSA2 Small (classic)' if row['name']=='LZSA2 Small (minimum)' else row['name']
+        return name+''.join(' **['+distinctions[role]+']**' for role in row['research_leader_roles'])
     lines=['# Decoder variants, function links and baseline comparisons','',
         f'Updated {date.today().isoformat()}. These are selectable decoder implementations of',
         'forward ZX0 v2 and raw LZSA2; switching implementations does not require',
@@ -508,7 +528,7 @@ def main():
             memory=number(row['service_bytes'])
             if row['full_reference_service_bytes'] is not None:memory+=' / '+number(row['full_reference_service_bytes'])
             call=f'[{row["display_call"]}]({row["source_file"]}#L{row["source_line"]})'
-            display_name='LZSA2 Small (classic)' if row['name']=='LZSA2 Small (minimum)' else row['name']
+            display_name=marked_name(row)
             if guarded_table:
                 lines.append(f'| {display_name} | {memory} | {number(row["real_total_benchmark_tstates"])} | '
                     f'{number(row["real_cpu_tstates"])} | {percent(row["delta_time_vs_pass_percent"])} / '
@@ -535,8 +555,6 @@ def main():
     e01_records=[row for row in records if 'e01' in row]
     f00_records=[row for row in records if 'f00' in row]
     s01_records=[row for row in records if 's01' in row]
-    fastest={codec:min((row for row in records if row['codec']==codec and row['kind']=='block'),
-                       key=lambda row:row['real_cpu_tstates']) for codec in ('zx0','lzsa2')}
     lines += ['## E01 increments against the accepted resident variants','',
         'These optional calls retain the same compressed data and resident ABI. The',
         'reference is the corresponding accepted `9c28b01f` implementation, rather than',
@@ -623,6 +641,31 @@ def main():
         'use8,184 B with the13+6-byte IRQ example. The61 E01 branch choices are',
         'inherited; their historical regression list is a separate comparison.',
         '[E04 report](NEXT_E04_PREFIX255.md).','',
+        '## Research leaders','',
+        'Bold badges in the full resident table and the frontier identify these',
+        'six selections. Minimum service and maximum speed are measured extrema',
+        'within each codec\'s qualified resident choices. Recommended balance is',
+        'a practical selection from that frontier, not a unique mathematical optimum.',
+        'The recommendations favor substantial service-memory savings while retaining',
+        'nearly maximum speed. Coroutine and guarded modes have separate feature costs.','',
+        '| Codec / distinction | Variant | Service B | Real CPU T | Function / file |',
+        '| --- | --- | ---: | ---: | --- |']
+    for codec,awards in leaders.items():
+        for role,row in awards.items():
+            lines.append(f'| {codec} / **{distinctions[role]}** | {row["name"]} | '
+                f'{number(row["service_bytes"])} | {number(row["real_cpu_tstates"])} | '
+                f'[{row["display_call"]}]({row["source_file"]}#L{row["source_line"]}) |')
+    lines.append('')
+    for codec,awards in leaders.items():
+        balance=awards['recommended-balance'];maximum=awards['maximum-speed']
+        overhead=100*(Decimal(balance['real_cpu_tstates'])/Decimal(maximum['real_cpu_tstates'])-1)
+        saved=maximum['service_bytes']-balance['service_bytes']
+        lines.append(f'- {codec}: recommended balance saves {number(saved)} service B versus '
+            f'the speed leader, with {overhead:.4f}% more aggregate real CPU time.')
+    lines += ['', 'All entry initialization remains included. Required application IRQ storage',
+        'and placement-dependent padding must still follow the existing memory contract.',
+        'The finite measured corpus and retained regression lists limit these awards;',
+        'they establish no universal or global optimum.','',
         '## Nondominated resident size/speed choices','',
         'These are the best tested points on the complete real-corpus aggregate at',
         'the aligned placements above, with the same resident format/ABI. A point',
@@ -633,7 +676,7 @@ def main():
         '| --- | ---: | ---: | --- |']
     for codec,points in frontier.items():
         for row in points:
-            lines.append(f'| {row["name"]} | {number(row["service_bytes"])} | {number(row["real_cpu_tstates"])} | '
+            lines.append(f'| {marked_name(row)} | {number(row["service_bytes"])} | {number(row["real_cpu_tstates"])} | '
                 f'[{row["display_call"]}]({row["source_file"]}#L{row["source_line"]}) |')
     lines += ['','## Selection and runtime contracts','',
         '- Smallest resident decoders: **ZX0 Standard 74 B** (68 code +6 stack),',
@@ -741,6 +784,10 @@ def main():
         checked_public_calls_and_exact_exports=len(records),checked_local_links=len(links),references=[dict(codec=c,kind=k,
             original_fast_cpu_tstates=originals[c,k],pass_baseline_cpu_tstates=baselines[c,k]) for c,k in originals],
         profiles=records,evidence_sha256=used,source_sha256_lf=sources,
+        research_leaders={codec:{role:{key:row[key] for key in
+            ('name','service_bytes','real_cpu_tstates','builder','kwargs')}
+            for role,row in awards.items()} for codec,awards in leaders.items()},
+        research_leader_scope='Qualified resident choices, same codec/ABI/corpus/placement; initialization included. Minimum/speed are measured extrema; recommended balance is an editorial choice from the measured frontier.',
         preceding_public_calls_exact=50,preceding_selection_memory_cpu_region_sha256=legacy_sha,
         preceding_e01_table_calls_exact=68,optional_f00_public_calls=len(f00_records),
         preceding_f00_table_calls_exact=71,optional_s01_public_calls=len(s01_records),

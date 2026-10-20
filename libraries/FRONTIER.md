@@ -34,6 +34,24 @@ target preparation is0 T. Future one-time preparation must enter cold-start
 and batch totals. The linked variant table identifies all nondominated
 resident points on the measured real aggregate, with function/file links.
 
+## Research leaders
+
+These badges identify the current qualified **resident** selections. Minimum
+service and maximum speed follow measured extrema; recommended balance is a
+practical choice from the frontier, with other tradeoffs still available.
+
+| Distinction | ZX0 | LZSA2 |
+| --- | --- | --- |
+| **MINIMUM SERVICE** | Standard: **74 B**, 201,490,104 T | Small compact EOF: **144 B**, 20,423,420 T |
+| **MAXIMUM SPEED** | Maximum 255-fast: **8,165 B**, **139,546,674 T** | Hot combined: **9,545 B**, **14,905,725 T** |
+| **RECOMMENDED BALANCE** | Maximum 127-fast: **5,053 B**, 139,576,574 T | Hybrid compact +cold extension: **4,998 B**, 15,030,346 T |
+
+The balance recommendations save 3,112/4,547 service bytes versus the speed
+leaders, with only 0.0214%/0.8361% more CPU time respectively. Initialization
+is included. The [linked leader table](DECODER_VARIANTS.md#research-leaders)
+provides exact calls and implementation files. These are finite-corpus awards;
+the saved per-case regressions and IRQ/alignment memory contracts still apply.
+
 [S01](NEXT_S01_MINIMUM.md) keeps ZX0 Standard's74-B minimum, adds compact
 75/78-B gamma/SMC choices and reduces LZSA2 Small145 ->144 B. Every entry
 initializer is included; SMC's43-T startup includes its20-T offset reset.
@@ -97,8 +115,9 @@ more bytes for further gains. Tuned Mega and shared Wide are useful middle
 choices. Shared prefix 127 keeps almost all tested ZX0 maximum speed with
 4,886 B left under the cap. Shared 228 spends 2,464 more bytes to save
 23,690 T beyond shared 127; E01 saves another339,934 T and61 B from either
-cap with its fastest policy. E01 Hybrid fast is the fastest measured resident
-LZSA2 profile. A finite measured frontier does not prove global optimality.
+cap with its fastest policy. Hot combined is the current fastest measured
+resident LZSA2 profile; E01 Hybrid fast remains selectable. A finite measured
+frontier does not prove global optimality.
 
 The optional [fixed LZSA2 hybrids](LZSA_HYBRID.md) use
 `lzsa.hybrid.build(profile='compact'/'balanced'/'fast')`. Compact saves

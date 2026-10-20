@@ -73,7 +73,7 @@ GUARDED = dict(core=0xa000, core_limit=0xbc00,
 
 | Variant | Service B | CPU T | Delta vs pass | Delta vs original | Builder call / source |
 | --- | ---: | ---: | ---: | ---: | --- |
-| ZX0 Standard (minimum) | 74 | 201,490,104 | +29.1500% | +29.1500% | [zx0.block.build(**SMALL, variant='standard')](zx0/src/zx0/block.py#L7) |
+| ZX0 Standard (minimum) **[MINIMUM SERVICE]** | 74 | 201,490,104 | +29.1500% | +29.1500% | [zx0.block.build(**SMALL, variant='standard')](zx0/src/zx0/block.py#L7) |
 | ZX0 Turbo | 130 | 160,653,056 | +2.9745% | +2.9745% | [zx0.block.build(**SMALL, variant='turbo')](zx0/src/zx0/block.py#L7) |
 | ZX0 Fast (original and pass baseline) | 211 | 156,012,520 | 0.0000% | 0.0000% | [zx0.block.build(**SMALL, variant='fast')](zx0/src/zx0/block.py#L7) |
 | ZX0 Mega (original) | 677 | 146,422,274 | -6.1471% | -6.1471% | [zx0.block.build(**SMALL, variant='mega')](zx0/src/zx0/block.py#L7) |
@@ -107,13 +107,13 @@ GUARDED = dict(core=0xa000, core_limit=0xbc00,
 | LZSA2 Wide shared +short +repeat | 4,228 | 15,188,829 | -14.5018% | -14.5139% | [lzsa.wide.build(**WIDE, shared_literals=True, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[4, 5, 6, 7, 8])](lzsa/src/lzsa/wide.py#L16) |
 | LZSA2 Wide expanded +short 3..8 | 9,524 | 14,999,606 | -15.5670% | -15.5789% | [lzsa.wide.build(**WIDE, shared_literals=False, short_lengths=[3, 4, 5, 6, 7, 8], repeat_lengths=[])](lzsa/src/lzsa/wide.py#L16) |
 | LZSA2 Wide expanded +short 2..8 | 9,748 | 14,975,960 | -15.7001% | -15.7120% | [lzsa.wide.build(**WIDE, shared_literals=False, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[])](lzsa/src/lzsa/wide.py#L16) |
-| ZX0 Maximum branches 127 fast | 5,053 | 139,576,574 | -10.5350% | -10.5350% | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
+| ZX0 Maximum branches 127 fast **[RECOMMENDED BALANCE]** | 5,053 | 139,576,574 | -10.5350% | -10.5350% | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
 | ZX0 Maximum branches 127 real | 5,101 | 139,701,644 | -10.4549% | -10.4549% | [zx0.maximum_branches.build(prefix_cap=127, policy='real')](zx0/src/zx0/maximum_branches.py#L180) |
 | ZX0 Maximum branches 127 corpus | 5,111 | 139,915,538 | -10.3178% | -10.3178% | [zx0.maximum_branches.build(prefix_cap=127, policy='corpus')](zx0/src/zx0/maximum_branches.py#L180) |
 | ZX0 Maximum branches 228 fast | 7,517 | 139,552,884 | -10.5502% | -10.5502% | [zx0.maximum_branches.build(prefix_cap=228, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
 | ZX0 Maximum branches 228 real | 7,565 | 139,677,954 | -10.4700% | -10.4700% | [zx0.maximum_branches.build(prefix_cap=228, policy='real')](zx0/src/zx0/maximum_branches.py#L180) |
 | ZX0 Maximum branches 228 corpus | 7,575 | 139,891,848 | -10.3329% | -10.3329% | [zx0.maximum_branches.build(prefix_cap=228, policy='corpus')](zx0/src/zx0/maximum_branches.py#L180) |
-| LZSA2 Hybrid compact +cold extension | 4,998 | 15,030,346 | -15.3939% | -15.4059% | [lzsa.hybrid.build(**WIDE, profile='compact', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid compact +cold extension **[RECOMMENDED BALANCE]** | 4,998 | 15,030,346 | -15.3939% | -15.4059% | [lzsa.hybrid.build(**WIDE, profile='compact', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
 | LZSA2 Hybrid balanced +cold extension | 6,499 | 14,964,996 | -15.7618% | -15.7737% | [lzsa.hybrid.build(**WIDE, profile='balanced', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
 | LZSA2 Hybrid fast +cold extension | 9,499 | 14,926,306 | -15.9796% | -15.9915% | [lzsa.hybrid.build(**WIDE, profile='fast', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
 | LZSA2 Hybrid compact-base +cold extension | 3,451 | 15,804,230 | -11.0377% | -11.0503% | [lzsa.hybrid.build(**WIDE, profile='compact-base', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
@@ -127,11 +127,11 @@ GUARDED = dict(core=0xa000, core_limit=0xbc00,
 | LZSA2 Wide expanded +short 2..8 +cold extension | 9,747 | 14,957,837 | -15.8021% | -15.8140% | [lzsa.wide.build(**WIDE, short_lengths=[2, 3, 4, 5, 6, 7, 8], cold_match_extension=True)](lzsa/src/lzsa/wide.py#L16) |
 | LZSA2 Hot literals | 9,529 | 14,913,435 | -16.0520% | -16.0639% | [lzsa.hot.build(**WIDE, profile='literals')](lzsa/src/lzsa/hot.py#L214) |
 | LZSA2 Hot nibble | 9,515 | 14,918,596 | -16.0230% | -16.0349% | [lzsa.hot.build(**WIDE, profile='nibble')](lzsa/src/lzsa/hot.py#L214) |
-| LZSA2 Hot combined | 9,545 | 14,905,725 | -16.0954% | -16.1073% | [lzsa.hot.build(**WIDE, profile='combined')](lzsa/src/lzsa/hot.py#L214) |
+| LZSA2 Hot combined **[MAXIMUM SPEED]** | 9,545 | 14,905,725 | -16.0954% | -16.1073% | [lzsa.hot.build(**WIDE, profile='combined')](lzsa/src/lzsa/hot.py#L214) |
 | ZX0 Small smc | 78 | 189,794,309 | +21.6533% | +21.6533% | [zx0.small.build(**SMALL, profile='smc')](zx0/src/zx0/small.py#L20) |
 | ZX0 Small gamma-jp | 75 | 199,881,370 | +28.1188% | +28.1188% | [zx0.small.build(**SMALL, profile='gamma-jp')](zx0/src/zx0/small.py#L20) |
-| LZSA2 Small compact EOF (minimum) | 144 | 20,423,420 | +14.9638% | +14.9475% | [lzsa.compact.build(**SMALL, compact_eof=True)](lzsa/src/lzsa/compact.py#L13) |
-| ZX0 Maximum branches 255 fast | 8,165 | 139,546,674 | -10.5542% | -10.5542% | [zx0.maximum_branches.build(prefix_cap=255, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
+| LZSA2 Small compact EOF (minimum) **[MINIMUM SERVICE]** | 144 | 20,423,420 | +14.9638% | +14.9475% | [lzsa.compact.build(**SMALL, compact_eof=True)](lzsa/src/lzsa/compact.py#L13) |
+| ZX0 Maximum branches 255 fast **[MAXIMUM SPEED]** | 8,165 | 139,546,674 | -10.5542% | -10.5542% | [zx0.maximum_branches.build(prefix_cap=255, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
 
 ## Ordinary output-demand coroutines
 
@@ -290,6 +290,32 @@ use8,184 B with the13+6-byte IRQ example. The61 E01 branch choices are
 inherited; their historical regression list is a separate comparison.
 [E04 report](NEXT_E04_PREFIX255.md).
 
+## Research leaders
+
+Bold badges in the full resident table and the frontier identify these
+six selections. Minimum service and maximum speed are measured extrema
+within each codec's qualified resident choices. Recommended balance is
+a practical selection from that frontier, not a unique mathematical optimum.
+The recommendations favor substantial service-memory savings while retaining
+nearly maximum speed. Coroutine and guarded modes have separate feature costs.
+
+| Codec / distinction | Variant | Service B | Real CPU T | Function / file |
+| --- | --- | ---: | ---: | --- |
+| zx0 / **MINIMUM SERVICE** | ZX0 Standard (minimum) | 74 | 201,490,104 | [zx0.block.build(**SMALL, variant='standard')](zx0/src/zx0/block.py#L7) |
+| zx0 / **MAXIMUM SPEED** | ZX0 Maximum branches 255 fast | 8,165 | 139,546,674 | [zx0.maximum_branches.build(prefix_cap=255, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
+| zx0 / **RECOMMENDED BALANCE** | ZX0 Maximum branches 127 fast | 5,053 | 139,576,574 | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
+| lzsa2 / **MINIMUM SERVICE** | LZSA2 Small compact EOF (minimum) | 144 | 20,423,420 | [lzsa.compact.build(**SMALL, compact_eof=True)](lzsa/src/lzsa/compact.py#L13) |
+| lzsa2 / **MAXIMUM SPEED** | LZSA2 Hot combined | 9,545 | 14,905,725 | [lzsa.hot.build(**WIDE, profile='combined')](lzsa/src/lzsa/hot.py#L214) |
+| lzsa2 / **RECOMMENDED BALANCE** | LZSA2 Hybrid compact +cold extension | 4,998 | 15,030,346 | [lzsa.hybrid.build(**WIDE, profile='compact', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
+
+- zx0: recommended balance saves 3,112 service B versus the speed leader, with 0.0214% more aggregate real CPU time.
+- lzsa2: recommended balance saves 4,547 service B versus the speed leader, with 0.8361% more aggregate real CPU time.
+
+All entry initialization remains included. Required application IRQ storage
+and placement-dependent padding must still follow the existing memory contract.
+The finite measured corpus and retained regression lists limit these awards;
+they establish no universal or global optimum.
+
 ## Nondominated resident size/speed choices
 
 These are the best tested points on the complete real-corpus aggregate at
@@ -300,7 +326,7 @@ Per-case regressions still matter; this finite set establishes no global optimum
 
 | Codec / variant | Service B | Real CPU T | Function / file |
 | --- | ---: | ---: | --- |
-| ZX0 Standard (minimum) | 74 | 201,490,104 | [zx0.block.build(**SMALL, variant='standard')](zx0/src/zx0/block.py#L7) |
+| ZX0 Standard (minimum) **[MINIMUM SERVICE]** | 74 | 201,490,104 | [zx0.block.build(**SMALL, variant='standard')](zx0/src/zx0/block.py#L7) |
 | ZX0 Small gamma-jp | 75 | 199,881,370 | [zx0.small.build(**SMALL, profile='gamma-jp')](zx0/src/zx0/small.py#L20) |
 | ZX0 Small smc | 78 | 189,794,309 | [zx0.small.build(**SMALL, profile='smc')](zx0/src/zx0/small.py#L20) |
 | ZX0 Turbo | 130 | 160,653,056 | [zx0.block.build(**SMALL, variant='turbo')](zx0/src/zx0/block.py#L7) |
@@ -309,21 +335,21 @@ Per-case regressions still matter; this finite set establishes no global optimum
 | ZX0 Mega tuned | 674 | 145,701,295 | [zx0.block.build(**SMALL, variant='mega', mega_tuned=True, fast_jumps=True)](zx0/src/zx0/block.py#L7) |
 | ZX0 Maximum shared 31 | 2,810 | 141,342,108 | [zx0.maximum.build(prefix_cap=31, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
 | ZX0 Maximum shared 63 | 3,578 | 140,403,868 | [zx0.maximum.build(prefix_cap=63, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
-| ZX0 Maximum branches 127 fast | 5,053 | 139,576,574 | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
+| ZX0 Maximum branches 127 fast **[RECOMMENDED BALANCE]** | 5,053 | 139,576,574 | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
 | ZX0 Maximum branches 228 fast | 7,517 | 139,552,884 | [zx0.maximum_branches.build(prefix_cap=228, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
-| ZX0 Maximum branches 255 fast | 8,165 | 139,546,674 | [zx0.maximum_branches.build(prefix_cap=255, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
-| LZSA2 Small compact EOF (minimum) | 144 | 20,423,420 | [lzsa.compact.build(**SMALL, compact_eof=True)](lzsa/src/lzsa/compact.py#L13) |
+| ZX0 Maximum branches 255 fast **[MAXIMUM SPEED]** | 8,165 | 139,546,674 | [zx0.maximum_branches.build(prefix_cap=255, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
+| LZSA2 Small compact EOF (minimum) **[MINIMUM SERVICE]** | 144 | 20,423,420 | [lzsa.compact.build(**SMALL, compact_eof=True)](lzsa/src/lzsa/compact.py#L13) |
 | LZSA2 Fast compact branches | 222 | 17,724,654 | [lzsa.block.build(**SMALL, fast_jumps=True, compact_branches=True)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Fast tuned +prefill | 228 | 17,635,500 | [lzsa.block.build(**SMALL, fast_jumps=True, branch_tuned=True, nibble_prefill=True)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Hybrid compact-base +cold extension | 3,451 | 15,804,230 | [lzsa.hybrid.build(**WIDE, profile='compact-base', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
 | LZSA2 Wide shared +short +cold extension | 4,137 | 15,203,367 | [lzsa.wide.build(**WIDE, shared_literals=True, short_lengths=[2, 3, 4, 5, 6, 7, 8], cold_match_extension=True)](lzsa/src/lzsa/wide.py#L16) |
 | LZSA2 Wide shared +short +repeat +cold extension | 4,227 | 15,170,706 | [lzsa.wide.build(**WIDE, shared_literals=True, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[4, 5, 6, 7, 8], cold_match_extension=True)](lzsa/src/lzsa/wide.py#L16) |
-| LZSA2 Hybrid compact +cold extension | 4,998 | 15,030,346 | [lzsa.hybrid.build(**WIDE, profile='compact', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid compact +cold extension **[RECOMMENDED BALANCE]** | 4,998 | 15,030,346 | [lzsa.hybrid.build(**WIDE, profile='compact', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
 | LZSA2 Hybrid balanced +cold extension | 6,499 | 14,964,996 | [lzsa.hybrid.build(**WIDE, profile='balanced', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
 | LZSA2 Hybrid fast +cold extension | 9,499 | 14,926,306 | [lzsa.hybrid.build(**WIDE, profile='fast', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
 | LZSA2 Hot nibble | 9,515 | 14,918,596 | [lzsa.hot.build(**WIDE, profile='nibble')](lzsa/src/lzsa/hot.py#L214) |
 | LZSA2 Hot literals | 9,529 | 14,913,435 | [lzsa.hot.build(**WIDE, profile='literals')](lzsa/src/lzsa/hot.py#L214) |
-| LZSA2 Hot combined | 9,545 | 14,905,725 | [lzsa.hot.build(**WIDE, profile='combined')](lzsa/src/lzsa/hot.py#L214) |
+| LZSA2 Hot combined **[MAXIMUM SPEED]** | 9,545 | 14,905,725 | [lzsa.hot.build(**WIDE, profile='combined')](lzsa/src/lzsa/hot.py#L214) |
 
 ## Selection and runtime contracts
 
