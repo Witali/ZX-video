@@ -1,5 +1,47 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Measure three nibble-state tradeoffs
+
+- **Objective/baseline:** Complete E03 against accepted E01 Hybrid fast,
+  cold_match_extension=True:9,499 service B/14,926,306 real T. Keep the same
+  675 compressed inputs, raw format and then-active faster-and-smaller acceptance.
+  Count code/tables/state/padding/stacks together; exclude input/output/history.
+- **Static full-table design:** Actual fast/balanced/compact have123/75/48
+  inline readers. Even granting free consumer clones, zero extra dispatch
+  code and removal of two startup bytes, a second512-byte table grows service
+  by264/360/414 B. A duplicated11-byte lookup grows these to275/371/425 B.
+  This rejects the specified full-table design, not every compressed dispatch.
+- **Measured prototypes:** Hot body_167_0 cached-first routing to a known-
+  empty second reader changes155 ->140 T on514 real hits, but needs16 more
+  code bytes:9,515 B/14,918,596 T (-7,710 T). Its22 faster/653 equal cases
+  include no slowdown. Shared SMC reader changes cached/refill27/66 ->68/104 T
+  including CALL/RET, phase JP/update; per-block reset8 ->20 T. It uses8,056 B
+  (-1,443),16,487,270 T (+1,560,964); all675 slow, max80,908 T. Required stack
+  peaks6/8 B, with the extra phase operand already counted inside emitted code.
+- **Verification:** Qualified C guarded core reproduces675 original-kosarev
+  E01 baseline counts and E00 branch/phase counts, then675 per candidate with
+  exact full-case equations.114,688 exhaustive byte/state/documented-flag
+  microcalls verify output flags/cache/input order and no prefetch.56 extra
+  hot-family inputs cover all nibble/byte/word/EOF exits in both phases;
+  baseline and both candidates pass. Each candidate also passes36 mixed
+  resident calls;8 microblocks execute actual20-T resets between odd/even
+  nibble counts. All256 origins and six focused tests pass. Minimum match2
+  is authenticated against the pinned format; word-literal1/2 stay covered.
+- **Attempts/decision:** Pre-run inventory/label/root-path harness mistakes
+  were corrected. Save the prior successful screen's summary/source hashes
+  separately from the stronger final rerun. Public/shared/native sources are
+  unchanged. Under that rule reject full tables/hot clone for memory and
+  shared SMC for CPU. The user's later Pareto request supersedes the rule:
+  retain these historical verdicts and requalify useful faster/larger modes.
+  The shared fast prototype is dominated by qualified compact; its smaller
+  service is not itself sufficient for promotion.
+  IRQ/actual compressed-overlap/relocated runtime promotion gates remain
+  explicitly unperformed; no wrapper/contention/disk/movie qualification.
+  E00..E03 complete, E04..E07 pending.
+  [Decision/reproduction](libraries/NEXT_E03_NIBBLE_STATES.md),
+  [full proof](libraries/evidence/next_e03_full.json.gz),
+  [focused test log](libraries/evidence/next_e03_tests.log.gz).
+
 ## 2026-10-20 — Reject three measured LL3 continuation alternatives
 
 - **Objective/baseline:** Complete bounded E02 against accepted E01 Hybrid
