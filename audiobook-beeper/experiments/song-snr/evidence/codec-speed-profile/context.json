@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-20",
+  "scope": "Frozen standalone C phase profiling and bounded format-preserving alternatives; no full-source quality or release experiment",
+  "source_pcm8_sha256": "84fa43d12f3f0c67e70846aa53c4568b346dda88e7a4bfa94a4c834eed457700",
+  "prefix": {
+    "original_samples": 16384,
+    "silent_samples": 512,
+    "total_samples": 16896,
+    "workset_sha256": "aa41e4e57a773f7561cd247dc85834255c939d704ae226502508632662b50cc5",
+    "workset_bytes": 29097336,
+    "expected_output_sha256": "5962d32bcc5cc9effdb2cbb3fba06b2b9161aaef6ea8afa8c46eba42e7851630"
+  },
+  "full_workset": {
+    "samples": 720384,
+    "workset_sha256": "2c62776a8c3d94ec61c941c4bf44839e3191d9025bef20d437a5bec83b24853a",
+    "workset_bytes": 138493944,
+    "encoding_launched_by_this_profile": false
+  },
+  "numPy_version": "2.3.5",
+  "compiler_command": "cmd /d /s /c \"call \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x64 >nul && cl /nologo /O2 /std:c11 /fp:strict /LD /MT kernel.c /link /OUT:kernel.dll\"",
+  "matrix_library": {
+    "path": "C:\\Users\\rudol\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+    "sha256": "14eadecd35eb6bf4c424fe21a902db92cd3b24b46eab598bb3982a024cab51be"
+  },
+  "clock_reference_cpu_units_hz": 3546900,
+  "physical_clock_CPU_hz": 3584000,
+  "physical_hold_T": 28,
+  "physical_sample_T": 448,
+  "search": {
+    "width": 32,
+    "horizon": 128,
+    "commit": 64,
+    "regularization": 0.1
+  },
+  "fitting": false,
+  "format_changed": false,
+  "profiling": {
+    "uses": "QueryPerformanceCounter",
+    "not_sampled": true,
+    "phase_labels": [
+      "BLAS_base",
+      "candidate_scores",
+      "select_merge_heap",
+      "BLAS_advance",
+      "state_copy_ancestry",
+      "prefix_replay"
+    ],
+    "includes": "Timers bracket each search-iteration stage",
+    "excludes": "DLL/process startup, workset read and guard outside stages",
+    "caveat": "Wall timings are illustrative under concurrent task activity, not an isolated performance guarantee"
+  },
+  "decision": {
+    "selector": "Proceed to independent exact tests and whole-source benchmark in parent task",
+    "memoized": "Do not integrate: 24.38% fewer error rows yielded only1.2% shorter scoring stage on prefix",
+    "lastlevel": "Do not integrate: no stable wall-time benefit in bounded trial",
+    "explicit_sse2": "Do not integrate: no stable wall-time benefit in bounded trial"
+  }
+}

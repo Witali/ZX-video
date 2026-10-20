@@ -1,0 +1,81 @@
+{
+  "source": "sea_foam first16384 plus512silentguard",
+  "samples": 16896,
+  "workset_bytes": 29097336,
+  "features": 74,
+  "timeline_seconds": 0.0007112999446690083,
+  "prepare_seconds": 0.2480099000968039,
+  "workset_write_seconds": 0.018967999960295856,
+  "profile_labels": [
+    "BLAS_base",
+    "score_candidates",
+    "select_merge_heap",
+    "BLAS_advance",
+    "state_copy_ancestry",
+    "prefix_replay"
+  ],
+  "runs": [
+    {
+      "tag": "baseline",
+      "elapsed_seconds": 1.3393584999721497,
+      "stdout": {
+        "samples": 16896,
+        "search_iterations": 33472,
+        "final_predictor": 0,
+        "final_index": 0
+      },
+      "packed_sha256": "5962d32bcc5cc9effdb2cbb3fba06b2b9161aaef6ea8afa8c46eba42e7851630"
+    },
+    {
+      "tag": "profile",
+      "elapsed_seconds": 1.9573692999547347,
+      "stdout": {
+        "samples": 16896,
+        "search_iterations": 33472,
+        "final_predictor": 0,
+        "final_index": 0,
+        "profile_seconds": [
+          0.0115099,
+          0.2317796,
+          0.2954895,
+          0.0090215,
+          0.0091256,
+          0.0012655
+        ]
+      },
+      "packed_sha256": "5962d32bcc5cc9effdb2cbb3fba06b2b9161aaef6ea8afa8c46eba42e7851630"
+    },
+    {
+      "tag": "baseline",
+      "elapsed_seconds": 1.292422299971804,
+      "stdout": {
+        "samples": 16896,
+        "search_iterations": 33472,
+        "final_predictor": 0,
+        "final_index": 0
+      },
+      "packed_sha256": "5962d32bcc5cc9effdb2cbb3fba06b2b9161aaef6ea8afa8c46eba42e7851630"
+    },
+    {
+      "tag": "profile",
+      "elapsed_seconds": 1.2756157000549138,
+      "stdout": {
+        "samples": 16896,
+        "search_iterations": 33472,
+        "final_predictor": 0,
+        "final_index": 0,
+        "profile_seconds": [
+          0.0110658,
+          0.2305858,
+          0.2944318,
+          0.0089858,
+          0.0080669,
+          0.0012823
+        ]
+      },
+      "packed_sha256": "5962d32bcc5cc9effdb2cbb3fba06b2b9161aaef6ea8afa8c46eba42e7851630"
+    }
+  ],
+  "baseline_source_sha256": "f3aa67518bf32e47f8891f371ff1462e4a6e50018a5b3628191113ea86174403",
+  "instrumented_source_sha256": "1213a418c930bfd3ba7fec66d0fbbce98e06027d8570a9de64682f6d0c845863"
+}

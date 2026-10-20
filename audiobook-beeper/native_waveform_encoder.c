@@ -27,6 +27,85 @@ static double nwf_sum16(const double *a) {
     return ((r0+r1)+(r2+r3))+((r4+r5)+(r6+r7));
 }
 
+/* The common32/64-wide beam keeps only currently competitive decoder keys.
+   Once full, its worst (score,candidateID) can only improve. A candidate that
+   cannot beat that threshold need not be hashed: no later duplicate can make
+   this discarded candidate relevant. Evicted keys stay in the open-address
+   table with position-1, preserving probe chains without deletion or rebuild.
+   slots[] maps heap positions back to hash entries, so decreasing a duplicate
+   score or replacing the root updates every affected position in O(log width).
+   No floating-point calculation or tie order changes. Larger public beams
+   retain the original selector, bounding this fast path's stack to512 bytes. */
+static void nwf_tracked_down(int64_t *heap,size_t *slots,int64_t *positions,
+    size_t count,size_t root,const double *score) {
+    for (;;) {
+        size_t child=2*root+1;
+        if (child>=count) return;
+        if (child+1<count && worse(heap[child+1],heap[child],score)) ++child;
+        if (!worse(heap[child],heap[root],score)) return;
+        int64_t id=heap[root];heap[root]=heap[child];heap[child]=id;
+        size_t slot=slots[root];slots[root]=slots[child];slots[child]=slot;
+        positions[slots[root]]=(int64_t)root;
+        positions[slots[child]]=(int64_t)child;root=child;
+    }
+}
+static size_t nwf_select(const int64_t *candidates,const int64_t *keys,
+    const double *score,size_t count,size_t width,int64_t *table_keys,
+    int64_t *positions,size_t capacity,int64_t *heap) {
+    if (width>64) return waveform_select(candidates,keys,score,count,width,
+                                        table_keys,positions,capacity,heap);
+    size_t slots[64],used=0;
+    memset(table_keys,0xff,capacity*sizeof(int64_t));
+    for (size_t i=0;i<count;++i) {
+        int64_t id=candidates[i];
+        if (used==width && !worse(heap[0],id,score)) continue;
+        uint64_t h=(uint64_t)keys[i];
+        h^=h>>30;h*=UINT64_C(0xbf58476d1ce4e5b9);
+        h^=h>>27;h*=UINT64_C(0x94d049bb133111eb);h^=h>>31;
+        size_t slot=(size_t)h&(capacity-1);
+        while (table_keys[slot]!=-1 && table_keys[slot]!=keys[i])
+            slot=(slot+1)&(capacity-1);
+        if (table_keys[slot]==-1) {
+            table_keys[slot]=keys[i];positions[slot]=-1;
+        }
+        if (positions[slot]>=0) {
+            size_t at=(size_t)positions[slot];
+            if (worse(heap[at],id,score)) {
+                heap[at]=id;nwf_tracked_down(heap,slots,positions,used,at,score);
+            }
+        } else if (used<width) {
+            size_t at=used++;heap[at]=id;slots[at]=slot;positions[slot]=(int64_t)at;
+            while (at) {
+                size_t parent=(at-1)/2;
+                if (!worse(heap[at],heap[parent],score)) break;
+                int64_t swap=heap[parent];heap[parent]=heap[at];heap[at]=swap;
+                size_t old=slots[parent];slots[parent]=slots[at];slots[at]=old;
+                positions[slots[parent]]=(int64_t)parent;
+                positions[slots[at]]=(int64_t)at;at=parent;
+            }
+        } else {
+            positions[slots[0]]=-1;
+            heap[0]=id;slots[0]=slot;positions[slot]=0;
+            nwf_tracked_down(heap,slots,positions,used,0,score);
+        }
+    }
+    /* The hash-position map is dead after selection. Use the exact original
+       retained-beam heap sort to preserve the public ascending total order. */
+    for (size_t end=used;end>1;) {
+        --end;int64_t id=heap[0];heap[0]=heap[end];heap[end]=id;
+        down(heap,end,0,score);
+    }
+    return used;
+}
+
+#ifdef NWF_SELECT_TEST
+API size_t native_waveform_select_probe(const int64_t *candidates,const int64_t *keys,
+    const double *score,size_t count,size_t width,int64_t *table_keys,
+    int64_t *positions,size_t capacity,int64_t *heap) {
+    return nwf_select(candidates,keys,score,count,width,table_keys,positions,capacity,heap);
+}
+#endif
+
 /* Integer-only midpoint recentering. Saturation of the final PCM bucket is
    essential: the positive PCM16 tail otherwise reaches an invalid bin64.
    Bias0 retains the archived floor lookup; bias512 maps both -1 and0 to32. */
@@ -104,7 +183,7 @@ API int native_waveform_encode_centered(const uint8_t *source,size_t samples,
                 keys[valid]=((predicted_value+32768)*89+ni)*32+next_q[k];++valid;
             }
             if (!valid) {result=5;goto cleanup;}
-            size_t used=waveform_select(candidates,keys,score,valid,width,
+            size_t used=nwf_select(candidates,keys,score,valid,width,
                                        table_keys,table_values,capacity,heap);
             nwf_product(gemm,gemv,states,a,active,6,advance);
             for (size_t j=0;j<used;++j) {
@@ -150,7 +229,7 @@ API int native_waveform_encode_centered(const uint8_t *source,size_t samples,
                 keys[valid]=(value+32768)*89+next_index[k];++valid;
             }
             if (!valid) {result=5;goto cleanup;}
-            size_t used=waveform_select(candidates,keys,score,valid,32,
+            size_t used=nwf_select(candidates,keys,score,valid,32,
                                        table_keys,table_values,capacity,heap);
             for (size_t j=0;j<used;++j) {
                 size_t k=(size_t)heap[j];p2[j]=predicted[k];i2[j]=next_index[k];c2[j]=score[k];

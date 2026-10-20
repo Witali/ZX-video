@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Accelerate exact C waveform beam selection
+
+- **Objective/baseline:** User requests faster encoding and decoding without
+  changing the data format. Profile the complete C search from878c578e on
+  original sea-foam PCM8; retain original Python, model, source clock, beam32,
+  horizon128, commit64, reg.1 and all guards. Instrumented bounded-prefix
+  search spends53% in merge/selection,42% in scoring and about4% in BLAS.
+- **Change:** Maintain selected decoder keys in a tracked heap and reject
+  candidates below its monotone threshold before hashing. Preserve duplicate
+  tie order and evicted-key probe chains; public widths above64 retain the
+  original selector. Five independent selector suites pass1400 randomized
+  cases plus duplicate/eviction/signed-zero/extreme/fallback controls; seven
+  existing complete encoder tests pass against untouched Python.
+- **Measured result:** Three alternating full-song pairs on one authenticated
+  138493944B workset retain all360192 IMA bytes, SHA44a07e30,1440448 iterations
+  and final0/0. Median wall30.6117->20.7480s,32.22% shorter; CPU28.6719->19.7344s,
+  31.17% shorter. All observations retained, ranges27.962..33.185/20.597..28.115s.
+  This includes child startup/workset I/O, excludes preparation/render/TRD.
+- **Negative controls/decision:** Per-parent memo removes24.4% error rows but
+  has no reliable total benefit; last-level memo and explicit SSE2 also show
+  mixed timings. Preserve their sources/results and keep them unmerged. Accept
+  the exact selector. Z80/player delta0T; format/audio bytes unchanged. No SNR
+  or release claim. [Profile](audiobook-beeper/experiments/song-snr/evidence/codec-speed-profile/README.md),
+  [full-song evidence](audiobook-beeper/experiments/song-snr/evidence/codec-speed-full/README.md).
+
 ## 2026-10-20 — Uniform128-kHz table output proved; matched C model reaches22.78dB
 
 - **Objective/baseline:** Follow the user's request to accelerate table output
