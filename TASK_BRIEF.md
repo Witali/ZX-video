@@ -16,17 +16,23 @@ Elias lookahead, hybrid refitting and separate wrapper qualification. These
 are planned hypotheses; no new candidate or timing is qualified by the plan.
 Complete one bounded experiment and its focused commit before the next.
 
-Current execution acceptance (2026-10-20) is stricter than the historical
-frontier search below: retain a new implementation only if it strictly
-reduces both complete real-input decode CPU and total service memory against
-the immediately preceding accepted same-feature version. Exclude compressed
-input and output/history; include code, variables, tables, padding, scratch
-and required stacks. Keep the 10,000-byte cap and publish all slower cases.
-Faster/larger or smaller/slower experiments remain evidence, not promoted
-modes in this pass. [E00](libraries/NEXT_E00_BASELINE.md) is complete:
+Latest user steering (2026-10-20): seek minimum service size, maximum speed
+under the 10,000-byte service cap, and optimal intermediate tradeoffs. This
+supersedes the prior strict requirement that every new mode improve both
+metrics. Compare complete real-input CPU against total service memory for
+the same ABI/features, inputs and placement. A profile dominates another
+only if it is no larger and no slower, with at least one strict improvement.
+Keep nondominated faster/larger and smaller/slower modes after all mandatory
+correctness/IRQ/relocation/overlap/package gates. Preserve all slower cases.
+Exclude compressed input/output/history; include code, variables, tables,
+padding, scratch/internal buffers and required stacks. Never count host
+generator/emulator storage as target RAM. Historical verdicts below retain
+their original rule; their useful tradeoffs now need reevaluation.
+[E00](libraries/NEXT_E00_BASELINE.md) is complete:
 946 ZX0 + 2,025 LZSA2 observer runs and 3,444 actual compressed-overlap
 plain/IRQ/relocation runs reproduce all frozen per-case counts. E01 is now
-complete; E02 is completed as a rejection, E03..E07 remain pending.
+complete; E02/E03 screens are complete under their earlier rule. Frontier
+follow-up F00, minimum-size audit S01 and E04..E07 remain pending.
 [ZX0 E01](libraries/NEXT_E01_ZX0_BRANCHES.md)
 has17,028 complete native replays plus six FFFFh probes for six branch
 candidates: -61/-13/-3 B and -339,934/-214,864/-970 real T, with no slower
@@ -43,13 +49,28 @@ current bytes to complete proofs; [68 linked calls](libraries/DECODER_VARIANTS.m
 retain all50 older choices. Original defaults remain exact. E01 is committed
 as9fbd9ce7. [E02](libraries/NEXT_E02_LONG_LITERALS.md) measures three private
 LL3 alternatives: direct HL' return+79 B/+92,530 real T; hot clone+30 B/
--12,871 T; shared cold tail-2 B/+2,028 T. Reject all three under the strict
-both-metrics rule; the accepted baseline remains E01. The qualified local
+-12,871 T; shared cold tail-2 B/+2,028 T. All were rejected under the earlier
+both-metrics rule; keep those verdicts historical. The qualified local
 C core reproduces675 frozen original-backend baseline counts, then2,025
 candidate cases with exact independent models and16+16 supplemental cross-
 core word1/2 cases. All768 static alignment builds/three geometry tests pass.
 IRQ/in-place/relocated runtime promotion gates are unperformed for rejected
-candidates. The next bounded experiment is E03; E03..E07 are not completed.
+candidates. E02 is committed as6f90c59c.
+[E03](libraries/NEXT_E03_NIBBLE_STATES.md), committed04890809, bounds full second phase tables
+by optimistic +264/+360/+414 B bounds for fast/balanced/compact. The measured
+hot pair uses9,515 B/14,918,596 T (+16/-7,710); shared SMC uses8,056 B/
+16,487,270 T (-1,443/+1,560,964). All675 baseline+eachcandidate cases,
+114,688 byte/state/flag checks,56 hot-family edges and repeated odd/even
+reset calls pass. Six focused tests pass; no IRQ/in-place/relocated runtime
+promotion was performed. Shared-fast SMC is dominated by qualified compact.
+Keep E01 as the current public implementation while F00 qualifies exactly
+three LZSA2 candidates: E02 hot literals, E03 hot pair and their combination.
+Combined predicted service9,545 B/14,905,725 real T is not yet a measurement.
+Only after exact full native gates and package integration may these become
+public modes. E04 cap255 can now qualify as faster/larger if nondominated;
+growth alone no longer rejects it. Add bounded S01 audits of the smallest
+ZX0 Standard/LZSA2 Small profiles, rather than only tuning large kernels.
+Retain E02's two-byte cold-tail tradeoff for E06 dominance/refit review.
 
 The user additionally requests using/adapting the C CPU from
 `C:/Work/z80-tester` for Spectrum and developing it inside this project.
@@ -72,7 +93,8 @@ divergence. Local generators repair the initially stale fused slice artifact.
 Instruction-level ULA contention and live banked guards remain unqualified;
 `Spectrum128(contention=True).attach(cpu)` is rejected. Preserve original protected
 IRQ/overlap/wrapper gates. No GUI, disk/movie qualification or main merge/push
-is implied. Continue the remaining E03..E07 experiments after the E02 commit.
+is implied. Continue F00, S01 and E04..E07 with one focused completed stage
+per commit; independent source review may run in parallel.
 
 ## Active codec goal — speed/service-memory frontier (2026-10-19)
 

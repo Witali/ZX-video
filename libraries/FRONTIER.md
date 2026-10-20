@@ -17,6 +17,12 @@ selection arguments and comparisons with both original Fast and this pass's
 baseline, see [Decoder variants](DECODER_VARIANTS.md). That table also retains
 the slower Standard/Small choices with the lowest measured service memory.
 
+The latest user request explicitly includes minimum size, maximum speed and
+nondominated intermediate tradeoffs. [The next pass](NEXT_TRICKS_PLAN.md)
+therefore qualifies useful faster/larger E02/E03 screens and audits the
+smallest decoders. The public choices below remain the qualified baseline
+until the corresponding full correctness and package gates pass.
+
 ## Current resident choices
 
 The later E01 optional modes improve both time and service memory against

@@ -1,5 +1,27 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Expand acceptance to the size/speed frontier
+
+- **User scope:** Seek minimum service memory, maximum speed under10,000
+  service bytes and useful intermediate tradeoffs. This supersedes the
+  strict-both acceptance used for E00..E03; preserve their historical results.
+  Compare identical formats, ABI/features, inputs and placement. Include
+  code, state, tables, padding, scratch/internal buffers and required stacks;
+  exclude compressed input and decoded output/history as authorized.
+- **Plan:** Add bounded F00 qualification of the E02 hot literal clone,
+  E03 nibble pair and their combination, then S01 minimum-size audits of
+  ZX0 Standard74 B and LZSA2 Small145 B. Retain E04..E07, revise their gates
+  to Pareto dominance and keep all correctness/package requirements. Correct
+  E04 estimates to use accepted E01 228-fast as its immediate predecessor.
+- **Decision/coverage:** Retain a fully qualified point when no same-feature
+  measured point is both no larger and no slower with one strict advantage.
+  Faster/larger and smaller/slower can qualify. Shared-fast SMC remains
+  dominated by existing compact; growth alone no longer rejects hot clones
+  or cap255. This is a planning change, with no new runtime, default, wrapper
+  or release qualification. F00 screens/full replays remain separate work.
+  [Bounded queue and gates](libraries/NEXT_TRICKS_PLAN.md),
+  [continuation brief](TASK_BRIEF.md).
+
 ## 2026-10-20 — Measure three nibble-state tradeoffs
 
 - **Objective/baseline:** Complete E03 against accepted E01 Hybrid fast,

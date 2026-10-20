@@ -2,7 +2,7 @@
 
 Research and testing plan, 2026-10-20. Baseline: `9c28b01f`, branch
 `codex/codec-speed-pass3`, worktree `.worktree/codec-speed-pass3`.
-Status: **E00/E01/E02 complete; E03..E07 pending**.
+Status: **E00..E03 complete; F00/S01/E04..E07 pending**.
 [ZX0 E01](NEXT_E01_ZX0_BRANCHES.md) completes six optional public branch
 layouts, bound to17,028 complete native replays plus six FFFFh probes.
 [LZSA2 E01](NEXT_E01_LZSA.md) completes12 optional cold-escape layouts with
@@ -15,6 +15,14 @@ baseline observer runs and predicted deltas alone do not qualify another gain.
 constructions: +79 B/+92,530 real T, +30 B/-12,871 T, -2 B/+2,028 T. All
 675 cases per candidate pass flat guarded screening and the independent timing
 model; none reduces both metrics. The accepted baseline stays E01.
+[E03](NEXT_E03_NIBBLE_STATES.md) rejects full phase tables by an optimistic
+memory bound and measures two prototypes: +16 B/-7,710 real T and
+-1,443 B/+1,560,964 T. All675 cases,114,688 state/byte/flag checks,56 hot-family
+edge inputs, resident reset tests and256 origins pass their screening models.
+These screens used the earlier strict-both rule. The latest user request
+supersedes that rule: minimum size, maximum speed and Pareto intermediates
+are all targets. F00/S01 below and E04..E07 are not complete; E01 remains
+the qualified public baseline until new full gates pass.
 [E00 evidence and selected hypotheses](NEXT_E00_BASELINE.md) authenticate
 the fixed inputs, all target layouts and a new minimum-safe overlap runner.
 The additionally requested local Spectrum/C-core test platform is a separate
@@ -32,23 +40,32 @@ saved evidence, root changelog and focused commit before another starts.
 Independent source review can run in parallel; do not combine unverified
 changes. No default promotion, main merge/push or movie rebuild belongs here.
 
-The current execution goal narrows the earlier frontier search: accept a
-change only when it **strictly reduces both complete decode CPU time and
-total service memory** against the immediately preceding accepted version
-with the same ABI/features and frozen real inputs. Also report the fixed
-baseline below. Faster-but-larger, smaller-but-slower and equal-time-only
-results remain documented experiments; do not promote them in this pass.
+The latest user instruction (2026-10-20) requests **minimum service memory,
+maximum speed under10,000 service bytes, and useful Pareto intermediates**.
+It supersedes the strict-both acceptance used by the initial E00..E03 screens.
+Compare the same ABI/features, frozen inputs and placement. A dominates B
+only when A is no larger and no slower, with at least one strict improvement.
+Retain qualifying nondominated faster/larger and smaller/slower points;
+remove dominated points from recommendations while preserving their history.
+Also report the fixed baseline below. No global optimum is established by
+a finite candidate set; call results the best tested choices.
 An unchanged input/output format and all correctness gates are mandatory.
 Real aggregate CPU improvement does not imply every block improves: report
 every slower block/slice and retain a no-slower selection when available.
 
-| Current public call | Intrinsic service B | Real CPU T | Frozen proof |
+| Fixed initial public call | Intrinsic service B | Real CPU T | Frozen proof |
 | --- | ---: | ---: | --- |
 | `zx0.maximum.build(prefix_cap=228, shared_prefixes=True)` | 7,578 | 139,892,818 | [ZX0 native](evidence/shared_zero_prefix_native.json.gz) |
 | `zx0.maximum.build(prefix_cap=127, shared_prefixes=True)` | 5,114 | 139,916,508 | Same proof |
 | `lzsa.hybrid.build('fast')` | 9,500 | 14,944,429 | [Hybrid native](evidence/wide_hybrid/wide_hybrid_experiment_short.json.gz) |
 | `lzsa.hybrid.build('balanced')` | 6,500 | 14,983,119 | Same proof |
 | `lzsa.hybrid.build('compact')` | 4,999 | 15,048,469 | Same proof |
+
+The accepted E01 predecessors for new candidates are
+`zx0.maximum_branches.build(prefix_cap=228, policy='fast')` at7,517 service B/
+139,552,884 real T and `lzsa.hybrid.build('fast', cold_match_extension=True)`
+at9,499 B/14,926,306 T. Keep the initial table above as the fixed cumulative
+comparison; use these E01 calls for incremental comparisons.
 
 Use the exact builder calls/source links in [DECODER_VARIANTS.md](DECODER_VARIANTS.md).
 ZX0 has 364 real blocks and LZSA2 has 21; their totals are not a cross-codec
@@ -62,9 +79,9 @@ embedded and external state, tables, padding, scratch/internal buffers and
 required caller/private stack. Count embedded operands once. Input and
 output/history are excluded as authorized, but still report their sizes.
 Add actual application IRQ code/state/headroom and, for guarded examples,
-the supplier/carry/I/O/workspace inventory. Intrinsic fast LZSA2 leaves 500 B;
-after worst table padding 255 and diagnostic IRQ 13+6, only **226 B** remain.
-ZX0 shared228 leaves **2,403 B** after that IRQ. These budgets determine
+the supplier/carry/I/O/workspace inventory. E01 fast LZSA2 leaves501 B;
+after worst table padding255 and diagnostic IRQ13+6, only **227 B** remain.
+E01 ZX0 shared228-fast leaves **2,464 B** after that IRQ. These budgets determine
 which clones/tables fit; nominal code size alone is insufficient.
 
 ## Sources reviewed
@@ -98,14 +115,34 @@ resident changes; if there are none, explicitly record that dependency.
 
 | Stage | Question to answer | Required completion artifact |
 | --- | --- | --- |
+| F00 | Do measured E02/E03 speed tradeoffs survive full qualification, separately and together? | Three fixed candidates, all native/package gates, Pareto comparison; no promoted screen-only mode |
+| S01 | Can the smallest retained resident decoders use less service RAM? | At most three bounded candidates per codec, full valid-format tests, complete CPU/size and dominance decisions |
 | E00 | Do the current bytes, inputs, CPU totals and service inventories match their proofs? Where is the remaining cost? | Authenticated baseline and hotspot report; bounded E01 selections |
 | E01 | Can new-layout branches/fallthroughs be both faster and smaller? | Exact per-branch/per-case deltas, final spans and accept/reject decision |
 | E02 | Can LL3 call/return work be removed without increasing total service memory? | Complete helper-exit model, selected continuations and decision |
 | E03 | Does known nibble-cache state remove more work/state than specialization adds? | Exhaustive state screen, full-path counts and decision |
-| E04 | What does shared ZX0 cap255 actually cost and save? | One bounded measured candidate; reject if growth violates the current rule |
+| E04 | What does shared ZX0 cap255 actually cost and save? | One bounded measured candidate; full promotion gates if nondominated and within the cap |
 | E05 | Can a two/four-bit Elias lookup beat parsing after all table/index costs? | Exhaustive lookup/fallback screen and decision |
 | E06 | Do accepted kernels allow better fixed compact/balanced/fast selectors? | Self-contained selectors, all alignments and same-profile comparisons |
 | E07 | Do the accepted gains survive coroutine/guarded features? | Same-feature CPU/memory and full suspension/producer qualification |
+
+F00 follows the committed E03 screen. Qualify exactly E02 hot literals, E03
+hot nibble pair and their combination, starting from E01 cold Hybrid fast.
+Predicted services9,529/9,515/9,545 B and real CPU14,913,435/14,918,596/
+14,905,725 T are hypotheses until complete replay; the separate two already
+have screening evidence. Preserve minimum-safe overlap, IRQ, relocation,
+FFFFh output end, byte EOF, dirty offset and IY/alternate registers. Package
+implementation must be self-contained and keep all existing defaults exact.
+E02's -2B/+2,028T cold-tail point remains for E06 dominance/refit review;
+shared-fast SMC is already dominated by compact, despite reducing its size.
+
+S01 audits ZX0 Standard74 service B and LZSA2 Small145 B before final selection.
+Inspect actual code/state/stack minima; do not silently replace their valid
+format/ABI with a narrower shortcut. For each codec choose at most three
+concrete peephole/helper/stack layouts. Count any CPU increase and preserved
+register cost, test legal short escaped literals and exact EOF, then apply
+all common promotion gates to useful points. A measured/proven rejection
+is complete; current minimum choices remain when no candidate improves them.
 
 ### E00 — Freeze evidence and profile the remaining work
 
@@ -142,9 +179,9 @@ Cloning/sharing changed branch distances and path frequencies.
 3. Verify each complete-block delta from taken/not-taken counts, including
    every added trampoline/jump. Report all slower outcomes/cases.
 
-Gate: strictly lower real CPU and total service memory with valid relocation.
-Stop if setup consumes the savings or the complete candidate fails either
-metric. Save per-case regression lists even when aggregate CPU improves.
+Gate: a fitting nondominated size/speed point with valid relocation and all
+correctness gates. Count setup costs; save every per-case regression even
+when aggregate CPU improves. Historical E01 already passed the stronger rule.
 
 ### E02 — Clone selected LZSA2 long-literal continuations
 
@@ -164,9 +201,10 @@ before continuing into its offset/length body.
 
 Test ordinary/extended/word literal forms, especially legal word counts1/2,
 all subsequent offset classes, both nibble phases and EOF after literals.
-Gate: exact byte/EOF/stack/IRQ behavior and strictly lower CPU and service
-memory. Cloning alone normally grows code; count any sharing/removal and
-stack reduction explicitly. Reject a faster clone if total memory increases.
+Gate: exact byte/EOF/stack/IRQ behavior and a fitting nondominated point.
+Cloning normally grows code; count sharing/removal and stack explicitly.
+Growth alone no longer rejects a faster clone. Historical E02 needs F00
+qualification for its newly useful speed tradeoff.
 
 ### E03 — Specialize LZSA2 nibble-cache states
 
@@ -184,9 +222,10 @@ Target `nibble()` and hot nibble-consuming bodies in
    every byte value, initial cache state and relevant flag input, then run
    the codec matrix. Never prefetch beyond exact EOF/input frontier.
 
-Gate: full-path gain, preserved AF/AF' and IRQ contracts, no hidden state or
-input reads, and lower total service memory. Reject duplication if its memory
-growth or entry/transition costs violate either acceptance metric.
+Gate: full-path costs, preserved AF/AF' and IRQ contracts, no hidden state or
+input reads, and a fitting nondominated point. Report every table/transition
+cost. E03's measured hot pair now proceeds through F00; a smaller but slower
+SMC variant must also beat existing compact choices to be useful.
 
 ### E04 — Bounded ZX0 prefix-budget extension
 
@@ -194,18 +233,18 @@ Target [maximum.py](zx0/src/zx0/maximum.py) with shared suffixes enabled.
 The earlier cap255 size rejection applied to the old layout; sharing changed
 that premise. First test only cap255 before another depth policy.
 
-- Extending twelve chains from 228 to 255 predicts 648 extra code B: 27*12*2.
-  Predicted intrinsic service is 8,226 B, or 8,245 B with diagnostic IRQ.
+- Extending twelve chains from E01 228-fast to255 predicts648 extra code B:
+  27*12*2. Predicted intrinsic service is8,165 B, or8,184 B with diagnostic IRQ.
   Actual assembly must confirm these counts.
 - At the existing >=256 entry, 255 LDIs leave BC>=1. Never let BC=0 enter
   LDIR. The saved 46 real word entries predict only 6,210 T saved: 27*46*5,
-  with predicted total 139,886,608 T. This is an estimate, not a run.
+  with predicted total139,546,674 T. This is an estimate, not a run.
 - Test 255/256/257 and long new/reused counts at all phases; reconcile the
   exact extra-LDI cost. Preserve the public cap228 option.
 
-Gate: measure this hypothesis, but do not promote its predicted larger
-layout under the current faster-and-smaller rule. Accept only if a complete
-candidate also reduces service memory. Low expected payoff limits this to
+Gate: measure the hypothesis and apply full promotion gates if it supplies
+a fitting nondominated speed point. The larger layout is allowed by the
+latest user request; growth alone does not reject it. Low expected payoff limits this to
 one initial candidate. Deeper >=512 or per-family caps need
 a separately justified hotspot/size bound, not an unbounded parameter sweep.
 
@@ -216,16 +255,19 @@ a bounded fragment already present in A, not an unconditional source prefetch.
 This is a new structural hypothesis, not the adopted depth unroll.
 
 1. Generate a small transition table for a fixed two/four-bit window and
-   enumerate reservoir/sentinel, partial-count and refill states explicitly.
+   enumerate reservoir/phase, partial-count and refill states explicitly.
+   Maximum carries reservoir phase in control flow; A=0 can contain valid
+   unconsumed zero bits and is not an empty-buffer sentinel.
 2. Try only an entry that finishes a short count or returns to the existing
    exact fallback. Include indexing, register pressure, tables, padding and
    entry/exit costs. A faster bit operation is insufficient by itself.
 3. Prove no consumed bit/byte or word-count bound changes. Test every table
    key and fallback/refill boundary before all 417+56 complete cases.
 
-Gate: lower real CPU and service memory against shared Maximum228 under the
-full cap. Reject if pointer preservation/lookup cost or table bytes erase
-either gain. A complete static lower-bound rejection is a useful result;
+Gate: complete CPU/service costs and dominance against all relevant existing
+size points, including smaller prefix caps. Pointer preservation/lookup cost
+and table bytes must be included. A smaller/slower candidate may still qualify.
+A complete static dominance-bound rejection is a useful result;
 label it as analysis rather than a native measurement.
 
 ### E06 — Refit fixed hybrids after accepted kernel changes
@@ -241,8 +283,8 @@ separately. Retain at most compact/balanced/fast new frontier points; compare
 against every current same-ABI point. Do not mix unverified techniques to
 manufacture a combined gain. Check regenerated constants and emitted bytes/
 labels at both native placements and all alignment sizes. Promote each
-replacement only if it is both faster and smaller than its corresponding
-current profile; retain the existing profile otherwise.
+replacement only if it supplies a fitting nondominated point for the same
+feature set; preserve useful preceding points rather than forcing one winner.
 
 ### E07 — Qualify accepted changes for coroutines and guarded input
 
@@ -282,15 +324,15 @@ and full-movie deadlines remain a later application release gate.
    with its actual baseline, max difference and real/directed classification.
    IRQ cost remains separately reported.
 5. **Integration:** exact 31 legacy layouts/six resources, relevant library
-   tests (74 at E01, plus three focused E02 geometry/format checks) and
+   tests (74 at E01, plus three E02 and six E03 focused checks) and
    recorded 24 selected toolkit integration tests.
    Add meaningful regressions only for changed behavior. Build isolated
    wheels, exercise exposed API/CLI and reconstruct ORG/DB exports. Keep the
    earlier 67-test evidence historical unless that selection is rerun.
 6. **Decision:** no correctness failure or unaccounted byte is acceptable.
-   Accept only a fitting candidate with strictly lower real aggregate CPU
-   and total service memory against its same-feature accepted predecessor.
-   Keep rejected tradeoffs in evidence without promoting them. Publish every real-case
+   Accept a fitting nondominated candidate among same-feature measured choices,
+   including faster/larger and smaller/slower tradeoffs. Keep dominated and
+   failed candidates in evidence without promoting them. Publish every real-case
    regression; aggregate gain is not a universal per-block gain. Keep defaults
    exact until separately qualified. Otherwise record rejection/reason;
    preserve unsuccessful/partial evidence without promotion.
@@ -310,7 +352,8 @@ the next pending stage. A failed experiment is a completed decision; a screen
 or partial replay is not a qualified implementation. The broader 10%-per-feature
 goal is separate from completion of any one bounded experiment.
 
-The pass is complete when E00 has authenticated the baseline, E01..E05 each
+The pass is complete when F00 has resolved the three speed candidates and S01
+has audited both minimum-size profiles, E00 has authenticated the baseline, E01..E05 each
 have an explicit measured or proven rejection/acceptance decision, E06 has
 reconciled the accepted set (or recorded no applicable change), and E07 has
 qualified each promoted same-feature wrapper or recorded why it remains
