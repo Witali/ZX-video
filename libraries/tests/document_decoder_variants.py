@@ -46,6 +46,7 @@ def main():
     jump_auth=read('evidence/fast_jumps_verification.json')
     second=read('second_pass_verification.json')
     shared_zx0=read('evidence/shared_zero_prefix_native.json.gz')
+    hybrid_lzsa=read('evidence/hybrid_public_verification.json')
     originals={
         ('zx0','block'):old_zx['summary']['fast']['real_tstates'],
         ('zx0','coroutine'):compact['profiles']['zx0-coroutine']['summary']['real_baseline_tstates'],
@@ -152,6 +153,14 @@ def main():
     for variant in ('wide-shared','wide'):
         add('LZSA2 '+('Wide shared' if variant=='wide-shared' else 'Wide expanded'),'lzsa2','block',
             'lzsa.block',dict(variant=variant),layout='WIDE',catalog='lzsa-'+variant+'-block')
+    for row in hybrid_lzsa['current_public_calls']:
+        options=row['kwargs'];module=row['module']
+        if module=='lzsa.hybrid':name='LZSA2 Hybrid '+options['profile']
+        elif options['shared_literals']:
+            name='LZSA2 Wide shared +short'+(' +repeat' if options['repeat_lengths'] else '')
+        else:name='LZSA2 Wide expanded +short '+str(min(options['short_lengths']))+'..8'
+        add(name,'lzsa2','block',module,options,layout='WIDE',
+            cpu=row['real_cpu_tstates'],stack=6,frozen=row)
 
     add('ZX0 Fast (original and pass baseline)','zx0','coroutine','zx0.resumable',{},layout='SMALL',
         cpu=originals['zx0','coroutine'],stack=16,frozen=compact['profiles']['zx0-coroutine']['baseline'])
@@ -264,8 +273,11 @@ def main():
         '- Smallest resident decoders: **ZX0 Standard 74 B** (68 code +6 stack),',
         '  **LZSA2 Small 145 B** (137 code +8 stack). Both are slower than Fast.',
         '- Fastest measured resident choices: **ZX0 Maximum shared 228, 7,578 B** and',
-        '  **LZSA2 Wide expanded, 7,004 B**. Shared 127 uses 5,114 B and is faster',
+        '  **LZSA2 Hybrid fast, 9,500 B**. Shared 127 uses 5,114 B and is faster',
         '  than the original unshared 228. Shared suffixes support resident calls only.',
+        '- LZSA2 Hybrid compact uses 4,999 B and reduces CPU time by 3.683344%',
+        '  versus the old 7,004-B Expanded. Hybrid fast saves 4.349245%; retain',
+        '  its four directed +4-T regressions and the smaller profiles\' full lists.',
         '- Useful intermediate choices include Mega tuned 674 B and Wide shared 3,452 B.',
         '- Maximum ZX0 coroutine requires Spectrum-style undocumented `CP IXH/IXL`.',
         '  Caller IX is restored on every return; IRQ must preserve live IX and AF/AF\'.',
@@ -303,6 +315,9 @@ def main():
         ('LZSA2 Small','lzsa.compact','build'),
         ('LZSA2 Fast and its coroutine','lzsa.resumable','build'),
         ('LZSA2 Wide resident','lzsa.wide','build'),
+        ('LZSA2 fixed resident hybrids','lzsa.hybrid','build'),
+        ('LZSA2 known new-offset short copy','lzsa._wide_kernels','emit_new_offset_short'),
+        ('LZSA2 known repeat-offset short copy','lzsa._wide_kernels','emit_repeat_short'),
         ('LZSA2 Wide ordinary / guarded coroutine','lzsa.wide_coroutine','build')):
         implementation=getattr(importlib.import_module(module),function)
         path=Path(inspect.getsourcefile(implementation));line=inspect.getsourcelines(implementation)[1]
@@ -312,6 +327,8 @@ def main():
     lines += ['','## Evidence and reproduction','',
         '[Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),',
         '[shared-prefix contracts](ZX0_SHARED_PREFIXES.md),',
+        '[Hybrid API/wheel/native binding](evidence/hybrid_public_verification.json),',
+        '[hybrid contracts and directed regressions](LZSA_HYBRID.md),',
         '[previous full native integration](evidence/frontier_completed_profiles_verification.json),',
         '[original ZX0 counts](evidence/trick_23.json), [original LZSA2 and jump pass](evidence/fast_jumps.json),',
         '[Small counts](evidence/trick_29.json), [guarded native replay](evidence/wide_guarded_native.json.gz),',

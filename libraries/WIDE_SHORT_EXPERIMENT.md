@@ -35,8 +35,8 @@ guarded reference currently totals9,881 bytes including its workspace/probe
 example; its119-byte headroom must not be confused with consumer-only room.
 
 All Expanded new-offset-only variants have **zero slower cases** among675.
-The shared variants improve all21 real blocks but have281 /253 slower directed
-cases, respectively, up to216 T versus Expanded. Every counterexample is
+The shared variants improve all21 real blocks but have281 /253 slower non-real
+cases across the complete675-case suite, respectively, up to216 T versus Expanded. Every counterexample is
 retained in the full report. No universal speed claim applies to sharing.
 
 The DEh omission has zero real frequency and frees20 bytes; it only demonstrates

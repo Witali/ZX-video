@@ -33,6 +33,10 @@ the slower Standard/Small choices with the lowest measured service memory.
 | LZSA2 Fast jumps +tuned branches +nibble prefill | **228 B** | 17,635,500 | 0.729487% |
 | LZSA2 Wide shared | **3,452 B** | 15,869,483 | 10.670425% |
 | LZSA2 Wide expanded | **7,004 B** | 15,623,953 | 12.052517% |
+| LZSA2 Shared +short new/repeated | **4,228 B** | 15,188,829 | 14.501837% |
+| LZSA2 Hybrid compact | **4,999 B** | 15,048,469 | 15.291926% |
+| LZSA2 Hybrid balanced | **6,500 B** | 14,983,119 | 15.659782% |
+| LZSA2 Hybrid fast | **9,500 B** | 14,944,429 | 15.877569% |
 
 Baselines:156,012,520 T /364 real ZX0 blocks and 17,765,094 T /21 real LZSA2
 blocks. Totals include four caller-stack bytes, except raw Wide needs six;
@@ -45,8 +49,18 @@ The 197-byte ZX0 and 222-byte LZSA2 profiles are smaller and faster than their
 more bytes for further gains. Tuned Mega and shared Wide are useful middle
 choices. Shared prefix 127 keeps almost all tested ZX0 maximum speed with
 4,886 B left under the cap. Shared 228 spends 2,464 more bytes to save
-23,690 T beyond shared 127. Expanded Wide is the fastest measured resident
+23,690 T beyond shared 127. Hybrid fast is the fastest measured resident
 LZSA2 profile. A finite measured frontier does not prove global optimality.
+
+The optional [fixed LZSA2 hybrids](LZSA_HYBRID.md) use
+`lzsa.hybrid.build(profile='compact'/'balanced'/'fast')`. Compact saves
+2,005 service bytes and 3.683344% CPU time versus old Expanded; fast gains
+4.349245%. Six fixed base/short profiles each pass all 95+580 cases with IRQ,
+relocation and exact per-token cycle models. Fast has four directed +4-T
+regressions versus Expanded; compact/balanced retain their full slower-case
+lists. These new options are resident-only. Ordinary/guarded profiles below
+retain their earlier complete proofs. Fast at9103h plus the diagnostic IRQ
+uses 9,772 service B; application producer/buffer needs remain separate.
 
 The optional [shared-prefix layout](ZX0_SHARED_PREFIXES.md) reduces cap228
 from 9,990 to 7,578 service B and saves another 277,150 real T (0.197724%).

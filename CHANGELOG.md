@@ -1,5 +1,42 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Publish the verified resident LZSA2 short/hybrid frontier
+
+- **Objective/baseline:** Finish optional public integration after the completed
+  short/hybrid experiments (`b6921c2a`/`c13d4693`), comparing unchanged raw
+  LZSA2 inputs against the previous fastest Expanded and both Fast references.
+  Preserve old wire formats, defaults, generator labels and all service bytes.
+- **Public result:** `lzsa.hybrid.build(profile='compact'/'balanced'/'fast')`
+  exports fixed 4,999/6,500/9,500-service-byte implementations at
+  15,048,469/14,983,119/14,944,429 real T. Compact saves 2,005 B and 575,484 T
+  (3.683344%) versus old Expanded; fast saves 679,524 T (4.349245%) for
+  2,496 extra B. Three `-base` variants and four direct `wide.build` short
+  selections retain measured intermediate/strict-no-slower choices. Package
+  selector constants are self-contained; no runtime benchmark/evidence access.
+- **Verification:** Bind all ten new public calls to complete archived native
+  regions at both measured placements, including every short-path CPU model
+  and six 675-case hybrid proofs. Keep exact per-case regressions: fast has
+  four directed +4-T cases versus Expanded, none versus Shared and no slower
+  real block. Public full-new alignment9003h is rejected at 10,001 B. Fast
+  at9103h plus diagnostic IRQ uses 9,772 B. An isolated installed wheel
+  reconstructs all ten ORG/DB exports with no native/toolkit dependency.
+  All 61 library tests, 24 selected toolkit integration tests and 31 frozen
+  layouts pass. The previous 67-test run remains separate historical proof.
+  Independent review corrects report prose: the smaller hybrids' 208/83
+  regressions and shared-short's 253 are full-suite non-real counts, not
+  directed-only counts; saved measurements and per-case lists are unchanged.
+  [Public/source/wheel/log authentication](libraries/evidence/hybrid_public_verification.json),
+  [verifier](libraries/tests/verify_hybrid_public.py).
+- **Decision/limits:** Accept optional resident implementations; the authorized
+  shared-ZX0, short-LZSA2 and hybrid-LZSA2 follow-up is complete. Update the
+  [50-call function-linked table](libraries/DECODER_VARIANTS.md) with full
+  service memory, both original/pass Fast references and exact selection calls.
+  [API/contracts/regressions](libraries/LZSA_HYBRID.md) retain source links and
+  evidence. Existing default decoder instruction delta is 0 T; new quota/guard
+  combinations reject until separately qualified. No new coroutine/guarded,
+  physical-disk, movie or main merge/push claim. The broader per-feature 10%
+  objective remains unachieved; these incremental gains do not complete it.
+
 ## 2026-10-20 — Measure fixed hybrid LZSA2 handlers and combine short kernels
 
 - **Objective/baseline:** Complete the third authorized direction: partition
@@ -21,7 +58,7 @@
   is 9,772 B; count actual application IRQ allocations separately.
   Preserve every regression against both bookends: the 9,500-byte point
   slows only four directed cases by 4 T versus Expanded, none versus Shared;
-  all real blocks improve. Smaller kernel points retain 208/83 directed
+  all real blocks improve. Smaller kernel points retain 208/83 full-suite
   regressions, maximum196/14 T. Screens retain dominated/simple layouts too.
 - **Decision/limits:** Accept fixed measured raw-only selectors for separate
   optional public integration. These private reports do not qualify coroutine,
@@ -50,7 +87,7 @@
   unaligned relocation, protected source/history/EOF/registers and plain/IRQ
   stack <=6/12 B. Every case matches the exact per-token CPU equation and
   native short-path microprobes. All new-offset-only Expanded cases do not
-  slow; Shared with both has 253 slower directed cases, maximum216 T, while
+  slow; Shared with both has 253 slower non-real cases, maximum216 T, while
   all real blocks improve. Full oversize relocation is test-only and never
   accepted under the service cap. A summary path-formatting error after the
   native run was repaired from the finished archive; retain that provenance.

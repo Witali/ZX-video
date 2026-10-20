@@ -39,7 +39,7 @@ repository migration remain separate tasks.
 
 Current completed 25-profile milestone: [FRONTIER.md](libraries/FRONTIER.md)
 and [full authentication](libraries/evidence/frontier_completed_profiles_verification.json).
-The follow-up [variant table](libraries/DECODER_VARIANTS.md) documents 40 exact
+The follow-up [variant table](libraries/DECODER_VARIANTS.md) documents 50 exact
 builder calls with function/file links, all service memory and CPU deltas
 against both original adapted Fast and the pass baseline. Its
 [reproducer](libraries/tests/document_decoder_variants.py) validates current
@@ -52,6 +52,16 @@ native cases with IRQ/relocation and exact removed-JP counts. Original
 profiles/defaults and coroutine implementations remain exact and available.
 The table now also includes these five public calls. Preserve the earlier
 selective-sharing attempt and its measured jump penalty as historical evidence.
+The same authorized follow-up also completes resident LZSA2 short kernels
+and fixed hybrid handlers. [Hybrid API/contracts](libraries/LZSA_HYBRID.md):
+compact/balanced/fast use 4,999/6,500/9,500 service B and
+15,048,469/14,983,119/14,944,429 real T, improving old Expanded by
+3.683344/4.101612/4.349245%. Each of six fixed profiles passes 95+580 cases,
+IRQ/relocation and an exact per-token model. Fast has four directed +4-T
+regressions; retain smaller-profile lists. All 61 library tests, 24 selected
+toolkit integration tests, 31 frozen layouts and isolated exports pass.
+New public short/grouped options explicitly reject quota/guard hooks;
+coroutine/guarded/disk/movie work is separate. Existing defaults stay exact.
 ZX0 Maximum resident defaults to prefix 228: 9,990 intrinsic service bytes,
 140,169,968 real T, 10.154667% vs Fast but only 3.796347% beyond tuned Mega.
 Prefix 127 uses 7,526 B/140,193,198 T, almost the same speed. Prefix 228 plus

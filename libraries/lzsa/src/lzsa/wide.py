@@ -14,7 +14,9 @@ CALLER_STACK_BYTES = 6
 
 
 def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
-          _boundary=None, _external_labels=None, _literal_guards=False):
+          short_lengths=(), repeat_lengths=(),
+          _boundary=None, _external_labels=None, _literal_guards=False,
+          _groups_by_body=None, _fallthrough_order=None):
     """Return resident regions/labels/metadata; no input or output bounds checks.
 
     Call start with HL=input, DE=output and a valid caller stack. AF/AF'/BC/
@@ -27,9 +29,34 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
     Service memory (code/tables/alignment/state/stack/scratch) obeys a 10,000-
     byte cap. Compressed input and complete output/history are separate caller
     buffers. Add actual hardware-return/IRQ-handler stack headroom separately.
+    Optional new-offset short_lengths2..8 and repeat_lengths4..8 specialize
+    only known token lengths. Word-escaped counts keep their existing path.
+    These options and internal grouped layouts are raw-only; quota/guard hooks
+    are rejected until their complete feature-equivalent profiles are proved.
     """
     if not (0 <= core < core_limit <= 65536):
         raise ValueError('invalid wide code reservation')
+    try:
+        short_lengths=frozenset(short_lengths);repeat_lengths=frozenset(repeat_lengths)
+    except TypeError as error:
+        raise ValueError('short length options must be integer iterables') from error
+    if (any(type(n) is not int for n in short_lengths|repeat_lengths) or
+            not short_lengths<=set(range(2,9)) or not repeat_lengths<=set(range(4,9))):
+        raise ValueError('new-offset lengths 2..8 and positive-gain repeats 4..8 only')
+    grouped_layout=_groups_by_body is not None or _fallthrough_order is not None
+    if (short_lengths or repeat_lengths or grouped_layout) and (
+            _boundary is not None or _external_labels is not None or _literal_guards):
+        raise ValueError('short/grouped Wide profiles require fully resident raw input without wrapper hooks')
+    groups_by_body={int(k):tuple(tuple(g) for g in v) for k,v in (_groups_by_body or {}).items()}
+    fallthrough_order={int(k):tuple(v) for k,v in (_fallthrough_order or {}).items()}
+    bases={(cls<<5)|length for cls in range(8) for length in range(8)}
+    if not (set(groups_by_body)|set(fallthrough_order))<=bases:
+        raise ValueError('internal group selectors require XYZ/MMM body bases')
+    if any(sorted(rank)!=[0,1,2,3] for rank in fallthrough_order.values()):
+        raise ValueError('internal fallthrough ranks must contain every literal form exactly once')
+    for selected in groups_by_body.values():
+        if sorted(v for group in selected for v in group)!=[0,1,2,3] or any(not group for group in selected):
+            raise ValueError('internal groups must partition all four literal forms exactly once')
     table = (core+255)&~255
     a = MiniAssembler(core)
     a.emit(*([0]*(table-core)))
@@ -99,25 +126,57 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
     def token_body(token):
         cls = token>>5
         if cls in (0, 1):
-            nibble('nibble_'+str(token));emit(0x87)
+            nibble('nibble_'+str(token)+('_'+str(a.pc) if grouped_layout else ''));emit(0x87)
             if cls == 0: emit(0x3c)
             emit(0x4f, 0x06, 255)
         elif cls in (2, 3):
             emit(0x06, 255 if cls == 2 else 254, 0x4e);inc()
         elif cls in (4, 5):
-            nibble('nibble_'+str(token));emit(0x3d, 0x87)
+            nibble('nibble_'+str(token)+('_'+str(a.pc) if grouped_layout else ''));emit(0x3d, 0x87)
             if cls == 4: emit(0x3c)
             emit(0x47, 0x4e);inc()
         elif cls == 6:
             emit(0x46);inc();emit(0x4e);inc()
+        length = token&7
+        n=length+2
+        context=str(token)+'_'+str(a.pc) if grouped_layout else token
+        if cls!=7 and n in short_lengths:
+            from ._wide_kernels import emit_new_offset_short
+            emit_new_offset_short(a,context,n);return
+        if cls==7 and n in repeat_lengths:
+            from ._wide_kernels import emit_repeat_short
+            emit_repeat_short(a,context,n);return
         if cls != 7:
             a.abs16((0xed, 0x43), 'offset');emit(0x06, 0)
-        length = token&7
         if length == 7:
             jp(0xc3, 'LongerMatch')
         else:
             emit(0x0e, length+2);jp(0xc3, 'MatchUseC')
-    if shared_literals:
+    shared_hit_tokens=[];body_layout=[]
+    if grouped_layout:
+        # Every group retains its unchanged literal parser. One member falls
+        # through; other shared hits pay JP10. Singletons are fully specialized.
+        # Groups and ranking are fixed package data, never input-dependent.
+        for cls in range(8):
+            for length in range(8):
+                token=(cls<<5)|length
+                selected=groups_by_body.get(token,((0,1,2,3),))
+                emitted=[]
+                for group_index,members in enumerate(selected):
+                    rank=fallthrough_order.get(token,(0,1,2,3))
+                    last=next(v for v in rank if v in members)
+                    body=f'body_{token}_{group_index}'
+                    ordered=[v for v in sorted(members) if v!=last]+[last]
+                    for literal in ordered:
+                        value=token|(literal<<3)
+                        a.label('token_'+str(value));handlers[value]=a.pc;emit(0xd9)
+                        literal_prefix(literal,cls)
+                        if literal!=last:
+                            jp(0xc3,body);shared_hit_tokens.append(value)
+                    a.label(body);body_start=a.pc;token_body(token)
+                    emitted.append(dict(literals=list(members),fallthrough=last,body_bytes=a.pc-body_start))
+                body_layout.append(dict(base_token=token,groups=emitted))
+    elif shared_literals:
         # Share offset/length bodies across the four LL forms. The most
         # frequent prefix (zero literals) falls through; nonempty literal
         # prefixes pay a 10-T jump to the same body.
@@ -145,7 +204,13 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
         blob[table-core+256+token] = target>>8
     return [(core, bytes(blob))], a.labels, dict(entry='start', variant='wide-shared-block' if shared_literals else 'wide-block',
         one_shot=True, code_bytes=len(blob), table_bytes=512, alignment_padding=table-core,
-        shared_literal_bodies=shared_literals,
+        shared_literal_bodies=shared_literals or grouped_layout,
+        **(dict(short_lengths=sorted(short_lengths),repeat_lengths=sorted(repeat_lengths))
+           if short_lengths or repeat_lengths or grouped_layout else {}),
+        **(dict(grouped_bodies=True,body_layout=body_layout,
+                group_counts=[len(item['groups']) for item in body_layout],
+                shared_hit_tokens=sorted(shared_hit_tokens),shared_hit_tstates=10)
+           if grouped_layout else {}),
         full_token_dispatch=True, token_handlers=256,
         storage_budget_bytes=STORAGE_BUDGET, total_storage_bytes=len(blob)+CALLER_STACK_BYTES,
         service_memory_bytes=len(blob)+CALLER_STACK_BYTES,

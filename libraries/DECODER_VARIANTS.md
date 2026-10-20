@@ -79,6 +79,16 @@ GUARDED = dict(core=0xa000, core_limit=0xbc00,
 | LZSA2 Fast tuned +prefill | 228 | 17,635,500 | -0.7295% | -0.7435% | [lzsa.block.build(**SMALL, fast_jumps=True, branch_tuned=True, nibble_prefill=True)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Wide shared | 3,452 | 15,869,483 | -10.6704% | -10.6831% | [lzsa.block.build(**WIDE, variant='wide-shared')](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Wide expanded | 7,004 | 15,623,953 | -12.0525% | -12.0650% | [lzsa.block.build(**WIDE, variant='wide')](lzsa/src/lzsa/block.py#L5) |
+| LZSA2 Hybrid compact-base | 3,452 | 15,822,353 | -10.9357% | -10.9483% | [lzsa.hybrid.build(**WIDE, profile='compact-base')](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid balanced-base | 4,499 | 15,683,583 | -11.7169% | -11.7293% | [lzsa.hybrid.build(**WIDE, profile='balanced-base')](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid fast-base | 5,500 | 15,643,493 | -11.9425% | -11.9550% | [lzsa.hybrid.build(**WIDE, profile='fast-base')](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid compact | 4,999 | 15,048,469 | -15.2919% | -15.3039% | [lzsa.hybrid.build(**WIDE, profile='compact')](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid balanced | 6,500 | 14,983,119 | -15.6598% | -15.6717% | [lzsa.hybrid.build(**WIDE, profile='balanced')](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid fast | 9,500 | 14,944,429 | -15.8776% | -15.8895% | [lzsa.hybrid.build(**WIDE, profile='fast')](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Wide shared +short | 4,138 | 15,221,490 | -14.3180% | -14.3301% | [lzsa.wide.build(**WIDE, shared_literals=True, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[])](lzsa/src/lzsa/wide.py#L16) |
+| LZSA2 Wide shared +short +repeat | 4,228 | 15,188,829 | -14.5018% | -14.5139% | [lzsa.wide.build(**WIDE, shared_literals=True, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[4, 5, 6, 7, 8])](lzsa/src/lzsa/wide.py#L16) |
+| LZSA2 Wide expanded +short 3..8 | 9,524 | 14,999,606 | -15.5670% | -15.5789% | [lzsa.wide.build(**WIDE, shared_literals=False, short_lengths=[3, 4, 5, 6, 7, 8], repeat_lengths=[])](lzsa/src/lzsa/wide.py#L16) |
+| LZSA2 Wide expanded +short 2..8 | 9,748 | 14,975,960 | -15.7001% | -15.7120% | [lzsa.wide.build(**WIDE, shared_literals=False, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[])](lzsa/src/lzsa/wide.py#L16) |
 
 ## Ordinary output-demand coroutines
 
@@ -120,8 +130,11 @@ harness and its 21 real blocks; producer CPU and sector delivery are separate.
 - Smallest resident decoders: **ZX0 Standard 74 B** (68 code +6 stack),
   **LZSA2 Small 145 B** (137 code +8 stack). Both are slower than Fast.
 - Fastest measured resident choices: **ZX0 Maximum shared 228, 7,578 B** and
-  **LZSA2 Wide expanded, 7,004 B**. Shared 127 uses 5,114 B and is faster
+  **LZSA2 Hybrid fast, 9,500 B**. Shared 127 uses 5,114 B and is faster
   than the original unshared 228. Shared suffixes support resident calls only.
+- LZSA2 Hybrid compact uses 4,999 B and reduces CPU time by 3.683344%
+  versus the old 7,004-B Expanded. Hybrid fast saves 4.349245%; retain
+  its four directed +4-T regressions and the smaller profiles' full lists.
 - Useful intermediate choices include Mega tuned 674 B and Wide shared 3,452 B.
 - Maximum ZX0 coroutine requires Spectrum-style undocumented `CP IXH/IXL`.
   Caller IX is restored on every return; IRQ must preserve live IX and AF/AF'.
@@ -168,12 +181,17 @@ emitters behind a dispatcher, use these implementation functions:
 | LZSA2 Small | [lzsa.compact.build](lzsa/src/lzsa/compact.py#L13) |
 | LZSA2 Fast and its coroutine | [lzsa.resumable.build](lzsa/src/lzsa/resumable.py#L15) |
 | LZSA2 Wide resident | [lzsa.wide.build](lzsa/src/lzsa/wide.py#L16) |
+| LZSA2 fixed resident hybrids | [lzsa.hybrid.build](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 known new-offset short copy | [lzsa._wide_kernels.emit_new_offset_short](lzsa/src/lzsa/_wide_kernels.py#L9) |
+| LZSA2 known repeat-offset short copy | [lzsa._wide_kernels.emit_repeat_short](lzsa/src/lzsa/_wide_kernels.py#L25) |
 | LZSA2 Wide ordinary / guarded coroutine | [lzsa.wide_coroutine.build](lzsa/src/lzsa/wide_coroutine.py#L16) |
 
 ## Evidence and reproduction
 
 [Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),
 [shared-prefix contracts](ZX0_SHARED_PREFIXES.md),
+[Hybrid API/wheel/native binding](evidence/hybrid_public_verification.json),
+[hybrid contracts and directed regressions](LZSA_HYBRID.md),
 [previous full native integration](evidence/frontier_completed_profiles_verification.json),
 [original ZX0 counts](evidence/trick_23.json), [original LZSA2 and jump pass](evidence/fast_jumps.json),
 [Small counts](evidence/trick_29.json), [guarded native replay](evidence/wide_guarded_native.json.gz),

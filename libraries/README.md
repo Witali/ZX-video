@@ -20,6 +20,12 @@ fastest resident choice from 9,990 to 7,578 service bytes and saves another
 277,150 real CPU T. Use `zx0.maximum.build(shared_prefixes=True)`; the smaller
 5,114-byte shared127 also beats the previous maximum. Defaults stay exact.
 
+The optional [fixed LZSA2 hybrids](LZSA_HYBRID.md) add a 4,999-byte compact
+choice that beats the old 7,004-byte Expanded by 3.683344%, and a 9,500-byte
+fast choice gaining 4.349245%. Use `lzsa.hybrid.build(profile='compact')` or
+`profile='fast'`, then the normal exporter. All token forms remain valid;
+these new profiles are resident-only and retain directed regression lists.
+
 These are two independently installable libraries extracted from ZX-video.
 Copy either directory to another project or install it from this checkout:
 

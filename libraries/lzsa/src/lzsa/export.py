@@ -57,6 +57,22 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
                '; Offset operand needs writable non-reentrant code; IRQ preserves all live registers, including AF\'.',
                '; Exact EOD returns before dummy word reads. Counts exclude IRQ/ULA/disk.', '']
         routines['ReadToken']='Enter the next resident token directly; AF\' nibble survives, no quota/frontier check.'
+    if metadata.get('short_lengths') or metadata.get('repeat_lengths'):
+        lines += ['; Optional resident short matches: new offsets save 5*n-4 T; repeated offsets save 5*n-16 T.',
+                  '; Only known token lengths are specialized; extended/word forms keep their original bounds.',
+                  '; Forward LDI retains overlap and leaves BC=0; one existing offset operand, no extra stack/state.', '']
+        for name in labels:
+            if name.startswith('short_ready_'):
+                token=int(name[len('short_ready_'):].split('_')[0])
+                routines[name]=('BC=negative new offset: retain its store, save input HL, copy offset to HL before installing BC=count, then forward LDIs and restore input.' if token>>5!=7 else
+                    'B=0, HL=input: load retained negative offset, copy the known repeat count with forward LDIs, restore input and enter the next token.')
+    if metadata.get('hybrid_profile'):
+        lines += ['; Fixed Hybrid profile: '+metadata['hybrid_profile']+'. All 256 token forms remain valid.',
+                  '; Literal forms share selected offset/length bodies: one member falls through, other hits cost 10 T.',
+                  '; Selector constants were measured offline; the generated decoder has no runtime profiler.', '']
+        for name in labels:
+            if name.startswith('body_'):
+                routines[name]='Shared offset/length body after unchanged literal parsing; AF\' owns the nibble cache, HL=input and DE=output.'
     if metadata.get('fast_jumps'):
         lines += ['; Optional core unconditional JR -> JP: 12 -> 10 T per execution, +1 byte/site.',
                   '; Conditional branches and cold input-wait retries keep their original encoding.',
