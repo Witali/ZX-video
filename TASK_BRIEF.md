@@ -24,6 +24,9 @@ the same ABI/features, inputs and placement. A profile dominates another
 only if it is no larger and no slower, with at least one strict improvement.
 Keep nondominated faster/larger and smaller/slower modes after all mandatory
 correctness/IRQ/relocation/overlap/package gates. Preserve all slower cases.
+Include all required Z80 library initialization in benchmarks: every per-block
+setup and any separate one-time preparation. Show setup/decode components,
+cold-start latency and batch totals; no required initialization is free.
 Exclude compressed input/output/history; include code, variables, tables,
 padding, scratch/internal buffers and required stacks. Never count host
 generator/emulator storage as target RAM. Historical verdicts below retain
@@ -32,7 +35,7 @@ their original rule; their useful tradeoffs now need reevaluation.
 946 ZX0 + 2,025 LZSA2 observer runs and 3,444 actual compressed-overlap
 plain/IRQ/relocation runs reproduce all frozen per-case counts. E01 is now
 complete; E02/E03 screens are complete under their earlier rule. Frontier
-follow-up F00, minimum-size audit S01 and E04..E07 remain pending.
+follow-up F00 is complete; minimum-size audit S01 and E04..E07 remain pending.
 [ZX0 E01](libraries/NEXT_E01_ZX0_BRANCHES.md)
 has17,028 complete native replays plus six FFFFh probes for six branch
 candidates: -61/-13/-3 B and -339,934/-214,864/-970 real T, with no slower
@@ -63,11 +66,20 @@ hot pair uses9,515 B/14,918,596 T (+16/-7,710); shared SMC uses8,056 B/
 114,688 byte/state/flag checks,56 hot-family edges and repeated odd/even
 reset calls pass. Six focused tests pass; no IRQ/in-place/relocated runtime
 promotion was performed. Shared-fast SMC is dominated by qualified compact.
-Keep E01 as the current public implementation while F00 qualifies exactly
-three LZSA2 candidates: E02 hot literals, E03 hot pair and their combination.
-Combined predicted service9,545 B/14,905,725 real T is not yet a measurement.
-Only after exact full native gates and package integration may these become
-public modes. E04 cap255 can now qualify as faster/larger if nondominated;
+[F00](libraries/NEXT_F00_HOT_PATHS.md) qualifies the three LZSA2 speed points:
+`lzsa.hot.build('nibble'|'literals'|'combined')` uses9,515/9,529/9,545 aligned
+service B and14,918,596/14,913,435/14,905,725 real T. All13,257 complete native
+configurations pass, including675+60 inputs per profile, IRQ, relocation,
+actual minimum-safe compressed overlap andFFFFh cursors. All256 alignments
+plus diagnostic IRQ fit (maximum9,819 B). Preserve four supplemental legal
+word-literal+10T regressions for literals/combined; no frozen675-case slowdown.
+Each entry's44T initialization and28T EOF restoration/RET are included;
+external required target preparation is0T. Public byte/label authentication,
+93 library/24 selected toolkit tests,31 defaults/six resources and isolated
+wheels/74 API exports/three CLI profiles pass. The71-call table retains every
+preceding68 call and identifies aggregate resident Pareto points. Existing
+defaults stay exact; quota/guarded hot wrappers remain unqualified.
+E04 cap255 can now qualify as faster/larger if nondominated;
 growth alone no longer rejects it. Add bounded S01 audits of the smallest
 ZX0 Standard/LZSA2 Small profiles, rather than only tuning large kernels.
 Retain E02's two-byte cold-tail tradeoff for E06 dominance/refit review.
@@ -93,7 +105,7 @@ divergence. Local generators repair the initially stale fused slice artifact.
 Instruction-level ULA contention and live banked guards remain unqualified;
 `Spectrum128(contention=True).attach(cpu)` is rejected. Preserve original protected
 IRQ/overlap/wrapper gates. No GUI, disk/movie qualification or main merge/push
-is implied. Continue F00, S01 and E04..E07 with one focused completed stage
+is implied. Continue S01 and E04..E07 with one focused completed stage
 per commit; independent source review may run in parallel.
 
 ## Active codec goal — speed/service-memory frontier (2026-10-19)

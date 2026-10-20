@@ -1,5 +1,55 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Qualify three LZSA2 hot size/speed points
+
+- **Objective/baseline:** Complete bounded F00 under the user's Pareto scope,
+  preserving the675 frozen inputs, raw ABI and accepted E01 cold Hybrid fast:
+  9,499 aligned service B/14,926,306 real T. Qualify E02 hot literals, E03 hot
+  nibble pair and their exact combination. Include all required Z80 library
+  initialization, code/state/tables/alignment/scratch/internal buffers/stacks;
+  exclude compressed input and complete output/history as authorized.
+- **Results:** Nibble uses9,515 B/14,918,596 T (+16 B/-7,710 T); literals
+  9,529 B/14,913,435 T (+30/-12,871); combined9,545 B/14,905,725 T
+  (+46/-20,581). Exact E00 models reconcile every case. All are nondominated
+  against current same-feature measured points; combined is fastest tested,
+  0.137884% less CPU than E01 and16.095434% versus pass Fast. No frozen case
+  slows. Preserve all four valid supplemental word-literal+10T regressions
+  for literals/combined. This does not establish a global optimum or the
+  broader ten-percent incremental goal.
+- **Initialization/inventory:** Entry's44T setup and28T EOF restoration/RET
+  are included. Separate required target preparation is0T; static512B tables
+  are emitted in the image. Six caller-stack B and embedded offset2B count
+  once. All256 alignments plus diagnostic13B IRQ/six extra stack fit, with
+  maximum combined9,819 B. Caller CALL17 is separate from the historical
+  entry-through-RET convention; IRQ/ULA/ROM/disk remain separate components.
+- **Native qualification:** Qualified C core reproduces675 original-backend
+  E01 counts, then675+60 inputs per candidate with independent models. Original
+  protected backend passes13,257 complete configurations: six modes per input,
+  disjoint/actual minimum-safe overlap, plain/IRQ/relocated, plus27 FFFFh probes.
+  Source/EOF, code writes, dirty offset, IX/IY/alternate pairs, SP and stack
+  pass; host/native minimum input starts and cursor digests agree. Each profile
+  has674 actual-overlap frozen cases and1,632 injected IRQs, stack6/12B. The
+  disjoint runner privately adds IY sentinel/operand poisoning; shared sources
+  stay exact. Launch/final native source hashes match.
+- **Integration/verification:** Self-contained public `lzsa.hot.build` and
+  three CLI profiles use fixed assembler events/canonical fingerprints. All
+  native bytes/labels and256 alignments match the frozen proof. Preserve prior
+  source witnesses; adding optional Wide/Hybrid factory hooks changes no
+  preceding bytes/labels/metadata. All93 library and24 selected toolkit tests,
+  31 legacy layouts/six resources, isolated wheels/74 API exports/three CLI
+  profiles pass. The71-call table retains every preceding68 call and adds a
+  measured aggregate resident Pareto selection. First wheel attempt hit an
+  inaccessible default sandbox TEMP; retry with worktree-local TEMP/TMP passed.
+  Correct the isolated CLI fixture to retain its export root before replacing
+  argv; final authentication reruns keep exports in the temporary directory.
+- **Decision/limits:** Publish all three opt-in tradeoffs; preserve defaults
+  and all slower-case history. Resident qualification does not qualify hot
+  quota/guarded wrappers or physical Spectrum/movie delivery. F00 complete;
+  S01/E04..E07 pending. [Report/reproduction](libraries/NEXT_F00_HOT_PATHS.md),
+  [full native proof](libraries/evidence/next_f00_full.json.gz),
+  [public authentication](libraries/evidence/next_f00_public_verification.json),
+  [function-linked table](libraries/DECODER_VARIANTS.md).
+
 ## 2026-10-20 — Expand acceptance to the size/speed frontier
 
 - **User scope:** Seek minimum service memory, maximum speed under10,000

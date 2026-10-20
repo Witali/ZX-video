@@ -1,0 +1,7816 @@
+{
+  "C_qualification_proof_sha256": {
+    "native_build.json": "d250038dd178f3b2c4d4fcca5f111be79963acca6516d62faf28cbe5be3cdc14",
+    "verification.json": "c489eb758673166f4389057c11ba237da029c5757e6044669cf5601f31688cf5"
+  },
+  "archived_proof_sha256": {
+    "next_e00_lzsa_full.json.gz": "77fc0cb9fb485e1dfb68a676696965857b61422966c7d41fb6770f212e98e2b5",
+    "next_e01_lzsa_full.json.gz": "ff348a5337de3cd21890becdc1d2048398b62aabf23a472e8ab2c180cb3a8ebb",
+    "next_e02_lzsa_full.json.gz": "5d9007d50c9a7ff5268705f3c01d99cf1753700f9fe68d5f40ad7ec8df185dec",
+    "next_e03_full.json.gz": "861da9b30f3c3d334ca726f2912f0fffef9b56d2253fa62caacdf017e589c4c1"
+  },
+  "attempts": [],
+  "baseline": {
+    "real_tstates": 14926306,
+    "regions": [
+      {
+        "address": 32768,
+        "bytes": 9493,
+        "sha256": "899e5725f87a384cc77f5eb36c8888d1873d6d976719434fdcd0c5c7680d1c70"
+      }
+    ],
+    "service_bytes": 9499
+  },
+  "baseline_real_tstates": 14926306,
+  "complete": true,
+  "date": "2026-10-20",
+  "decision": "Three raw candidates passed complete correctness gates; public promotion and final frontier policy remain a separate integration step.",
+  "final_source_sha256_lf": {
+    "emulator/cpu.py": "4a43446648f032ba442025e8804582cef661435e1ef199f0c4715fed78d1128e",
+    "libraries/lzsa/src/lzsa/_wide_kernels.py": "cdd98fd57309335948d23b64ce88bba80efcc6e33862a3efe3dc60001e46c114",
+    "libraries/lzsa/src/lzsa/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/lzsa/src/lzsa/codec.py": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775",
+    "libraries/lzsa/src/lzsa/hybrid.py": "73566fac896c0c67e5d1881c2a9cddc00b512efc75d61258a8f9b44c734634c7",
+    "libraries/lzsa/src/lzsa/wide.py": "3cf33e89d78586fb6c387a7e909d42bf90d7049cc0ca4922397ec7816d9029e5",
+    "libraries/tests/measure_full_token_dispatch.py": "81eb2f0d2d2da1a8eeeb8236146d8d4d47bb920eb98a4ec8f5ef85e067bf4f90",
+    "libraries/tests/measure_long_copy.py": "6d676451b49f40b649ce70beaef42f3fc071ad5bf246bf27f0e8de77d8fc506b",
+    "libraries/tests/native_block.py": "94bb095d918546ee3e54af1088e814f8442ca26ce65efd519574e72f1f104b3e",
+    "libraries/tests/native_inplace_block.py": "a5b6806483d10b0d0aaed5ebbae24c5c1bcf57242c672e7b23927381bed171cd",
+    "libraries/tests/next_e02_measure.py": "7b78ae7863adfab541c04cfca3bd4c047ea043aac631f1e14d767d6490e5d81f",
+    "libraries/tests/next_e02_profiles.py": "07016bcfbd8c891891dc331c41198f830612c49368d6b93cb5a0c07482813c38",
+    "libraries/tests/next_e03_measure.py": "aa2e932316ce19a3dd2d928472dc7ce17f847f31faa7894cba822a7d365be373",
+    "libraries/tests/next_e03_profiles.py": "6db6797f8d763b489fe5de6fda83617896c82d4541040f954268a89368ced0b8",
+    "libraries/tests/next_f00_measure.py": "de21665ddb89a39f3bdd0800f83ccb947d39eb68318544840d0f8bf56cefeb87",
+    "libraries/tests/next_f00_profiles.py": "db5288d6eadfb8bacac305541fd08f6717d469265eb5fc853fb520447bb50ce2",
+    "libraries/tests/profile_branch_mix.py": "e0721a08dfa090ac160a879bb6e4a63815428d1cda29f6582b8ba6519318c9ac",
+    "libraries/tests/profile_next_lzsa.py": "f480b696eb404691152e5a8a1779717b2d4784a9c14c34f5329a86d39a3bd70b",
+    "libraries/tests/test_next_f00.py": "ba3075863294c2882e412d9b58d6c7faff24dae2bd9a9796fd50cbdef4df05bf"
+  },
+  "full_evidence": {
+    "path": "libraries/evidence/next_f00_full.json.gz",
+    "sha256": "00b1facac131ba65f880989af84e0a013958bec9fe66a24733f7c09873c5ad66"
+  },
+  "launch_source_sha256_lf": {
+    "emulator/cpu.py": "4a43446648f032ba442025e8804582cef661435e1ef199f0c4715fed78d1128e",
+    "libraries/lzsa/src/lzsa/_wide_kernels.py": "cdd98fd57309335948d23b64ce88bba80efcc6e33862a3efe3dc60001e46c114",
+    "libraries/lzsa/src/lzsa/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/lzsa/src/lzsa/codec.py": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775",
+    "libraries/lzsa/src/lzsa/hybrid.py": "73566fac896c0c67e5d1881c2a9cddc00b512efc75d61258a8f9b44c734634c7",
+    "libraries/lzsa/src/lzsa/wide.py": "3cf33e89d78586fb6c387a7e909d42bf90d7049cc0ca4922397ec7816d9029e5",
+    "libraries/tests/measure_full_token_dispatch.py": "81eb2f0d2d2da1a8eeeb8236146d8d4d47bb920eb98a4ec8f5ef85e067bf4f90",
+    "libraries/tests/measure_long_copy.py": "6d676451b49f40b649ce70beaef42f3fc071ad5bf246bf27f0e8de77d8fc506b",
+    "libraries/tests/native_block.py": "94bb095d918546ee3e54af1088e814f8442ca26ce65efd519574e72f1f104b3e",
+    "libraries/tests/native_inplace_block.py": "a5b6806483d10b0d0aaed5ebbae24c5c1bcf57242c672e7b23927381bed171cd",
+    "libraries/tests/next_e02_measure.py": "7b78ae7863adfab541c04cfca3bd4c047ea043aac631f1e14d767d6490e5d81f",
+    "libraries/tests/next_e02_profiles.py": "07016bcfbd8c891891dc331c41198f830612c49368d6b93cb5a0c07482813c38",
+    "libraries/tests/next_e03_measure.py": "aa2e932316ce19a3dd2d928472dc7ce17f847f31faa7894cba822a7d365be373",
+    "libraries/tests/next_e03_profiles.py": "6db6797f8d763b489fe5de6fda83617896c82d4541040f954268a89368ced0b8",
+    "libraries/tests/next_f00_measure.py": "de21665ddb89a39f3bdd0800f83ccb947d39eb68318544840d0f8bf56cefeb87",
+    "libraries/tests/next_f00_profiles.py": "db5288d6eadfb8bacac305541fd08f6717d469265eb5fc853fb520447bb50ce2",
+    "libraries/tests/profile_branch_mix.py": "e0721a08dfa090ac160a879bb6e4a63815428d1cda29f6582b8ba6519318c9ac",
+    "libraries/tests/profile_next_lzsa.py": "f480b696eb404691152e5a8a1779717b2d4784a9c14c34f5329a86d39a3bd70b",
+    "libraries/tests/test_next_f00.py": "ba3075863294c2882e412d9b58d6c7faff24dae2bd9a9796fd50cbdef4df05bf"
+  },
+  "native_C": {
+    "build_sha256": "d250038dd178f3b2c4d4fcca5f111be79963acca6516d62faf28cbe5be3cdc14",
+    "dll_path": "C:\\Work\\ZX-video\\.worktree\\codec-speed-pass3\\.tmp\\codec-cpu-qualified\\codec_cpu.dll",
+    "dll_sha256": "21e89129d040c6c29112c8977b5cb28573ae09f75632f5b993308204a76b2db8"
+  },
+  "native_kosarev_files": {
+    "C:\\Work\\ZX-video\\.tmp\\library-test-deps\\z80\\__init__.py": "ed7ee94935c64c4dcbac28378d314403812a826a6de9749aec825624fe314f17",
+    "C:\\Work\\ZX-video\\.tmp\\library-test-deps\\z80\\_z80.cp312-win_amd64.pyd": "fa9faf874754877962b88ed2dc6a4e184dc03ea0b79b3e4745f3115626b98cbb"
+  },
+  "objective": "Find nondominated faster raw candidates within10000 total service bytes; larger than E01 is allowed.",
+  "profiles": {
+    "combined": {
+      "metadata": {
+        "alignment_padding": 0,
+        "alternate_hl_preservation_tstates": 37,
+        "body_layout": [
+          {
+            "base_token": 0,
+            "groups": [
+              {
+                "body_bytes": 39,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 1,
+            "groups": [
+              {
+                "body_bytes": 41,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 2,
+            "groups": [
+              {
+                "body_bytes": 43,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 3,
+            "groups": [
+              {
+                "body_bytes": 45,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 4,
+            "groups": [
+              {
+                "body_bytes": 47,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 1,
+                "literals": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 5,
+            "groups": [
+              {
+                "body_bytes": 49,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 3,
+                "literals": [
+                  3,
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 6,
+            "groups": [
+              {
+                "body_bytes": 51,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 7,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 32,
+            "groups": [
+              {
+                "body_bytes": 38,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 38,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 38,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 38,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 33,
+            "groups": [
+              {
+                "body_bytes": 40,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 34,
+            "groups": [
+              {
+                "body_bytes": 42,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 35,
+            "groups": [
+              {
+                "body_bytes": 44,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 36,
+            "groups": [
+              {
+                "body_bytes": 46,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 37,
+            "groups": [
+              {
+                "body_bytes": 48,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 38,
+            "groups": [
+              {
+                "body_bytes": 50,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 39,
+            "groups": [
+              {
+                "body_bytes": 28,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 28,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 28,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 28,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 64,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 65,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 66,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 67,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 68,
+            "groups": [
+              {
+                "body_bytes": 31,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 69,
+            "groups": [
+              {
+                "body_bytes": 33,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 70,
+            "groups": [
+              {
+                "body_bytes": 35,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 71,
+            "groups": [
+              {
+                "body_bytes": 13,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 96,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 97,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 98,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 99,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 100,
+            "groups": [
+              {
+                "body_bytes": 31,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 101,
+            "groups": [
+              {
+                "body_bytes": 33,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 102,
+            "groups": [
+              {
+                "body_bytes": 35,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 103,
+            "groups": [
+              {
+                "body_bytes": 13,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 128,
+            "groups": [
+              {
+                "body_bytes": 40,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 129,
+            "groups": [
+              {
+                "body_bytes": 42,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 130,
+            "groups": [
+              {
+                "body_bytes": 44,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 131,
+            "groups": [
+              {
+                "body_bytes": 46,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 132,
+            "groups": [
+              {
+                "body_bytes": 48,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 133,
+            "groups": [
+              {
+                "body_bytes": 50,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 134,
+            "groups": [
+              {
+                "body_bytes": 52,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 52,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 52,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 52,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 135,
+            "groups": [
+              {
+                "body_bytes": 30,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 30,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 30,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 30,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 160,
+            "groups": [
+              {
+                "body_bytes": 39,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 161,
+            "groups": [
+              {
+                "body_bytes": 41,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 162,
+            "groups": [
+              {
+                "body_bytes": 43,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 163,
+            "groups": [
+              {
+                "body_bytes": 45,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 164,
+            "groups": [
+              {
+                "body_bytes": 47,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 165,
+            "groups": [
+              {
+                "body_bytes": 49,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 166,
+            "groups": [
+              {
+                "body_bytes": 51,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 167,
+            "groups": [
+              {
+                "body_bytes": 45,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 192,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 193,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 194,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 195,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 196,
+            "groups": [
+              {
+                "body_bytes": 31,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 197,
+            "groups": [
+              {
+                "body_bytes": 33,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 198,
+            "groups": [
+              {
+                "body_bytes": 35,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 1,
+                "literals": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 199,
+            "groups": [
+              {
+                "body_bytes": 13,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 224,
+            "groups": [
+              {
+                "body_bytes": 5,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 11,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 5,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 225,
+            "groups": [
+              {
+                "body_bytes": 5,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 5,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 5,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 226,
+            "groups": [
+              {
+                "body_bytes": 19,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 19,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 19,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 227,
+            "groups": [
+              {
+                "body_bytes": 21,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 21,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 21,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 228,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 229,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 230,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 231,
+            "groups": [
+              {
+                "body_bytes": 3,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 3,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 3,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 3,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              }
+            ]
+          }
+        ],
+        "caller_stack_bytes": 6,
+        "candidate_promoted": false,
+        "code_bytes": 9539,
+        "cold_match_extension": true,
+        "core_end": 42307,
+        "decoder_stack_bytes": 4,
+        "design": "combined",
+        "dispatch_tstates": 58,
+        "embedded_mutable_bytes": 2,
+        "embedded_state_counted_once_in_code": true,
+        "entry": "start",
+        "experiment": "F00",
+        "external_buffers": "complete compressed input plus complete decoded output/history; counted separately",
+        "full_token_dispatch": true,
+        "group_counts": [
+          4,
+          4,
+          4,
+          3,
+          2,
+          3,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4,
+          3,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          2,
+          4,
+          4,
+          4,
+          3,
+          3,
+          2,
+          4,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          4
+        ],
+        "grouped_bodies": true,
+        "hybrid_profile": "fast",
+        "hybrid_selector": "short-budget-9500",
+        "inplace_qualified": false,
+        "irq_headroom": "add actual hardware-return and register-preserving handler stack separately",
+        "irq_qualified": false,
+        "literal_fallthrough_ranks": [
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ]
+        ],
+        "match_extension_path_delta_tstates": {
+          "extended_length": 2,
+          "nibble_length": -3
+        },
+        "one_shot": true,
+        "patched_addresses": [
+          33314,
+          33315
+        ],
+        "private_stack_bytes": 0,
+        "qualification_scope": "private raw candidate; complete proof recorded externally",
+        "raw_only": true,
+        "repeat_lengths": [
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "service_memory": {
+          "caller_stack_bytes": 6,
+          "code_tables_alignment_and_embedded_state_bytes": 9539,
+          "extra_variables": 0,
+          "internal_buffer_bytes": 0,
+          "scratch_bytes": 0
+        },
+        "service_memory_bytes": 9545,
+        "shared_hit_tokens": [
+          20,
+          21,
+          27,
+          28,
+          30,
+          60,
+          61,
+          125,
+          208,
+          214,
+          216,
+          220,
+          221,
+          222,
+          224,
+          225,
+          226,
+          227,
+          228,
+          229,
+          230
+        ],
+        "shared_hit_tstates": 10,
+        "shared_literal_bodies": true,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "state_bytes": 0,
+        "storage_budget_bytes": 10000,
+        "storage_budget_scope": "service code/tables/alignment/state/decoder stack/scratch/internal buffers",
+        "table_bytes": 512,
+        "test_only": true,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "token_handlers": 256,
+        "total_storage_bytes": 9545,
+        "upstream_commit": "15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5",
+        "variant": "next-f00-combined"
+      },
+      "qualification": {
+        "FFFF_configs": 9,
+        "actual_overlap_cases": 674,
+        "complete": true,
+        "frozen_cases": 675,
+        "host_native_write_cursor_digests_exact": true,
+        "injected_interrupts": 1632,
+        "max_example_IRQ_service_bytes": 9819,
+        "max_intrinsic_service_bytes": 9800,
+        "maximum_inplace_irq_stack_bytes": 12,
+        "maximum_irq_stack_bytes": 12,
+        "maximum_plain_stack_bytes": 6,
+        "modes_per_case": 6,
+        "native_configs": 4410,
+        "raw_only": true,
+        "source_frontier_code_EOF_ABI_dirtyoffset": true,
+        "supplemental_cases": 60
+      },
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9539,
+          "sha256": "289c23ed93a8557197bcca5c79a78ec2cbe9a0010294a365a42e3603a5f16d4e"
+        }
+      ],
+      "summary": {
+        "cases": 675,
+        "equal_cases": 651,
+        "faster_cases": 24,
+        "max_regression_tstates": 0,
+        "real_cases": 21,
+        "real_delta_tstates": -20581,
+        "real_tstates": 14905725,
+        "slower_cases": [],
+        "slower_real_cases": 0
+      }
+    },
+    "hot_clone": {
+      "metadata": {
+        "alignment_padding": 0,
+        "alternate_hl_preservation_tstates": 37,
+        "body_layout": [
+          {
+            "base_token": 0,
+            "groups": [
+              {
+                "body_bytes": 39,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 1,
+            "groups": [
+              {
+                "body_bytes": 41,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 2,
+            "groups": [
+              {
+                "body_bytes": 43,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 3,
+            "groups": [
+              {
+                "body_bytes": 45,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 4,
+            "groups": [
+              {
+                "body_bytes": 47,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 1,
+                "literals": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 5,
+            "groups": [
+              {
+                "body_bytes": 49,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 3,
+                "literals": [
+                  3,
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 6,
+            "groups": [
+              {
+                "body_bytes": 51,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 7,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 32,
+            "groups": [
+              {
+                "body_bytes": 38,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 38,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 38,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 38,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 33,
+            "groups": [
+              {
+                "body_bytes": 40,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 34,
+            "groups": [
+              {
+                "body_bytes": 42,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 35,
+            "groups": [
+              {
+                "body_bytes": 44,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 36,
+            "groups": [
+              {
+                "body_bytes": 46,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 37,
+            "groups": [
+              {
+                "body_bytes": 48,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 38,
+            "groups": [
+              {
+                "body_bytes": 50,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 39,
+            "groups": [
+              {
+                "body_bytes": 28,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 28,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 28,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 28,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 64,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 65,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 66,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 67,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 68,
+            "groups": [
+              {
+                "body_bytes": 31,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 69,
+            "groups": [
+              {
+                "body_bytes": 33,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 70,
+            "groups": [
+              {
+                "body_bytes": 35,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 71,
+            "groups": [
+              {
+                "body_bytes": 13,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 96,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 97,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 98,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 99,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 100,
+            "groups": [
+              {
+                "body_bytes": 31,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 101,
+            "groups": [
+              {
+                "body_bytes": 33,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 102,
+            "groups": [
+              {
+                "body_bytes": 35,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 103,
+            "groups": [
+              {
+                "body_bytes": 13,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 128,
+            "groups": [
+              {
+                "body_bytes": 40,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 129,
+            "groups": [
+              {
+                "body_bytes": 42,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 130,
+            "groups": [
+              {
+                "body_bytes": 44,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 131,
+            "groups": [
+              {
+                "body_bytes": 46,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 132,
+            "groups": [
+              {
+                "body_bytes": 48,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 133,
+            "groups": [
+              {
+                "body_bytes": 50,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 134,
+            "groups": [
+              {
+                "body_bytes": 52,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 52,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 52,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 52,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 135,
+            "groups": [
+              {
+                "body_bytes": 30,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 30,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 30,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 30,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 160,
+            "groups": [
+              {
+                "body_bytes": 39,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 161,
+            "groups": [
+              {
+                "body_bytes": 41,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 162,
+            "groups": [
+              {
+                "body_bytes": 43,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 163,
+            "groups": [
+              {
+                "body_bytes": 45,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 164,
+            "groups": [
+              {
+                "body_bytes": 47,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 165,
+            "groups": [
+              {
+                "body_bytes": 49,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 166,
+            "groups": [
+              {
+                "body_bytes": 51,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 167,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 192,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 193,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 194,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 195,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 196,
+            "groups": [
+              {
+                "body_bytes": 31,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 197,
+            "groups": [
+              {
+                "body_bytes": 33,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 198,
+            "groups": [
+              {
+                "body_bytes": 35,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 1,
+                "literals": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 199,
+            "groups": [
+              {
+                "body_bytes": 13,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 224,
+            "groups": [
+              {
+                "body_bytes": 5,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 11,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 5,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 225,
+            "groups": [
+              {
+                "body_bytes": 5,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 5,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 5,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 226,
+            "groups": [
+              {
+                "body_bytes": 19,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 19,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 19,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 227,
+            "groups": [
+              {
+                "body_bytes": 21,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 21,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 21,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 228,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 229,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 230,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 231,
+            "groups": [
+              {
+                "body_bytes": 3,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 3,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 3,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 3,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              }
+            ]
+          }
+        ],
+        "caller_stack_bytes": 6,
+        "candidate_promoted": false,
+        "code_bytes": 9523,
+        "cold_match_extension": true,
+        "core_end": 42291,
+        "decoder_stack_bytes": 4,
+        "design": "hot_clone",
+        "dispatch_tstates": 58,
+        "embedded_mutable_bytes": 2,
+        "embedded_state_counted_once_in_code": true,
+        "entry": "start",
+        "experiment": "F00",
+        "external_buffers": "complete compressed input plus complete decoded output/history; counted separately",
+        "full_token_dispatch": true,
+        "group_counts": [
+          4,
+          4,
+          4,
+          3,
+          2,
+          3,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4,
+          3,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          2,
+          4,
+          4,
+          4,
+          3,
+          3,
+          2,
+          4,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          4
+        ],
+        "grouped_bodies": true,
+        "hybrid_profile": "fast",
+        "hybrid_selector": "short-budget-9500",
+        "inplace_qualified": false,
+        "irq_headroom": "add actual hardware-return and register-preserving handler stack separately",
+        "irq_qualified": false,
+        "literal_fallthrough_ranks": [
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ]
+        ],
+        "match_extension_path_delta_tstates": {
+          "extended_length": 2,
+          "nibble_length": -3
+        },
+        "one_shot": true,
+        "patched_addresses": [
+          33314,
+          33315
+        ],
+        "private_stack_bytes": 0,
+        "qualification_scope": "private raw candidate; complete proof recorded externally",
+        "raw_only": true,
+        "repeat_lengths": [
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "service_memory": {
+          "caller_stack_bytes": 6,
+          "code_tables_alignment_and_embedded_state_bytes": 9523,
+          "extra_variables": 0,
+          "internal_buffer_bytes": 0,
+          "scratch_bytes": 0
+        },
+        "service_memory_bytes": 9529,
+        "shared_hit_tokens": [
+          20,
+          21,
+          27,
+          28,
+          30,
+          60,
+          61,
+          125,
+          208,
+          214,
+          216,
+          220,
+          221,
+          222,
+          224,
+          225,
+          226,
+          227,
+          228,
+          229,
+          230
+        ],
+        "shared_hit_tstates": 10,
+        "shared_literal_bodies": true,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "state_bytes": 0,
+        "storage_budget_bytes": 10000,
+        "storage_budget_scope": "service code/tables/alignment/state/decoder stack/scratch/internal buffers",
+        "table_bytes": 512,
+        "test_only": true,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "token_handlers": 256,
+        "total_storage_bytes": 9529,
+        "upstream_commit": "15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5",
+        "variant": "next-f00-hot_clone"
+      },
+      "qualification": {
+        "FFFF_configs": 9,
+        "actual_overlap_cases": 674,
+        "complete": true,
+        "frozen_cases": 675,
+        "host_native_write_cursor_digests_exact": true,
+        "injected_interrupts": 1632,
+        "max_example_IRQ_service_bytes": 9803,
+        "max_intrinsic_service_bytes": 9784,
+        "maximum_inplace_irq_stack_bytes": 12,
+        "maximum_irq_stack_bytes": 12,
+        "maximum_plain_stack_bytes": 6,
+        "modes_per_case": 6,
+        "native_configs": 4410,
+        "raw_only": true,
+        "source_frontier_code_EOF_ABI_dirtyoffset": true,
+        "supplemental_cases": 60
+      },
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9523,
+          "sha256": "225a65d4439d009bfddc5f103ecd3ebe9c5593d87400146e786a42fdc2c8174f"
+        }
+      ],
+      "summary": {
+        "cases": 675,
+        "equal_cases": 652,
+        "faster_cases": 23,
+        "max_regression_tstates": 0,
+        "real_cases": 21,
+        "real_delta_tstates": -12871,
+        "real_tstates": 14913435,
+        "slower_cases": [],
+        "slower_real_cases": 0
+      }
+    },
+    "hot_pair": {
+      "metadata": {
+        "alignment_padding": 0,
+        "alternate_hl_preservation_tstates": 37,
+        "body_layout": [
+          {
+            "base_token": 0,
+            "groups": [
+              {
+                "body_bytes": 39,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 1,
+            "groups": [
+              {
+                "body_bytes": 41,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 2,
+            "groups": [
+              {
+                "body_bytes": 43,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 3,
+            "groups": [
+              {
+                "body_bytes": 45,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 4,
+            "groups": [
+              {
+                "body_bytes": 47,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 1,
+                "literals": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 5,
+            "groups": [
+              {
+                "body_bytes": 49,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 3,
+                "literals": [
+                  3,
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 6,
+            "groups": [
+              {
+                "body_bytes": 51,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 7,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 32,
+            "groups": [
+              {
+                "body_bytes": 38,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 38,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 38,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 38,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 33,
+            "groups": [
+              {
+                "body_bytes": 40,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 34,
+            "groups": [
+              {
+                "body_bytes": 42,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 35,
+            "groups": [
+              {
+                "body_bytes": 44,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 36,
+            "groups": [
+              {
+                "body_bytes": 46,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 37,
+            "groups": [
+              {
+                "body_bytes": 48,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 38,
+            "groups": [
+              {
+                "body_bytes": 50,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 39,
+            "groups": [
+              {
+                "body_bytes": 28,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 28,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 28,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 28,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 64,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 65,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 66,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 67,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 68,
+            "groups": [
+              {
+                "body_bytes": 31,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 69,
+            "groups": [
+              {
+                "body_bytes": 33,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 70,
+            "groups": [
+              {
+                "body_bytes": 35,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 71,
+            "groups": [
+              {
+                "body_bytes": 13,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 96,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 97,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 98,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 99,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 100,
+            "groups": [
+              {
+                "body_bytes": 31,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 101,
+            "groups": [
+              {
+                "body_bytes": 33,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 102,
+            "groups": [
+              {
+                "body_bytes": 35,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 103,
+            "groups": [
+              {
+                "body_bytes": 13,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 128,
+            "groups": [
+              {
+                "body_bytes": 40,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 40,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 129,
+            "groups": [
+              {
+                "body_bytes": 42,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 42,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 130,
+            "groups": [
+              {
+                "body_bytes": 44,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 44,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 131,
+            "groups": [
+              {
+                "body_bytes": 46,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 46,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 132,
+            "groups": [
+              {
+                "body_bytes": 48,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 48,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 133,
+            "groups": [
+              {
+                "body_bytes": 50,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 50,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 134,
+            "groups": [
+              {
+                "body_bytes": 52,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 52,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 52,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 52,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 135,
+            "groups": [
+              {
+                "body_bytes": 30,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 30,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 30,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 30,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 160,
+            "groups": [
+              {
+                "body_bytes": 39,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 39,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 161,
+            "groups": [
+              {
+                "body_bytes": 41,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 41,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 162,
+            "groups": [
+              {
+                "body_bytes": 43,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 43,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 163,
+            "groups": [
+              {
+                "body_bytes": 45,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 45,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 164,
+            "groups": [
+              {
+                "body_bytes": 47,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 47,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 165,
+            "groups": [
+              {
+                "body_bytes": 49,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 49,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 166,
+            "groups": [
+              {
+                "body_bytes": 51,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 51,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 167,
+            "groups": [
+              {
+                "body_bytes": 45,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 192,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 193,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 194,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 195,
+            "groups": [
+              {
+                "body_bytes": 29,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 29,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 196,
+            "groups": [
+              {
+                "body_bytes": 31,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 31,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 197,
+            "groups": [
+              {
+                "body_bytes": 33,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 33,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 198,
+            "groups": [
+              {
+                "body_bytes": 35,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 35,
+                "fallthrough": 1,
+                "literals": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 199,
+            "groups": [
+              {
+                "body_bytes": 13,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 13,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 224,
+            "groups": [
+              {
+                "body_bytes": 5,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 5,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 5,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 225,
+            "groups": [
+              {
+                "body_bytes": 5,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 5,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 5,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 226,
+            "groups": [
+              {
+                "body_bytes": 19,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 19,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 19,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 227,
+            "groups": [
+              {
+                "body_bytes": 21,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 21,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 21,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 228,
+            "groups": [
+              {
+                "body_bytes": 23,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 23,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 229,
+            "groups": [
+              {
+                "body_bytes": 25,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 25,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 230,
+            "groups": [
+              {
+                "body_bytes": 27,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 27,
+                "fallthrough": 2,
+                "literals": [
+                  2,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "base_token": 231,
+            "groups": [
+              {
+                "body_bytes": 3,
+                "fallthrough": 1,
+                "literals": [
+                  1
+                ]
+              },
+              {
+                "body_bytes": 3,
+                "fallthrough": 3,
+                "literals": [
+                  3
+                ]
+              },
+              {
+                "body_bytes": 3,
+                "fallthrough": 2,
+                "literals": [
+                  2
+                ]
+              },
+              {
+                "body_bytes": 3,
+                "fallthrough": 0,
+                "literals": [
+                  0
+                ]
+              }
+            ]
+          }
+        ],
+        "caller_stack_bytes": 6,
+        "candidate_promoted": false,
+        "code_bytes": 9509,
+        "cold_match_extension": true,
+        "core_end": 42277,
+        "decoder_stack_bytes": 4,
+        "design": "hot_pair",
+        "dispatch_tstates": 58,
+        "embedded_mutable_bytes": 2,
+        "embedded_state_counted_once_in_code": true,
+        "entry": "start",
+        "experiment": "F00",
+        "external_buffers": "complete compressed input plus complete decoded output/history; counted separately",
+        "full_token_dispatch": true,
+        "group_counts": [
+          4,
+          4,
+          4,
+          3,
+          2,
+          3,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4,
+          3,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          3,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          2,
+          4,
+          4,
+          4,
+          3,
+          3,
+          2,
+          4,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          4
+        ],
+        "grouped_bodies": true,
+        "hybrid_profile": "fast",
+        "hybrid_selector": "short-budget-9500",
+        "inplace_qualified": false,
+        "irq_headroom": "add actual hardware-return and register-preserving handler stack separately",
+        "irq_qualified": false,
+        "literal_fallthrough_ranks": [
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            2,
+            0
+          ]
+        ],
+        "match_extension_path_delta_tstates": {
+          "extended_length": 2,
+          "nibble_length": -3
+        },
+        "one_shot": true,
+        "patched_addresses": [
+          33314,
+          33315
+        ],
+        "private_stack_bytes": 0,
+        "qualification_scope": "private raw candidate; complete proof recorded externally",
+        "raw_only": true,
+        "repeat_lengths": [
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "service_memory": {
+          "caller_stack_bytes": 6,
+          "code_tables_alignment_and_embedded_state_bytes": 9509,
+          "extra_variables": 0,
+          "internal_buffer_bytes": 0,
+          "scratch_bytes": 0
+        },
+        "service_memory_bytes": 9515,
+        "shared_hit_tokens": [
+          20,
+          21,
+          27,
+          28,
+          30,
+          60,
+          61,
+          125,
+          208,
+          214,
+          216,
+          220,
+          221,
+          222,
+          224,
+          225,
+          226,
+          227,
+          228,
+          229,
+          230
+        ],
+        "shared_hit_tstates": 10,
+        "shared_literal_bodies": true,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "state_bytes": 0,
+        "storage_budget_bytes": 10000,
+        "storage_budget_scope": "service code/tables/alignment/state/decoder stack/scratch/internal buffers",
+        "table_bytes": 512,
+        "test_only": true,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "token_handlers": 256,
+        "total_storage_bytes": 9515,
+        "upstream_commit": "15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5",
+        "variant": "next-f00-hot_pair"
+      },
+      "qualification": {
+        "FFFF_configs": 9,
+        "actual_overlap_cases": 674,
+        "complete": true,
+        "frozen_cases": 675,
+        "host_native_write_cursor_digests_exact": true,
+        "injected_interrupts": 1632,
+        "max_example_IRQ_service_bytes": 9789,
+        "max_intrinsic_service_bytes": 9770,
+        "maximum_inplace_irq_stack_bytes": 12,
+        "maximum_irq_stack_bytes": 12,
+        "maximum_plain_stack_bytes": 6,
+        "modes_per_case": 6,
+        "native_configs": 4410,
+        "raw_only": true,
+        "source_frontier_code_EOF_ABI_dirtyoffset": true,
+        "supplemental_cases": 60
+      },
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9509,
+          "sha256": "c780c4bd76b1204fb4bd0cd08e200fa5be698395565fb5c87e31e6d8396b5561"
+        }
+      ],
+      "summary": {
+        "cases": 675,
+        "equal_cases": 653,
+        "faster_cases": 22,
+        "max_regression_tstates": 0,
+        "real_cases": 21,
+        "real_delta_tstates": -7710,
+        "real_tstates": 14918596,
+        "slower_cases": [],
+        "slower_real_cases": 0
+      }
+    }
+  },
+  "protected_runner_extra_guard": "Original native_block.execute, privately adding only IY=57B9 sentinel; mutable2B operands poisonedA5A5 in supplied image.",
+  "protected_runner_source_sha256": "9198ff878e6a4a1efb2eb656eab224fab723542caef4bdca356a656577a49dad",
+  "public_changes": false,
+  "raw_qualification_complete": true,
+  "release": false,
+  "stage": "F00",
+  "unperformed": [
+    "Public API/CLI/export/wheel integration",
+    "Coroutine/guarded wrappers",
+    "Physical ULA/disk/ROM/movie timing"
+  ]
+}

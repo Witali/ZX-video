@@ -214,6 +214,14 @@ def main():
     zx_public=read('evidence/next_e01_zx0_public.json')
     lz_cold=read('evidence/next_e01_lzsa_full.json.gz')
     e01_auth=read('evidence/next_e01_public_verification.json')
+    f00_auth=read('evidence/next_f00_public_verification.json')
+    f00_native=read('evidence/next_f00_full.json.gz')
+    f00_prior=read('evidence/next_f00_prior_sources.json.gz')
+    assert f00_auth['complete'] and f00_native['complete']
+    assert f00_auth['proof_sha256']['next_f00_full.json.gz']==used['evidence/next_f00_full.json.gz']
+    assert f00_auth['proof_sha256']['next_e01_public_verification.json']==used['evidence/next_e01_public_verification.json']
+    for relative,digest in f00_auth['source_sha256_lf'].items():
+        assert sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))==digest,relative
     assert all(proof['complete'] for proof in (zx_branches,zx_public,lz_cold,e01_auth))
     assert len(zx_branches['profiles'])==len(zx_public['current_public_calls'])==6
     assert len(lz_cold['profiles'])==12 and lz_cold['accepted']
@@ -221,7 +229,11 @@ def main():
     for filename in ('next_e01_zx0_branches.json.gz','next_e01_zx0_public.json','next_e01_lzsa_full.json.gz'):
         assert e01_auth['proof_sha256'][filename]==used['evidence/'+filename],filename
     for relative,digest in e01_auth['source_sha256_lf'].items():
-        assert sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))==digest,relative
+        current=sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))
+        if current!=digest:
+            assert relative in {f'libraries/lzsa/src/lzsa/{name}.py'
+                                for name in ('wide','hybrid','__main__','export')},relative
+            assert f00_auth['source_sha256_lf'][relative]==current
 
     def stage(reference,public,proof,slower,cases,baseline_cpu):
         assert not any(row['real'] for row in slower)
@@ -279,6 +291,43 @@ def main():
             cpu=public['real_cpu_tstates'],stack=6,frozen=public,stage=information)
         assert json.loads(json.dumps(profile[2]))==saved['candidate']['metadata'],key
     assert len(records)==68
+    preceding=json.loads(f00_prior['libraries/evidence/decoder_variants_verification.json']['text'])['profiles']
+    assert [{key:row[key] for key in LEGACY_FIELDS} for row in records]==[
+        {key:row[key] for key in LEGACY_FIELDS} for row in preceding]
+    for public in f00_auth['current_public_calls']:
+        saved=f00_native['profiles'][public['native_profile']]
+        assert saved['native_complete'] and saved['C_complete']
+        assert public['regions']==saved['regions'] and public['labels']==saved['labels']
+        assert public['real_cpu_tstates']==saved['summary']['real_tstates']
+        profile=add('LZSA2 Hot '+public['kwargs']['profile'],'lzsa2','block',
+            public['module'],public['kwargs'],layout='WIDE',cpu=public['real_cpu_tstates'],
+            stack=6,frozen=public)
+        assert profile[1]==public['labels']
+        assert json.loads(json.dumps(profile[2]))==public['metadata']
+        records[-1]['f00']=dict(native_proof='evidence/next_f00_full.json.gz',
+            public_authentication='evidence/next_f00_public_verification.json',
+            baseline_service_bytes=9499,baseline_real_tstates=14926306,
+            service_delta_bytes=public['service_bytes']-9499,
+            real_delta_tstates=public['real_delta_tstates'],
+            slower_frozen_cases=public['slower_frozen_cases'],
+            slower_supplemental_cases=public['slower_supplemental_cases'],
+            qualification=public['qualification'],initialization=f00_auth['initialization'])
+    assert len(records)==71
+
+    # Compare like features and the documented aligned placement. This is an
+    # aggregate real-workload frontier, not a universal per-block ordering.
+    frontier={}
+    for codec in ('zx0','lzsa2'):
+        points=[row for row in records if row['codec']==codec and row['kind']=='block']
+        keep=[]
+        for row in points:
+            dominated=any(other['service_bytes']<=row['service_bytes'] and
+                other['real_cpu_tstates']<=row['real_cpu_tstates'] and
+                (other['service_bytes']<row['service_bytes'] or
+                 other['real_cpu_tstates']<row['real_cpu_tstates']) for other in points)
+            row['resident_real_frontier']=not dominated
+            if not dominated:keep.append(row)
+        frontier[codec]=sorted(keep,key=lambda row:(row['service_bytes'],row['real_cpu_tstates']))
 
     # Check that every documented call produces a usable standalone include.
     # This is export validation, not a new timing/correctness benchmark.
@@ -319,6 +368,11 @@ def main():
         '- IRQ execution, ULA contention, physical disk/ROM latency and player publication',
         '  deadlines are outside these CPU totals. Directed/slice regressions remain in',
         '  [FRONTIER.md](FRONTIER.md) and the linked complete native evidence.','',
+        'All required Z80 initialization belongs in benchmark totals. F00 includes44 T',
+        'of setup per block and28 T of EOF restoration/RET; its external initializer is0 T.',
+        'The512-byte static dispatch table is emitted in the library image. Any future',
+        'separate one-time preparation must be shown in cold-start and batch totals.',
+        'The retained convention measures entry through RET; caller CALL17 is additional.','',
         'Original means the retained pre-policy project implementation; no timing claim',
         'for an unmodified upstream executable is implied. ZX0 Standard and LZSA2 Small',
         'are additional size-oriented choices, not substituted for the Fast baselines.','',
@@ -360,6 +414,7 @@ def main():
                 f'{percent(row["delta_time_vs_pass_percent"])} | {percent(row["delta_time_vs_original_percent"])} | {call} |')
         lines.append('')
     e01_records=[row for row in records if 'e01' in row]
+    f00_records=[row for row in records if 'f00' in row]
     fastest={codec:min((row for row in records if row['codec']==codec and row['kind']=='block'),
                        key=lambda row:row['real_cpu_tstates']) for codec in ('zx0','lzsa2')}
     lines += ['## E01 increments against the accepted resident variants','',
@@ -398,7 +453,36 @@ def main():
         'compressed-input overlap in their complete saved native experiments. This',
         'document rebuild authenticates current bytes, labels, memory and exports',
         'against those proofs; it does not rerun those native measurements.','',
-        '## Selection and runtime contracts','',
+        '## F00 faster/larger resident choices','',
+        'All three are optional self-contained fixed profiles of the same raw decoder.',
+        'Each passes675 frozen and60 supplemental cases at six native configurations,',
+        'plus nine FFFFh probes. Entry setup is included. Compared with E01 fast:','',
+        '| Variant | Service B / delta | Real CPU T / delta | Supplemental regressions |',
+        '| --- | ---: | ---: | --- |']
+    for row in f00_records:
+        item=row['f00'];regressions=item['slower_supplemental_cases']
+        lines.append(f'| {row["name"]} | {number(row["service_bytes"])} / +{item["service_delta_bytes"]} | '
+            f'{number(row["real_cpu_tstates"])} / {number(item["real_delta_tstates"])} | '
+            f'{len(regressions)}'+(' at +10 T' if regressions else '')+' |')
+    lines += ['','No frozen case slows. The four valid short-word-literal regressions for',
+        '`literals` and `combined` are `clone-word-1-cached`, `clone-word-2-cached`,',
+        '`clone-word-1-refill`, `clone-word-2-refill`. Their exact input/CPU and all six',
+        'configurations are retained. Arbitrary alignment adds up to255 B; with the',
+        '13+6-byte IRQ example the largest profile is9,819 B. Raw qualification does',
+        'not qualify quota/guarded wrappers. [F00 report](NEXT_F00_HOT_PATHS.md).','',
+        '## Nondominated resident size/speed choices','',
+        'These are the best tested points on the complete real-corpus aggregate at',
+        'the aligned placements above, with the same resident format/ABI. A point',
+        'is omitted here only when another is no larger and no slower, with one',
+        'strict advantage. All named measured choices remain in the full table.',
+        'Per-case regressions still matter; this finite set establishes no global optimum.','',
+        '| Codec / variant | Service B | Real CPU T | Function / file |',
+        '| --- | ---: | ---: | --- |']
+    for codec,points in frontier.items():
+        for row in points:
+            lines.append(f'| {row["name"]} | {number(row["service_bytes"])} | {number(row["real_cpu_tstates"])} | '
+                f'[{row["display_call"]}]({row["source_file"]}#L{row["source_line"]}) |')
+    lines += ['','## Selection and runtime contracts','',
         '- Smallest resident decoders: **ZX0 Standard 74 B** (68 code +6 stack),',
         '  **LZSA2 Small 145 B** (137 code +8 stack). Both are slower than Fast.',
         f'- Fastest measured resident choices: **{fastest["zx0"]["name"]}, {number(fastest["zx0"]["service_bytes"])} B**',
@@ -409,7 +493,7 @@ def main():
         '- The preceding Hybrid compact/fast rows remain selectable: 4,999/9,500 B,',
         '  3.683344%/4.349245% less CPU than old 7,004-B Expanded. Their saved',
         '  regression lists remain valid; E01 cold extension has its own lists above.',
-        '- Useful intermediate choices include Mega tuned 674 B and Wide shared 3,452 B.',
+        '- Useful intermediate choices include Mega tuned 674 B and E01 Hybrid compact 4,998 B.',
         '- Maximum ZX0 coroutine requires Spectrum-style undocumented `CP IXH/IXL`.',
         '  Caller IX is restored on every return; IRQ must preserve live IX and AF/AF\'.',
         '- Wide figures assume an aligned core. Arbitrary alignment adds up to 255 B.',
@@ -450,6 +534,7 @@ def main():
         ('LZSA2 Fast and its coroutine','lzsa.resumable','build'),
         ('LZSA2 Wide resident','lzsa.wide','build'),
         ('LZSA2 fixed resident hybrids','lzsa.hybrid','build'),
+        ('LZSA2 fixed hot literal/nibble profiles','lzsa.hot','build'),
         ('LZSA2 known new-offset short copy','lzsa._wide_kernels','emit_new_offset_short'),
         ('LZSA2 known repeat-offset short copy','lzsa._wide_kernels','emit_repeat_short'),
         ('LZSA2 Wide ordinary / guarded coroutine','lzsa.wide_coroutine','build')):
@@ -463,6 +548,8 @@ def main():
         '[E01 ZX0 public binding](evidence/next_e01_zx0_public.json),',
         '[E01 LZSA2 native cold extension](evidence/next_e01_lzsa_full.json.gz),',
         '[E01 public API/wheel authentication](evidence/next_e01_public_verification.json),',
+        '[F00 full native proof](evidence/next_f00_full.json.gz),',
+        '[F00 public/wheel authentication](evidence/next_f00_public_verification.json),',
         '[Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),',
         '[shared-prefix contracts](ZX0_SHARED_PREFIXES.md),',
         '[Hybrid API/wheel/native binding](evidence/hybrid_public_verification.json),',
@@ -495,6 +582,10 @@ def main():
             original_fast_cpu_tstates=originals[c,k],pass_baseline_cpu_tstates=baselines[c,k]) for c,k in originals],
         profiles=records,evidence_sha256=used,source_sha256_lf=sources,
         preceding_public_calls_exact=50,preceding_selection_memory_cpu_region_sha256=legacy_sha,
+        preceding_e01_table_calls_exact=68,optional_f00_public_calls=len(f00_records),
+        resident_real_frontier={codec:[dict(name=row['name'],service_bytes=row['service_bytes'],
+            real_cpu_tstates=row['real_cpu_tstates'],builder=row['builder'],kwargs=row['kwargs'])
+            for row in points] for codec,points in frontier.items()},
         optional_e01_public_calls=len(e01_records),fastest_resident={codec:dict(name=row['name'],
             service_bytes=row['service_bytes'],real_cpu_tstates=row['real_cpu_tstates'],builder=row['builder'],
             kwargs=row['kwargs']) for codec,row in fastest.items()},

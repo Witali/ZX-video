@@ -126,7 +126,8 @@ _SELECTOR_INFO = {
 }
 
 
-def build(profile="fast", *, core=0x8000, core_limit=0xc000, cold_match_extension=False):
+def build(profile="fast", *, core=0x8000, core_limit=0xc000, cold_match_extension=False,
+          _assembler=None):
     """Return resident raw regions/labels/metadata for a fixed Hybrid layout.
 
     compact/balanced/fast include new-offset2..8 and repeat-offset4..8
@@ -157,7 +158,8 @@ def build(profile="fast", *, core=0x8000, core_limit=0xc000, cold_match_extensio
         cold_match_extension=cold_match_extension,
         short_lengths=range(2,9) if specialized else (),
         repeat_lengths=range(4,9) if specialized else (),
-        _groups_by_body=groups, _fallthrough_order=ranks)
+        _groups_by_body=groups, _fallthrough_order=ranks,
+        **({"_assembler": _assembler} if _assembler is not None else {}))
     selector, aligned_service, real_tstates, aligned_sha = _SELECTOR_INFO[profile]
     metadata.update(variant="hybrid-"+profile+"-block", hybrid_profile=profile,
         hybrid_selector=selector, raw_only=True,

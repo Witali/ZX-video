@@ -16,7 +16,7 @@ CALLER_STACK_BYTES = 6
 def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
           short_lengths=(), repeat_lengths=(), cold_match_extension=False,
           _boundary=None, _external_labels=None, _literal_guards=False,
-          _groups_by_body=None, _fallthrough_order=None):
+          _groups_by_body=None, _fallthrough_order=None, _assembler=None):
     """Return resident regions/labels/metadata; no input or output bounds checks.
 
     Call start with HL=input, DE=output and a valid caller stack. AF/AF'/BC/
@@ -74,6 +74,10 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
             raise ValueError('internal groups must partition all four literal forms exactly once')
     table = (core+255)&~255
     a = MiniAssembler(core)
+    if _assembler is not None:
+        # Internal fixed-layout emitters supply a local assembler instance;
+        # default builders keep their exact bytes and metadata.
+        a = _assembler(core)
     a.emit(*([0]*(table-core)))
     a.label('dispatch_low');a.emit(*([0]*256))
     a.label('dispatch_high');a.emit(*([0]*256))

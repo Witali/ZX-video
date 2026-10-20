@@ -17,6 +17,16 @@ compact uses 4,998 B/15,030,346 T. The [E01 report](../NEXT_E01_LZSA.md) lists
 exact calls, all regressions and IRQ/alignment limits. Defaults and coroutine
 implementations remain exact.
 
+The optional [hot profiles](../NEXT_F00_HOT_PATHS.md) retain more speed points:
+`lzsa.hot.build('nibble'|'literals'|'combined')` uses9,515/9,529/9,545 aligned
+service B and14,918,596/14,913,435/14,905,725 real-corpus T. Each fits the
+10,000-byte cap at all alignments with the tested IRQ. Block initialization
+and EOF return are included; no separate target initializer is required.
+The literal clone and combined mode retain four valid word-literal cases at
++10 T. CLI profiles are `hot-nibble-block`, `hot-literals-block` and
+`hot-combined-block`, with explicit `--core 0x8000 --core-limit 0xb000`.
+They expose complete resident decoding; quota/guarded wrappers remain separate.
+
 ## Host use
 
 For a complete resident block, `lzsa.block.build(core=0x8000,core_limit=0x8400)`

@@ -11,7 +11,8 @@ def main():
     commands = parser.add_subparsers(dest='command', required=True)
     assembly = commands.add_parser('build')
     assembly.add_argument('--profile',choices=('coroutine','fast-block','small-block','wide-block','wide-shared-block',
-                                             'wide-coroutine','wide-shared-coroutine'),default='coroutine',
+                                             'wide-coroutine','wide-shared-coroutine',
+                                             'hot-literals-block','hot-nibble-block','hot-combined-block'),default='coroutine',
                           help='wide profiles need explicit larger --core/--core-limit reservations')
     assembly.add_argument('--output', type=Path, required=True)
     assembly.add_argument('--namespace', default='lzsa2')
@@ -60,6 +61,16 @@ def main():
                 prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base,
                 shared_literals=args.profile=='wide-shared-coroutine',
                 streaming=args.streaming,direct_header=args.direct_header)
+        elif args.profile.startswith('hot-'):
+            if supplied_coroutine_layout:
+                parser.error('resident-block profile does not use --prefix/--prefix-limit/--stack/--output-base')
+            if (args.streaming or args.direct_header or args.word_state_init or args.restore_compare or
+                    args.compact_sync or args.long_copy or args.near_literals or args.fast_jumps or
+                    args.branch_tuned or args.nibble_prefill or args.compact_branches):
+                parser.error('hot resident profiles require their fixed copy/branch layout and complete input')
+            from .hot import build as hot_build
+            regions,labels,metadata=hot_build(args.profile.removeprefix('hot-').removesuffix('-block'),
+                core=args.core,core_limit=args.core_limit)
         elif args.profile!='coroutine':
             if supplied_coroutine_layout:
                 parser.error('resident-block profile does not use --prefix/--prefix-limit/--stack/--output-base')

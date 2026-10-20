@@ -79,6 +79,25 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
                   '; The extended block follows the terminal RET; one fewer code/service byte, no extra stack/state.',
                   '; Corpus CPU improves; retain the measured non-real regressions for extended-heavy blocks.', '']
         routines['ColdExtendedMatch']='Cold byte/word/EOF escape entered on NC after CP 24; retain exact EOF before dummy word reads and jump back with the decoded count.'
+    if metadata.get('hot_profile'):
+        lines += ['; Fixed F00 hot profile: '+metadata['hot_profile']+'. All raw-v2 forms remain valid.',
+                  '; Per-block initialization is44 T and EOF restoration/RET is28 T, both included in measured CPU.',
+                  '; Dispatch tables are512 precomputed image bytes; no external Z80 initialization is required.',
+                  '; All code/tables/state/alignment plus six caller-stack bytes count toward service RAM.', '']
+        if metadata['hot_profile'] in ('literals','combined'):
+            lines += ['; Hot LL3 nibble literals inline the parser/copy and remove CALL17+RET10 (-27 T).',
+                      '; Byte/word literals use the unchanged helper through a cold continuation (+10 T).',
+                      '; Legal one/two-byte word literals use LDIR; they never enter the two-LDI nibble path.', '']
+            routines['E02CloneStart']='Token248 LL3 prefix; parse a nibble literal length directly, copy3..17 bytes and continue to the retained repeat-offset body. HL=input, DE=output; AF\' cache retained.'
+            routines['E02CloneCold']='Byte/word literal escape; CALL ManyLiterals retains exact counts including1/2, then JP the hot continuation. This path costs10 T more than the old helper.'
+            routines['E02CloneContinue']='Resume token248 offset/length handling after either literal path; B=0 and HL/DE are exact input/output cursors.'
+        if metadata['hot_profile'] in ('nibble','combined'):
+            lines += ['; Body167_0: cached first nibble implies an empty cache for the following match-length nibble.',
+                      '; Duplicate offset setup then enter the known-empty reader; complete pair155 ->140 T.',
+                      '; The refill-first path keeps ordinary state testing. No extra reads, state or stack.', '']
+            routines['e03_hot_first']='Read the class5 offset nibble, retaining both cached/refill paths and the unchanged negative-offset store.'
+            routines['e03_hot_cached']='Cached offset nibble: AF\' is now empty. Prepare BC/offset, then enter the known-empty match-length reader, saving15 T over the full pair.'
+            routines['e03_known_empty_LongMatchNibble']='Proved empty AF\' cache; refill exactly one input byte and retain the ordinary low-nibble cache/carry protocol. Entry skips SCF/EX/JR only.'
     if metadata.get('fast_jumps'):
         lines += ['; Optional core unconditional JR -> JP: 12 -> 10 T per execution, +1 byte/site.',
                   '; Conditional branches and cold input-wait retries keep their original encoding.',

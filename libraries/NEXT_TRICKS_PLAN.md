@@ -2,7 +2,7 @@
 
 Research and testing plan, 2026-10-20. Baseline: `9c28b01f`, branch
 `codex/codec-speed-pass3`, worktree `.worktree/codec-speed-pass3`.
-Status: **E00..E03 complete; F00/S01/E04..E07 pending**.
+Status: **E00..E03/F00 complete; S01/E04..E07 pending**.
 [ZX0 E01](NEXT_E01_ZX0_BRANCHES.md) completes six optional public branch
 layouts, bound to17,028 complete native replays plus six FFFFh probes.
 [LZSA2 E01](NEXT_E01_LZSA.md) completes12 optional cold-escape layouts with
@@ -21,8 +21,12 @@ memory bound and measures two prototypes: +16 B/-7,710 real T and
 edge inputs, resident reset tests and256 origins pass their screening models.
 These screens used the earlier strict-both rule. The latest user request
 supersedes that rule: minimum size, maximum speed and Pareto intermediates
-are all targets. F00/S01 below and E04..E07 are not complete; E01 remains
-the qualified public baseline until new full gates pass.
+are all targets. [F00](NEXT_F00_HOT_PATHS.md) now qualifies exactly three
+optional hot profiles:9,515/9,529/9,545 service B and14,918,596/14,913,435/
+14,905,725 real T. All13,257 native configurations and public package gates
+pass; retain the four supplemental+10T word-literal regressions for clones.
+Every block's44T entry setup and28T restoration/RET are included, with no
+external target initializer. S01 and E04..E07 remain pending.
 [E00 evidence and selected hypotheses](NEXT_E00_BASELINE.md) authenticate
 the fixed inputs, all target layouts and a new minimum-safe overlap runner.
 The additionally requested local Spectrum/C-core test platform is a separate
@@ -52,6 +56,16 @@ a finite candidate set; call results the best tested choices.
 An unchanged input/output format and all correctness gates are mandatory.
 Real aggregate CPU improvement does not imply every block improves: report
 every slower block/slice and retain a no-slower selection when available.
+
+The user additionally requires all preliminary library initialization time
+in the benchmark. Measure from the first required Z80 initialization opcode
+through final decode return. Per-block initialization belongs in every call;
+any separate one-time preparation must appear once in batch totals and in
+cold-start latency, with its cost shown explicitly. Report setup/decode
+components as well as their sum; do not assume prebuilt runtime state for
+free. Static tables emitted in the library image need no runtime generation.
+Keep the existing entry-through-RET CPU reference convention explicit; caller
+CALL overhead and actual IRQ work are separate stated components.
 
 | Fixed initial public call | Intrinsic service B | Real CPU T | Frozen proof |
 | --- | ---: | ---: | --- |
@@ -128,11 +142,11 @@ resident changes; if there are none, explicitly record that dependency.
 
 F00 follows the committed E03 screen. Qualify exactly E02 hot literals, E03
 hot nibble pair and their combination, starting from E01 cold Hybrid fast.
-Predicted services9,529/9,515/9,545 B and real CPU14,913,435/14,918,596/
-14,905,725 T are hypotheses until complete replay; the separate two already
-have screening evidence. Preserve minimum-safe overlap, IRQ, relocation,
-FFFFh output end, byte EOF, dirty offset and IY/alternate registers. Package
-implementation must be self-contained and keep all existing defaults exact.
+The initially predicted services9,529/9,515/9,545 B and real CPU14,913,435/
+14,918,596/14,905,725 T are now measured and fully qualified. Minimum-safe
+overlap, IRQ, relocation, FFFFh output end, byte EOF, dirty offset and
+IY/alternate registers pass. The package is self-contained and keeps all
+existing defaults exact. [F00](NEXT_F00_HOT_PATHS.md) records the complete gates.
 E02's -2B/+2,028T cold-tail point remains for E06 dominance/refit review;
 shared-fast SMC is already dominated by compact, despite reducing its size.
 

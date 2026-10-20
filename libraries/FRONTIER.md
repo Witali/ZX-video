@@ -20,8 +20,12 @@ the slower Standard/Small choices with the lowest measured service memory.
 The latest user request explicitly includes minimum size, maximum speed and
 nondominated intermediate tradeoffs. [The next pass](NEXT_TRICKS_PLAN.md)
 therefore qualifies useful faster/larger E02/E03 screens and audits the
-smallest decoders. The public choices below remain the qualified baseline
-until the corresponding full correctness and package gates pass.
+smallest decoders. [F00](NEXT_F00_HOT_PATHS.md) is now complete: all three
+optional LZSA2 hot profiles pass native and package gates. Every block's44 T
+entry setup and28 T EOF restoration/RET are included; required external
+target preparation is0 T. Future one-time preparation must enter cold-start
+and batch totals. The linked variant table identifies all nondominated
+resident points on the measured real aggregate, with function/file links.
 
 ## Current resident choices
 
@@ -53,6 +57,9 @@ their complete non-real regression lists; every real block is no slower.
 | LZSA2 E01 Hybrid compact | **4,998 B** | 15,030,346 | 15.393940% |
 | LZSA2 E01 Hybrid balanced | **6,499 B** | 14,964,996 | 15.761797% |
 | LZSA2 E01 Hybrid fast | **9,499 B** | 14,926,306 | 15.979583% |
+| LZSA2 Hot nibble | **9,515 B** | 14,918,596 | 16.022983% |
+| LZSA2 Hot literals | **9,529 B** | 14,913,435 | 16.052034% |
+| LZSA2 Hot combined | **9,545 B** | 14,905,725 | 16.095434% |
 
 Baselines:156,012,520 T /364 real ZX0 blocks and 17,765,094 T /21 real LZSA2
 blocks. Totals include four caller-stack bytes, except raw Wide needs six;
