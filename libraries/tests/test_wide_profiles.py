@@ -34,7 +34,7 @@ class WideProfileTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 build(variant, core_limit=0x8000+size-1)
             self.assertEqual(build(variant, core_limit=0x8000+size)[2]['code_bytes'], size)
-            for option in ('long_copy', 'near_literals', 'fast_jumps', 'branch_tuned', 'nibble_prefill'):
+            for option in ('long_copy', 'near_literals', 'fast_jumps', 'branch_tuned', 'nibble_prefill', 'compact_branches'):
                 with self.assertRaises(ValueError):
                     build(variant, core_limit=0xb000, **{option:True})
         for core, limit in ((-1, 0xb000), (0x8000, 0x8000), (0x8000, 65537), (0xf000, 65536)):

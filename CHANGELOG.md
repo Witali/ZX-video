@@ -93,6 +93,40 @@
   hardware qualification and no additional speed claim. Retain this reference
   for every following experiment; the ten-percent codec goal remains active.
 
+## 2026-10-20 — Keep only the smaller LZSA2 Case11x branch policy
+
+- Objective/baseline: continue the interrupted 2026-10-19 faster-and-smaller
+  experiment from `bb687f71`, within the active goal against `f5a0362c`.
+  Add explicit `compact_branches` selecting only Case11x JP NC ->JR NC;
+  preserve the old `branch_tuned` policy exactly and reject selecting both.
+  Small also rejects the option; applicable existing features compose.
+- Changed dispatch is 17 ->14/19 T (-3 untaken/+2 taken), -1 byte. The exact
+  21 real blocks save 40,440 T: Fast+jumps resident 17,765,094 ->17,724,654 T
+  (0.227638%), 219 ->218 bytes; coroutine 19,407,004 ->19,366,564 T
+  (0.208378%), 386 ->385. All real blocks improve. Seventeen directed cases
+  per profile slow at most four T; ordinary profiles have 124 slower slices,
+  maximum +23 T. Old tuned policy is 10,170 real T faster for two more bytes.
+- Verified 776 full native comparisons, each with IRQ and relocated replay,
+  both tiny EOFs, pending registers, and exact protected memory. Both guarded
+  modes pass 63 cases/six placements with identical producer/waits/772 sectors;
+  save 40,410 T each. Strong guarded combinations pass 65 cases/six placements
+  per mode; 102 placements each slow at most four T. All 36 library tests,
+  isolated installed wheel/API/CLI/ORG-DB checks, 31 defaults and six resources
+  pass. Keep every slower block/slice and interrupted 2026-10-19 report.
+- Required service RAM: raw 221..310 bytes, ordinary 401..486; benchmark IRQ
+  totals 240..329 /426..511. Guarded strongest CALL/direct totals including
+  patcher and carry256 are 900/892 plain, 925/917 with test IRQ. Separate full
+  reference producer/disk/paging inventory composes to 2,200/2,192 plain,
+  2,231/2,223 with test IRQ/headroom and configured mocked-ROM workspace.
+  Required stacks are separate from optional 128-byte test margins; external
+  input/output/history excluded. All fit the 10,000-byte service cap.
+- Decision: retain an optional size/CPU frontier choice. The approximately
+  10%-per-library goal remains active and unachieved; payload/default paths
+  unchanged (0 T). No physical ROM/disk/ULA or movie publication claim.
+  [Counts, memory, provenance and reproduction](libraries/COMPACT_BRANCHES.md),
+  [native evidence](libraries/evidence/compact_branches_native.json),
+  [authenticated verification](libraries/evidence/compact_branches_verification.json).
+
 ## 2026-10-19 — Make LZSA2 coroutine quota synchronization smaller and faster
 
 - Objective/baseline: pursue the user's faster-and-smaller direction from

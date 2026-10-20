@@ -13,7 +13,7 @@ PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
 def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,restore_compare=False,fast_jumps=False,
-          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,nibble_prefill=False,compact_sync=False,_one_shot=False,_assembler=None):
+          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,branch_tuned=False,nibble_prefill=False,compact_sync=False,compact_branches=False,_one_shot=False,_assembler=None):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
     Configure input_pointer, block_end and slice_target, then call begin or
@@ -36,6 +36,8 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     retries stay unchanged: the producer-helper tail has a fixed RAM budget.
     branch_tuned selects measured conditional JR/JP forms. Conditions/flags
     remain identical; some synthetic cases are slower. Metadata lists changes.
+    compact_branches selects only Case11x shortening, saving one byte; it is
+    a separate policy and cannot be combined with branch_tuned.
     nibble_prefill normalizes the cached low nibble while refilling: +3 T on
     refill, -7 T when consumed, +4 code bytes. An unmatched refill is slower.
     AF' carry still distinguishes refill/cache; suspension saves it intact.
@@ -44,13 +46,14 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     quota comparison. It replaces the
     older restore_compare calculation when both options are selected.
     """
-    if branch_tuned:
+    if branch_tuned and compact_branches:raise ValueError('select one conditional branch policy')
+    if branch_tuned or compact_branches:
         from ._branch_tuning import tune
         return tune(build,dict(core=core,core_limit=core_limit,streaming=streaming,
             direct_header=direct_header,long_copy=long_copy,near_literals=near_literals,
             word_state_init=word_state_init,restore_compare=restore_compare,fast_jumps=fast_jumps,
             prefix=prefix,prefix_limit=prefix_limit,stack=stack,output_base=output_base,
-            nibble_prefill=nibble_prefill,compact_sync=compact_sync,_one_shot=_one_shot),'lzsa2')
+            nibble_prefill=nibble_prefill,compact_sync=compact_sync,_one_shot=_one_shot),'lzsa2',compact=compact_branches)
     if direct_header and not streaming:raise ValueError('direct header requires streaming input')
     if near_literals and (not long_copy or streaming):
         raise ValueError('near literals require ordinary long-copy input')

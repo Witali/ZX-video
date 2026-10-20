@@ -38,6 +38,10 @@ class WideCoroutineTests(unittest.TestCase):
                 self.assertTrue(metadata['coroutine'])
                 self.assertFalse(metadata['one_shot'])
                 self.assertIn('private-stack and four caller-stack', (path/'decoder.asm').read_text())
+                for unsupported in ('--compact-sync','--nibble-prefill','--compact-branches'):
+                    rejected=code.replace(repr(argv),repr(argv+[unsupported]))
+                    result=subprocess.run([sys.executable,'-I','-c',rejected],capture_output=True)
+                    self.assertNotEqual(result.returncode,0)
 
     @unittest.skipUnless(importlib.util.find_spec('z80'),'install lzsa[native]')
     def test_publication_cursor_and_actual_stacks(self):

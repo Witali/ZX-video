@@ -7,11 +7,14 @@ class _RelativeOverflow(Exception):
         self.site = site
 
 
-def tune(builder, options, codec):
+def tune(builder, options, codec, *, compact=False):
     """Rebuild a private assembler until every selected short branch fits.
 
-    Frequencies come from the complete frozen 2026-10-19 real corpus. The
-    policy trades JR's 7/12 T for JP's constant 10 T, without changing branch
+    Frequencies come from the complete frozen 2026-10-19 real corpus. Compact
+    LZSA2 selects only Case11x: JP NC is 10 T, JR NC is 7/12 T, saving one
+    byte and 3 T on fallthrough while costing 2 T when taken. The older
+    branch_tuned policy additionally lengthens two other branches unchanged.
+    The policy trades JR's 7/12 T for JP's constant 10 T, without changing branch
     conditions or flags. It is optional: individual artificial inputs can be
     slower. Per-call factories avoid changing any global assembler or builder.
     """
@@ -33,7 +36,7 @@ def tune(builder, options, codec):
                 site = (op, normalized, occurrence)
                 if codec == 'lzsa2':
                     shorten = not relative and op == 0xd2 and target == 'Case11x'
-                    lengthen = relative and op == 0x30 and target in ('MatchLen', 'CopyMoreLiterals')
+                    lengthen = not compact and relative and op == 0x30 and target in ('MatchLen', 'CopyMoreLiterals')
                 else:
                     shorten = not relative and (
                         (op == 0xd2 and normalized in ('gamma_loop', 'LongerMatch', 'LongerOffets', 'LongerRun', 'LongerRepMatch'))
@@ -74,7 +77,8 @@ def tune(builder, options, codec):
             excluded.add(error.site)
             continue
         changes = [row for instance in instances for row in instance.changed]
-        metadata = dict(profile[2], branch_tuned=True, branch_changes=changes,
+        policy = dict(compact_branches=True) if compact else dict(branch_tuned=True)
+        metadata = dict(profile[2], **policy, branch_changes=changes,
                         relative_overflow_fallbacks=[list(site) for site in sorted(excluded)])
         if 'instruction_listing' in metadata:
             changed = {row['address']:row for row in changes}

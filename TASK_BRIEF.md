@@ -76,6 +76,17 @@ resident /1.229359% coroutine; existing Mega remains faster at greater size.
 [source/test/wheel authentication](libraries/evidence/literal_prefix_verification.json).
 The ten-percent-per-library goal is active and unachieved.
 
+On 2026-10-20, the resumed smaller LZSA2 policy adds optional
+`compact_branches=True` / `--compact-branches`: only Case11x JP NC ->JR NC,
+-1 byte and -40,440 real T. Same-feature Fast+jumps resident improves
+0.227638%, ordinary coroutine 0.208378%; the old tuned policy remains
+10,170 real T faster for two more bytes. Both policies are explicit and
+mutually exclusive; all default/tuned bytes stay frozen. All 776 full native
+comparisons, 63/65-case guarded modes/combinations, 36 unit tests and isolated
+wheel checks pass. Retain slower directed blocks/slices and original dated
+interrupted evidence. [Complete memory, CPU and reproduction](libraries/COMPACT_BRANCHES.md).
+This component result leaves the broader goal active and unachieved.
+
 ## Codec speed pass 3 — unconditional branches (2026-10-19)
 
 The user requests continued ZX0/LZSA optimization in a separate worktree.

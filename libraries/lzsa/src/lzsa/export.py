@@ -61,6 +61,9 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
         lines += ['; Optional core unconditional JR -> JP: 12 -> 10 T per execution, +1 byte/site.',
                   '; Conditional branches and cold input-wait retries keep their original encoding.',
                   '; Register/flag ownership and the caller ABI are unchanged.', '']
+    if metadata.get('compact_branches'):
+        lines += ['; Optional compact branch policy: Case11x JP NC -> JR NC, -1 byte.',
+                  '; Same flags/condition, 10 T -> 7/12 T; some taken-branch inputs are slower.', '']
     if metadata.get('branch_tuned'):
         lines += ['; Optional measured conditional branches: JR 7/12 T versus JP 10 T.',
                   '; Conditions/flags are unchanged; some synthetic cases are slower.', '']

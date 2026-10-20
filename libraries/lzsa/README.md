@@ -252,6 +252,22 @@ long-copy/near-literal/restore-compare options. Both partial-input guard modes
 retain waits, slices and sector reads. [Counts, rejected cold-wrapper trial
 and full regression scope](../OPTIMIZATION_PLAN.md#item30--unconditional-branch-speed-policy-2026-10-19).
 
+## Optional smaller conditional branch policy
+
+`compact_branches=True` / `--compact-branches` shortens only the Fast
+decoder's `JP NC,Case11x` to `JR NC,Case11x`. It saves one code byte and
+40,440 T across the unchanged 21 real blocks. With `fast_jumps=True`, resident
+CPU is 17,765,094 ->17,724,654 T (0.227638%), 219 ->218 bytes; the ordinary
+coroutine is 19,407,004 ->19,366,564 T (0.208378%), 386 ->385 bytes.
+
+The option combines with applicable copy, nibble, sync and input options.
+Select either `compact_branches` or `branch_tuned`; combining them raises an
+error. Small rejects this option. The existing `branch_tuned` bytes and all
+defaults stay exact. This smaller policy trades 10,170 real T for two bytes
+against `branch_tuned`; retain both frontier choices. Seventeen directed
+blocks slow at most four T, and some coroutine slices slow at most 23 T.
+[Instruction counts, full checks, service RAM and reproduction](../COMPACT_BRANCHES.md).
+
 ## Optional measured Fast branch layout
 
 `lzsa.block.build(branch_tuned=True)` and
