@@ -6,8 +6,13 @@ dated 2026-10-19 is retained. The new public replay independently reproduces
 all 417 cases for each of three sizes. This is a bounded measured frontier,
 not proof of a global optimum or completion of the per-library/coroutine goal.
 
+Current update: the separately measured[shared word-prefix extension](ZX0_WORD_PREFIX.md)
+adds caps227/228and makes228the maximum-direction default (9,990library
+service bytes;9,995with its verified minimalIRQ). The original31/63/127audit
+below and its committed reports remain historical evidence from`6759dedf`.
+
 `zx0.maximum.build()` and CLI `--variant maximum` export the fastest of these
-three candidates by default. It retains the resident Fast caller contract:
+three candidates, with cap127as the original default at`6759dedf`. It retains the resident Fast caller contract:
 HL=complete valid input, DE=nonwrapping output, caller stack; AF/BC/DE/HL
 clobbered, IX and alternate registers preserved. Source and initialized
 history remain resident. Code contains a writable previous-offset operand;
@@ -28,7 +33,7 @@ Do not attribute the old Mega advantage over Fast to this new transformation.
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | 31 | 4,450 | 4,454 | 4,473 | 141,618,798 | 2.801963% | 9.226004% |
 | 63 | 5,986 | 5,990 | 6,009 | 140,680,558 | 3.445911% | 9.827392% |
-| 127 (default) | 7,522 | 7,526 | 7,545 | 140,193,198 | 3.780404% | 10.139777% |
+| 127 (original default) | 7,522 | 7,526 | 7,545 | 140,193,198 | 3.780404% | 10.139777% |
 
 The largest profile saves 5,508,097 real T versus tuned Mega, and 6,229,076 T
 (4.254186%) versus original unmodified Mega. All-case 417-block totals are
@@ -93,7 +98,7 @@ routine may change application load/allocation; player adoption is unmeasured.
 
 ## Every service-memory byte
 
-The hard cap is 10,000 bytes. The default code is 7,522 bytes including its
+The hard cap is 10,000 bytes. The original cap127code is 7,522 bytes including its
 two-byte mutable offset operand. Extra variables, tables, alignment, scratch
 areas, internal buffers and private stack reservations are all zero. Maximum
 decoder stack is four bytes including the caller's two-byte return and one
@@ -144,7 +149,7 @@ Generated assembly comments document gamma depth, overlapping copies, register
 ownership, stack, service accounting and the word-loop join.
 
 ```powershell
-python -m zx0 build --variant maximum --irq-code-bytes 13 --irq-stack-bytes 6 --output build/zx0-maximum
+python -m zx0 build --variant maximum --prefix-cap 127 --irq-code-bytes 13 --irq-stack-bytes 6 --output build/zx0-maximum
 python -m zx0 build --variant maximum --prefix-cap 31 --core 0x8000 --core-limit 0xa000 --output build/zx0-frontier31
 python libraries/tests/measure_mega_prefix.py --public --output libraries/evidence/ten_percent_maximum.json
 python libraries/tests/measure_mega_prefix.py --public --high-word --output libraries/evidence/ten_percent_maximum_high_word.json
@@ -156,6 +161,9 @@ python libraries/tests/verify_maximum.py --output libraries/evidence/ten_percent
 ```
 
 Use the existing native `z80` dependency on PYTHONPATH and a writable local
+TMP/TEMP. To reproduce this historical complete authentication use`6759dedf`;
+the current wheel/smoke adds more profiles and has its own[reproduction](ZX0_WORD_PREFIX.md).
+Use a writable local
 TMP/TEMP. Save each command's output as the correspondingly named
 `.tmp/maximum-native.log`, `maximum-unit.log`, `maximum-wheel.log`,
 `maximum-install.log` and `maximum-smoke.log` before authentication.

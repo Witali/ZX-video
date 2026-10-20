@@ -83,6 +83,10 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
                   '; Includes code/embedded offset, caller return, live source PUSH and declared IRQ code/extra stack.',
                   '; Input/output/history are separate. Count the actual caller IRQ implementation explicitly.',
                   '; Frontier is measured on the retained corpus; global optimality is not established.', '']
+        if metadata['prefix_cap']>127:
+            extra=metadata['prefix_cap']-127
+            lines += [f'; Word counts >=256 copy {extra} initial bytes, then share the existing 127-LDI suffix.',
+                      f'; Match setup runs once. The shared suffix retains BC>={256-extra} and a positive LDIR tail.', '']
     for name,info in metadata.get('prefixes',{}).items():
         routines[name]=(f'Gamma-proven {info["family"]} count >= {info["minimum_count"]}; '
                             f'copy {info["prefix_bytes"]} bytes with LDI, leave positive BC for LDIR. '
@@ -94,6 +98,8 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
                 routines[name]='Depth-specific Elias continuation; BC accumulates length, A holds bit reservoir, HL advances only on refill. RL B begins at data bit eight.'
             elif name.startswith('max_word_join_'):
                 routines[name]='Word-count continuation: retain high-byte shifts and join the proven >=128 copy path; extra JP costs 10 T.'
+            elif name.startswith('max_suffix_'):
+                routines[name]=f'Shared 127-LDI suffix; word-entry setup already saved source/loaded offset and copied {metadata["prefix_cap"]-127} bytes. BC>=128 on every entry; restore source only at the original match tail.'
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')

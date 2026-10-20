@@ -12,7 +12,7 @@ PHASES=(1,3,5,7)
 def after(phase):return phase-2 if phase>1 else 7
 
 
-def build(*,origin=0x8000,prefix_cap=127):
+def build(*,origin=0x8000,prefix_cap=127,allow_oversize=False):
     """Keep ordinary copies; specialize only proven gamma lower bounds.
 
     A gamma count of at least K permits K-1 initial LDI instructions, leaving
@@ -21,11 +21,11 @@ def build(*,origin=0x8000,prefix_cap=127):
     Count B remains provably zero through seven data bits; only subsequent
     word loops retain RL B. There is no table, runtime selector or new state.
     """
-    if prefix_cap not in (7,15,31,63,127):raise ValueError(prefix_cap)
+    if prefix_cap not in (7,15,31,63,127,227,228,229,255):raise ValueError(prefix_cap)
     source=Path(__file__).resolve().parents[1]/'zx0/src/zx0/asm/dzx0_mega.asm'
     original=[' '.join(line.split(';')[0].strip().split()).replace(', ', ',') for line in source.read_text().splitlines()]
     original=[line for line in original if line]
-    lines=[];prefixes={};dead_stages=[];word_joins=[]
+    lines=[];prefixes={};dead_stages=[];word_joins=[];shared_literals={}
     def copy(family,phase,lower):
         label=f'max_copy_{family}_{phase}_{lower}'
         prefix=min(prefix_cap,lower-1)
@@ -33,6 +33,7 @@ def build(*,origin=0x8000,prefix_cap=127):
                              extra_offset_load_tstates=6 if family=='reuse' and phase==7 else 0)
         result=[label+':']
         if family!='literals':result+=['push hl','ld hl,(dzx0m_last_offset+1)','add hl,de']
+        if lower==128 and prefix_cap>127:result+=[f'max_suffix_{family}_{phase}_128:']
         return result+['ldi']*prefix+[f'jp tail_{family}_{phase}']
     def stage(family,phase,level):
         name=f'max_gamma_{family}_{phase}_{level}'
@@ -46,7 +47,15 @@ def build(*,origin=0x8000,prefix_cap=127):
         if level==8:
             join=f'max_word_join_{family}_{phase}'
             word_joins.append(join)
-            result+=[join+':',f'jp max_copy_{family}_{q}_128']
+            if prefix_cap>127:
+                entry=f'max_copy_{family}_{q}_256'
+                prefixes[entry]=dict(family=family,phase=q,minimum_count=256,prefix_bytes=prefix_cap,
+                    extra_offset_load_tstates=6 if family=='reuse' and q==7 else 0)
+                result+=[entry+':']
+                if family!='literals':result+=['push hl','ld hl,(dzx0m_last_offset+1)','add hl,de']
+                result+=['ldi']*(prefix_cap-127)+[join+':',f'jp max_suffix_{family}_{q}_128']
+                if family=='literals':shared_literals[join]=f'max_copy_{family}_{q}_128'
+            else:result+=[join+':',f'jp max_copy_{family}_{q}_128']
         else:result+=copy(family,q,1<<level)
         return result
     counts={family:0 for family in FAMILIES}
@@ -111,10 +120,11 @@ def build(*,origin=0x8000,prefix_cap=127):
                 a.emit({'bc':0x01,'hl':0x21,'c':0x0e}[dest]);(a.word if dest in ('bc','hl') else a.emit)(value)
         else:raise ValueError(line)
     for name,(label,offset) in aliases.items():a.labels[name]=a.labels[label]+offset
-    blob=a.resolve();assert len(blob)+4<=10000
+    blob=a.resolve();assert allow_oversize or len(blob)+4<=10000
     return [(origin,blob)],a.labels,dict(entry='dzx0_mega',variant='mega-prefix-test',
         code_bytes=len(blob),workspace_bytes=len(blob)+4,max_decoder_stack_bytes=4,
         patched_addresses=[a.labels['dzx0m_last_offset+1']+i for i in (0,1)],
         source_sha256=sha(source.read_bytes()),prefix_cap=prefix_cap,prefixes=prefixes,
         removed_word_shift_stages=dead_stages,word_copy_joins=word_joins,
+        shared_literal_suffixes=shared_literals,
         coroutine_supported=False,test_only=True)

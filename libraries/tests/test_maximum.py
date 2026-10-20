@@ -14,22 +14,28 @@ from mega_prefix_profile import build as reference
 
 class MaximumTests(unittest.TestCase):
     def test_independent_layout_and_complete_service_bound(self):
-        for cap,code in ((31,4450),(63,5986),(127,7522)):
+        for cap,code in ((31,4450),(63,5986),(127,7522),(227,9962),(228,9986)):
+            irq_code,irq_stack=(3,2) if cap==228 else (13,6)
             for origin in (0x8000,0x9103):
-                profile=build(core=origin,prefix_cap=cap,irq_code_bytes=13,irq_stack_bytes=6)
+                profile=build(core=origin,prefix_cap=cap,irq_code_bytes=irq_code,irq_stack_bytes=irq_stack)
                 self.assertEqual(profile[:2],reference(origin=origin,prefix_cap=cap)[:2])
                 meta=profile[2]
                 self.assertEqual(meta['code_bytes'],code)
                 self.assertEqual(meta['workspace_bytes'],code+4)
-                self.assertEqual(sum(meta['service_memory'].values()),code+23)
-                self.assertEqual(meta['service_memory_bytes'],code+23)
+                self.assertEqual(sum(meta['service_memory'].values()),code+4+irq_code+irq_stack)
+                self.assertEqual(meta['service_memory_bytes'],code+4+irq_code+irq_stack)
                 self.assertFalse(meta['coroutine_supported'])
                 self.assertTrue(meta['input_output_history_counted_separately'])
                 self.assertFalse(meta['globally_optimal'])
             self.assertEqual(build(prefix_cap=cap,service_limit=code+4)[2]['service_memory_bytes'],code+4)
             with self.assertRaises(ValueError):build(prefix_cap=cap,service_limit=code+3)
         # The cap includes declared caller IRQ storage, not just decoder code.
-        self.assertEqual(build(irq_code_bytes=2474)[2]['service_memory_bytes'],10000)
+        self.assertEqual(build(prefix_cap=127,irq_code_bytes=2474)[2]['service_memory_bytes'],10000)
+        self.assertEqual(build(prefix_cap=227,irq_code_bytes=13,irq_stack_bytes=6)[2]['service_memory_bytes'],9985)
+        self.assertEqual(build(irq_code_bytes=3,irq_stack_bytes=2)[2]['service_memory_bytes'],9995)
+        self.assertEqual(build(irq_code_bytes=10)[2]['service_memory_bytes'],10000)
+        with self.assertRaises(ValueError):build(irq_code_bytes=11)
+        with self.assertRaises(ValueError):build(irq_code_bytes=13,irq_stack_bytes=6)
         for options in (dict(irq_code_bytes=2475),dict(service_limit=10001),dict(service_limit=0),
                         dict(irq_stack_bytes=-1),dict(irq_code_bytes=1.5),dict(prefix_cap=15),
                         dict(prefix_cap=True),dict(core=-1),dict(core=0xffff),
@@ -40,7 +46,7 @@ class MaximumTests(unittest.TestCase):
     def test_native_dirty_offset_and_short_gamma(self):
         from native_block import execute
         from zx0.tokens import Token,encode
-        for cap in (31,63,127):
+        for cap in (31,63,127,227,228):
             regions,labels,meta=build(prefix_cap=cap)
             address,blob=regions[0];dirty=bytearray(blob)
             offset=labels['dzx0m_last_offset+1']-address
@@ -68,13 +74,14 @@ class MaximumTests(unittest.TestCase):
                   'runpy.run_module("zx0.__main__",run_name="__main__")')
             return subprocess.run([sys.executable,'-I','-c',code],capture_output=True,text=True)
         with tempfile.TemporaryDirectory() as directory:
-            for cap in (31,63,127):
+            for cap in (31,63,127,227,228):
                 destination=Path(directory)/str(cap)
+                irq_code,irq_stack=(3,2) if cap==228 else (13,6)
                 args=['--variant','maximum','--prefix-cap',str(cap),
-                      '--irq-code-bytes','13','--irq-stack-bytes','6','--output',str(destination)]
+                      '--irq-code-bytes',str(irq_code),'--irq-stack-bytes',str(irq_stack),'--output',str(destination)]
                 result=run(args);self.assertEqual(result.returncode,0,result.stderr)
                 meta=json.loads((destination/'metadata.json').read_text())
-                profile=build(prefix_cap=cap,irq_code_bytes=13,irq_stack_bytes=6)
+                profile=build(prefix_cap=cap,irq_code_bytes=irq_code,irq_stack_bytes=irq_stack)
                 self.assertEqual(meta['service_memory_bytes'],profile[2]['service_memory_bytes'])
                 lines=(destination/'decoder.asm').read_text()
                 self.assertIn('Gamma-proven',lines)

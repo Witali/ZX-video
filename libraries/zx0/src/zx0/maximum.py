@@ -17,7 +17,7 @@ def _after(phase):
     return phase-2 if phase > 1 else 7
 
 
-def build(*, core=0x8000, core_limit=None, prefix_cap=127,
+def build(*, core=0x8000, core_limit=None, prefix_cap=228,
           irq_code_bytes=0, irq_stack_bytes=0, service_limit=10000):
     """Return absolute regions, labels and complete service-memory metadata.
 
@@ -34,9 +34,11 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=127,
     leaving a positive LDIR remainder. This retains forward overlapping-copy
     semantics and avoids a zero-count 65,536-byte LDIR. B stays zero until the
     eighth length data bit; deeper loops retain the required word shifts.
+    At cap227/228, word counts >=256 copy 100/101 extra bytes before sharing
+    the existing 127-LDI suffix. Source is pushed and offset loaded once.
     """
-    if type(prefix_cap) is not int or prefix_cap not in (31, 63, 127):
-        raise ValueError('prefix-cap must be one of the measured 31, 63, 127 profiles')
+    if type(prefix_cap) is not int or prefix_cap not in (31, 63, 127, 227, 228):
+        raise ValueError('prefix-cap must be one of the measured 31, 63, 127, 227, 228 profiles')
     if (type(core) is not int or (core_limit is not None and type(core_limit) is not int)
             or not 0 <= core < (65536 if core_limit is None else core_limit) <= 65536):
         raise ValueError('invalid code reservation')
@@ -48,7 +50,7 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=127,
     original = [' '.join(line.split(';')[0].strip().split()).replace(', ', ',')
                 for line in source.read_text().splitlines()]
     original = [line for line in original if line]
-    lines = []; prefixes = {}; dead_stages = []; word_joins = []
+    lines = []; prefixes = {}; dead_stages = []; word_joins = []; shared_literals = {}
 
     def copy(family, phase, lower):
         label = f'max_copy_{family}_{phase}_{lower}'
@@ -59,6 +61,8 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=127,
         result = [label+':']
         if family != 'literals':
             result += ['push hl', 'ld hl,(dzx0m_last_offset+1)', 'add hl,de']
+        if lower == 128 and prefix_cap > 127:
+            result += [f'max_suffix_{family}_{phase}_128:']
         return result + ['ldi']*prefix + [f'jp tail_{family}_{phase}']
 
     def stage(family, phase, level):
@@ -76,7 +80,23 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=127,
         if level == 8:
             join = f'max_word_join_{family}_{phase}'
             word_joins.append(join)
-            result += [join+':', f'jp max_copy_{family}_{q}_128']
+            if prefix_cap > 127:
+                # At this depth BC>=256. Reuse the existing 127-LDI suffix
+                # after its match setup, adding only the extra prefix bytes.
+                # Save source and load offset exactly once. One JP connects
+                # the two prefixes, as in the smaller word-loop join.
+                entry=f'max_copy_{family}_{q}_256'
+                prefixes[entry]=dict(family=family,phase=q,minimum_count=256,
+                    prefix_bytes=prefix_cap,
+                    extra_offset_load_tstates=6 if family=='reuse' and q==7 else 0)
+                result += [entry+':']
+                if family != 'literals':
+                    result += ['push hl','ld hl,(dzx0m_last_offset+1)','add hl,de']
+                result += ['ldi']*(prefix_cap-127) + [join+':',f'jp max_suffix_{family}_{q}_128']
+                if family == 'literals':
+                    shared_literals[join]=f'max_copy_{family}_{q}_128'
+            else:
+                result += [join+':', f'jp max_copy_{family}_{q}_128']
         else:
             result += copy(family, q, 1 << level)
         return result
@@ -180,5 +200,6 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=127,
         source_commit='ecde3a2ae05061fe06469ed46df81a33b7de7d86',
         source_sha256=sha(source.read_bytes()), code_sha256=sha(blob), prefix_cap=prefix_cap,
         prefixes=prefixes, removed_word_shift_stages=dead_stages,
-        word_copy_joins=word_joins, coroutine_supported=False,
+        word_copy_joins=word_joins, shared_literal_suffixes=shared_literals,
+        coroutine_supported=False,
         measured_frontier=True, globally_optimal=False)

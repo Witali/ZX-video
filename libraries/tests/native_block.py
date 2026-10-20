@@ -3,13 +3,14 @@ from z80 import Z80Machine
 
 
 def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc000,
-            caller_stack=0xbff0,alternate_af=0,watch=None):
+            caller_stack=0xbff0,alternate_af=0,watch=None,irq_handler=None):
     regions,labels,metadata=profile
     m=Z80Machine();m.memory[:]=b'\xa5'*65536
     stack,stop=caller_stack,0x100
     assert source+len(payload)<=min(at for at,_ in regions)
     assert output+len(expected)<=65535
-    irq=bytes.fromhex('f5 08 f5 3e 55 ee aa f1 08 f1 fb ed 4d')
+    irq=(bytes.fromhex('f5 08 f5 3e 55 ee aa f1 08 f1 fb ed 4d')
+         if irq_handler is None else bytes(irq_handler))
     # A relocated caller stack permits long high-word gamma cases. Validate
     # every live allocation so a larger output cannot overwrite code, source,
     # caller/IRQ stack or the harness's return and interrupt entry sequences.

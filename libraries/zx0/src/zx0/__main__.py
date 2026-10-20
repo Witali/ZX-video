@@ -25,8 +25,8 @@ def main():
                           help='inline exhausted repeat-gamma refill in Fast profiles; +3 bytes')
     assembly.add_argument('--mega-tuned',action='store_true',
                           help='remove dead offset shifts and tune reuse exits in resident Mega; -4 bytes')
-    assembly.add_argument('--prefix-cap',type=int,choices=(31,63,127),
-                          help='maximum profile only: measured inline-copy frontier (default 127)')
+    assembly.add_argument('--prefix-cap',type=int,choices=(31,63,127,227,228),
+                          help='maximum profile only: measured inline-copy frontier (default 228)')
     for name in ('irq-code-bytes','irq-stack-bytes','service-limit'):
         assembly.add_argument('--'+name,type=int,
                               help='maximum profile only: complete service-memory accounting')
@@ -69,7 +69,7 @@ def main():
             from .maximum import build as maximum_build
             try:
                 regions,labels,metadata=maximum_build(core=args.core,core_limit=args.core_limit,
-                    prefix_cap=127 if args.prefix_cap is None else args.prefix_cap,
+                    prefix_cap=228 if args.prefix_cap is None else args.prefix_cap,
                     irq_code_bytes=args.irq_code_bytes or 0,irq_stack_bytes=args.irq_stack_bytes or 0,
                     service_limit=10000 if args.service_limit is None else args.service_limit)
             except ValueError as error:parser.error(str(error))

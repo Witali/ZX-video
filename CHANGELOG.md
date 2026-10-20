@@ -180,6 +180,47 @@
   result; the full 10%-per-library goal remains active. No player release,
   physical disk/ROM/ULA timing, external encoder or wheel reinstall is claimed.
 
+## 2026-10-20 — Shared ZX0 word-copy suffix uses remaining service budget
+
+- **Objective/baseline:** After committing the complete maximum-direction
+  frontier as`6759dedf`, test the obvious remaining service-memory room rather
+  than stopping at its numeric10% comparison withFast. Keep earlier reports.
+  Cap127baseline7522code+4stack=7526B,140,193,198realT; separate stronger
+  tunedMega670B/145,701,295T and originalFast207B/156,012,520T remain explicit.
+- **Changed parameters:** At gamma-proven BC>=256copy100/101extra bytes before
+  sharing the existing127-LDI suffix after the one-time match prologue. Full
+  word shifts, source PUSH/POP and forward overlapping-copy semantics remain.
+  Add caps227/228, defaultmaximum to228, retain31/63/127. Count libraryservice
+  independently of caller IRQ: add optional minimalEI/RETI probe(3code+2extra
+  stack) alongside the existing full-AF diagnostic(13code+6extra stack).
+- **Measured results:** Cap227/228code9962/9986B; total libraryservice9966/
+  9990B including maximum4stack bytes. MinimalIRQ totals9971/9995B; larger
+  diagnostic totals9985/10009B. Cap228is a validunder10,000B library option;
+  the larger diagnostic application exceeds it and is not claimed to fit.
+  PublicAPI rejects an explicitly declared13/6reservation at228;227fits that
+  handler. The nextcap229assembles10010code+4stack=10014B; cap255exact
+  assembly10634code+4stack=10638Bexceeds the cap before
+  IRQ, size-only rejection. No extra state/table/alignment/scratch/buffer bytes;
+  input/output/history separate. Real140,170,198 /140,169,968T, new savings
+  23,000 /23,230T versuscap127. Eachwordentry saves500/505T by replacing21-T
+  LDIR repeats with16-T LDI and retaining the same10-Tjoin. Bestcombinedgain
+  3.796347% versus tunedMega;10.154667% total versusFast includes oldMega gain.
+- **Verification/decision:** All417original+56high-word cases percap, plain/
+  full-AF IRQ/minimalIRQ/relocated execution:946comparisons/4257native runs.
+  Exact independent per-case delta/EOF/input/output/history/register/stack
+  checks pass, zero slowercases. Widehigh-word layout proactively uses0800h/
+  0703h code,0400h input,3000h output and2ff0h SP; strict live-region checks
+  prevent the old0903h relocation's potential guarded-stack overlap. No
+  overlapping run was accepted. Actual plain/full/minimal maxstack4/10/6B.
+  All31library tests,31exactdefaults/sixresources and independent five-profile
+  wheel/API/CLI exports pass with source/input/log hashes. Accept228default,
+  227for largerIRQ headroom. Gain beyondcap127is0.016570%; no globaloptimality,
+  coroutine, per-library-goal completion or movie/physical-delivery claim.
+  [Audit and reproduction](libraries/ZX0_WORD_PREFIX.md),
+  [full corpus](libraries/evidence/ten_percent_maximum_word_prefix.json),
+  [high-word supplement](libraries/evidence/ten_percent_maximum_word_prefix_high_word.json),
+  [authentication](libraries/evidence/ten_percent_maximum_word_prefix_verification.json).
+
 ## 2026-10-20 — Compatible ZX0 maximum-speed resident frontier under total-service cap
 
 - **Objective/baseline:** Resume interrupted work in the existing

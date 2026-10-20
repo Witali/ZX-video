@@ -30,12 +30,15 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--public',action='store_true',help='replay the independently packaged maximum generator')
     parser.add_argument('--high-word',action='store_true',help='separate disjoint high-word gamma correctness supplement')
+    parser.add_argument('--caps',type=int,nargs='+',default=[31,63,127],help='measured build-time candidates')
+    parser.add_argument('--minimal-irq',action='store_true',help='also replay a register-preserving three-byte EI/RETI handler')
     args=parser.parse_args()
     assert profiles()==json.loads((ROOT/'libraries/tests/decoder_baseline.json').read_text())['profiles']
     origin,relocation=(0x0800,0x0903) if args.high_word else (0x8000,0x9103)
+    if args.high_word and max(args.caps)>127:relocation=0x0703
     options=dict(source=0x0400,output=0x3000,caller_stack=0x2ff0) if args.high_word else {}
     base=public('mega',core=origin,core_limit=origin+0x400,fast_jumps=True,mega_tuned=True)
-    candidates={cap:build(origin=origin,prefix_cap=cap) for cap in (31,63,127)}
+    candidates={cap:build(origin=origin,prefix_cap=cap) for cap in args.caps}
     moved={cap:build(origin=relocation,prefix_cap=cap) for cap in candidates}
     if args.public:
         from zx0.maximum import build as maximum
@@ -54,22 +57,33 @@ def main():
                 watch[at]=observe
         before=execute(base,payload,raw,watch=watch,**options)
         for cap,candidate in candidates.items():
-            hits=Counter();watch={}
+            hits=Counter();watch={};skip_shared=[]
             for label in candidate[2]['removed_word_shift_stages']:
                 def observe(machine):hits['removed_word_shifts']+=1
                 watch[candidate[1][label]]=observe
             for label,info in candidate[2]['prefixes'].items():
-                def observe(machine,item=info):
+                def observe(machine,item=info,entry=label):
                     assert machine.bc>=item['minimum_count'] and machine.bc>item['prefix_bytes']
+                    # A large literal prefix rejoins the same-address 127-LDI
+                    # suffix. Count that already included suffix once, while
+                    # still checking its residual count bound at the join.
+                    if skip_shared and entry==skip_shared[0]:
+                        skip_shared.pop();return
                     hits['prefix_entries']+=1;hits['prefix_bytes']+=item['prefix_bytes']
                     if item['extra_offset_load_tstates']:hits['phase7_indirect_loads']+=1
                 watch[candidate[1][label]]=observe
             for label in candidate[2]['word_copy_joins']:
-                def observe(machine):hits['word_joins']+=1
+                def observe(machine,shared=candidate[2].get('shared_literal_suffixes',{}).get(label)):
+                    hits['word_joins']+=1
+                    if shared:skip_shared.append(shared)
                 watch[candidate[1][label]]=observe
             after=execute(candidate,payload,raw,watch=watch,**options)
+            assert not skip_shared
             irq=execute(candidate,payload,raw,interrupts=True,**options)
             relocated=execute(moved[cap],payload,raw,**options)
+            minimal=(execute(candidate,payload,raw,interrupts=True,irq_handler=b'\xfb\xed\x4d',**options)
+                     if args.minimal_irq else None)
+            if minimal:assert minimal['stack_bytes']<=6
             assert relocated['tstates']==after['tstates']
             expected=(-8*hits['removed_word_shifts']-5*hits['prefix_bytes']+10*hits['prefix_entries']
                       +6*hits['phase7_indirect_loads']+10*hits['word_joins']
@@ -83,7 +97,10 @@ def main():
                 candidate_tstates=after['tstates'],delta_tstates=delta,predicted_delta_tstates=expected,
                 dynamic_counts=dict(hits,extra_jr_taken=branch['taken'],extra_jr_not_taken=branch['not_taken']),
                 injected_interrupts=irq['injected_interrupts'],stack_bytes=after['stack_bytes'],
-                irq_stack_bytes=irq['stack_bytes'],exact=True,relocated_exact=True))
+                irq_stack_bytes=irq['stack_bytes'],exact=True,relocated_exact=True,
+                **(dict(minimal_irq_stack_bytes=minimal['stack_bytes'],
+                        minimal_irq_injected_interrupts=minimal['injected_interrupts'],
+                        minimal_irq_tstates=minimal['tstates'],minimal_irq_exact=True) if minimal else {})))
         if name=='real-3-0':
             print('real progress',name,flush=True)
     report=dict(date=date.today().isoformat(),source_baseline='1784e45a',goal_baseline='f5a0362c',
@@ -91,6 +108,7 @@ def main():
         default_profiles_exact=31,payload_delta_bytes=0,scope=__doc__,
         baseline=layout(base),goal_fast_real_tstates=None if args.high_word else 156012520,
         high_word_supplement=args.high_word,placement=dict(core=origin,relocated_core=relocation,**options),
+        minimal_irq_replayed=args.minimal_irq,
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',profiles={})
     for cap,candidate in candidates.items():
         summary=summarize(rows[cap])
@@ -100,7 +118,8 @@ def main():
             workspace_bytes=candidate[2]['workspace_bytes'],max_decoder_stack_bytes=4,
             max_observed_irq_stack_bytes=max(row['irq_stack_bytes'] for row in rows[cap]),
             service_memory=candidate[2].get('service_memory'),
-            service_with_probe_irq_bytes=candidate[2]['workspace_bytes']+13+6)
+            service_with_probe_irq_bytes=candidate[2]['workspace_bytes']+13+6,
+            **(dict(service_with_minimal_irq_bytes=candidate[2]['workspace_bytes']+5) if args.minimal_irq else {}))
         print(cap,'code',candidate[2]['code_bytes'],'service',candidate[2]['workspace_bytes'],json.dumps(summary),flush=True)
     args.output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
 

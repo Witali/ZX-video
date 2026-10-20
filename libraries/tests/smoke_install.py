@@ -183,8 +183,9 @@ if name=='zx0':
 maximum=[]
 if name=='zx0':
     maximum_build=importlib.import_module(name+'.maximum').build
-    for cap in (31,63,127):
-        regions,labels,metadata=maximum_build(prefix_cap=cap,irq_code_bytes=13,irq_stack_bytes=6)
+    for cap in (31,63,127,227,228):
+        irq_code,irq_stack=(3,2) if cap==228 else (13,6)
+        regions,labels,metadata=maximum_build(prefix_cap=cap,irq_code_bytes=irq_code,irq_stack_bytes=irq_stack)
         at=destination/('maximum-'+str(cap))
         export(at,regions,labels,metadata)
         rebuilt=[]
@@ -192,13 +193,14 @@ if name=='zx0':
             if line.startswith('org '):rebuilt.append((int(line[5:],16),bytearray()))
             elif line.startswith('db '):rebuilt[-1][1].extend(int(x[1:],16) for x in line[3:].split(','))
         assert [(address,bytes(data)) for address,data in rebuilt]==regions
-        assert metadata['service_memory_bytes']==metadata['code_bytes']+23<=10000
+        assert metadata['service_memory_bytes']==metadata['code_bytes']+4+irq_code+irq_stack<=10000
         maximum.append(dict(prefix_cap=cap,bytes=metadata['code_bytes'],
-                            service_with_probe_irq_bytes=metadata['service_memory_bytes'],exact_export=True))
-    sys.argv=[name,'build','--variant','maximum','--irq-code-bytes','13','--irq-stack-bytes','6',
+                            irq_code_bytes=irq_code,irq_extra_stack_bytes=irq_stack,
+                            service_with_selected_irq_bytes=metadata['service_memory_bytes'],exact_export=True))
+    sys.argv=[name,'build','--variant','maximum','--irq-code-bytes','3','--irq-stack-bytes','2',
               '--output',str(destination/'maximum-cli')]
     runpy.run_module(name+'.__main__',run_name='__main__')
-    assert json.loads((destination/'maximum-cli/metadata.json').read_text())['service_memory_bytes']==7545
+    assert json.loads((destination/'maximum-cli/metadata.json').read_text())['service_memory_bytes']==9995
     assert not any(n.startswith(('toolkit','tests','cv2','numpy')) for n in sys.modules)
 assert not any(n.startswith(('toolkit','cv2','numpy')) for n in sys.modules)
 if encoder:

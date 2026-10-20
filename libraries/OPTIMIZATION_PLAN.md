@@ -488,3 +488,24 @@ No player/movie/disk-delivery qualification or global optimality claim.
 [Algorithm, absolute timing and complete memory/reproduction](ZX0_MAXIMUM.md),
 [new public native report](evidence/ten_percent_maximum.json),
 [source/wheel/test authentication](evidence/ten_percent_maximum_verification.json).
+
+## ZX0 shared word-prefix extension (2026-10-20)
+
+**Decision: accept caps227/228and default maximum-direction to228.** Complete
+the prior6759dedffrontier before extending word exits with shared127-LDI
+suffixes. At BC>=256copy100/101extra bytes, then join after one-time match
+setup; save500/505T per word entry. All417cases plus56high-word cases percap
+pass plain/full-AF IRQ/minimal IRQ/relocation,946comparisons/4257native runs,
+with exact independent deltas and zero slowercases. Real CPU cap127140,193,198
+becomes140,170,198 /140,169,968T, +2440/+2464code bytes. Cap228libraryservice
+9990B; minimal preservingIRQ9995B. The optional full-AF diagnostic handler
+would require10009B at228; choose227for9985Bwiththat handler. All mandatory
+library code/state/stack counted; externalIRQ storage is explicit, input/output/
+history separate. Cap255assembled10638Bservice even withoutIRQ, rejected bysize.
+
+Current best3.796347% versus tunedMega145,701,295T;10.154667% versus original
+Fast156,012,520T includes the historicalMega gain. No coroutine/globaloptimum
+or per-library-goal completion.31library tests/default31/resources6and isolated
+five-profile wheel/API/CLI exports pass. Preserve all earlier reports.
+[Full audit/reproduction](ZX0_WORD_PREFIX.md),
+[authenticated evidence](evidence/ten_percent_maximum_word_prefix_verification.json).

@@ -321,3 +321,22 @@ and startupfast-jumpMega674B/146,421,546T as distinct baselines. All417cases
 percap have zero slower completeblocks and passIRQ/relocation; no coroutine.
 CPU counts exclude IRQservice/ULA/WAIT/ROM/disk; payload/required input sectors
 stay exact. Larger resident code's application allocation is unmeasured.
+
+## ZX0 shared word-copy suffix (2026-10-20)
+
+After6759dedf, gamma-proven BC>=256paths copy100/101extra LDI bytes then share
+the existing127-LDI suffix after match setup. The same10-T word join remains,
+so each additional byte changes21T LDIR to16T LDI: -500/-505T perwordentry.
+141all-case/46real/45high-word entries give exact differences70,500/23,000/
+22,500T atcap227and71,205/23,230/22,725T atcap228versus cap127. RealCPU
+140,193,198 ->140,170,198 /140,169,968T. Combined best gain versus tunedMega
+145,701,295T is3.796347%; originalFast156,012,520T comparison10.154667%
+includes pre-existingMega gains. There are no slower completecases.
+
+Cap227code9962+stack4=9966B; cap228code9986+stack4=9990B. Actual minimal
+EI/RETI handler3code+2extra-stack totals9971/9995B respectively. The larger
+diagnosticAF/AF' handler13code+6extra-stack totals9985/10009B, so itscap228
+application is explicitly outside10,000B; use227for that handler. Cap255
+assembly gives10634code+4stack, outside the library cap, no nativequalification.
+All473cases×2caps also pass twoIRQ handlers/relocation; all deltas match
+instruction observers. [Full service accounting and proof](ZX0_WORD_PREFIX.md).

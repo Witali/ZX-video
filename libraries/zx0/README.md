@@ -188,18 +188,22 @@ public/prototype equivalence and full tests](../MEGA_OFFSET_AUDIT.md).
 
 ## Measured maximum-speed resident frontier
 
-`zx0.maximum.build(prefix_cap=127)` exports a compatible resident decoder with
-the same HL/DE/caller-stack ABI. CLI `--variant maximum` uses cap127; build-time
-`--prefix-cap 31` or63 selects smaller measured points. Gamma depth proves safe
-inline LDI prefixes and delays high-count shifts until needed. All417complete
-cases, relocation andIRQ pass. Default cap127 uses7522code+4decoder-stack bytes;
-the probeIRQ adds13code+6stack, total7545under the hard10,000-byte service cap.
+`zx0.maximum.build()` exports a compatible resident decoder with
+the same HL/DE/caller-stack ABI. CLI `--variant maximum` defaults to cap228;
+build-time caps31/63/127/227select smaller measured points. Gamma depth proves
+safe inline LDI prefixes and delays high-count shifts until needed. All417
+complete cases plus56high-word cases, relocation and twoIRQ handlers pass.
+Default cap228 uses9986code+4decoder-stack=9990service bytes; minimal preserving
+EI/RETI IRQ adds3code+2stack, total9995under the hard10,000-byte service cap.
+The larger diagnosticAF/AF' handler adds13code+6stack:10009for cap228,9985for
+cap227. Select227to fit that handler, and count actual callerIRQ requirements.
 No extra tables, alignment, variables, scratch or buffers. Input/output/history
 are separate. Declare actual IRQ storage via `irq_code_bytes`/`irq_stack_bytes`
 or CLI `--irq-code-bytes`/`--irq-stack-bytes`; the builder enforces total service
 memory and rejects irrelevant coroutine/tuning flags.
 
-Real CPU145,701,295 ->140,193,198T versus tunedMega (-3.780404%). The10.139777%
+Real CPU145,701,295 ->140,169,968T versus tunedMega (-3.796347%). The10.154667%
 comparison with originalFast includes the oldMega advantage and must not be
 described as entirely new. No coroutine or global optimum is established.
-[Full frontier, absolute counts, memory contract and reproduction](../ZX0_MAXIMUM.md).
+[Current frontier, absolute counts, memory contract and reproduction](../ZX0_WORD_PREFIX.md),
+[initial three-profile evidence](../ZX0_MAXIMUM.md).
