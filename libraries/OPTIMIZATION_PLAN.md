@@ -462,3 +462,29 @@ then `tests/summarize_wide_coroutine.py --directory ../.tmp --output
 evidence/wide_coroutine_verification.json` from `libraries/`, after the30-test
 library run and isolated wheel smoke. [Native counts](evidence/wide_coroutine.json),
 [service/package verification](evidence/wide_coroutine_verification.json).
+
+## ZX0 measured maximum-speed direction (2026-10-20)
+
+**Decision: accept an optional public resident frontier under the revised
+10,000-byte total-service cap.** Resume the existing interrupted maximum-speed
+work without changing the saved completed2026-10-19prototype evidence.
+`zx0.maximum.build` /CLI `--variant maximum` specialize gamma depth and inline
+proven-safe LDI prefixes; no runtime selectors, data changes or new buffers.
+Caps31/63/127 use4454/5990/7526service bytes including caller return/live source
+stack; the probeIRQ totals4473/6009/7545. Real CPU141,618,798 /140,680,558 /
+140,193,198T versus separately tracked tunedMega145,701,295T (670code bytes).
+New gains2.801963 /3.445911 /3.780404%; cap127 total advantage10.139777% over
+originalFast156,012,520T includes the pre-existingMega benefit. Do not count
+that old advantage as a new optimization or claim the global/per-library goal.
+
+All417cases percap also passIRQ/relocation, exact residentABI/EOF/history and
+independently observed instruction deltas:1251comparisons/4170native runs.
+Another56directed high-word cases percap add168comparisons/560runs, including
+32767/32768/49151-byte match counts with disjoint code/input/output/stack.
+Zero slower complete cases versus tunedMega/originalFast; individual untaken
+changed exits still cost+3T. There is no coroutine/slice contract.31library
+tests,31exact defaults/six resources and isolated wheel/API/CLI exports pass.
+No player/movie/disk-delivery qualification or global optimality claim.
+[Algorithm, absolute timing and complete memory/reproduction](ZX0_MAXIMUM.md),
+[new public native report](evidence/ten_percent_maximum.json),
+[source/wheel/test authentication](evidence/ten_percent_maximum_verification.json).

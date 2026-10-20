@@ -74,6 +74,26 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
             routines.update(CopyLiterals='Proven BC>=2 resident literal run: one LDI then the shared LDIR.',
                             slice_long_fast='Copy the first literal: HL source, DE output, BC>=2; no quota wrapper.',
                             slice_fast='Shared resident literal LDIR with nonzero BC; no deferred AF restore.')
+    if metadata.get('measured_frontier'):
+        lines += [f'; Measured maximum-speed direction: prefix cap {metadata["prefix_cap"]}; no coroutine ABI.',
+                  '; Gamma depth proves count >= K; inline LDI copies at most K-1 bytes, then positive LDIR.',
+                  '; BC high-byte shifts are delayed until the eighth data bit; full word loops remain.',
+                  '; Forward copies retain overlapping history. No tables, alignment, scratch or internal buffers.',
+                  f'; Complete service reservation: {metadata["service_memory_bytes"]} bytes, cap {metadata["service_limit_bytes"]}.',
+                  '; Includes code/embedded offset, caller return, live source PUSH and declared IRQ code/extra stack.',
+                  '; Input/output/history are separate. Count the actual caller IRQ implementation explicitly.',
+                  '; Frontier is measured on the retained corpus; global optimality is not established.', '']
+    for name,info in metadata.get('prefixes',{}).items():
+        routines[name]=(f'Gamma-proven {info["family"]} count >= {info["minimum_count"]}; '
+                            f'copy {info["prefix_bytes"]} bytes with LDI, leave positive BC for LDIR. '
+                            + ('HL is resident input.' if info['family']=='literals' else
+                               'Save source HL on caller stack; use patched negative offset for forward history.'))
+    if metadata.get('measured_frontier'):
+        for name in labels:
+            if name.startswith('max_gamma_'):
+                routines[name]='Depth-specific Elias continuation; BC accumulates length, A holds bit reservoir, HL advances only on refill. RL B begins at data bit eight.'
+            elif name.startswith('max_word_join_'):
+                routines[name]='Word-count continuation: retain high-byte shifts and join the proven >=128 copy path; extra JP costs 10 T.'
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')

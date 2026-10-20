@@ -302,3 +302,22 @@ retain31 old default profiles/six resources. Flat CPU excludes injected IRQ,
 ROM/ULA/disk latency and publication scheduling. Partial-input/guarded producer
 integration is not implemented by this milestone. [Native evidence](evidence/wide_coroutine.json),
 [service/package authentication](evidence/wide_coroutine_verification.json).
+
+## ZX0 gamma-depth maximum-speed frontier (2026-10-20)
+
+`zx0.maximum.build` adds build-time count-depth specialization and safe LDI
+prefixes. CopyN>P bytes: old21N-5T; new21N-5-5P+10T. Omit8T RL B only before
+the eighth data bit; gamma bodies34 ->26T or47 ->39T withrefill. Retain word
+loops and their extra10T join. Phase7reuse indirect offset load adds6T; changed
+conditionalJR exits becomeJP, -2T taken/+3T untaken. Every measured block
+matches the independent executed-instruction formula in[ZX0_MAXIMUM.md](ZX0_MAXIMUM.md).
+
+Real364-block CPU145,701,295T from tunedMega670B becomes141,618,798 /140,680,558 /
+140,193,198T at caps31/63/127. Code4450/5986/7522B; complete service4454/5990/
+7526B, or4473/6009/7545including the13B/6-extra-stack probeIRQ. New best gain
+is3.780404% versus tunedMega; originalFast156,012,520T comparison10.139777%
+includes the oldMega gain. Preserve original unmodifiedMega673B/146,422,274T
+and startupfast-jumpMega674B/146,421,546T as distinct baselines. All417cases
+percap have zero slower completeblocks and passIRQ/relocation; no coroutine.
+CPU counts exclude IRQservice/ULA/WAIT/ROM/disk; payload/required input sectors
+stay exact. Larger resident code's application allocation is unmeasured.

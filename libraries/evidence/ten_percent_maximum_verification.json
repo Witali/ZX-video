@@ -1,0 +1,467 @@
+{
+  "date": "2026-10-20",
+  "source_baseline": "1784e45a",
+  "goal_baseline": "f5a0362c",
+  "complete": true,
+  "release": false,
+  "goal_achieved": false,
+  "coroutine_supported": false,
+  "same_resident_abi": true,
+  "global_optimum_established": false,
+  "native_candidate_comparisons": 1251,
+  "native_replays": 4170,
+  "high_word_candidate_comparisons": 168,
+  "high_word_native_replays": 560,
+  "high_word_supplement": {
+    "31": {
+      "cases": 56,
+      "raw_bytes": 818171,
+      "baseline_tstates": 17240318,
+      "candidate_tstates": 17223072,
+      "delta_tstates": -17246,
+      "injected_interrupts": 154,
+      "slower_blocks": 0,
+      "exact": true,
+      "relocated_exact": true,
+      "word_joins": 45
+    },
+    "63": {
+      "cases": 56,
+      "raw_bytes": 818171,
+      "baseline_tstates": 17240318,
+      "candidate_tstates": 17207712,
+      "delta_tstates": -32606,
+      "injected_interrupts": 154,
+      "slower_blocks": 0,
+      "exact": true,
+      "relocated_exact": true,
+      "word_joins": 45
+    },
+    "127": {
+      "cases": 56,
+      "raw_bytes": 818171,
+      "baseline_tstates": 17240318,
+      "candidate_tstates": 17183712,
+      "delta_tstates": -56606,
+      "injected_interrupts": 154,
+      "slower_blocks": 0,
+      "exact": true,
+      "relocated_exact": true,
+      "word_joins": 45
+    }
+  },
+  "default_profiles_exact": 31,
+  "upstream_resources_exact": [
+    {
+      "package": "zx0",
+      "file": "dzx0_fast.asm",
+      "sha256": "bb4c0d8f359091522958d7ffc12b841629412a91a81ebd7eb03f824877bf5fd4",
+      "exact": true
+    },
+    {
+      "package": "zx0",
+      "file": "dzx0_standard.asm",
+      "sha256": "95b5dde1cfb334cb09d8be566728662bd94eb867f8c2f5437c31d78f2f4647b0",
+      "exact": true
+    },
+    {
+      "package": "zx0",
+      "file": "dzx0_turbo.asm",
+      "sha256": "9de7ca474bf03bdb4fe773f0eb1327744fae5558c285d5e670388b8ba20bc39d",
+      "exact": true
+    },
+    {
+      "package": "lzsa",
+      "file": "unlzsa2_fast.asm",
+      "sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071",
+      "exact": true
+    },
+    {
+      "package": "zx0",
+      "file": "dzx0_mega.asm",
+      "sha256": "6a3774508bf8d0f7a6cf08851a22e836aaedccf56dc1ef119b3e04e0f79fb23a",
+      "source_commit": "ecde3a2ae05061fe06469ed46df81a33b7de7d86"
+    },
+    {
+      "package": "lzsa",
+      "file": "unlzsa2_small.asm",
+      "sha256": "862882a4ba95de2b7a9cf1246c5c070b6b70ced60be68cd91f4ea4d3a5d7450b",
+      "source_commit": "15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5"
+    }
+  ],
+  "library_tests": 31,
+  "profiles": {
+    "31": {
+      "code_bytes": 4450,
+      "service_bytes": 4454,
+      "service_with_probe_irq_bytes": 4473,
+      "real_tstates": 141618798,
+      "all_cases_tstates": 146946342,
+      "incremental_gain_vs_tuned_mega_percent": 2.801963427984631,
+      "total_gain_vs_original_fast_percent": 9.226004425798648,
+      "gain_vs_original_mega_percent": 3.280563720790185,
+      "slower_than_tuned_mega_blocks": 0,
+      "slower_than_original_fast": [],
+      "dynamic_counts": {
+        "prefix_entries": 127533,
+        "prefix_bytes": 1017691,
+        "removed_word_shifts": 102686,
+        "word_joins": 141,
+        "phase7_indirect_loads": 7063,
+        "extra_jr_taken": 143922,
+        "extra_jr_not_taken": 223954
+      },
+      "memory": {
+        "code_and_embedded_variables": 4450,
+        "embedded_offset_already_in_code": 2,
+        "extra_variables_tables_alignment_scratch_internal_buffers": 0,
+        "decoder_stack_including_caller_return": 4,
+        "probe_irq_extra_stack": 6,
+        "probe_irq_code": 13,
+        "max_separate_real_input_bytes": 6209,
+        "max_separate_real_output_history_bytes": 8192,
+        "max_separate_input_bytes": 15878,
+        "max_separate_output_history_bytes": 15872
+      }
+    },
+    "63": {
+      "code_bytes": 5986,
+      "service_bytes": 5990,
+      "service_with_probe_irq_bytes": 6009,
+      "real_tstates": 140680558,
+      "all_cases_tstates": 145932902,
+      "incremental_gain_vs_tuned_mega_percent": 3.445911033254715,
+      "total_gain_vs_original_fast_percent": 9.82739205802201,
+      "gain_vs_original_mega_percent": 3.9213405468624263,
+      "slower_than_tuned_mega_blocks": 0,
+      "slower_than_original_fast": [],
+      "dynamic_counts": {
+        "prefix_entries": 127533,
+        "prefix_bytes": 1220379,
+        "removed_word_shifts": 102686,
+        "word_joins": 141,
+        "phase7_indirect_loads": 7063,
+        "extra_jr_taken": 143922,
+        "extra_jr_not_taken": 223954
+      },
+      "memory": {
+        "code_and_embedded_variables": 5986,
+        "embedded_offset_already_in_code": 2,
+        "extra_variables_tables_alignment_scratch_internal_buffers": 0,
+        "decoder_stack_including_caller_return": 4,
+        "probe_irq_extra_stack": 6,
+        "probe_irq_code": 13,
+        "max_separate_real_input_bytes": 6209,
+        "max_separate_real_output_history_bytes": 8192,
+        "max_separate_input_bytes": 15878,
+        "max_separate_output_history_bytes": 15872
+      }
+    },
+    "127": {
+      "code_bytes": 7522,
+      "service_bytes": 7526,
+      "service_with_probe_irq_bytes": 7545,
+      "real_tstates": 140193198,
+      "all_cases_tstates": 145354022,
+      "incremental_gain_vs_tuned_mega_percent": 3.7804035990208593,
+      "total_gain_vs_original_fast_percent": 10.13977724351866,
+      "gain_vs_original_mega_percent": 4.254186081005681,
+      "slower_than_tuned_mega_blocks": 0,
+      "slower_than_original_fast": [],
+      "dynamic_counts": {
+        "prefix_entries": 127533,
+        "prefix_bytes": 1336155,
+        "removed_word_shifts": 102686,
+        "word_joins": 141,
+        "phase7_indirect_loads": 7063,
+        "extra_jr_taken": 143922,
+        "extra_jr_not_taken": 223954
+      },
+      "memory": {
+        "code_and_embedded_variables": 7522,
+        "embedded_offset_already_in_code": 2,
+        "extra_variables_tables_alignment_scratch_internal_buffers": 0,
+        "decoder_stack_including_caller_return": 4,
+        "probe_irq_extra_stack": 6,
+        "probe_irq_code": 13,
+        "max_separate_real_input_bytes": 6209,
+        "max_separate_real_output_history_bytes": 8192,
+        "max_separate_input_bytes": 15878,
+        "max_separate_output_history_bytes": 15872
+      }
+    }
+  },
+  "payload_delta_bytes": 0,
+  "required_input_sector_delta": 0,
+  "original_fast": {
+    "code_bytes": 207,
+    "real_tstates": 156012520
+  },
+  "original_mega": {
+    "code_bytes": 673,
+    "real_tstates": 146422274
+  },
+  "original_mega_with_fast_jumps": {
+    "code_bytes": 674,
+    "real_tstates": 146421546
+  },
+  "tuned_mega_with_fast_jumps": {
+    "code_bytes": 670,
+    "real_tstates": 145701295
+  },
+  "wheel": {
+    "name": "zxvideo_zx0-0.1.0-py3-none-any.whl",
+    "sha256": "1add9c372acb1cd0b259fd5c1358597419de739629aecbce3d55ca452817893a",
+    "files": [
+      {
+        "file": "zx0/__init__.py",
+        "sha256": "f1cac84d7bf6e4fca5dcb3abdf3170416c7760bc47655eab0aae86da927feef3"
+      },
+      {
+        "file": "zx0/__main__.py",
+        "sha256": "8505134faac0b9582b89df7f18031e5e34a770d560a0ab3cb33da09187eadae6"
+      },
+      {
+        "file": "zx0/_branch_tuning.py",
+        "sha256": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54"
+      },
+      {
+        "file": "zx0/_z80.py",
+        "sha256": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d"
+      },
+      {
+        "file": "zx0/asm/dzx0_fast.asm",
+        "sha256": "bb4c0d8f359091522958d7ffc12b841629412a91a81ebd7eb03f824877bf5fd4"
+      },
+      {
+        "file": "zx0/asm/dzx0_mega.asm",
+        "sha256": "6a3774508bf8d0f7a6cf08851a22e836aaedccf56dc1ef119b3e04e0f79fb23a"
+      },
+      {
+        "file": "zx0/asm/dzx0_standard.asm",
+        "sha256": "95b5dde1cfb334cb09d8be566728662bd94eb867f8c2f5437c31d78f2f4647b0"
+      },
+      {
+        "file": "zx0/asm/dzx0_turbo.asm",
+        "sha256": "9de7ca474bf03bdb4fe773f0eb1327744fae5558c285d5e670388b8ba20bc39d"
+      },
+      {
+        "file": "zx0/bank_local.py",
+        "sha256": "90b2b4f74d323b5b1c6883f957151c7bb2a3864cf3f7a473d388b685e5b0e102"
+      },
+      {
+        "file": "zx0/banked.py",
+        "sha256": "6535d8405b79fa8a1001ac39309e7198d4adfe40441fcfa9486a10a8657d381f"
+      },
+      {
+        "file": "zx0/block.py",
+        "sha256": "6741dd0c598d137fcfbce8ab60144e2366b72e2e194a473473d4674aa90376b2"
+      },
+      {
+        "file": "zx0/codec.py",
+        "sha256": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91"
+      },
+      {
+        "file": "zx0/compressor.py",
+        "sha256": "80e11256c842bfaaa71ae30658355df99ba15601d33c915ad63ed8bcfa85e5d3"
+      },
+      {
+        "file": "zx0/export.py",
+        "sha256": "ed4df4d21cf0e3145b501c9ad49c383877e6ec4534428dd28c796d5ee428bce0"
+      },
+      {
+        "file": "zx0/incremental.py",
+        "sha256": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a"
+      },
+      {
+        "file": "zx0/inplace.py",
+        "sha256": "57693ad1d72805bb251daac1a3ed8afec365fb64fd6403519c67c761a9ac72dc"
+      },
+      {
+        "file": "zx0/LICENSE",
+        "sha256": "1c4474030e6090708b35f3dce1569709744a800312ae367194b3b079bf458ecf"
+      },
+      {
+        "file": "zx0/maximum.py",
+        "sha256": "8d7dd0f560fc75f52e1d7e1e72c44f2f7911888bd26e4bd4cc5ae84eccc0cf5b"
+      },
+      {
+        "file": "zx0/resumable.py",
+        "sha256": "a7b1579f8fb014ebcfdd2fe92167153e4102ad5c6618550975789c300f7155ab"
+      },
+      {
+        "file": "zx0/selection.py",
+        "sha256": "027011ca7929f33a1d875350bf5f9e4ccd3282c0fbc311b3c58935a5472763e6"
+      },
+      {
+        "file": "zx0/split_bank2.py",
+        "sha256": "0d8b24c3d4c4540b0111ad1dc77f34854e045897490423ef877f1d00a9852e07"
+      },
+      {
+        "file": "zx0/split_streaming.py",
+        "sha256": "f01968bdf9f95d96b9b470dee8a3efb525313c8258b13a39fb48bc7af03c2527"
+      },
+      {
+        "file": "zx0/streaming.py",
+        "sha256": "15b9659b03d27b57f989c1400a903ed5889bcfb7604438efe8defc91e1e1a234"
+      },
+      {
+        "file": "zx0/streaming_inline.py",
+        "sha256": "e4d3b169b2e0075c7dce7565ab29e248f22f14a04444bdba20173c4f5dec4bd3"
+      },
+      {
+        "file": "zx0/tokens.py",
+        "sha256": "48555eea40aa0d8fc4a9be67a5263a75c2cf6231b7879b17780afae803e46268"
+      }
+    ],
+    "smoke": {
+      "package": "zx0",
+      "independent_wheel": true,
+      "custom_layout": true,
+      "cli_export": true,
+      "resources": true,
+      "exact_round_trip": true,
+      "external_encoder": false,
+      "resident_profiles": [
+        {
+          "variant": "standard",
+          "bytes": 68,
+          "exact_export": true
+        },
+        {
+          "variant": "turbo",
+          "bytes": 126,
+          "exact_export": true
+        },
+        {
+          "variant": "fast",
+          "bytes": 207,
+          "exact_export": true
+        },
+        {
+          "variant": "mega",
+          "bytes": 673,
+          "exact_export": true
+        }
+      ],
+      "fast_jump_profiles": [
+        {
+          "variant": "standard",
+          "bytes": 70,
+          "exact_export": true
+        },
+        {
+          "variant": "turbo",
+          "bytes": 127,
+          "exact_export": true
+        },
+        {
+          "variant": "mega",
+          "bytes": 674,
+          "exact_export": true
+        },
+        {
+          "variant": "fast",
+          "bytes": 207,
+          "exact_export": true
+        }
+      ],
+      "branch_tuned_profiles": [
+        {
+          "variant": "fast",
+          "bytes": 193,
+          "exact_export": true
+        }
+      ],
+      "inline_tail_refill_profiles": [
+        {
+          "resident": false,
+          "bytes": 391
+        },
+        {
+          "resident": true,
+          "bytes": 196
+        }
+      ],
+      "mega_tuned_profiles": [
+        {
+          "fast_jumps": false,
+          "bytes": 669
+        },
+        {
+          "fast_jumps": true,
+          "bytes": 670
+        }
+      ],
+      "maximum_profiles": [
+        {
+          "prefix_cap": 31,
+          "bytes": 4450,
+          "service_with_probe_irq_bytes": 4473,
+          "exact_export": true
+        },
+        {
+          "prefix_cap": 63,
+          "bytes": 5986,
+          "service_with_probe_irq_bytes": 6009,
+          "exact_export": true
+        },
+        {
+          "prefix_cap": 127,
+          "bytes": 7522,
+          "service_with_probe_irq_bytes": 7545,
+          "exact_export": true
+        }
+      ]
+    }
+  },
+  "source_sha256_lf": {
+    "tests/mega_prefix_profile.py": "5699c15370c509c828a0cb28e410317c43514377c0626a543cdbc4a35637d2c5",
+    "tests/measure_mega_prefix.py": "93342e000d3bb370534e849ae03fe5206e05ba11d351606299090e9595110b79",
+    "tests/test_maximum.py": "dae16f03e6eb1d3221e1e3e026dd3a9e4b1030908e1f8fa0cc631ddd7de0a748",
+    "tests/verify_maximum.py": "7703d605b2231dd45551826fb6172cc995507f039a39aa6935a5af734d10892d",
+    "tests/smoke_install.py": "0137b20784fac242e1f970c1667abd9defaa4d5eba669de8462767b629af89c8",
+    "tests/native_block.py": "2d1b2c15d5c49c2a6d7c4961794dae0c0b9f12cb924172c84d54b4dbc4702a17",
+    "zx0/src/zx0/maximum.py": "8d7dd0f560fc75f52e1d7e1e72c44f2f7911888bd26e4bd4cc5ae84eccc0cf5b",
+    "zx0/src/zx0/__main__.py": "8505134faac0b9582b89df7f18031e5e34a770d560a0ab3cb33da09187eadae6",
+    "zx0/src/zx0/export.py": "ed4df4d21cf0e3145b501c9ad49c383877e6ec4534428dd28c796d5ee428bce0"
+  },
+  "native_evidence_sha256": "3fd6d026f06d81d66622a321279ab72309bc10b80d47e3ae0c2287d2e892d2a1",
+  "historical_prototype_sha256": "ad61891f0c4395ef374edbd88921e410205ebfc32b746ca76ee90e62fc586991",
+  "high_word_evidence_sha256": "11cfb7e1b262084d4ebbedea253fcea73e3c1a70b13b313c7ab8b874ab27d584",
+  "original_fast_mega_evidence_sha256": "8df00ca5a655a5ff29d447bb6289897306e72acdad4f2451bc248ba6516ab9b6",
+  "logs": [
+    {
+      "file": "evidence/maximum/maximum-unit.log.gz",
+      "sha256": "903e28965e7979653e088a0c721682d6200341f070fb408e1c28e19f68b0388a"
+    },
+    {
+      "file": "evidence/maximum/maximum-native.log.gz",
+      "sha256": "7c1751c122109ab1dd82429332afbd39625cb50affa2b7e816566e6d8ff3d553"
+    },
+    {
+      "file": "evidence/maximum/maximum-high-word.log.gz",
+      "sha256": "26c6d895951b2d43d666e7f2a063cdde8107ac4b1dafca070a79f88f1d9c0a9b"
+    },
+    {
+      "file": "evidence/maximum/maximum-wheel.log.gz",
+      "sha256": "6769116ce1d91901de864aaf5eb221442af84df339f0db3370d373d26f07a977"
+    },
+    {
+      "file": "evidence/maximum/maximum-install.log.gz",
+      "sha256": "ccc412bd4cc16a4dc4d53e557dbe953987d54f6710a644e37f1afd9c1f72900f"
+    },
+    {
+      "file": "evidence/maximum/maximum-smoke.log.gz",
+      "sha256": "d0551e5baaf66e68db2251e7b650228e68a55ebbcc6d418860ae0fbf1e4c0058"
+    }
+  ],
+  "limits": [
+    "Only resident ZX0 maximum-speed direction; the per-library/coroutine goal remains active.",
+    "The historical Mega advantage over Fast is not a new optimization.",
+    "Individual changed conditional exits cost 3 T more when untaken; no complete case slows.",
+    "No physical disk, ULA, player/movie delivery or global optimality claim.",
+    "Count the actual caller IRQ implementation; the probe is only one 13-byte/6-extra-stack handler.",
+    "No coroutine slices exist for this profile."
+  ]
+}

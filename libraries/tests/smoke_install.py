@@ -180,6 +180,26 @@ if name=='zx0':
               '--core','0x8000','--core-limit','0x8400','--output',str(destination/'mega-tuned-cli')]
     runpy.run_module(name+'.__main__',run_name='__main__')
     assert json.loads((destination/'mega-tuned-cli/metadata.json').read_text())['mega_tuned']
+maximum=[]
+if name=='zx0':
+    maximum_build=importlib.import_module(name+'.maximum').build
+    for cap in (31,63,127):
+        regions,labels,metadata=maximum_build(prefix_cap=cap,irq_code_bytes=13,irq_stack_bytes=6)
+        at=destination/('maximum-'+str(cap))
+        export(at,regions,labels,metadata)
+        rebuilt=[]
+        for line in (at/'decoder.asm').read_text().splitlines():
+            if line.startswith('org '):rebuilt.append((int(line[5:],16),bytearray()))
+            elif line.startswith('db '):rebuilt[-1][1].extend(int(x[1:],16) for x in line[3:].split(','))
+        assert [(address,bytes(data)) for address,data in rebuilt]==regions
+        assert metadata['service_memory_bytes']==metadata['code_bytes']+23<=10000
+        maximum.append(dict(prefix_cap=cap,bytes=metadata['code_bytes'],
+                            service_with_probe_irq_bytes=metadata['service_memory_bytes'],exact_export=True))
+    sys.argv=[name,'build','--variant','maximum','--irq-code-bytes','13','--irq-stack-bytes','6',
+              '--output',str(destination/'maximum-cli')]
+    runpy.run_module(name+'.__main__',run_name='__main__')
+    assert json.loads((destination/'maximum-cli/metadata.json').read_text())['service_memory_bytes']==7545
+    assert not any(n.startswith(('toolkit','tests','cv2','numpy')) for n in sys.modules)
 assert not any(n.startswith(('toolkit','cv2','numpy')) for n in sys.modules)
 if encoder:
     assert package.decompress(package.compress(raw,executable=encoder),limit=len(raw))==raw
@@ -187,6 +207,6 @@ report=dict(package=name,independent_wheel=True,custom_layout=True,cli_export=Tr
             resources=True,exact_round_trip=True,external_encoder=bool(encoder),resident_profiles=resident,
             fast_jump_profiles=fast_jumps,branch_tuned_profiles=tuned,literal_prefix_profiles=literal_prefix,
             inline_tail_refill_profiles=tail_refill,combined_profiles=combined_profiles,wide_profiles=wide,
-            mega_tuned_profiles=mega_tuned)
+            mega_tuned_profiles=mega_tuned,maximum_profiles=maximum)
 (destination/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report))

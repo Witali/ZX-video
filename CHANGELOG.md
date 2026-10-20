@@ -180,6 +180,59 @@
   result; the full 10%-per-library goal remains active. No player release,
   physical disk/ROM/ULA timing, external encoder or wheel reinstall is claimed.
 
+## 2026-10-20 — Compatible ZX0 maximum-speed resident frontier under total-service cap
+
+- **Objective/baseline:** Resume interrupted work in the existing
+  `.worktree/codec-zx0-maxspeed`, branch`codex/codec-zx0-maxspeed`, HEAD`1784e45a`.
+  Preserve the complete saved2026-10-19test-only prototype. Compare new gains
+  with tunedMega670B/145,701,295realT separately from originalFast207B/
+  156,012,520T, originalMega673B/146,422,274T and prior startupfast-jumpMega
+  674B/146,421,546T. Input/output/history are separate from the hard10,000-byte
+  total-service cap; no oldMega speed benefit is counted as a new experiment.
+- **Changed parameters:** Specialize literal/reuse/length gamma depths,
+  omit provably zero high-count shifts until data bit eight, inline
+  min(cap,K-1)LDI after a proved count>=K, then positive-count LDIR. Preserve
+  word loops, forward overlap, patched offset and residentFast callerABI.
+  Measure caps31/63/127; promote independent package`zx0.maximum.build` and
+  CLI`--variant maximum`, cap127default. Count declared callerIRQ code/extra
+  stack and reject total-service overflow or irrelevant tuning/coroutine flags.
+  No runtime selectors, buffers, format changes or coroutine implementation.
+- **Measured results:** Complete real364-block CPU141,618,798 /140,680,558 /
+  140,193,198T: new improvements2.801963 /3.445911 /3.780404% versus tunedMega.
+  Code4450/5986/7522B plus4maximum decoder-stack bytes gives4454/5990/7526B;
+  the13B/6-extra-stack probeIRQ totals4473/6009/7545B. Other variables/tables/
+  alignment/scratch/internal buffers are zero; the2B offset is already incode.
+  Best profile saves5,508,097realT; its10.139777% total comparison withFast
+  includes pre-existingMega gains. All417-case totals146,946,342 /145,932,902 /
+  145,354,022T versus151,153,149T. No slower complete case versus tunedMega or
+  originalFast. Individual untaken changedJR exits cost+3T; word joins+10T.
+  Exact instruction-table delta includes -8T per removed countshift, -5T per
+  prefixbyte, +10T perprefix, +6T phase7indirect loads, +10T wordjoins and
+  taken/untaken branch costs. Payload/required-input-sector delta0.
+- **Verification/decision:** New2026-10-20public replay covers417cases×3caps,
+  each plain/IRQ/relocated,1251comparisons/4170native runs including shared
+  baselines; exactEOF/output/history/ABI/code permissions and dynamic delta
+  proofs pass. Separate56high-word cases percap add168comparisons/560runs,
+  including32767/32768/49151-byte matches, reused/new offsets and explicit
+  disjoint code/input/output/caller-stack placements. All passIRQ/relocation
+  and dynamic deltas; no slower case. Add an optional caller-stack argument
+  with live-allocation overlap rejection to the protected native harness.
+  Correct resumed harness's overly strict stack==4 assertion to
+  stack<=4 because pure literals use2B.31library tests,31byte-exact defaults,
+  six exact resources and an isolated wheel/API/CLI export pass; all sources,
+  inputs/evidence and saved logs authenticated. Accept the optional measured
+  resident frontier; no global maximum, coroutine, per-library-goal completion
+  or movie/player/physical-disk delivery claim. Retain old profiles and evidence.
+  [Full memory/timing/reproduction](libraries/ZX0_MAXIMUM.md),
+  [complete new native cases](libraries/evidence/ten_percent_maximum.json),
+  [authentication](libraries/evidence/ten_percent_maximum_verification.json).
+
+- **Combined-branch integration (2026-10-20):** All50 library tests pass with
+  the prior compact/wide/coroutine options retained. The new disjoint-allocation
+  native check initially rejected the legal empty LZSA2 EOF output as a
+  zero-length interval; omit that empty interval while keeping all nonempty
+  code/input/output/stack overlap checks. This corrects the test harness only.
+
 ## 2026-10-19 — Optional smaller/faster Mega offset-register and reuse-tail profile
 
 - **Objective/baseline:** Independently inspect stronger existing ZX0 Mega

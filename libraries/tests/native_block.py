@@ -2,12 +2,26 @@
 from z80 import Z80Machine
 
 
-def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc000,alternate_af=0,watch=None):
+def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc000,
+            caller_stack=0xbff0,alternate_af=0,watch=None):
     regions,labels,metadata=profile
     m=Z80Machine();m.memory[:]=b'\xa5'*65536
-    stack,stop=0xbff0,0x100
+    stack,stop=caller_stack,0x100
     assert source+len(payload)<=min(at for at,_ in regions)
     assert output+len(expected)<=65535
+    irq=bytes.fromhex('f5 08 f5 3e 55 ee aa f1 08 f1 fb ed 4d')
+    # A relocated caller stack permits long high-word gamma cases. Validate
+    # every live allocation so a larger output cannot overwrite code, source,
+    # caller/IRQ stack or the harness's return and interrupt entry sequences.
+    allocations=[(at,at+len(data),'code') for at,data in regions]
+    allocations += [(source,source+len(payload),'input'),
+                    (stack-64,stack,'caller/IRQ stack'),(0x38,0x38+len(irq),'IRQ'),
+                    (0x200,0x207,'IRQ bootstrap'),(stop,stop+1,'return breakpoint')]
+    if expected:allocations.append((output,output+len(expected),'output/history'))
+    for index,(lo,hi,name) in enumerate(allocations):
+        assert 0<=lo<hi<=65536,('invalid allocation',name,lo,hi)
+        for other_lo,other_hi,other_name in allocations[index+1:]:
+            assert hi<=other_lo or other_hi<=lo,('overlapping allocations',name,other_name)
     for at,data in regions:m.set_memory_block(at,data)
     m.set_memory_block(source,payload)
     m.set_memory_block(stack-2,stop.to_bytes(2,'little'))
@@ -16,7 +30,6 @@ def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc
     m.alt_af=alternate_af
     preserved=dict(ix=0x1357,alt_bc=0x2468,alt_de=0x369a,alt_hl=0xace1)
     for name,value in preserved.items():setattr(m,name,value)
-    irq=bytes.fromhex('f5 08 f5 3e 55 ee aa f1 08 f1 fb ed 4d')
     m.set_memory_block(0x38,irq)
     if interrupts:
         m.set_memory_block(0x200,bytes.fromhex('ed56fb00c3')+entry.to_bytes(2,'little'))
