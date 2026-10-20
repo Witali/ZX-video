@@ -1,5 +1,35 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Verify LZSA2 Wide short-match kernels
+
+- **Objective/baseline:** Execute the authorized short-copy follow-up against
+  retained public Expanded (7,004 service B /15,623,953 real T) on the same
+  frozen 21 real blocks and all 95+580 corpus/directed cases. Input/output
+  and history are separate from all code/table/padding/state/stack service.
+- **Change/results:** Seven private profiles specialize known short fields.
+  New offsets save `5*n-4 T` at lengths2..8; repeated offsets save `5*n-16 T`
+  at lengths4..8. Shared with both uses 4,228 B /15,188,829 real T, saving
+  2,776 B and 435,124 T (2.784980%) against Expanded. Structured Expanded
+  lengths3..8 uses 9,524 B /14,999,606 T; full new2..8 gives 9,748 B /
+  14,975,960 T but relocation9003h needs 10,001 B and is explicitly invalid.
+  Preserve all seven points and the discarded token-exclusion workaround.
+- **Verification:** Each profile passes all 675 cases with IRQ and aligned/
+  unaligned relocation, protected source/history/EOF/registers and plain/IRQ
+  stack <=6/12 B. Every case matches the exact per-token CPU equation and
+  native short-path microprobes. All new-offset-only Expanded cases do not
+  slow; Shared with both has 253 slower directed cases, maximum216 T, while
+  all real blocks improve. Full oversize relocation is test-only and never
+  accepted under the service cap. A summary path-formatting error after the
+  native run was repaired from the finished archive; retain that provenance.
+- **Decision/limits:** Accept the kernels for separate optional public
+  integration with measured hybrid layouts. This focused experiment keeps
+  public LZSA2 bytes/defaults exact (0 T); coroutine/guarded input and actual
+  producer/disk/player timing remain separately unqualified.
+  [Results/contracts](libraries/WIDE_SHORT_EXPERIMENT.md),
+  [reproducer](libraries/tests/measure_wide_short.py),
+  [summary](libraries/evidence/wide_short_experiment.json),
+  [complete native evidence](libraries/evidence/wide_short_experiment_full.json.gz).
+
 ## 2026-10-20 — Share ZX0 LDI chains without an extra runtime jump
 
 - **Objective/baseline:** Follow the completed selective-sharing screen at
