@@ -12,6 +12,13 @@ complete deterministic CPU T-states on the frozen real corpus; IRQ execution,
 ULA contention, ROM and physical disk latency are separate. Ordinary
 coroutines use 256-byte demands and preserve every publication cursor.
 
+[Initialization accounting](BENCHMARK_INITIALIZATION.md) confirms all resident
+and ordinary begin/setup work is included. For guarded profiles, use the
+variant table's producer+decoder total: it includes producer initialization,
+initial/repeated guard patching and decoder begin/sync/EOF. The historical
+decoder-only timing is retained as a component. Expanded CALL/direct totals
+are23,106,239/20,892,688 real T,8.4733%/9.2876% less than same-mode pass Fast.
+
 For direct links to each public builder and implementation file, copyable
 selection arguments and comparisons with both original Fast and this pass's
 baseline, see [Decoder variants](DECODER_VARIANTS.md). That table also retains

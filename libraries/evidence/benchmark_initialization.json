@@ -1,0 +1,3619 @@
+{
+  "accounting_only": true,
+  "catalog_discovery": {
+    "note": "Regenerating table accounting fields/evidence links is allowed; the unchanged 71 selection subset is the catalog identity.",
+    "path": "libraries/evidence/decoder_variants_verification.json",
+    "required_timing_anchor": false,
+    "stable_selection_fields": [
+      "name",
+      "codec",
+      "kind",
+      "builder",
+      "kwargs",
+      "real_cpu_tstates",
+      "regions"
+    ],
+    "stable_selection_sha256": "975867bbbb3641c2594c62220f66869840406392cf6c274b606ca924018b41b0"
+  },
+  "complete": true,
+  "date": "2026-10-20",
+  "document_sha256": "a4680b1b96fad608e0cedb51edde9f78629895d629c318b913d3779a31a84854",
+  "entry_instruction_ledgers": {
+    "lzsa_fast": {
+      "instructions": [
+        [
+          "LD B,0",
+          7
+        ],
+        [
+          "SCF",
+          4
+        ],
+        [
+          "EX AF,AF'",
+          4
+        ],
+        [
+          "JP ReadToken",
+          10
+        ]
+      ],
+      "tstates": 25
+    },
+    "lzsa_small": {
+      "instructions": [
+        [
+          "XOR A",
+          4
+        ],
+        [
+          "LD B,A",
+          4
+        ],
+        [
+          "EX AF,AF'",
+          4
+        ],
+        [
+          "JR ReadToken",
+          12
+        ]
+      ],
+      "tstates": 24
+    },
+    "lzsa_wide": {
+      "instructions": [
+        [
+          "EXX",
+          4
+        ],
+        [
+          "PUSH HL",
+          11
+        ],
+        [
+          "EXX",
+          4
+        ],
+        [
+          "LD B,0",
+          7
+        ],
+        [
+          "SCF",
+          4
+        ],
+        [
+          "EX AF,AF'",
+          4
+        ],
+        [
+          "JP ReadToken",
+          10
+        ]
+      ],
+      "tstates": 44
+    },
+    "producer_begin": {
+      "instructions": [
+        [
+          "CP3",
+          7
+        ],
+        [
+          "JP NC,fatal not taken",
+          10
+        ],
+        [
+          "LD(slot),A",
+          13
+        ],
+        [
+          "XOR A",
+          4
+        ],
+        [
+          "LD(phase),A",
+          13
+        ],
+        [
+          "LD(header_count),A",
+          13
+        ],
+        [
+          "RET",
+          10
+        ]
+      ],
+      "tstates": 70
+    },
+    "zx0_fast": {
+      "instructions": [
+        [
+          "LD BC,FFFF",
+          10
+        ],
+        [
+          "LD(offset),BC",
+          20
+        ],
+        [
+          "INC BC",
+          6
+        ],
+        [
+          "LD A,80",
+          7
+        ],
+        [
+          "JP literals",
+          10
+        ]
+      ],
+      "tstates": 53
+    },
+    "zx0_maximum": {
+      "instructions": [
+        [
+          "LD BC,FFFF",
+          10
+        ],
+        [
+          "LD(offset),BC",
+          20
+        ],
+        [
+          "INC BC",
+          6
+        ],
+        [
+          "JP literals0",
+          10
+        ]
+      ],
+      "tstates": 46
+    },
+    "zx0_mega": {
+      "instructions": [
+        [
+          "LD BC,FFFF",
+          10
+        ],
+        [
+          "LD(offset),BC",
+          20
+        ],
+        [
+          "INC BC",
+          6
+        ],
+        [
+          "JR literals0",
+          12
+        ]
+      ],
+      "tstates": 48
+    },
+    "zx0_standard": {
+      "instructions": [
+        [
+          "LD BC,FFFF",
+          10
+        ],
+        [
+          "PUSH BC",
+          11
+        ],
+        [
+          "INC BC",
+          6
+        ],
+        [
+          "LD A,80",
+          7
+        ]
+      ],
+      "tstates": 34
+    },
+    "zx0_turbo": {
+      "instructions": [
+        [
+          "LD BC,FFFF",
+          10
+        ],
+        [
+          "LD(offset),BC",
+          20
+        ],
+        [
+          "INC BC",
+          6
+        ],
+        [
+          "LD A,80",
+          7
+        ],
+        [
+          "JR literals",
+          12
+        ]
+      ],
+      "tstates": 55
+    }
+  },
+  "evidence_sha256": {
+    "libraries/evidence/compact_frontier.json": "6ef47b77f85ab0d1ddd5a5a662c86f20eaf08f89386419fec391c2d99698ba95",
+    "libraries/evidence/fast_jumps.json": "95f2a71a0bdc2225365fc520ad41e541ed19bb56f5f226d370289b28f5083fc0",
+    "libraries/evidence/fast_jumps_streaming/fast-jumps-call-after.json.gz": "7c35c9423070738bfc9915ee44adbe819ba19760745a176399f29b249f82699b",
+    "libraries/evidence/fast_jumps_streaming/fast-jumps-call-before.json.gz": "14393b61d1de789ef6db4fe80a1b6b46328484e59421758029c8ad57d52156c5",
+    "libraries/evidence/fast_jumps_streaming/fast-jumps-direct-after.json.gz": "7f3bc3cacefbf85a1bd3d857f1bb105e581c7b39cefad331a3ea686042063058",
+    "libraries/evidence/fast_jumps_streaming/fast-jumps-direct-before.json.gz": "353c665bc6dd5b94586263660b8d362004b39417bdb841f7b2c10f598496ea9f",
+    "libraries/evidence/fast_jumps_verification.json": "d886368449e861043677e154ab190130d0aa745c32e069f4968d5d35fa253f1d",
+    "libraries/evidence/frontier_completed_profiles_verification.json": "07949dfacf37c5cab7f35a23c4d06a34ad56b549f2ef860fec8ab519596f57d6",
+    "libraries/evidence/hybrid_public_verification.json": "7cd02f0aed406633cd8531ef86de11f7dbb3f0688f1420d7a55dc89aa3b7d77f",
+    "libraries/evidence/next_e01_lzsa_full.json.gz": "ff348a5337de3cd21890becdc1d2048398b62aabf23a472e8ab2c180cb3a8ebb",
+    "libraries/evidence/next_e01_public_verification.json": "9c0f7a09a5b5023a8224386cdf3cf9821fd33b19d256444799e4de15fe9b4780",
+    "libraries/evidence/next_e01_zx0_branches.json.gz": "0641d507f137b95f03e4d4d4a6a9214fbfc10fd8ccd98a529bb1ec44107b9d55",
+    "libraries/evidence/next_e01_zx0_public.json": "63a1c8a15cdcfdae34172498db636611e8e9d0577ec3ff456ae09c85c5e5cf63",
+    "libraries/evidence/next_f00_full.json.gz": "00b1facac131ba65f880989af84e0a013958bec9fe66a24733f7c09873c5ad66",
+    "libraries/evidence/next_f00_prior_sources.json.gz": "9a7a0e07e3b45266260ab19ca6461289198480711f70bb679f5ee94a0a5535b2",
+    "libraries/evidence/next_f00_public_verification.json": "2421192c84e7bd0a054c1d384c1643dd7bb4ec37b9db1a9af7789068651e8367",
+    "libraries/evidence/shared_zero_prefix_native.json.gz": "fcb80906d6ab6b40983add657850c70bf38f3e41de64611b94eb9751dafa91e1",
+    "libraries/evidence/trick_23.json": "8df00ca5a655a5ff29d447bb6289897306e72acdad4f2451bc248ba6516ab9b6",
+    "libraries/evidence/trick_29.json": "13a479847d660b7cfefe670597cb6e69411a7d230290906652a2804d4649e9d2",
+    "libraries/evidence/wide_guarded_native.json.gz": "a685b79d4cc1484035569a21f5b0224f7184bf21cc1a1b9d03a7184b8c6f7bec",
+    "libraries/second_pass_verification.json": "f159ef38fe0c91f5ee6f96e315d7980d0707999d42029372ffc5241ef96a6db0"
+  },
+  "guarded_profiles": {
+    "wide-call": {
+      "all_blocks": 63,
+      "all_decoder_calls": 2670,
+      "all_decoder_tstates": 25467129,
+      "all_original_fast_decoder_tstates": 27611498,
+      "all_original_fast_total_tstates": 29619154,
+      "all_pass_fast_decoder_tstates": 27606494,
+      "all_pass_fast_total_tstates": 29614150,
+      "all_producer_begin_tstates": 4410,
+      "all_producer_steps": 796,
+      "all_producer_tstates": 2007656,
+      "all_total_tstates": 27474785,
+      "builder": "lzsa.wide_coroutine.build",
+      "guard_patcher": {
+        "callable_complete_entry_to_RET_tstates": 234,
+        "callable_partial_entry_to_RET_tstates": 197,
+        "caller_CALL_extra_tstates": 17,
+        "inline_complete_tstates": 224,
+        "inline_partial_tstates": 187,
+        "scopes": {
+          "all": {
+            "calls": 795,
+            "complete_calls": 63,
+            "included_in": "producer_tstates; do not add to combined total",
+            "initial_complete_calls": 33,
+            "initial_partial_calls": 30,
+            "initial_setup_tstates": 13002,
+            "partial_calls": 732,
+            "repeated_update_tstates": 137994,
+            "total_tstates": 150996
+          },
+          "real": {
+            "calls": 605,
+            "complete_calls": 21,
+            "included_in": "producer_tstates; do not add to combined total",
+            "initial_complete_calls": 0,
+            "initial_partial_calls": 21,
+            "initial_setup_tstates": 3927,
+            "partial_calls": 584,
+            "repeated_update_tstates": 109985,
+            "total_tstates": 113912
+          }
+        }
+      },
+      "input_binding_sha256": "36043324114e451bf9268e1b051edee71eb6cb1c20de156aef591f2ea6bc9eb1",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "direct_header": false,
+        "output_base": 49152,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "shared_literals": false,
+        "stack": 31712,
+        "streaming": true
+      },
+      "native_proof": "libraries/evidence/wide_guarded_native.json.gz",
+      "native_proof_sha256": "a685b79d4cc1484035569a21f5b0224f7184bf21cc1a1b9d03a7184b8c6f7bec",
+      "profile_name": "LZSA2 Wide expanded call",
+      "real_blocks": 21,
+      "real_decoder_calls": 1850,
+      "real_decoder_tstates": 21822661,
+      "real_original_fast_decoder_tstates": 23966776,
+      "real_original_fast_total_tstates": 25250354,
+      "real_pass_fast_decoder_tstates": 23961774,
+      "real_pass_fast_total_tstates": 25245352,
+      "real_producer_begin_tstates": 1470,
+      "real_producer_steps": 605,
+      "real_producer_tstates": 1283578,
+      "real_total_tstates": 23106239,
+      "standalone_native_decoder_plus_guard_update": [
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166157285,
+            "decoder_tstates": 161829042,
+            "guard_update_calls": 21844,
+            "guard_update_tstates": 4328243
+          },
+          "offset": 0,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 21975968,
+            "decoder_tstates": 21853642,
+            "guard_update_calls": 617,
+            "guard_update_tstates": 122326
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166156738,
+            "decoder_tstates": 161828495,
+            "guard_update_calls": 21844,
+            "guard_update_tstates": 4328243
+          },
+          "offset": 1,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 21975488,
+            "decoder_tstates": 21853162,
+            "guard_update_calls": 617,
+            "guard_update_tstates": 122326
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166150735,
+            "decoder_tstates": 161822886,
+            "guard_update_calls": 21842,
+            "guard_update_tstates": 4327849
+          },
+          "offset": 252,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 21970114,
+            "decoder_tstates": 21847985,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 122129
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166150990,
+            "decoder_tstates": 161822944,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4328046
+          },
+          "offset": 253,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 21969442,
+            "decoder_tstates": 21847313,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 122129
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166150567,
+            "decoder_tstates": 161822521,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4328046
+          },
+          "offset": 254,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 21969019,
+            "decoder_tstates": 21846890,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 122129
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166149607,
+            "decoder_tstates": 161821561,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4328046
+          },
+          "offset": 255,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 21968155,
+            "decoder_tstates": 21846026,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 122129
+          }
+        }
+      ],
+      "stream_sha256": "b92b8fcd06f76d12ccd2697a3096bbc29e587038f2989bb1b88ec1e926192a20",
+      "total_scope": "Saved guest producer begin+steps (including descriptor/frontier/carry/guard work) plus every decoder begin/resume/EOF/RET. Caller argument passing/CALL and hardware latency are outside this convention."
+    },
+    "wide-direct": {
+      "all_blocks": 63,
+      "all_decoder_calls": 2670,
+      "all_decoder_tstates": 23260993,
+      "all_original_fast_decoder_tstates": 25405362,
+      "all_original_fast_total_tstates": 27402683,
+      "all_pass_fast_decoder_tstates": 25400358,
+      "all_pass_fast_total_tstates": 27397679,
+      "all_producer_begin_tstates": 4410,
+      "all_producer_steps": 796,
+      "all_producer_tstates": 1997321,
+      "all_total_tstates": 25258314,
+      "builder": "lzsa.wide_coroutine.build",
+      "guard_patcher": {
+        "callable_complete_entry_to_RET_tstates": 221,
+        "callable_partial_entry_to_RET_tstates": 184,
+        "caller_CALL_extra_tstates": 17,
+        "inline_complete_tstates": 211,
+        "inline_partial_tstates": 174,
+        "scopes": {
+          "all": {
+            "calls": 795,
+            "complete_calls": 63,
+            "included_in": "producer_tstates; do not add to combined total",
+            "initial_complete_calls": 33,
+            "initial_partial_calls": 30,
+            "initial_setup_tstates": 12183,
+            "partial_calls": 732,
+            "repeated_update_tstates": 128478,
+            "total_tstates": 140661
+          },
+          "real": {
+            "calls": 605,
+            "complete_calls": 21,
+            "included_in": "producer_tstates; do not add to combined total",
+            "initial_complete_calls": 0,
+            "initial_partial_calls": 21,
+            "initial_setup_tstates": 3654,
+            "partial_calls": 584,
+            "repeated_update_tstates": 102393,
+            "total_tstates": 106047
+          }
+        }
+      },
+      "input_binding_sha256": "36043324114e451bf9268e1b051edee71eb6cb1c20de156aef591f2ea6bc9eb1",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "direct_header": true,
+        "output_base": 49152,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "shared_literals": false,
+        "stack": 31712,
+        "streaming": true
+      },
+      "native_proof": "libraries/evidence/wide_guarded_native.json.gz",
+      "native_proof_sha256": "a685b79d4cc1484035569a21f5b0224f7184bf21cc1a1b9d03a7184b8c6f7bec",
+      "profile_name": "LZSA2 Wide expanded direct",
+      "real_blocks": 21,
+      "real_decoder_calls": 1850,
+      "real_decoder_tstates": 19616975,
+      "real_original_fast_decoder_tstates": 21761090,
+      "real_original_fast_total_tstates": 23036803,
+      "real_pass_fast_decoder_tstates": 21756088,
+      "real_pass_fast_total_tstates": 23031801,
+      "real_producer_begin_tstates": 1470,
+      "real_producer_steps": 605,
+      "real_producer_tstates": 1275713,
+      "real_total_tstates": 20892688,
+      "standalone_native_decoder_plus_guard_update": [
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163590643,
+            "decoder_tstates": 159546372,
+            "guard_update_calls": 21844,
+            "guard_update_tstates": 4044271
+          },
+          "offset": 0,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19749723,
+            "decoder_tstates": 19635418,
+            "guard_update_calls": 617,
+            "guard_update_tstates": 114305
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163590368,
+            "decoder_tstates": 159546097,
+            "guard_update_calls": 21844,
+            "guard_update_tstates": 4044271
+          },
+          "offset": 1,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19749493,
+            "decoder_tstates": 19635188,
+            "guard_update_calls": 617,
+            "guard_update_tstates": 114305
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163586785,
+            "decoder_tstates": 159542882,
+            "guard_update_calls": 21842,
+            "guard_update_tstates": 4043903
+          },
+          "offset": 252,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19746578,
+            "decoder_tstates": 19632457,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 114121
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163587354,
+            "decoder_tstates": 159543267,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4044087
+          },
+          "offset": 253,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19746256,
+            "decoder_tstates": 19632135,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 114121
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163587132,
+            "decoder_tstates": 159543045,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4044087
+          },
+          "offset": 254,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19746034,
+            "decoder_tstates": 19631913,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 114121
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163586648,
+            "decoder_tstates": 159542561,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4044087
+          },
+          "offset": 255,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19745620,
+            "decoder_tstates": 19631499,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 114121
+          }
+        }
+      ],
+      "stream_sha256": "b92b8fcd06f76d12ccd2697a3096bbc29e587038f2989bb1b88ec1e926192a20",
+      "total_scope": "Saved guest producer begin+steps (including descriptor/frontier/carry/guard work) plus every decoder begin/resume/EOF/RET. Caller argument passing/CALL and hardware latency are outside this convention."
+    },
+    "wide-shared-call": {
+      "all_blocks": 63,
+      "all_decoder_calls": 2670,
+      "all_decoder_tstates": 25713079,
+      "all_original_fast_decoder_tstates": 27611498,
+      "all_original_fast_total_tstates": 29619154,
+      "all_pass_fast_decoder_tstates": 27606494,
+      "all_pass_fast_total_tstates": 29614150,
+      "all_producer_begin_tstates": 4410,
+      "all_producer_steps": 796,
+      "all_producer_tstates": 2007656,
+      "all_total_tstates": 27720735,
+      "builder": "lzsa.wide_coroutine.build",
+      "guard_patcher": {
+        "callable_complete_entry_to_RET_tstates": 234,
+        "callable_partial_entry_to_RET_tstates": 197,
+        "caller_CALL_extra_tstates": 17,
+        "inline_complete_tstates": 224,
+        "inline_partial_tstates": 187,
+        "scopes": {
+          "all": {
+            "calls": 795,
+            "complete_calls": 63,
+            "included_in": "producer_tstates; do not add to combined total",
+            "initial_complete_calls": 33,
+            "initial_partial_calls": 30,
+            "initial_setup_tstates": 13002,
+            "partial_calls": 732,
+            "repeated_update_tstates": 137994,
+            "total_tstates": 150996
+          },
+          "real": {
+            "calls": 605,
+            "complete_calls": 21,
+            "included_in": "producer_tstates; do not add to combined total",
+            "initial_complete_calls": 0,
+            "initial_partial_calls": 21,
+            "initial_setup_tstates": 3927,
+            "partial_calls": 584,
+            "repeated_update_tstates": 109985,
+            "total_tstates": 113912
+          }
+        }
+      },
+      "input_binding_sha256": "36043324114e451bf9268e1b051edee71eb6cb1c20de156aef591f2ea6bc9eb1",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "direct_header": false,
+        "output_base": 49152,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "shared_literals": true,
+        "stack": 31712,
+        "streaming": true
+      },
+      "native_proof": "libraries/evidence/wide_guarded_native.json.gz",
+      "native_proof_sha256": "a685b79d4cc1484035569a21f5b0224f7184bf21cc1a1b9d03a7184b8c6f7bec",
+      "profile_name": "LZSA2 Wide shared call",
+      "real_blocks": 21,
+      "real_decoder_calls": 1850,
+      "real_decoder_tstates": 22068191,
+      "real_original_fast_decoder_tstates": 23966776,
+      "real_original_fast_total_tstates": 25250354,
+      "real_pass_fast_decoder_tstates": 23961774,
+      "real_pass_fast_total_tstates": 25245352,
+      "real_producer_begin_tstates": 1470,
+      "real_producer_steps": 605,
+      "real_producer_tstates": 1283578,
+      "real_total_tstates": 23351769,
+      "standalone_native_decoder_plus_guard_update": [
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166420545,
+            "decoder_tstates": 162092302,
+            "guard_update_calls": 21844,
+            "guard_update_tstates": 4328243
+          },
+          "offset": 0,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 22221498,
+            "decoder_tstates": 22099172,
+            "guard_update_calls": 617,
+            "guard_update_tstates": 122326
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166419998,
+            "decoder_tstates": 162091755,
+            "guard_update_calls": 21844,
+            "guard_update_tstates": 4328243
+          },
+          "offset": 1,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 22221018,
+            "decoder_tstates": 22098692,
+            "guard_update_calls": 617,
+            "guard_update_tstates": 122326
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166413995,
+            "decoder_tstates": 162086146,
+            "guard_update_calls": 21842,
+            "guard_update_tstates": 4327849
+          },
+          "offset": 252,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 22215644,
+            "decoder_tstates": 22093515,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 122129
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166414250,
+            "decoder_tstates": 162086204,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4328046
+          },
+          "offset": 253,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 22214972,
+            "decoder_tstates": 22092843,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 122129
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166413827,
+            "decoder_tstates": 162085781,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4328046
+          },
+          "offset": 254,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 22214549,
+            "decoder_tstates": 22092420,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 122129
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 166412867,
+            "decoder_tstates": 162084821,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4328046
+          },
+          "offset": 255,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 22213685,
+            "decoder_tstates": 22091556,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 122129
+          }
+        }
+      ],
+      "stream_sha256": "b92b8fcd06f76d12ccd2697a3096bbc29e587038f2989bb1b88ec1e926192a20",
+      "total_scope": "Saved guest producer begin+steps (including descriptor/frontier/carry/guard work) plus every decoder begin/resume/EOF/RET. Caller argument passing/CALL and hardware latency are outside this convention."
+    },
+    "wide-shared-direct": {
+      "all_blocks": 63,
+      "all_decoder_calls": 2670,
+      "all_decoder_tstates": 23506943,
+      "all_original_fast_decoder_tstates": 25405362,
+      "all_original_fast_total_tstates": 27402683,
+      "all_pass_fast_decoder_tstates": 25400358,
+      "all_pass_fast_total_tstates": 27397679,
+      "all_producer_begin_tstates": 4410,
+      "all_producer_steps": 796,
+      "all_producer_tstates": 1997321,
+      "all_total_tstates": 25504264,
+      "builder": "lzsa.wide_coroutine.build",
+      "guard_patcher": {
+        "callable_complete_entry_to_RET_tstates": 221,
+        "callable_partial_entry_to_RET_tstates": 184,
+        "caller_CALL_extra_tstates": 17,
+        "inline_complete_tstates": 211,
+        "inline_partial_tstates": 174,
+        "scopes": {
+          "all": {
+            "calls": 795,
+            "complete_calls": 63,
+            "included_in": "producer_tstates; do not add to combined total",
+            "initial_complete_calls": 33,
+            "initial_partial_calls": 30,
+            "initial_setup_tstates": 12183,
+            "partial_calls": 732,
+            "repeated_update_tstates": 128478,
+            "total_tstates": 140661
+          },
+          "real": {
+            "calls": 605,
+            "complete_calls": 21,
+            "included_in": "producer_tstates; do not add to combined total",
+            "initial_complete_calls": 0,
+            "initial_partial_calls": 21,
+            "initial_setup_tstates": 3654,
+            "partial_calls": 584,
+            "repeated_update_tstates": 102393,
+            "total_tstates": 106047
+          }
+        }
+      },
+      "input_binding_sha256": "36043324114e451bf9268e1b051edee71eb6cb1c20de156aef591f2ea6bc9eb1",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "direct_header": true,
+        "output_base": 49152,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "shared_literals": true,
+        "stack": 31712,
+        "streaming": true
+      },
+      "native_proof": "libraries/evidence/wide_guarded_native.json.gz",
+      "native_proof_sha256": "a685b79d4cc1484035569a21f5b0224f7184bf21cc1a1b9d03a7184b8c6f7bec",
+      "profile_name": "LZSA2 Wide shared direct",
+      "real_blocks": 21,
+      "real_decoder_calls": 1850,
+      "real_decoder_tstates": 19862505,
+      "real_original_fast_decoder_tstates": 21761090,
+      "real_original_fast_total_tstates": 23036803,
+      "real_pass_fast_decoder_tstates": 21756088,
+      "real_pass_fast_total_tstates": 23031801,
+      "real_producer_begin_tstates": 1470,
+      "real_producer_steps": 605,
+      "real_producer_tstates": 1275713,
+      "real_total_tstates": 21138218,
+      "standalone_native_decoder_plus_guard_update": [
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163853903,
+            "decoder_tstates": 159809632,
+            "guard_update_calls": 21844,
+            "guard_update_tstates": 4044271
+          },
+          "offset": 0,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19995253,
+            "decoder_tstates": 19880948,
+            "guard_update_calls": 617,
+            "guard_update_tstates": 114305
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163853628,
+            "decoder_tstates": 159809357,
+            "guard_update_calls": 21844,
+            "guard_update_tstates": 4044271
+          },
+          "offset": 1,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19995023,
+            "decoder_tstates": 19880718,
+            "guard_update_calls": 617,
+            "guard_update_tstates": 114305
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163850045,
+            "decoder_tstates": 159806142,
+            "guard_update_calls": 21842,
+            "guard_update_tstates": 4043903
+          },
+          "offset": 252,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19992108,
+            "decoder_tstates": 19877987,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 114121
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163850614,
+            "decoder_tstates": 159806527,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4044087
+          },
+          "offset": 253,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19991786,
+            "decoder_tstates": 19877665,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 114121
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163850392,
+            "decoder_tstates": 159806305,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4044087
+          },
+          "offset": 254,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19991564,
+            "decoder_tstates": 19877443,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 114121
+          }
+        },
+        {
+          "all": {
+            "cases": 675,
+            "decoder_plus_guard_update_tstates": 163849908,
+            "decoder_tstates": 159805821,
+            "guard_update_calls": 21843,
+            "guard_update_tstates": 4044087
+          },
+          "offset": 255,
+          "real": {
+            "cases": 21,
+            "decoder_plus_guard_update_tstates": 19991150,
+            "decoder_tstates": 19877029,
+            "guard_update_calls": 616,
+            "guard_update_tstates": 114121
+          }
+        }
+      ],
+      "stream_sha256": "b92b8fcd06f76d12ccd2697a3096bbc29e587038f2989bb1b88ec1e926192a20",
+      "total_scope": "Saved guest producer begin+steps (including descriptor/frontier/carry/guard work) plus every decoder begin/resume/EOF/RET. Caller argument passing/CALL and hardware latency are outside this convention."
+    }
+  },
+  "initialization_scope": {
+    "application_limits": "Binary loading, caller argument preparation, disk/ROM latency, ULA, real IRQ scheduling and a complete application cold boot are outside this service-entry benchmark. Do not call it complete application CPU.",
+    "generated_target_code_changed": false,
+    "invocation": "All recorded entry-through-RET costs exclude caller CALL17; every internal CALL/RET is included.",
+    "native_cases_reexecuted": 0,
+    "no_double_counting": "Initialization, begin/sync, guard setup and updates are subsets of the reported entry or producer totals. Add only separately reported standalone guard helper time to its decode-only counter; never add it to producer+decoder again.",
+    "parameter_passing": "HL/DE for raw decoders and input_pointer/block_end/slice_target for coroutines are ready at the API boundary. Host ABI fixture writes are not timed Z80 instructions; they are not a free implementation of a separate callable initializer.",
+    "required_initializer": "No required external target table/cache/offset initializer for resident/ordinary profiles. Guarded suppliers must publish frontiers and run the guard patcher; the full guest producer evidence counts both.",
+    "static_image": "Code, emitted tables and initial data are installed as binary image; there is no target table generation or runtime image-copy initializer in these APIs."
+  },
+  "input_bindings": [
+    {
+      "case": "literal-1",
+      "input_bytes": 4,
+      "input_pointer": 65284,
+      "output_bytes": 1,
+      "payload_sha256": "00718ff37c6a3c13a5c8cdf69b7caa4fa16d2bed4d62429f16999f70bea82705",
+      "raw_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+    },
+    {
+      "case": "literal-2",
+      "input_bytes": 5,
+      "input_pointer": 65292,
+      "output_bytes": 2,
+      "payload_sha256": "7a58cde13b50fbe32287c03a5fedcc8629fbb2d447780d17dbf136fa499c13e4",
+      "raw_sha256": "b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2"
+    },
+    {
+      "case": "literal-3",
+      "input_bytes": 6,
+      "input_pointer": 65301,
+      "output_bytes": 3,
+      "payload_sha256": "568ec219daa7313a6929b59ca1cae2943b227e43dc1965ee9ed43f0e9affdbaa",
+      "raw_sha256": "ae4b3280e56e2faf83f414a6e3dabe9d5fbe18976544c05fed121accb85b53fc"
+    },
+    {
+      "case": "literal-17",
+      "input_bytes": 20,
+      "input_pointer": 65311,
+      "output_bytes": 17,
+      "payload_sha256": "51e40fc47182968af70ff68e8c03f5e5b4fd844db78260aad67cb658202c887b",
+      "raw_sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e"
+    },
+    {
+      "case": "literal-18",
+      "input_bytes": 22,
+      "input_pointer": 65335,
+      "output_bytes": 18,
+      "payload_sha256": "05dc117a1f242e737b05f3dd7b7a4a98706f08f889b095186775d438758e90a8",
+      "raw_sha256": "7a096cc12702bcfa647ee070d4f3ba4c2d1d715b484b55b825d0edba6545803b"
+    },
+    {
+      "case": "literal-237",
+      "input_bytes": 241,
+      "input_pointer": 65105,
+      "output_bytes": 237,
+      "payload_sha256": "ff21a53e83e5e06fe56f58553f2432eb8ad618c81a2f58259d481b766b5b7ca0",
+      "raw_sha256": "69e640e22c3ddd1e1d8391aa4db54aa6ac8aa60ff687a5986f1bea86c49651ab"
+    },
+    {
+      "case": "literal-238",
+      "input_bytes": 242,
+      "input_pointer": 65094,
+      "output_bytes": 238,
+      "payload_sha256": "e32fcce1e2436276aea8edc998c6cbf9b3a517ac20fa3dd60076051f752749e7",
+      "raw_sha256": "6f58ce599facae90d94a287e9bf8cb06eaf17da2c293700eeb6bc087fec676b1"
+    },
+    {
+      "case": "literal-239",
+      "input_bytes": 243,
+      "input_pointer": 65084,
+      "output_bytes": 239,
+      "payload_sha256": "9ad08bd0690297005647eb98ea61f722c0d5ce9c539b264d26f5ac3abd99ee1d",
+      "raw_sha256": "5e1c10284710f5c2db48f88de3d051579643a1ed042afa846a7844895351a77b"
+    },
+    {
+      "case": "literal-255",
+      "input_bytes": 259,
+      "input_pointer": 65075,
+      "output_bytes": 255,
+      "payload_sha256": "eb5578372e87fae2310aec12ea80c38aa4902d8413ed644a759b70db50c2fd72",
+      "raw_sha256": "857df204175f077a9986709897f00ee0bcc0449585248e4b42498337e9329999"
+    },
+    {
+      "case": "literal-256",
+      "input_bytes": 262,
+      "input_pointer": 65082,
+      "output_bytes": 256,
+      "payload_sha256": "2128dbdc925d23a3400d3f58c3711a834381e194d9e08a1ef5c51019ba11a3fe",
+      "raw_sha256": "5bc31b283cef0072274e97d74916552954c935794536cab632641e5ea071379d"
+    },
+    {
+      "case": "literal-257",
+      "input_bytes": 263,
+      "input_pointer": 65092,
+      "output_bytes": 257,
+      "payload_sha256": "e774cdddd0242ee3f24483fc45f28e6ded7eb7ee776e9837c24aa231a3e3e460",
+      "raw_sha256": "a2c6cad2ffa699b14538231fef914f45d30440389e6f8d79091efba836165a2b"
+    },
+    {
+      "case": "literal-511",
+      "input_bytes": 517,
+      "input_pointer": 64847,
+      "output_bytes": 511,
+      "payload_sha256": "3d6204ebe98a779bb657e23ec83966f412c9331d79232f37b43d08168c812310",
+      "raw_sha256": "96781741ba50e7280e4d5eab7cf2cfed6b0eeb98d27d235611e689322b6b6d0f"
+    },
+    {
+      "case": "literal-800",
+      "input_bytes": 806,
+      "input_pointer": 64600,
+      "output_bytes": 800,
+      "payload_sha256": "d96d0ae2c1436b32d9161f7c40fc289cec7344b6250bee1cabe55530d9e12762",
+      "raw_sha256": "aa93d03f36b1ae08887c3af467bdf524b430e67599bf53e270edc115c73c0b0e"
+    },
+    {
+      "case": "literal-4096",
+      "input_bytes": 4102,
+      "input_pointer": 61314,
+      "output_bytes": 4096,
+      "payload_sha256": "10d3887921f181acf4bedbb5b22f4b419688459fa393e9cfc0d80d67514b907d",
+      "raw_sha256": "d67c656e01756650d77717b0839985a056ec28ffe174601d690fc407a2ceffca"
+    },
+    {
+      "case": "literal-15872",
+      "input_bytes": 15878,
+      "input_pointer": 49548,
+      "output_bytes": 15872,
+      "payload_sha256": "c82534754471a52a7e68e6b2444b68f9dbc0d0d095e1108adf867fec22a4a2e3",
+      "raw_sha256": "884fba662bdfee42f3d6cd82bb504f49151b65158fda671b5d03684821e874b9"
+    },
+    {
+      "case": "match-1",
+      "input_bytes": 9,
+      "input_pointer": 65430,
+      "output_bytes": 15872,
+      "payload_sha256": "dba481a5fb080956277d101a4e20019ca9b4d59bbed0bf31675dce5ac84e71d8",
+      "raw_sha256": "4cab2551b407bf533455a5e64771f1895f13ca23db7539d94ec34716efaf9e77"
+    },
+    {
+      "case": "match-2",
+      "input_bytes": 10,
+      "input_pointer": 65443,
+      "output_bytes": 15872,
+      "payload_sha256": "f6957e907414f0937fbde9af3fdc2ec6ffff6523fc1deca8a573ca9999d9f369",
+      "raw_sha256": "8f0c0a18f8075bc4220335acacf343987f98995731a694c09232de26b18e368a"
+    },
+    {
+      "case": "match-32",
+      "input_bytes": 41,
+      "input_pointer": 65457,
+      "output_bytes": 15872,
+      "payload_sha256": "531c0aeec9c3901235ba184eadc0dec3b93ddfd4082c6c3077603c0424378bc4",
+      "raw_sha256": "1941082acc511833175942fa56ff14f1ca961311644a9ef9116548f83ff62146"
+    },
+    {
+      "case": "match-33",
+      "input_bytes": 43,
+      "input_pointer": 65246,
+      "output_bytes": 15872,
+      "payload_sha256": "2f9f26be52fcadb5e703d81fcef2b4377767c9e63bcfb59da9b382e5533071ee",
+      "raw_sha256": "41a809dcc8de9ce907e54f3cc970555de6e33e8fe44e4c7d33c0f13b98dd43cd"
+    },
+    {
+      "case": "match-511",
+      "input_bytes": 523,
+      "input_pointer": 64781,
+      "output_bytes": 15872,
+      "payload_sha256": "45f803b4443d953829f6ad13c714a271c72ea4eec4a3a81b3a501e448da23477",
+      "raw_sha256": "81d9e3d3912a462b532be69443cb658f9a1bfcffdc7a483d473a036ceb7d1370"
+    },
+    {
+      "case": "match-512",
+      "input_bytes": 524,
+      "input_pointer": 64796,
+      "output_bytes": 15872,
+      "payload_sha256": "160d47f40b7fa8d1037264f02f071d64c069d7314919d2bf98f92f6cfe2ca487",
+      "raw_sha256": "caf173cf95a1135d697b957269630fb080da9962d09d36616f1923007644d322"
+    },
+    {
+      "case": "match-513",
+      "input_bytes": 525,
+      "input_pointer": 64812,
+      "output_bytes": 15872,
+      "payload_sha256": "5c8537b3fd80236559d283c9be54432391ca66f09a28a106e03412f42f35601e",
+      "raw_sha256": "dffcd4cc4ae8c7224f81637a69ab6253f62aa16603241b8a5ecf9850ba285c52"
+    },
+    {
+      "case": "match-8704",
+      "input_bytes": 8716,
+      "input_pointer": 56637,
+      "output_bytes": 15872,
+      "payload_sha256": "fc5a59393a275a704eee4abd01a644ab61eed28995bb637d08e81c5547dc321e",
+      "raw_sha256": "ae04333088afc3003393a4b3fe651ef528d60d809dad1b69929846bb2e17b954"
+    },
+    {
+      "case": "match-8705",
+      "input_bytes": 8718,
+      "input_pointer": 56653,
+      "output_bytes": 15872,
+      "payload_sha256": "1aeec7c4cb5b9e52297e2f85d54f599c5f7e908072e9bbb8288c695c1a1e91de",
+      "raw_sha256": "ac2b346434b9e158f126b4b3ae7396a0f107254b6a6e54b021977fe10639d552"
+    },
+    {
+      "case": "word-literal-3",
+      "input_bytes": 10,
+      "input_pointer": 65375,
+      "output_bytes": 3,
+      "payload_sha256": "eb7dc8896fa798163f41f6cffea3e990c8dbb62960cac7552c603df787f7728c",
+      "raw_sha256": "ae4b3280e56e2faf83f414a6e3dabe9d5fbe18976544c05fed121accb85b53fc"
+    },
+    {
+      "case": "word-literal-4",
+      "input_bytes": 11,
+      "input_pointer": 65389,
+      "output_bytes": 4,
+      "payload_sha256": "cb9db14567c9865b2f3ac60e546da4b99fe55c7acdfd8aba4a060fc296d2730b",
+      "raw_sha256": "054edec1d0211f624fed0cbca9d4f9400b0e491c43742af2c5b0abebf0c990d8"
+    },
+    {
+      "case": "word-literal-15",
+      "input_bytes": 22,
+      "input_pointer": 65404,
+      "output_bytes": 15,
+      "payload_sha256": "c70b28372c18f2896cb891ec2cf9c8b73d6dab5cc1c645320ab5367191723add",
+      "raw_sha256": "7071fc3188fde7e7e500d4768f1784bede1a22e991648dcab9dc3219acff1d4c"
+    },
+    {
+      "case": "word-literal-16",
+      "input_bytes": 23,
+      "input_pointer": 65430,
+      "output_bytes": 16,
+      "payload_sha256": "6d3fe60c92d30bc79d2d49a13ae3645e6dae950604e37e0be9685d3f1952c01f",
+      "raw_sha256": "be45cb2605bf36bebde684841a28f0fd43c69850a3dce5fedba69928ee3a8991"
+    },
+    {
+      "case": "word-literal-17",
+      "input_bytes": 24,
+      "input_pointer": 65457,
+      "output_bytes": 17,
+      "payload_sha256": "4ebc6a1cf9dca8055c4d9c78045ce6d25a21a78435a70d409aa06f2ea8c25218",
+      "raw_sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e"
+    },
+    {
+      "case": "word-literal-18",
+      "input_bytes": 25,
+      "input_pointer": 65485,
+      "output_bytes": 18,
+      "payload_sha256": "c2153fca6d2f2b2d7685c1796b9c62f93c995a16c078250c8082cb9bfa49acbf",
+      "raw_sha256": "7a096cc12702bcfa647ee070d4f3ba4c2d1d715b484b55b825d0edba6545803b"
+    },
+    {
+      "case": "word-literal-24",
+      "input_bytes": 31,
+      "input_pointer": 65258,
+      "output_bytes": 24,
+      "payload_sha256": "aa7105f5a3e42dcf4d1b67dfdbb2d87d37f23346e5475c4d745b9b852b419e27",
+      "raw_sha256": "1d64add2a6388367c9bc2d1f1b384b069a6ef382cdaaa89771dd103e28613a25"
+    },
+    {
+      "case": "word-literal-255",
+      "input_bytes": 262,
+      "input_pointer": 65037,
+      "output_bytes": 255,
+      "payload_sha256": "a36dc4abdbfe88043017b28916e3028ccc0d8ff65cba34b2a82180d2d6ce6e3e",
+      "raw_sha256": "857df204175f077a9986709897f00ee0bcc0449585248e4b42498337e9329999"
+    },
+    {
+      "case": "word-match-2",
+      "input_bytes": 10,
+      "input_pointer": 65303,
+      "output_bytes": 3,
+      "payload_sha256": "144505c4d78aac95d7b59ba2b270c41da6812cfd4efda48b38749eadc6f02b35",
+      "raw_sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358"
+    },
+    {
+      "case": "word-match-3",
+      "input_bytes": 10,
+      "input_pointer": 65317,
+      "output_bytes": 4,
+      "payload_sha256": "c87165708a1045ffb5e3ff03945af8d3d618290de14ac8be6cb8532148ce7f24",
+      "raw_sha256": "63c1dd951ffedf6f7fd968ad4efa39b8ed584f162f46e715114ee184f8de9201"
+    },
+    {
+      "case": "word-match-8",
+      "input_bytes": 10,
+      "input_pointer": 65331,
+      "output_bytes": 9,
+      "payload_sha256": "977c21c5d9d31d3b4398fe494a628eb7d6b4915854e1b535ffcfa50e1e9ea711",
+      "raw_sha256": "e5f9176ecd90317cf2d4673926c9db65475b0b58e7f468586ddaef280a98cdbd"
+    },
+    {
+      "case": "word-match-9",
+      "input_bytes": 10,
+      "input_pointer": 65345,
+      "output_bytes": 10,
+      "payload_sha256": "97c8f364792cb2eccfe70dd9805ade9d472e7ec40a24654b2d6927d4db939261",
+      "raw_sha256": "1d65bf29403e4fb1767522a107c827b8884d16640cf0e3b18c4c1dd107e0d49d"
+    },
+    {
+      "case": "word-match-15",
+      "input_bytes": 10,
+      "input_pointer": 65359,
+      "output_bytes": 16,
+      "payload_sha256": "2bc6f441592629de7332059229fc3cb62580ba39e2904e940c5b88f15e619621",
+      "raw_sha256": "991204fba2b6216d476282d375ab88d20e6108d109aecded97ef424ddd114706"
+    },
+    {
+      "case": "word-match-16",
+      "input_bytes": 10,
+      "input_pointer": 65373,
+      "output_bytes": 17,
+      "payload_sha256": "5743bb49968a1de0e80bbc7bca4f0a623086ae8d6af4a5d061ddd6c923d2171f",
+      "raw_sha256": "444074d5328d52b4e0036d37b1b6ea0a9fe3b0c96872d1157fbf01b6fdb2ce8d"
+    },
+    {
+      "case": "word-match-17",
+      "input_bytes": 10,
+      "input_pointer": 65387,
+      "output_bytes": 18,
+      "payload_sha256": "f39c66d83a0c2d22badf792a583515f7c284493ef130aee531ab234a83e14a18",
+      "raw_sha256": "d273c6b6de3f5260e123348e0feb270126fa06e164bb82818df7c71b30ab0ef5"
+    },
+    {
+      "case": "word-match-23",
+      "input_bytes": 10,
+      "input_pointer": 65401,
+      "output_bytes": 24,
+      "payload_sha256": "5bcfc8e2bce3f74f2cf2894876ac50b3246feca23f20b277e23ae4293fab55f5",
+      "raw_sha256": "1bda9f0aed80857d43c9329457f28b1ca29f736a0c539901e1ba16a909eb07b4"
+    },
+    {
+      "case": "word-match-24",
+      "input_bytes": 10,
+      "input_pointer": 65415,
+      "output_bytes": 25,
+      "payload_sha256": "c005577427339e35cc40afff54dfd9a3e16e102fc31f55266deb03778a17e26f",
+      "raw_sha256": "6724431fc312ba42c98b38b8595a49749419526aa89722c77a85c6c813dfdb5a"
+    },
+    {
+      "case": "word-match-255",
+      "input_bytes": 10,
+      "input_pointer": 65429,
+      "output_bytes": 256,
+      "payload_sha256": "728c49a2b53350c743248c188de71c6e35d3e3c3dcafa5f8ea58c058fd6cc43f",
+      "raw_sha256": "e075f2f51cad23d0537186cfcd50f911ea954f9c2e32a437f45327f1b7899bbb"
+    },
+    {
+      "case": "real-0",
+      "input_bytes": 7520,
+      "input_pointer": 57763,
+      "output_bytes": 15872,
+      "payload_sha256": "4c6aa0b48f6cbd0bb5560135202f1e878d9c7b4622e5d4484fa1ffeb64205c09",
+      "raw_sha256": "e7e7c41d0245a886940ab04e8dcd0086ebae8018aa2f578e960f576317c0ed91"
+    },
+    {
+      "case": "real-1",
+      "input_bytes": 8116,
+      "input_pointer": 57351,
+      "output_bytes": 15872,
+      "payload_sha256": "300ac513e6b5f1dba1f73dbf4387e7a19136e3df2f24305c93a29a6dacadb863",
+      "raw_sha256": "66937d840ebc9dbddf406e73e156c0ad6a77e656aa3ac17b100585b8a84f9064"
+    },
+    {
+      "case": "real-2",
+      "input_bytes": 7877,
+      "input_pointer": 57535,
+      "output_bytes": 15872,
+      "payload_sha256": "b78e623d14c6e30a6b8c52ba132fe601ba04cfdac852027333a444047cd2556a",
+      "raw_sha256": "0b85a70ab3c75e7bf75b495cf2eab8b1064ebec2a17a26baaa159820fc88d662"
+    },
+    {
+      "case": "real-3",
+      "input_bytes": 8198,
+      "input_pointer": 57224,
+      "output_bytes": 15872,
+      "payload_sha256": "c525b4be2ea7e56a763179797ff7b53e45ddd4db902af4a114342753e5145f37",
+      "raw_sha256": "4882ad3bd31dca42d613db4ad5ed6e83d2687a2a0c8d5e2bc2ab0fb32cedec47"
+    },
+    {
+      "case": "real-4",
+      "input_bytes": 7522,
+      "input_pointer": 58002,
+      "output_bytes": 15872,
+      "payload_sha256": "0ea101299b2bcf9849084c9c77010d535c3a442eb60f29318ef0b1ce35dea2e6",
+      "raw_sha256": "7352b71ebe75f513a02760d44386c56a9f0b4801ef034e3abe2c658d01564a3d"
+    },
+    {
+      "case": "real-5",
+      "input_bytes": 7745,
+      "input_pointer": 57592,
+      "output_bytes": 15872,
+      "payload_sha256": "87dfcd36d071ceb27926117c849948e90c392feb6144e02af0cfe4c458ea63b6",
+      "raw_sha256": "b7027639639be924f9245104382592ed03b0af5f9a982635bab78f3ead3e73df"
+    },
+    {
+      "case": "real-6",
+      "input_bytes": 7839,
+      "input_pointer": 57661,
+      "output_bytes": 15872,
+      "payload_sha256": "a3e64b3db5a39c6f1fa94398511b51cdb2a0bb3ce06bbad49e728dfd8340f3b0",
+      "raw_sha256": "f978ea43b1932117517716cb4dcda43e757e3c2496d25d97be657a76afa6fc8d"
+    },
+    {
+      "case": "real-7",
+      "input_bytes": 7694,
+      "input_pointer": 57824,
+      "output_bytes": 15872,
+      "payload_sha256": "80ce24c0285e34692959125a2a6d26cf5ab3815e026672a0c244702db42d4177",
+      "raw_sha256": "5caf48aaf7987fd509037b21eef1dd0f4a5f2a98dae9ab6e95f6f1f32db2fdf4"
+    },
+    {
+      "case": "real-8",
+      "input_bytes": 7530,
+      "input_pointer": 57842,
+      "output_bytes": 15872,
+      "payload_sha256": "0850c69a7c00c3107112b7e85e0c4fc8bf7574804a7aefb10285da048e023637",
+      "raw_sha256": "ac5ecaeec5b7ae73290554d899260283338248a6e12c1a84d870100bc8bb42ed"
+    },
+    {
+      "case": "real-9",
+      "input_bytes": 7366,
+      "input_pointer": 57952,
+      "output_bytes": 15872,
+      "payload_sha256": "bacebc9c82108773ad5e6951a4ab1821dd53430e30ea3da405fbe879d4dbeb62",
+      "raw_sha256": "658e5d75aac29415dcee3e99017913b9c0146d0df29cf0fb8bca3e0ff1e4407f"
+    },
+    {
+      "case": "real-10",
+      "input_bytes": 7119,
+      "input_pointer": 58410,
+      "output_bytes": 15872,
+      "payload_sha256": "69979dd39bce8cb1f13ef5eaf5cbfbbbc9606b6ed24af828acd1f99a35dd3633",
+      "raw_sha256": "d6091732f2cfb62907c821ab897274e75bba7495df49002ce16a6197262b334f"
+    },
+    {
+      "case": "real-11",
+      "input_bytes": 7165,
+      "input_pointer": 58365,
+      "output_bytes": 15872,
+      "payload_sha256": "5764c0143ffb7d7c51b017a77f0789236001a638c258ffeedcc00190a168953a",
+      "raw_sha256": "5ba688980a0675fd758549a853f31cf0ce24f6c20bbfc701efc2478a7c2bfa7a"
+    },
+    {
+      "case": "real-12",
+      "input_bytes": 6987,
+      "input_pointer": 58366,
+      "output_bytes": 15872,
+      "payload_sha256": "2ddadcd567d255779a0b0ede86f08c5e39eac887a88ff8da80044889e21d3b5d",
+      "raw_sha256": "09b58385b7629f7329b9295cb989cc6b9a4e4a95ffd4398b7372bd70e4c35fe3"
+    },
+    {
+      "case": "real-13",
+      "input_bytes": 7032,
+      "input_pointer": 58445,
+      "output_bytes": 15872,
+      "payload_sha256": "7a8e4337859eda8d631b31c137ec8f3b69b6b14b83a6f221e652105bb1fafb17",
+      "raw_sha256": "896aa1eeeb6fd81ba158bd69c1ab156be68cfba79ba2b07a71d9ba491406a199"
+    },
+    {
+      "case": "real-14",
+      "input_bytes": 7468,
+      "input_pointer": 58057,
+      "output_bytes": 15872,
+      "payload_sha256": "1fa84bebd3615daa2419c1a12229b9dd576a122b8fe75e55f099e5fafb908eb0",
+      "raw_sha256": "92ec0712a026b8eaa906be208addd96aebf04b0f27a8615d1f6b12a7dd507271"
+    },
+    {
+      "case": "real-15",
+      "input_bytes": 7372,
+      "input_pointer": 58105,
+      "output_bytes": 15872,
+      "payload_sha256": "31ae5c221d03eb5e261c3e34484105ac1258f6335799fec063a4c30460945c76",
+      "raw_sha256": "cfcda933fd198a6a0308ada7a2e97d6ea7cc74e60aa463cb2a5b2c20cd610124"
+    },
+    {
+      "case": "real-16",
+      "input_bytes": 7742,
+      "input_pointer": 57545,
+      "output_bytes": 15872,
+      "payload_sha256": "b279531a05ba3873fdd4366b75849334827c2c6c6e68765691023a8c7b0ea280",
+      "raw_sha256": "b924e89e0a301d96eedfe1cf51ef9a99d1993ae55d5c4eb2c3ca76f8716a1c78"
+    },
+    {
+      "case": "real-17",
+      "input_bytes": 7785,
+      "input_pointer": 57611,
+      "output_bytes": 15872,
+      "payload_sha256": "da27a804f505379a14501765bb95ebec35093fed49f200a712e26b164c812219",
+      "raw_sha256": "5c59f1a93c2b3b04eff7f5a0854d4a251d750448e22a8cdfda1c8dd6a8425292"
+    },
+    {
+      "case": "real-18",
+      "input_bytes": 7819,
+      "input_pointer": 57464,
+      "output_bytes": 15872,
+      "payload_sha256": "103989cf36ec070d0e2eff5dca7a7b00494e92bfed2253982892021dbdfc42d4",
+      "raw_sha256": "50f1bde57821d47a171dc2803a4abdf04a65d75616872a59413dd71d32dddd99"
+    },
+    {
+      "case": "real-19",
+      "input_bytes": 7627,
+      "input_pointer": 57863,
+      "output_bytes": 15872,
+      "payload_sha256": "beb0b5ae49d257875da05a85bd96d515bb63385114dc12dcb9a657f302bba883",
+      "raw_sha256": "5285284a004272c1c48cf3950cc561eff4f3a08c0809dead3a2e18c98102b2e9"
+    },
+    {
+      "case": "real-20",
+      "input_bytes": 3349,
+      "input_pointer": 62166,
+      "output_bytes": 6500,
+      "payload_sha256": "1214ce98294834a503811ecc87d65bf5b7a28be3b4741523a617d402f392f597",
+      "raw_sha256": "e774518fb18edaf276dc75278dacdb11c09385a7cdeb239fa3c26a477800defc"
+    }
+  ],
+  "mode_counts": {
+    "block": 55,
+    "coroutine": 12,
+    "guarded-call": 2,
+    "guarded-direct": 2
+  },
+  "native_cases_reexecuted": 0,
+  "ordinary_begin_costs": {
+    "guarded_lzsa_fast": {
+      "begin_wrapper_nonfinal_tstates": 261,
+      "raw_init_tstates": 25,
+      "total_final_demand_tstates": 291,
+      "total_nonfinal_tstates": 286
+    },
+    "guarded_lzsa_wide": {
+      "begin_wrapper_nonfinal_tstates": 261,
+      "raw_init_tstates": 44,
+      "total_final_demand_tstates": 310,
+      "total_nonfinal_tstates": 305
+    },
+    "lzsa_fast": {
+      "begin_wrapper_nonfinal_tstates": 231,
+      "raw_init_tstates": 25,
+      "total_final_demand_tstates": 261,
+      "total_nonfinal_tstates": 256
+    },
+    "lzsa_fast_compact_sync": {
+      "begin_wrapper_nonfinal_tstates": 223,
+      "raw_init_tstates": 25,
+      "total_final_demand_tstates": 253,
+      "total_nonfinal_tstates": 248
+    },
+    "lzsa_wide": {
+      "begin_wrapper_nonfinal_tstates": 231,
+      "raw_init_tstates": 44,
+      "total_final_demand_tstates": 280,
+      "total_nonfinal_tstates": 275
+    },
+    "zx0_fast": {
+      "begin_wrapper_tstates": 216,
+      "raw_init_tstates": 53,
+      "total_to_first_parser_tstates": 269
+    },
+    "zx0_literal_prefix": {
+      "begin_wrapper_tstates": 242,
+      "extra_sync_tstates_every_request": 26,
+      "raw_init_tstates": 53,
+      "total_to_first_parser_tstates": 295
+    },
+    "zx0_maximum_index": {
+      "begin_wrapper_nonfinal_tstates": 258,
+      "raw_init_tstates": 46,
+      "total_final_demand_tstates": 309,
+      "total_nonfinal_tstates": 304
+    }
+  },
+  "ordinary_derivation": {
+    "call_sync": 17,
+    "common_begin_after_sync": 87,
+    "final_sync_path_extra": 5,
+    "guarded_flags_clear": 30,
+    "lzsa_compact_sync_nonfinal": 119,
+    "lzsa_sync_nonfinal": 127,
+    "maximum_begin_after_quota": 104,
+    "maximum_index_sync_nonfinal": 97,
+    "maximum_quota_enter": 40,
+    "scope": "From begin through the raw entry jump, before the first token/literal parser; included, never add again.",
+    "zx0_prefix_sync": 138,
+    "zx0_sync": 112
+  },
+  "profile_count": 71,
+  "profiles": [
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.block.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "standard"
+      },
+      "name": "ZX0 Standard (minimum)",
+      "primary_cpu_tstates": 201490104,
+      "real_cpu_tstates": 201490104,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 68,
+          "sha256": "31bd3ab5925774a364ead81ea1e27e9d5bb4adf26dacce2cc3b1a4e0f188d2c8"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.block.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "turbo"
+      },
+      "name": "ZX0 Turbo",
+      "primary_cpu_tstates": 160653056,
+      "real_cpu_tstates": 160653056,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 126,
+          "sha256": "a9e31b3d78214b99a485fc7664cce77ab3938f425513c68df4d41e5b6c3e8609"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.block.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "fast"
+      },
+      "name": "ZX0 Fast (original and pass baseline)",
+      "primary_cpu_tstates": 156012520,
+      "real_cpu_tstates": 156012520,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 207,
+          "sha256": "15bc6545e15141dd3783cc05d4c0d973cff5c8c1018a0f38b8eb53e2d9d99cb5"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.block.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "mega"
+      },
+      "name": "ZX0 Mega (original)",
+      "primary_cpu_tstates": 146422274,
+      "real_cpu_tstates": 146422274,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 673,
+          "sha256": "8281d55d07b4314de9896b3efa52b713c7bd0d6bc04b6ce058dfcba73cb897e3"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.block.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "branch_tuned": true,
+        "core": 32768,
+        "core_limit": 33792
+      },
+      "name": "ZX0 Fast tuned",
+      "primary_cpu_tstates": 153706279,
+      "real_cpu_tstates": 153706279,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 193,
+          "sha256": "c3a85be5104724cc0169258404217422eaa8f2df8c79bd538f8f12506c0384c2"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.block.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "branch_tuned": true,
+        "core": 32768,
+        "core_limit": 33792,
+        "inline_tail_refill": true,
+        "literal_prefix": true
+      },
+      "name": "ZX0 Fast tuned +prefix +tail",
+      "primary_cpu_tstates": 152776831,
+      "real_cpu_tstates": 152776831,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 198,
+          "sha256": "eb227a88524937f25a44443d49e5d39aeff9f9686de7f52ce17879d3d91aeb1e"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.block.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true,
+        "mega_tuned": true,
+        "variant": "mega"
+      },
+      "name": "ZX0 Mega tuned",
+      "primary_cpu_tstates": 145701295,
+      "real_cpu_tstates": 145701295,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 670,
+          "sha256": "aa0823f48bf1e9201ccafd3951db929bef83a6f89362c208b34530f5f39a3d32"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "prefix_cap": 31
+      },
+      "name": "ZX0 Maximum 31",
+      "primary_cpu_tstates": 141618798,
+      "real_cpu_tstates": 141618798,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4450,
+          "sha256": "6b9cd8bfa1c231e587559aa9aa62d93a035a0a281068c103e02740ba730bf473"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "prefix_cap": 63
+      },
+      "name": "ZX0 Maximum 63",
+      "primary_cpu_tstates": 140680558,
+      "real_cpu_tstates": 140680558,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 5986,
+          "sha256": "130c273560b31eae89fa8055cd4cdff7aed7ce7437043a8e7f32deec8a24cba9"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "prefix_cap": 127
+      },
+      "name": "ZX0 Maximum 127",
+      "primary_cpu_tstates": 140193198,
+      "real_cpu_tstates": 140193198,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 7522,
+          "sha256": "397d95917f588ebe50255c19fcec6f24780728a5fe310ba8d1823a7ea32db221"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "prefix_cap": 227
+      },
+      "name": "ZX0 Maximum 227",
+      "primary_cpu_tstates": 140170198,
+      "real_cpu_tstates": 140170198,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9962,
+          "sha256": "9653b9961244b7fa80bb1719f211fc66170344c6a1d87d81fa94ba136f719f92"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "prefix_cap": 228
+      },
+      "name": "ZX0 Maximum 228",
+      "primary_cpu_tstates": 140169968,
+      "real_cpu_tstates": 140169968,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9986,
+          "sha256": "edfb49cb0f704ecc71c663a61f4fca3a96bc5f773628500d02609bc0dcd486ca"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "prefix_cap": 31,
+        "shared_prefixes": true
+      },
+      "name": "ZX0 Maximum shared 31",
+      "primary_cpu_tstates": 141342108,
+      "real_cpu_tstates": 141342108,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 2806,
+          "sha256": "e814d1a71d2fa9fc322cf7114b8715e50beb7999b59ed6241c3eccdbe988d136"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "prefix_cap": 63,
+        "shared_prefixes": true
+      },
+      "name": "ZX0 Maximum shared 63",
+      "primary_cpu_tstates": 140403868,
+      "real_cpu_tstates": 140403868,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 3574,
+          "sha256": "49c67e15964fe7d3c7ea6db3718eff9325cc14c4d04c981a75060131cdb7be36"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "prefix_cap": 127,
+        "shared_prefixes": true
+      },
+      "name": "ZX0 Maximum shared 127",
+      "primary_cpu_tstates": 139916508,
+      "real_cpu_tstates": 139916508,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 5110,
+          "sha256": "d8c3d850db7d9bbd4aa0967afb068e546f9ffb653ffd501afdeb0e696e0ef0c8"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "prefix_cap": 227,
+        "shared_prefixes": true
+      },
+      "name": "ZX0 Maximum shared 227",
+      "primary_cpu_tstates": 139893048,
+      "real_cpu_tstates": 139893048,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 7550,
+          "sha256": "8060cc05713a461c4412939342247075257c337665e3a662aae8dbb1e1ffc628"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "prefix_cap": 228,
+        "shared_prefixes": true
+      },
+      "name": "ZX0 Maximum shared 228",
+      "primary_cpu_tstates": 139892818,
+      "real_cpu_tstates": 139892818,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 7574,
+          "sha256": "f2212d85982ab4186eddf0a0905a76098ec33d4324a53448b902b41953093cf8"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.block.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": false
+      },
+      "name": "LZSA2 Fast (original)",
+      "primary_cpu_tstates": 17767606,
+      "real_cpu_tstates": 17767606,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 218,
+          "sha256": "87c0687ecd704ca0328215e620d66a17ebb274e84c9626fc82e49b20a584d8d7"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.block.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true
+      },
+      "name": "LZSA2 Fast (pass baseline)",
+      "primary_cpu_tstates": 17765094,
+      "real_cpu_tstates": 17765094,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 219,
+          "sha256": "dcd41d0d4bc0b650c7fd99eed23531afecea2849453f3fbfd9fa6ebecc36fd15"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.block.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "variant": "small"
+      },
+      "name": "LZSA2 Small (minimum)",
+      "primary_cpu_tstates": 20423546,
+      "real_cpu_tstates": 20423546,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 137,
+          "sha256": "768649a26470989e971e111ad7926ad615ffe3149e913e0e55eb2a4d9e4085db"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.block.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "compact_branches": true,
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true
+      },
+      "name": "LZSA2 Fast compact branches",
+      "primary_cpu_tstates": 17724654,
+      "real_cpu_tstates": 17724654,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 218,
+          "sha256": "2e0f085e369c1af31aeb9e2a63ed48b925ef9cc6da2a07211225155b167d82f2"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.block.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "branch_tuned": true,
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true,
+        "nibble_prefill": true
+      },
+      "name": "LZSA2 Fast tuned +prefill",
+      "primary_cpu_tstates": 17635500,
+      "real_cpu_tstates": 17635500,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 224,
+          "sha256": "3605f063aeb52250e0e75e695248fe5caf3463a51f86043c8a3236766beff35e"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.block.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "variant": "wide-shared"
+      },
+      "name": "LZSA2 Wide shared",
+      "primary_cpu_tstates": 15869483,
+      "real_cpu_tstates": 15869483,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 3446,
+          "sha256": "42026f90d505ee0ec5c6e15a3448380062b9005daa242662c0a21e5c27ba6a68"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.block.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "variant": "wide"
+      },
+      "name": "LZSA2 Wide expanded",
+      "primary_cpu_tstates": 15623953,
+      "real_cpu_tstates": 15623953,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 6998,
+          "sha256": "233c435c3c1902c5ef651cc2fbc1d566604a44bc509dd5f32c7287aa0c270d8a"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "compact-base"
+      },
+      "name": "LZSA2 Hybrid compact-base",
+      "primary_cpu_tstates": 15822353,
+      "real_cpu_tstates": 15822353,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 3446,
+          "sha256": "2c1f8cc001d1005fcacaeb2edc248c34626f6681b4fef852759028b8c564b140"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "balanced-base"
+      },
+      "name": "LZSA2 Hybrid balanced-base",
+      "primary_cpu_tstates": 15683583,
+      "real_cpu_tstates": 15683583,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4493,
+          "sha256": "ebb181368a0006780c52bf8f594920dafad1b40f3e425a534d53eeef81f46690"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "fast-base"
+      },
+      "name": "LZSA2 Hybrid fast-base",
+      "primary_cpu_tstates": 15643493,
+      "real_cpu_tstates": 15643493,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 5494,
+          "sha256": "3386fa41cd5fdb757f370e9c20a9fa2ea47d3b4e7fae743f7e6be4cb236d67c6"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "compact"
+      },
+      "name": "LZSA2 Hybrid compact",
+      "primary_cpu_tstates": 15048469,
+      "real_cpu_tstates": 15048469,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4993,
+          "sha256": "78bb1bd440ac23d95d8bd7c6337c075c47d68fe10ac36435c15c2c1d09ce2e51"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "balanced"
+      },
+      "name": "LZSA2 Hybrid balanced",
+      "primary_cpu_tstates": 14983119,
+      "real_cpu_tstates": 14983119,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 6494,
+          "sha256": "79b37ae3c5bee81646974096a6c005775b391a04bea43e227840bb94c4c87124"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "fast"
+      },
+      "name": "LZSA2 Hybrid fast",
+      "primary_cpu_tstates": 14944429,
+      "real_cpu_tstates": 14944429,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9494,
+          "sha256": "9d25fccf551fa821c6894356e01dc4c9e1328b3ff20da15f4534cbec37101abd"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.wide.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "repeat_lengths": [],
+        "shared_literals": true,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "name": "LZSA2 Wide shared +short",
+      "primary_cpu_tstates": 15221490,
+      "real_cpu_tstates": 15221490,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4132,
+          "sha256": "10a4036e822e0ae321c0c8d322608cb72e354d55d6aabe121d7e06a05a596e7c"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.wide.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "repeat_lengths": [
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "shared_literals": true,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "name": "LZSA2 Wide shared +short +repeat",
+      "primary_cpu_tstates": 15188829,
+      "real_cpu_tstates": 15188829,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4222,
+          "sha256": "67b2e24283d16940d898a7e716ccff753f2d02257a4edc83b268645e3e1296e1"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.wide.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "repeat_lengths": [],
+        "shared_literals": false,
+        "short_lengths": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "name": "LZSA2 Wide expanded +short 3..8",
+      "primary_cpu_tstates": 14999606,
+      "real_cpu_tstates": 14999606,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9518,
+          "sha256": "aa68d32f0b2cc238628815ce9143b5587b3b849dfa50bd34dad498b1470f151f"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.wide.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "repeat_lengths": [],
+        "shared_literals": false,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "name": "LZSA2 Wide expanded +short 2..8",
+      "primary_cpu_tstates": 14975960,
+      "real_cpu_tstates": 14975960,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9742,
+          "sha256": "8dd5dbf0d9bfb8d374e277b278bc654e600ba2426ba55c2334025828398bb2d9"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "zx0.resumable.build",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792
+      },
+      "name": "ZX0 Fast (original and pass baseline)",
+      "primary_cpu_tstates": 180610040,
+      "real_cpu_tstates": 180610040,
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 125,
+          "sha256": "8a7c5376d9fe5e188ab6ff60cf0f4e6ff4c3eff78e950c8e3ea32ff8b145da5b"
+        },
+        {
+          "address": 32768,
+          "bytes": 276,
+          "sha256": "fd0db8c3c0c6d2c5aa538ed25fdc0b20671b9a45ad1dd589ccedcf87e16da391"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "zx0.resumable.build",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "kwargs": {
+        "branch_tuned": true,
+        "core": 32768,
+        "core_limit": 33792,
+        "inline_tail_refill": true
+      },
+      "name": "ZX0 tuned +tail",
+      "primary_cpu_tstates": 178298032,
+      "real_cpu_tstates": 178298032,
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 125,
+          "sha256": "2c187cb8643337848593c2f9893b0ec303a11fbca6fb29f215a385415254d172"
+        },
+        {
+          "address": 32768,
+          "bytes": 266,
+          "sha256": "851c75b98491c3f5e9e15d5deb1421b77b7684d77f9008ab4085803dc7e2067c"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "zx0.resumable.build",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "kwargs": {
+        "branch_tuned": true,
+        "core": 32768,
+        "core_limit": 33792,
+        "inline_tail_refill": true,
+        "literal_prefix": true
+      },
+      "name": "ZX0 tuned +prefix +tail",
+      "primary_cpu_tstates": 178029731,
+      "real_cpu_tstates": 178029731,
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 131,
+          "sha256": "10b3f6fdd3afdeea27cf393ec5758c70d063622177691263c2f01325a5b711ff"
+        },
+        {
+          "address": 32768,
+          "bytes": 290,
+          "sha256": "b3d1fa3244bbaf23f06533d7feb1e532c18384c455766437d3b279c238fe669c"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "zx0.maximum_coroutine.build",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "kwargs": {
+        "prefix_cap": 31
+      },
+      "name": "ZX0 Maximum coroutine 31",
+      "primary_cpu_tstates": 167431057,
+      "real_cpu_tstates": 167431057,
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 159,
+          "sha256": "35ecd4628428cf8c941348b3805cc1f3bcbd18fc0fd532384254c7e1609f3d7d"
+        },
+        {
+          "address": 32768,
+          "bytes": 4726,
+          "sha256": "158f6f6ce20b953568ca13f84b4e23d5651cd308cc4db6ceea415d472b04cf82"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "zx0.maximum_coroutine.build",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "kwargs": {
+        "prefix_cap": 63
+      },
+      "name": "ZX0 Maximum coroutine 63",
+      "primary_cpu_tstates": 166492817,
+      "real_cpu_tstates": 166492817,
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 159,
+          "sha256": "35ecd4628428cf8c941348b3805cc1f3bcbd18fc0fd532384254c7e1609f3d7d"
+        },
+        {
+          "address": 32768,
+          "bytes": 6262,
+          "sha256": "12f82e20a707fd9924f6ea53abf798191dd1c1a248a979f4ba19db09a2c59a24"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "zx0.maximum_coroutine.build",
+      "codec": "zx0",
+      "kind": "coroutine",
+      "kwargs": {
+        "prefix_cap": 127
+      },
+      "name": "ZX0 Maximum coroutine 127",
+      "primary_cpu_tstates": 166005457,
+      "real_cpu_tstates": 166005457,
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 159,
+          "sha256": "35ecd4628428cf8c941348b3805cc1f3bcbd18fc0fd532384254c7e1609f3d7d"
+        },
+        {
+          "address": 32768,
+          "bytes": 7798,
+          "sha256": "fab313850790d524e3bd29085b6a8b9d2d5952ab6abb312c4834329bd724f3d7"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "lzsa.resumable.build",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": false
+      },
+      "name": "LZSA2 Fast (original)",
+      "primary_cpu_tstates": 19412006,
+      "real_cpu_tstates": 19412006,
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 134,
+          "sha256": "ec1d7b085ecaea6ecec676f8aa36da1966a430b20e949449653ee12a80268be1"
+        },
+        {
+          "address": 32768,
+          "bytes": 250,
+          "sha256": "079fcdfa6907f1af556055ca0a24dc5c719674340de7a908b0944d838d5679bf"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "lzsa.resumable.build",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true
+      },
+      "name": "LZSA2 Fast (pass baseline)",
+      "primary_cpu_tstates": 19407004,
+      "real_cpu_tstates": 19407004,
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 134,
+          "sha256": "c6cb2f69cba9429ccae03204cbdbff0be74279481212d40184c26ba2d2f84bd5"
+        },
+        {
+          "address": 32768,
+          "bytes": 252,
+          "sha256": "344431004c4ddb2bb0337240dd0d41a4072d9bea6a7765e227cbd6f9220d12e4"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "lzsa.resumable.build",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "kwargs": {
+        "compact_branches": true,
+        "compact_sync": true,
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true,
+        "nibble_prefill": true
+      },
+      "name": "LZSA2 Fast compact_branches +prefill +sync",
+      "primary_cpu_tstates": 19252552,
+      "real_cpu_tstates": 19252552,
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 129,
+          "sha256": "dc35787245d00f9653fd1a92cc52b9d42d342dd1d9626f3e9ffdddf6cc097aea"
+        },
+        {
+          "address": 32768,
+          "bytes": 255,
+          "sha256": "df36daf3e343228dd01bb425edc6f3911d831e437c002f10a57d529bd6cc96c2"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "lzsa.resumable.build",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "kwargs": {
+        "branch_tuned": true,
+        "compact_sync": true,
+        "core": 32768,
+        "core_limit": 33792,
+        "fast_jumps": true,
+        "nibble_prefill": true
+      },
+      "name": "LZSA2 Fast branch_tuned +prefill +sync",
+      "primary_cpu_tstates": 19242382,
+      "real_cpu_tstates": 19242382,
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 129,
+          "sha256": "4eb802fc83f1605de594c95a28b438ce8223ebbeb558448731858136a26a9c82"
+        },
+        {
+          "address": 32768,
+          "bytes": 257,
+          "sha256": "d3ac5b5639e5ad167fe8425ddf1a227ee8f18d1b66be834574270a40d71312f7"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "lzsa.wide_coroutine.build",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "shared_literals": true
+      },
+      "name": "LZSA2 Wide shared",
+      "primary_cpu_tstates": 17511393,
+      "real_cpu_tstates": 17511393,
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 134,
+          "sha256": "b1a76102bb811d32e4fdb1a71baf965a0118c4a28d1b3b481283c47aa102982d"
+        },
+        {
+          "address": 32768,
+          "bytes": 3479,
+          "sha256": "9a37fd20a0dbc14a63174202b94b69b78db407800ee9555b7fcab96c0a212420"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "begin first invocation plus every slice_until entry through its RET; sum all invocations",
+      "builder": "lzsa.wide_coroutine.build",
+      "codec": "lzsa2",
+      "kind": "coroutine",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "shared_literals": false
+      },
+      "name": "LZSA2 Wide expanded",
+      "primary_cpu_tstates": 17265863,
+      "real_cpu_tstates": 17265863,
+      "regions": [
+        {
+          "address": 31744,
+          "bytes": 134,
+          "sha256": "b1a76102bb811d32e4fdb1a71baf965a0118c4a28d1b3b481283c47aa102982d"
+        },
+        {
+          "address": 32768,
+          "bytes": 7031,
+          "sha256": "36eb08e45eb79096d8d1d286495ef9a49d1f5c491d34ddabc6f03186cc0ed2af"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "producer begin+all producer steps+decoder begin+all resumes through RET",
+      "builder": "lzsa.wide_coroutine.build",
+      "codec": "lzsa2",
+      "guarded_profile_key": "wide-call",
+      "kind": "guarded-call",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "direct_header": false,
+        "output_base": 49152,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "shared_literals": false,
+        "stack": 31712,
+        "streaming": true
+      },
+      "name": "LZSA2 Wide expanded call",
+      "primary_cpu_tstates": 23106239,
+      "real_cpu_tstates": 21822661,
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 276,
+          "sha256": "bff3f729a95549efe6084e6068110220b90c5c7cb1baf59c62d62baf43972cb8"
+        },
+        {
+          "address": 40960,
+          "bytes": 7040,
+          "sha256": "ebab0be4f37db1346d0336301421e838f20f12821c5ab1df27ada7fd7b6d3060"
+        }
+      ],
+      "required_external_library_initializer": "Required guard updates are included in producer work; standalone decode-only timing reports their separate measured cost."
+    },
+    {
+      "benchmark_boundary": "producer begin+all producer steps+decoder begin+all resumes through RET",
+      "builder": "lzsa.wide_coroutine.build",
+      "codec": "lzsa2",
+      "guarded_profile_key": "wide-direct",
+      "kind": "guarded-direct",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "direct_header": true,
+        "output_base": 49152,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "shared_literals": false,
+        "stack": 31712,
+        "streaming": true
+      },
+      "name": "LZSA2 Wide expanded direct",
+      "primary_cpu_tstates": 20892688,
+      "real_cpu_tstates": 19616975,
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 271,
+          "sha256": "e4730d91b371c9f2566d8a60a5364dbb056f0a642c2c6e0b0086dca5811de1f9"
+        },
+        {
+          "address": 40960,
+          "bytes": 7037,
+          "sha256": "7c33c4799b6a8c30593a6375b0757640ee2481ff5439073ae2d2b83920f2db3a"
+        }
+      ],
+      "required_external_library_initializer": "Required guard updates are included in producer work; standalone decode-only timing reports their separate measured cost."
+    },
+    {
+      "benchmark_boundary": "producer begin+all producer steps+decoder begin+all resumes through RET",
+      "builder": "lzsa.wide_coroutine.build",
+      "codec": "lzsa2",
+      "guarded_profile_key": "wide-shared-call",
+      "kind": "guarded-call",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "direct_header": false,
+        "output_base": 49152,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "shared_literals": true,
+        "stack": 31712,
+        "streaming": true
+      },
+      "name": "LZSA2 Wide shared call",
+      "primary_cpu_tstates": 23351769,
+      "real_cpu_tstates": 22068191,
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 276,
+          "sha256": "bff3f729a95549efe6084e6068110220b90c5c7cb1baf59c62d62baf43972cb8"
+        },
+        {
+          "address": 40960,
+          "bytes": 3488,
+          "sha256": "668bc6933b011b9f22cb18e95017e9fa98f467d0c3b96c7c35829353faaadfbe"
+        }
+      ],
+      "required_external_library_initializer": "Required guard updates are included in producer work; standalone decode-only timing reports their separate measured cost."
+    },
+    {
+      "benchmark_boundary": "producer begin+all producer steps+decoder begin+all resumes through RET",
+      "builder": "lzsa.wide_coroutine.build",
+      "codec": "lzsa2",
+      "guarded_profile_key": "wide-shared-direct",
+      "kind": "guarded-direct",
+      "kwargs": {
+        "core": 40960,
+        "core_limit": 48128,
+        "direct_header": true,
+        "output_base": 49152,
+        "prefix": 28672,
+        "prefix_limit": 29696,
+        "shared_literals": true,
+        "stack": 31712,
+        "streaming": true
+      },
+      "name": "LZSA2 Wide shared direct",
+      "primary_cpu_tstates": 21138218,
+      "real_cpu_tstates": 19862505,
+      "regions": [
+        {
+          "address": 28672,
+          "bytes": 271,
+          "sha256": "e4730d91b371c9f2566d8a60a5364dbb056f0a642c2c6e0b0086dca5811de1f9"
+        },
+        {
+          "address": 40960,
+          "bytes": 3485,
+          "sha256": "dbf9a09b4f9848753c91c6398064b975d1da3ca6ed7222e8dbc8f790d8d46c34"
+        }
+      ],
+      "required_external_library_initializer": "Required guard updates are included in producer work; standalone decode-only timing reports their separate measured cost."
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum_branches.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "policy": "fast",
+        "prefix_cap": 127
+      },
+      "name": "ZX0 Maximum branches 127 fast",
+      "primary_cpu_tstates": 139576574,
+      "real_cpu_tstates": 139576574,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 5049,
+          "sha256": "2681d22aa441705ae404425d822e33c1c5673babf46a459e6a26cf36f8a5d1ff"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum_branches.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "policy": "real",
+        "prefix_cap": 127
+      },
+      "name": "ZX0 Maximum branches 127 real",
+      "primary_cpu_tstates": 139701644,
+      "real_cpu_tstates": 139701644,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 5097,
+          "sha256": "b5c31155abbe1a2d6a216ff776cb3cc6824d56885e54357e7da521474e87b87c"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum_branches.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "policy": "corpus",
+        "prefix_cap": 127
+      },
+      "name": "ZX0 Maximum branches 127 corpus",
+      "primary_cpu_tstates": 139915538,
+      "real_cpu_tstates": 139915538,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 5107,
+          "sha256": "36c418ae39152534676e77027931ebea05a96ff177462197d4d73f95d90d4b4a"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum_branches.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "policy": "fast",
+        "prefix_cap": 228
+      },
+      "name": "ZX0 Maximum branches 228 fast",
+      "primary_cpu_tstates": 139552884,
+      "real_cpu_tstates": 139552884,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 7513,
+          "sha256": "5a12b921418813e7d40afe2791a28c77f49ad333146ef88a47a3d433323087f4"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum_branches.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "policy": "real",
+        "prefix_cap": 228
+      },
+      "name": "ZX0 Maximum branches 228 real",
+      "primary_cpu_tstates": 139677954,
+      "real_cpu_tstates": 139677954,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 7561,
+          "sha256": "4be4133cd55ce55cfb64b1901713c95a706ea98bf7d543022e8a7d9151785dc0"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.maximum_branches.build",
+      "codec": "zx0",
+      "kind": "block",
+      "kwargs": {
+        "policy": "corpus",
+        "prefix_cap": 228
+      },
+      "name": "ZX0 Maximum branches 228 corpus",
+      "primary_cpu_tstates": 139891848,
+      "real_cpu_tstates": 139891848,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 7571,
+          "sha256": "95516988e99c38fe794427bb835d32dce70c38e71bf73a731a06959770566e62"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "compact"
+      },
+      "name": "LZSA2 Hybrid compact +cold extension",
+      "primary_cpu_tstates": 15030346,
+      "real_cpu_tstates": 15030346,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4992,
+          "sha256": "adfcfb173d62f3634358ba3acd0f6ff2161d3a05c6cd96b81000757108f06cc8"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "balanced"
+      },
+      "name": "LZSA2 Hybrid balanced +cold extension",
+      "primary_cpu_tstates": 14964996,
+      "real_cpu_tstates": 14964996,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 6493,
+          "sha256": "1eb85b95f28fa794187d2f6d45ad1b250a564d4ad6f3645aa37911ce1183670d"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "fast"
+      },
+      "name": "LZSA2 Hybrid fast +cold extension",
+      "primary_cpu_tstates": 14926306,
+      "real_cpu_tstates": 14926306,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9493,
+          "sha256": "899e5725f87a384cc77f5eb36c8888d1873d6d976719434fdcd0c5c7680d1c70"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "compact-base"
+      },
+      "name": "LZSA2 Hybrid compact-base +cold extension",
+      "primary_cpu_tstates": 15804230,
+      "real_cpu_tstates": 15804230,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 3445,
+          "sha256": "dea76062a1e1943c035503b2ed6659ad169dcab1c3cc6f90187d4f32ea273e1d"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "balanced-base"
+      },
+      "name": "LZSA2 Hybrid balanced-base +cold extension",
+      "primary_cpu_tstates": 15665460,
+      "real_cpu_tstates": 15665460,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4492,
+          "sha256": "d2e16c9a777ca1659755efef07d32c3e4c86ccd13636572dd09cff9841845d3a"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hybrid.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "fast-base"
+      },
+      "name": "LZSA2 Hybrid fast-base +cold extension",
+      "primary_cpu_tstates": 15625370,
+      "real_cpu_tstates": 15625370,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 5493,
+          "sha256": "daff059515fa97ef5c2a9604f7c208acd4b60d4cd94a5a9f6582774680939079"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.wide.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056
+      },
+      "name": "LZSA2 Wide expanded +cold extension",
+      "primary_cpu_tstates": 15605830,
+      "real_cpu_tstates": 15605830,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 6997,
+          "sha256": "0321833216b734da38aa622a6d9ce678fe09ffa9b595c1374ddfb9dfa29853ed"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.wide.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "shared_literals": true
+      },
+      "name": "LZSA2 Wide shared +cold extension",
+      "primary_cpu_tstates": 15851360,
+      "real_cpu_tstates": 15851360,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 3445,
+          "sha256": "3dc3b76dead47a646f75e9c7eebce4873d7cff17a0a628cceceacfca759a63ad"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.wide.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "shared_literals": true,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "name": "LZSA2 Wide shared +short +cold extension",
+      "primary_cpu_tstates": 15203367,
+      "real_cpu_tstates": 15203367,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4131,
+          "sha256": "e15d917a2e5b2e4242e70445d9fe44eea6a5cbb6bf28c668e916186b11f208c5"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.wide.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "repeat_lengths": [
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "shared_literals": true,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "name": "LZSA2 Wide shared +short +repeat +cold extension",
+      "primary_cpu_tstates": 15170706,
+      "real_cpu_tstates": 15170706,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 4221,
+          "sha256": "ec10cf5ab1797065cd48c7abcdee75e88c662e179c64cc9b44a1f10e21c230db"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.wide.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "short_lengths": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "name": "LZSA2 Wide expanded +short 3..8 +cold extension",
+      "primary_cpu_tstates": 14981483,
+      "real_cpu_tstates": 14981483,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9517,
+          "sha256": "dfaf2231e9e614e09030a4d754b2dc7ea9527a6bc49d783350175a14e20b694a"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.wide.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "cold_match_extension": true,
+        "core": 32768,
+        "core_limit": 45056,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "name": "LZSA2 Wide expanded +short 2..8 +cold extension",
+      "primary_cpu_tstates": 14957837,
+      "real_cpu_tstates": 14957837,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9741,
+          "sha256": "dd9675e6bfb585700f42183b46267e10e5dc51aa34bc9f49ba56dc926c3524a6"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hot.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "literals"
+      },
+      "name": "LZSA2 Hot literals",
+      "primary_cpu_tstates": 14913435,
+      "real_cpu_tstates": 14913435,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9523,
+          "sha256": "225a65d4439d009bfddc5f103ecd3ebe9c5593d87400146e786a42fdc2c8174f"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hot.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "nibble"
+      },
+      "name": "LZSA2 Hot nibble",
+      "primary_cpu_tstates": 14918596,
+      "real_cpu_tstates": 14918596,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9509,
+          "sha256": "c780c4bd76b1204fb4bd0cd08e200fa5be698395565fb5c87e31e6d8396b5561"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.hot.build",
+      "codec": "lzsa2",
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 45056,
+        "profile": "combined"
+      },
+      "name": "LZSA2 Hot combined",
+      "primary_cpu_tstates": 14905725,
+      "real_cpu_tstates": 14905725,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 9539,
+          "sha256": "289c23ed93a8557197bcca5c79a78ec2cbe9a0010294a365a42e3603a5f16d4e"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    }
+  ],
+  "retained_stream_sha256": "b92b8fcd06f76d12ccd2697a3096bbc29e587038f2989bb1b88ec1e926192a20",
+  "source_references": {
+    "compact_begin": {
+      "file": "libraries/tests/measure_compact_sync.py",
+      "line": 48,
+      "text": "entry=z['begin' if index==0 else 'slice_until']"
+    },
+    "compact_timer": {
+      "file": "libraries/tests/measure_compact_sync.py",
+      "line": 51,
+      "text": "m.ticks_to_stop=20_000_000"
+    },
+    "compact_total": {
+      "file": "libraries/tests/measure_compact_sync.py",
+      "line": 60,
+      "text": "return dict(tstates=sum(costs)"
+    },
+    "guest_descriptor": {
+      "file": "toolkit/inplace_slot_input_z80.py",
+      "line": 53,
+      "text": "ws(z['block_length'])"
+    },
+    "guest_frontiers": {
+      "file": "toolkit/inplace_streaming_core.py",
+      "line": 44,
+      "text": "a.label('frontier');load(p['destination_high']);store(z['input_high'])"
+    },
+    "guest_input_pointer": {
+      "file": "toolkit/inplace_slot_input_z80.py",
+      "line": 60,
+      "text": "ws(z['input_pointer'])"
+    },
+    "guest_patcher": {
+      "file": "toolkit/inplace_streaming_core.py",
+      "line": 51,
+      "text": "emit_guard_update(a,z,emit=e,operand=n)"
+    },
+    "guest_producer_begin": {
+      "file": "toolkit/inplace_slot_input_z80.py",
+      "line": 31,
+      "text": "a.label('begin'); e('CP 3'"
+    },
+    "lzsa_begin": {
+      "file": "libraries/lzsa/src/lzsa/resumable.py",
+      "line": 229,
+      "text": "cold.label('begin')"
+    },
+    "lzsa_sync": {
+      "file": "libraries/lzsa/src/lzsa/resumable.py",
+      "line": 246,
+      "text": "cold.label('sync')"
+    },
+    "maximum_begin": {
+      "file": "libraries/tests/maximum_coroutine_native.py",
+      "line": 58,
+      "text": "entry=z['begin' if index==0 else 'slice_until']"
+    },
+    "maximum_init": {
+      "file": "libraries/zx0/src/zx0/maximum_coroutine.py",
+      "line": 50,
+      "text": "c.label('begin')"
+    },
+    "maximum_timer": {
+      "file": "libraries/tests/maximum_coroutine_native.py",
+      "line": 65,
+      "text": "m.ticks_to_stop=20_000_000"
+    },
+    "maximum_total": {
+      "file": "libraries/tests/maximum_coroutine_native.py",
+      "line": 84,
+      "text": "return dict(tstates=sum(costs)"
+    },
+    "native_guard_decoder_total": {
+      "file": "libraries/tests/wide_guarded_support.py",
+      "line": 133,
+      "text": "return dict(exact=True,tstates=sum(cost)"
+    },
+    "native_guard_helper": {
+      "file": "libraries/tests/wide_guarded_support.py",
+      "line": 91,
+      "text": "m.af=int(full)<<8;m.pc=z['update_guards']"
+    },
+    "native_guard_helper_cost": {
+      "file": "libraries/tests/wide_guarded_support.py",
+      "line": 95,
+      "text": "helper_cost.append(20_000_000-m.ticks_to_stop)"
+    },
+    "native_guard_separate_total": {
+      "file": "libraries/tests/wide_guarded_support.py",
+      "line": 136,
+      "text": "guard_update_tstates=sum(helper_cost)"
+    },
+    "ordinary_arguments": {
+      "file": "libraries/lzsa/src/lzsa/native.py",
+      "line": 24,
+      "text": "put_word(m,labels['input_pointer'],source)"
+    },
+    "ordinary_begin": {
+      "file": "libraries/lzsa/src/lzsa/native.py",
+      "line": 61,
+      "text": "entry=labels['begin' if index==0 else 'slice_until']"
+    },
+    "ordinary_target": {
+      "file": "libraries/lzsa/src/lzsa/native.py",
+      "line": 59,
+      "text": "put_word(m,labels['slice_target'],output+target)"
+    },
+    "ordinary_timer": {
+      "file": "libraries/lzsa/src/lzsa/native.py",
+      "line": 66,
+      "text": "budget=20_000_000;m.ticks_to_stop=budget"
+    },
+    "ordinary_total": {
+      "file": "libraries/lzsa/src/lzsa/native.py",
+      "line": 89,
+      "text": "return dict(tstates=sum(slices)"
+    },
+    "patcher": {
+      "file": "libraries/lzsa/src/lzsa/streaming.py",
+      "line": 4,
+      "text": "def emit_guard_update"
+    },
+    "producer_begin": {
+      "file": "toolkit/benchmark_inplace_streaming.py",
+      "line": 61,
+      "text": "begin=self.call(self.p['begin'],interrupt)"
+    },
+    "producer_combined": {
+      "file": "toolkit/benchmark_inplace_slot.py",
+      "line": 161,
+      "text": "total_tstates=producer+decoder"
+    },
+    "producer_decoder_timer": {
+      "file": "toolkit/benchmark_inplace_streaming.py",
+      "line": 84,
+      "text": "c.sp=STACK;c.push(STOP);c.decoding=True;start=c.tstates"
+    },
+    "producer_target": {
+      "file": "toolkit/benchmark_inplace_streaming.py",
+      "line": 82,
+      "text": "word(c,self.z['slice_target'],0xc000+target)"
+    },
+    "producer_totals": {
+      "file": "toolkit/benchmark_inplace_streaming.py",
+      "line": 110,
+      "text": "producer_tstates=begin+sum(steps),decoder_tstates=sum(slices)"
+    },
+    "resident_entry": {
+      "file": "libraries/tests/native_block.py",
+      "line": 30,
+      "text": "m.pc,m.sp,m.hl,m.de=entry"
+    },
+    "resident_timer": {
+      "file": "libraries/tests/native_block.py",
+      "line": 68,
+      "text": "m.set_breakpoint(stop);budget=20_000_000;m.ticks_to_stop=budget"
+    },
+    "resident_total": {
+      "file": "libraries/tests/native_block.py",
+      "line": 77,
+      "text": "return dict(tstates=budget-m.ticks_to_stop"
+    },
+    "wide_begin": {
+      "file": "libraries/lzsa/src/lzsa/wide_coroutine.py",
+      "line": 51,
+      "text": "cold.label('begin')"
+    },
+    "wide_static_table": {
+      "file": "libraries/lzsa/src/lzsa/wide.py",
+      "line": 82,
+      "text": "a.label('dispatch_low')"
+    },
+    "wide_sync": {
+      "file": "libraries/lzsa/src/lzsa/wide_coroutine.py",
+      "line": 63,
+      "text": "cold.label('sync')"
+    },
+    "zx0_begin": {
+      "file": "libraries/zx0/src/zx0/resumable.py",
+      "line": 64,
+      "text": "cold.label('slice_begin')"
+    },
+    "zx0_sync": {
+      "file": "libraries/zx0/src/zx0/resumable.py",
+      "line": 78,
+      "text": "cold.label('slice_sync_target')"
+    }
+  },
+  "source_sha256_lf": {
+    "emulator/cpu.py": "4a43446648f032ba442025e8804582cef661435e1ef199f0c4715fed78d1128e",
+    "emulator/src/codec_cpu.c": "90d505995a3fb8b90de6610da034c3eac8d6b3470764f7400988d7d849503a38",
+    "libraries/lzsa/src/lzsa/_branch_tuning.py": "5a209f6251f5b39bb33a950656c6c6e7acb07d2b4299e6e8eddf648d4b1db3aa",
+    "libraries/lzsa/src/lzsa/block.py": "f909370ee4c475ae7115bd47b1011c9482e70aa20811286f74783c9e673dac0a",
+    "libraries/lzsa/src/lzsa/hot.py": "525f7922b967c46f01a675a13e4fdaba7d249447b05060b2bf285bc4971577b5",
+    "libraries/lzsa/src/lzsa/hybrid.py": "a7a5258382c13339c300b8f21440da1637a407c5fac3f4cdab4bc177c306379a",
+    "libraries/lzsa/src/lzsa/native.py": "536c5a202b16988b280d0627a0e973f10d942caf76c2ae2ed810c8949194010e",
+    "libraries/lzsa/src/lzsa/resumable.py": "bd6a4559e30b66d65c483e458348589b99497539001f4f1de1a1f98651bd0f40",
+    "libraries/lzsa/src/lzsa/streaming.py": "8cdf842acc989b253c31bf7d0dc2e5e238afd6e975436f8a988002eb15c80aaa",
+    "libraries/lzsa/src/lzsa/wide.py": "9aeca47bc02de53710ffdd82b2ec30b2149b6a5a7bc275c96053ee45e8ae1a89",
+    "libraries/lzsa/src/lzsa/wide_coroutine.py": "02bd6b2e041534e658a8ff4c4dbc133c62db83711f5e010fd1dcccda884cfd30",
+    "libraries/tests/audit_benchmark_initialization.py": "a32f1d4b27b110ed19aed1a6a85b11b7e49c10f294fbfe147260596ad3fa6e85",
+    "libraries/tests/maximum_coroutine_native.py": "69aa478c4fbc6bc51bb4a88a901d0121c07a360f65b22144ed69b29f2645b833",
+    "libraries/tests/measure_bit_phases.py": "4649acbe8390a7040de55763f7c8743ed2b8dcb7d5a325c2f66e0d61fe8daaf1",
+    "libraries/tests/measure_compact_branches.py": "a1a9aac0025abf08f50da0f2631a6218bd40509fc62a8510931c1d8b70c178d1",
+    "libraries/tests/measure_compact_frontier.py": "84417faafdbdd1d9bc223bdc398bf786d57c5fc372c1ac3e6a13fc350630939a",
+    "libraries/tests/measure_compact_profile.py": "30a28c1c0cdfcbc296c8659ca93c56a4c9d469d3b68a58482f541c9decb05e0f",
+    "libraries/tests/measure_compact_sync.py": "51634919ea42b3a802c836cc6faff6cc2bc8f74a948a73bf1d71df7b87b9a478",
+    "libraries/tests/measure_fast_jumps.py": "271c95ee46fa41a76cf6d77b6f3ff72392cf7c38683472994994cb8e811aa391",
+    "libraries/tests/measure_maximum_coroutine.py": "801fef25804d60480479995ce4706472a0eecc98021d837d7cc8e36d15e47037",
+    "libraries/tests/measure_wide_coroutine.py": "2a2a4fcdca7d834c1d90f8957c399cc7025bb992285035ca40bf115d0e22a1e1",
+    "libraries/tests/measure_wide_guarded.py": "49425ce69822d273bbbb26fd4a8f99e90ef5789fee4ebb46fde8923ce56605ff",
+    "libraries/tests/native_block.py": "94bb095d918546ee3e54af1088e814f8442ca26ce65efd519574e72f1f104b3e",
+    "libraries/tests/native_inplace_block.py": "a5b6806483d10b0d0aaed5ebbae24c5c1bcf57242c672e7b23927381bed171cd",
+    "libraries/tests/summarize_wide_guarded.py": "7ab8197c311793ca22dcd926044b00705ecd64202035e92e8f04db7a1d9fd1f5",
+    "libraries/tests/wide_guarded_support.py": "c77cd9c3204e1667011a65fd76765e1163bf264572dd76ee9fd7c4449891e764",
+    "libraries/zx0/src/zx0/_branch_tuning.py": "447b1414ac9cf47e1c84bf46be749fbbc65b0ac7cf2a87dbc6afe56533254f54",
+    "libraries/zx0/src/zx0/asm/dzx0_fast.asm": "bb4c0d8f359091522958d7ffc12b841629412a91a81ebd7eb03f824877bf5fd4",
+    "libraries/zx0/src/zx0/asm/dzx0_mega.asm": "6a3774508bf8d0f7a6cf08851a22e836aaedccf56dc1ef119b3e04e0f79fb23a",
+    "libraries/zx0/src/zx0/asm/dzx0_standard.asm": "95b5dde1cfb334cb09d8be566728662bd94eb867f8c2f5437c31d78f2f4647b0",
+    "libraries/zx0/src/zx0/asm/dzx0_turbo.asm": "9de7ca474bf03bdb4fe773f0eb1327744fae5558c285d5e670388b8ba20bc39d",
+    "libraries/zx0/src/zx0/block.py": "cad29f8ffa3b104d012787d87ca78adf2d81b6bc5de2ffece605f51320ed2c46",
+    "libraries/zx0/src/zx0/codec.py": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91",
+    "libraries/zx0/src/zx0/maximum.py": "88a22fe1c79af6a2491fc2f17e21d79d0ac48878e90550fedfa2fd0c2e72cb84",
+    "libraries/zx0/src/zx0/maximum_branches.py": "96c4a792548a1f7414bbb301a835b7d4f1bd9873a5edc8cb1ec9fad31eca2d28",
+    "libraries/zx0/src/zx0/maximum_coroutine.py": "3c14dafba5efac6696e6e96a5947012285cab490d07164ba70de7f5b5d580139",
+    "libraries/zx0/src/zx0/resumable.py": "f2a614b3ef6c9b4b9977c0e56fe0ef533ef41019ac1bf5617a521757205d6ddd",
+    "toolkit/benchmark_inplace_slot.py": "f840275a215aa3f2c8dbc03a0cfd71ec60072bfc26f39a842f255d128a076a9e",
+    "toolkit/benchmark_inplace_streaming.py": "dc811b4746c9bdd9a0e414fa9199c3b1294f0f12c0d80380385249d2c00200be",
+    "toolkit/inplace_slot_input_z80.py": "aed5462418016e17a64708b313e38dfc48a886f1c40bd006dd4db7370f1d5319",
+    "toolkit/inplace_streaming_core.py": "584a5d7b60646af48df0e96f7e51795f3e4a1898f868813ad2a7f5f8d4826dd0",
+    "toolkit/test_streaming_lzsa2.py": "8b2f7ffe1fb69938dbfa318563b11dbf9ae9abc93b654841bfb48a4a3444dc34"
+  }
+}

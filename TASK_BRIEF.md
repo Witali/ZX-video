@@ -27,6 +27,14 @@ correctness/IRQ/relocation/overlap/package gates. Preserve all slower cases.
 Include all required Z80 library initialization in benchmarks: every per-block
 setup and any separate one-time preparation. Show setup/decode components,
 cold-start latency and batch totals; no required initialization is free.
+[The completed accounting audit](libraries/BENCHMARK_INITIALIZATION.md) checks
+all71 current calls: resident/ordinary begin work was already timed; guarded
+tables now show producer+decoder totals, including70T producer begin/block
+and initial/repeated guard patching. Expanded CALL/direct real service CPU
+is23,106,239/20,892,688 T, improving same-mode pass Fast8.4733%/9.2876%.
+Historical guarded decoder-only counts remain labelled components. Caller
+CALL17/ABI parameter passing and physical I/O/IRQ remain explicit exclusions
+from the entry-through-return service convention, not hidden library setup.
 Exclude compressed input/output/history; include code, variables, tables,
 padding, scratch/internal buffers and required stacks. Never count host
 generator/emulator storage as target RAM. Historical verdicts below retain

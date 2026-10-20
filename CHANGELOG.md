@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Include initialization and guard work in benchmark accounting
+
+- **Objective/scope:** The user requires preliminary library initialization
+  to enter benchmark totals. Audit all71 linked selections against current
+  entry/timer sources and complete retained native evidence. This is an
+  accounting change, with no target-code change or new native measurement.
+- **Findings:** All55 resident and12 ordinary-coroutine selections already
+  include their start/begin/sync, per-block cache/offset setup and exact return.
+  Guarded replay measures producer begin70T/block and inline guard updates
+  in producer CPU, while previous table columns show decoder-only CPU.
+  The separate flat guarded runner returns guard_update_tstates separately;
+  consumer-plus-patcher time is their sum. Do not add this helper again when
+  using real producer totals, which already include its inline implementation.
+- **Complete guarded totals:** Expanded CALL/direct use23,106,239/20,892,688
+  real T; shared CALL/direct23,351,769/21,138,218. Their unchanged producers
+  cost1,283,578/1,275,713 T, including1,470T begin work over21 real blocks.
+  Same-mode pass Fast totals are25,245,352/23,031,801 T. Expanded gains are
+  therefore8.4733%/9.2876% for the complete measured service; older decoder-
+  only percentages remain explicitly labelled historical components.
+- **Validation/decision:** Reconcile all63 input/output/stream bindings,
+  772 sectors,795 total/605 real guard updates, initial/repeated patch costs
+  and all six standalone placements. Hash21 proofs/42 sources and derive
+  setup ledgers from the instruction table. The audit reproducer passes;
+  the table revalidates71 exact API/ORG+DB exports and keeps preceding bytes,
+  memory and decoder-only reference counts intact. No initialization is
+  removed from measurement or charged twice. External caller CALL17 and
+  ABI argument writes remain an explicit entry-through-RET convention;
+  physical disk/ROM/ULA/IRQ and complete application CPU remain separate.
+  [Initialization audit](libraries/BENCHMARK_INITIALIZATION.md),
+  [machine-readable proof](libraries/evidence/benchmark_initialization.json),
+  [reproducer](libraries/tests/audit_benchmark_initialization.py),
+  [full and component comparisons](libraries/DECODER_VARIANTS.md).
+
 ## 2026-10-20 — Qualify three LZSA2 hot size/speed points
 
 - **Objective/baseline:** Complete bounded F00 under the user's Pareto scope,

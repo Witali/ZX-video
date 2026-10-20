@@ -50,6 +50,8 @@ def main():
     second=read('second_pass_verification.json')
     shared_zx0=read('evidence/shared_zero_prefix_native.json.gz')
     hybrid_lzsa=read('evidence/hybrid_public_verification.json')
+    initialization=read('evidence/benchmark_initialization.json')
+    assert initialization['complete'] and initialization['native_cases_reexecuted']==0
     originals={
         ('zx0','block'):old_zx['summary']['fast']['real_tstates'],
         ('zx0','coroutine'):compact['profiles']['zx0-coroutine']['summary']['real_baseline_tstates'],
@@ -328,6 +330,16 @@ def main():
             row['resident_real_frontier']=not dominated
             if not dominated:keep.append(row)
         frontier[codec]=sorted(keep,key=lambda row:(row['service_bytes'],row['real_cpu_tstates']))
+    for row in records:
+        row['real_total_benchmark_tstates']=row['real_cpu_tstates']
+        if row['kind'].startswith('guarded-'):
+            mode=row['kind'].removeprefix('guarded-')
+            key=('wide-shared-' if row['kwargs']['shared_literals'] else 'wide-')+mode
+            audit=initialization['guarded_profiles'][key]
+            assert audit['real_decoder_tstates']==row['real_cpu_tstates']
+            assert audit['real_total_tstates']==audit['real_producer_tstates']+row['real_cpu_tstates']
+            row['real_total_benchmark_tstates']=audit['real_total_tstates']
+            row['initialization_and_producer_accounting']=audit
 
     # Check that every documented call produces a usable standalone include.
     # This is export validation, not a new timing/correctness benchmark.
@@ -354,7 +366,9 @@ def main():
         'recompressing a valid compatible block. The table covers the named measured',
         'selection points, including the smallest retained valid decoders.','',
         '## Reading the measurements','',
-        '- **CPU T** is the complete real-corpus deterministic instruction count.',
+        '- **CPU T** measures complete entry-through-return work on the frozen real corpus.',
+        '  Guarded tables additionally show **total CPU** for producer+decoder, including',
+        '  initialization and guard updates; their historical decoder-only column is explicit.',
         '- **Delta vs pass** compares with Fast at `f5a0362c`; LZSA2 includes `fast_jumps=True`.',
         '- **Delta vs original** compares with the project\'s pre-policy adapted Fast:',
         '  all optional tuning flags off, with the same ABI and input data.',
@@ -372,7 +386,9 @@ def main():
         'of setup per block and28 T of EOF restoration/RET; its external initializer is0 T.',
         'The512-byte static dispatch table is emitted in the library image. Any future',
         'separate one-time preparation must be shown in cold-start and batch totals.',
-        'The retained convention measures entry through RET; caller CALL17 is additional.','',
+        'The retained convention measures entry through RET; caller CALL17 is additional.',
+        '[Initialization audit](BENCHMARK_INITIALIZATION.md) authenticates all measured',
+        'entry/timer scopes and the guarded total CPU below; target setup is not free.','',
         'Original means the retained pre-policy project implementation; no timing claim',
         'for an unmodified upstream executable is implied. ZX0 Standard and LZSA2 Small',
         'are additional size-oriented choices, not substituted for the Fast baselines.','',
@@ -380,6 +396,14 @@ def main():
         '| --- | ---: | ---: |']
     for codec,kind in originals:
         lines.append(f'| {codec} / {kind} | {number(originals[codec,kind])} | {number(baselines[codec,kind])} |')
+    lines += ['','Guarded references above preserve historical decoder-only counts.',
+        'The complete initialization/supplier/decoder Fast references are:','',
+        '| Guarded mode | Original Fast total CPU T | Pass Fast total CPU T |',
+        '| --- | ---: | ---: |']
+    for mode in ('call','direct'):
+        audit=initialization['guarded_profiles']['wide-'+mode]
+        lines.append(f'| {mode} | {number(audit["real_original_fast_total_tstates"])} | '
+            f'{number(audit["real_pass_fast_total_tstates"])} |')
     lines += ['','## Shared placement arguments','',
         'Import the module named in a linked call. The source link targets its actual',
         '`build` function; the visible call includes all variant-selection arguments.',
@@ -401,18 +425,43 @@ def main():
                 'guard patcher. The full reference additionally includes the retained supplier,',
                 '256-byte carry, I/O code/state, 1,280-byte mock workspace, required stacks and',
                 'the tested IRQ. Carry is specific to that supplier, not every possible supplier.',
-                'CPU columns compare decoder work only, using the same original 63-case supplier',
-                'harness and its 21 real blocks; producer CPU and sector delivery are separate.','']
-        lines += ['| Variant | Service B | CPU T | Delta vs pass | Delta vs original | Builder call / source |',
-                  '| --- | ---: | ---: | ---: | ---: | --- |']
+                'The total CPU column sums producer+decoder on the same original 63-case supplier',
+                'harness and its 21 real blocks. It includes producer begin, decoder begin/sync/EOF',
+                'and inline guard patching. Decoder-only deltas remain as historical comparisons.',
+                'Caller parameter passing, IRQ, physical sector/ROM time and movie deadlines are separate.','']
+        guarded_table='guarded-call' in kinds
+        lines += (['| Variant | Service B | Total CPU T | Decoder-only T | Decoder delta vs pass / original | Builder call / source |',
+                   '| --- | ---: | ---: | ---: | ---: | --- |'] if guarded_table else
+                  ['| Variant | Service B | CPU T | Delta vs pass | Delta vs original | Builder call / source |',
+                   '| --- | ---: | ---: | ---: | ---: | --- |'])
         for row in records:
             if row['kind'] not in kinds:continue
             memory=number(row['service_bytes'])
             if row['full_reference_service_bytes'] is not None:memory+=' / '+number(row['full_reference_service_bytes'])
             call=f'[{row["display_call"]}]({row["source_file"]}#L{row["source_line"]})'
-            lines.append(f'| {row["name"]} | {memory} | {number(row["real_cpu_tstates"])} | '
-                f'{percent(row["delta_time_vs_pass_percent"])} | {percent(row["delta_time_vs_original_percent"])} | {call} |')
+            if guarded_table:
+                lines.append(f'| {row["name"]} | {memory} | {number(row["real_total_benchmark_tstates"])} | '
+                    f'{number(row["real_cpu_tstates"])} | {percent(row["delta_time_vs_pass_percent"])} / '
+                    f'{percent(row["delta_time_vs_original_percent"])} | {call} |')
+            else:
+                lines.append(f'| {row["name"]} | {memory} | {number(row["real_cpu_tstates"])} | '
+                    f'{percent(row["delta_time_vs_pass_percent"])} | {percent(row["delta_time_vs_original_percent"])} | {call} |')
         lines.append('')
+    lines += ['## Guarded total benchmark comparisons','',
+        'These totals include every measured initialization/guard operation through the',
+        'real supplier and the decoder. Do not add their begin costs again. All variants',
+        'use the same saved input stream and supplier mode; physical I/O latency is separate.','',
+        '| Variant | Setup/supplier CPU T | Decoder CPU T | Total T | Total delta vs pass / original |',
+        '| --- | ---: | ---: | ---: | ---: |']
+    for row in records:
+        if not row['kind'].startswith('guarded-'):continue
+        audit=row['initialization_and_producer_accounting']
+        total=audit['real_total_tstates']
+        delta=lambda reference:percent(100*(Decimal(total)/Decimal(reference)-1))
+        lines.append(f'| {row["name"]} | {number(audit["real_producer_tstates"])} | '
+            f'{number(audit["real_decoder_tstates"])} | {number(total)} | '
+            f'{delta(audit["real_pass_fast_total_tstates"])} / {delta(audit["real_original_fast_total_tstates"])} |')
+    lines.append('')
     e01_records=[row for row in records if 'e01' in row]
     f00_records=[row for row in records if 'f00' in row]
     fastest={codec:min((row for row in records if row['codec']==codec and row['kind']=='block'),
@@ -550,6 +599,7 @@ def main():
         '[E01 public API/wheel authentication](evidence/next_e01_public_verification.json),',
         '[F00 full native proof](evidence/next_f00_full.json.gz),',
         '[F00 public/wheel authentication](evidence/next_f00_public_verification.json),',
+        '[Initialization and guarded-total audit](evidence/benchmark_initialization.json),',
         '[Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),',
         '[shared-prefix contracts](ZX0_SHARED_PREFIXES.md),',
         '[Hybrid API/wheel/native binding](evidence/hybrid_public_verification.json),',

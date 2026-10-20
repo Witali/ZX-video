@@ -7,7 +7,9 @@ selection points, including the smallest retained valid decoders.
 
 ## Reading the measurements
 
-- **CPU T** is the complete real-corpus deterministic instruction count.
+- **CPU T** measures complete entry-through-return work on the frozen real corpus.
+  Guarded tables additionally show **total CPU** for producer+decoder, including
+  initialization and guard updates; their historical decoder-only column is explicit.
 - **Delta vs pass** compares with Fast at `f5a0362c`; LZSA2 includes `fast_jumps=True`.
 - **Delta vs original** compares with the project's pre-policy adapted Fast:
   all optional tuning flags off, with the same ABI and input data.
@@ -27,6 +29,8 @@ of setup per block and28 T of EOF restoration/RET; its external initializer is0 
 The512-byte static dispatch table is emitted in the library image. Any future
 separate one-time preparation must be shown in cold-start and batch totals.
 The retained convention measures entry through RET; caller CALL17 is additional.
+[Initialization audit](BENCHMARK_INITIALIZATION.md) authenticates all measured
+entry/timer scopes and the guarded total CPU below; target setup is not free.
 
 Original means the retained pre-policy project implementation; no timing claim
 for an unmodified upstream executable is implied. ZX0 Standard and LZSA2 Small
@@ -40,6 +44,14 @@ are additional size-oriented choices, not substituted for the Fast baselines.
 | lzsa2 / coroutine | 19,412,006 | 19,407,004 |
 | lzsa2 / guarded-call | 23,966,776 | 23,961,774 |
 | lzsa2 / guarded-direct | 21,761,090 | 21,756,088 |
+
+Guarded references above preserve historical decoder-only counts.
+The complete initialization/supplier/decoder Fast references are:
+
+| Guarded mode | Original Fast total CPU T | Pass Fast total CPU T |
+| --- | ---: | ---: |
+| call | 25,250,354 | 25,245,352 |
+| direct | 23,036,803 | 23,031,801 |
 
 ## Shared placement arguments
 
@@ -142,15 +154,30 @@ Service is **consumer / full aligned reference**. The consumer includes the
 guard patcher. The full reference additionally includes the retained supplier,
 256-byte carry, I/O code/state, 1,280-byte mock workspace, required stacks and
 the tested IRQ. Carry is specific to that supplier, not every possible supplier.
-CPU columns compare decoder work only, using the same original 63-case supplier
-harness and its 21 real blocks; producer CPU and sector delivery are separate.
+The total CPU column sums producer+decoder on the same original 63-case supplier
+harness and its 21 real blocks. It includes producer begin, decoder begin/sync/EOF
+and inline guard patching. Decoder-only deltas remain as historical comparisons.
+Caller parameter passing, IRQ, physical sector/ROM time and movie deadlines are separate.
 
-| Variant | Service B | CPU T | Delta vs pass | Delta vs original | Builder call / source |
+| Variant | Service B | Total CPU T | Decoder-only T | Decoder delta vs pass / original | Builder call / source |
 | --- | ---: | ---: | ---: | ---: | --- |
-| LZSA2 Wide expanded call | 7,344 / 9,881 | 21,822,661 | -8.9272% | -8.9462% | [lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=False, shared_literals=False)](lzsa/src/lzsa/wide_coroutine.py#L16) |
-| LZSA2 Wide expanded direct | 7,336 / 9,870 | 19,616,975 | -9.8323% | -9.8530% | [lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=True, shared_literals=False)](lzsa/src/lzsa/wide_coroutine.py#L16) |
-| LZSA2 Wide shared call | 3,792 / 6,329 | 22,068,191 | -7.9025% | -7.9217% | [lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=False, shared_literals=True)](lzsa/src/lzsa/wide_coroutine.py#L16) |
-| LZSA2 Wide shared direct | 3,784 / 6,318 | 19,862,505 | -8.7037% | -8.7247% | [lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=True, shared_literals=True)](lzsa/src/lzsa/wide_coroutine.py#L16) |
+| LZSA2 Wide expanded call | 7,344 / 9,881 | 23,106,239 | 21,822,661 | -8.9272% / -8.9462% | [lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=False, shared_literals=False)](lzsa/src/lzsa/wide_coroutine.py#L16) |
+| LZSA2 Wide expanded direct | 7,336 / 9,870 | 20,892,688 | 19,616,975 | -9.8323% / -9.8530% | [lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=True, shared_literals=False)](lzsa/src/lzsa/wide_coroutine.py#L16) |
+| LZSA2 Wide shared call | 3,792 / 6,329 | 23,351,769 | 22,068,191 | -7.9025% / -7.9217% | [lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=False, shared_literals=True)](lzsa/src/lzsa/wide_coroutine.py#L16) |
+| LZSA2 Wide shared direct | 3,784 / 6,318 | 21,138,218 | 19,862,505 | -8.7037% / -8.7247% | [lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=True, shared_literals=True)](lzsa/src/lzsa/wide_coroutine.py#L16) |
+
+## Guarded total benchmark comparisons
+
+These totals include every measured initialization/guard operation through the
+real supplier and the decoder. Do not add their begin costs again. All variants
+use the same saved input stream and supplier mode; physical I/O latency is separate.
+
+| Variant | Setup/supplier CPU T | Decoder CPU T | Total T | Total delta vs pass / original |
+| --- | ---: | ---: | ---: | ---: |
+| LZSA2 Wide expanded call | 1,283,578 | 21,822,661 | 23,106,239 | -8.4733% / -8.4914% |
+| LZSA2 Wide expanded direct | 1,275,713 | 19,616,975 | 20,892,688 | -9.2876% / -9.3073% |
+| LZSA2 Wide shared call | 1,283,578 | 22,068,191 | 23,351,769 | -7.5007% / -7.5190% |
+| LZSA2 Wide shared direct | 1,275,713 | 19,862,505 | 21,138,218 | -8.2216% / -8.2415% |
 
 ## E01 increments against the accepted resident variants
 
@@ -330,6 +357,7 @@ emitters behind a dispatcher, use these implementation functions:
 [E01 public API/wheel authentication](evidence/next_e01_public_verification.json),
 [F00 full native proof](evidence/next_f00_full.json.gz),
 [F00 public/wheel authentication](evidence/next_f00_public_verification.json),
+[Initialization and guarded-total audit](evidence/benchmark_initialization.json),
 [Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),
 [shared-prefix contracts](ZX0_SHARED_PREFIXES.md),
 [Hybrid API/wheel/native binding](evidence/hybrid_public_verification.json),
