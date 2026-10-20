@@ -26,6 +26,15 @@ fast choice gaining 4.349245%. Use `lzsa.hybrid.build(profile='compact')` or
 `profile='fast'`, then the normal exporter. All token forms remain valid;
 these new profiles are resident-only and retain directed regression lists.
 
+The [E01 ZX0 branch layouts](NEXT_E01_ZX0_BRANCHES.md) add the self-contained
+`zx0.maximum_branches.build(prefix_cap=228, policy='fast')`: 7,517 service B
+and 139,552,884 real T, improving both metrics against shared Maximum228.
+Cap127 uses 5,053 B/139,576,574 T. Policies `'real'` and `'corpus'` retain
+smaller branch selections with fewer measured regressions. The
+[LZSA2 cold layout](NEXT_E01_LZSA.md), selected with
+`lzsa.hybrid.build('fast', cold_match_extension=True)`, uses 9,499 B and
+14,926,306 T. All these options are resident-only; defaults stay exact.
+
 [Next Z80 experiments](NEXT_TRICKS_PLAN.md) records the researched follow-up
 queue, fixed current baselines, memory/timing bounds and complete test gates.
 Its candidates are planned hypotheses, not newly benchmarked improvements.

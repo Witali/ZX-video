@@ -1,9 +1,9 @@
-# E01 ZX0 branch contractions: native experiment complete
+# E01 ZX0 branch contractions
 
 2026-10-20. Fixed baseline `9c28b01f`; unchanged resident Maximum with shared
-prefixes. This is a test-only experiment. Its accepted candidates still need
-public package/export integration; existing ZX0 generator/default bytes have
-not changed. [E00](NEXT_E00_BASELINE.md) supplied the frozen input/outcome
+prefixes. The six accepted candidates are now optional public modes in
+[zx0.maximum_branches.build](zx0/src/zx0/maximum_branches.py); existing
+Maximum/default bytes remain exact. [E00](NEXT_E00_BASELINE.md) supplied the frozen input/outcome
 observations, without which no new speed claim was made.
 
 ## Complete measured results
@@ -62,15 +62,37 @@ IRQ<=10 B; disjoint/in-place IRQ CPU totals agree. The original protected
 `z80==1.2.0` backend is used throughout; the separately developed C/Spectrum
 platform is not used to qualify these candidates.
 
-## Decision, reproduction and remaining integration
+## Public selection, decision and reproduction
 
 Accept the six candidates for optional public integration because each
 strictly lowers real decode CPU and complete service memory against its
 same-cap predecessor, with all regressions retained. The middle policy has
 less speed/size gain but fewer non-real regressions; the third retains no
 slower tested case. Do not replace old defaults or infer wrapper qualification.
-The [execution plan](NEXT_TRICKS_PLAN.md) still has the LZSA2 part of E01 and
-E02..E07 pending.
+Use public policies `'fast'`, `'real'` or `'corpus'` for the three table
+selections, with `prefix_cap=228` or `127`. Installed selectors are fixed and
+self-contained; no tests, AST, benchmark/evidence files or runtime profiling
+are required. Each selected original opcode/target and the final code size
+are checked against its qualified layout before exporting. Existing Maximum
+builders still offer their original shared/unshared implementations.
+
+```python
+from zx0.maximum_branches import build
+from zx0.export import export
+export("build/zx0", *build(prefix_cap=228, policy="fast"))
+```
+
+```powershell
+python -m zx0 build --variant maximum-branches --prefix-cap 127 --branch-policy corpus --output build/zx0
+```
+
+The [public source authentication](evidence/next_e01_zx0_public.json) binds
+all six current builders, every label and all 256 alignments/four native
+origins to the independent binary oracle and archived complete native proof.
+The [combined package proof](evidence/next_e01_public_verification.json) adds
+isolated wheel/ORG-DB export and existing default/integration checks. Reusing
+native evidence by exact bytes does not constitute a fresh native replay.
+The [execution plan](NEXT_TRICKS_PLAN.md) records E02..E07 separately.
 
 ```powershell
 python libraries/tests/measure_next_zx0_branches.py --output libraries/evidence/next_e01_zx0_branches.json.gz
@@ -78,7 +100,6 @@ python libraries/tests/measure_next_zx0_branches.py --output libraries/evidence/
 
 [Reproducer](tests/measure_next_zx0_branches.py) and
 [complete evidence/source hashes](evidence/next_e01_zx0_branches.json.gz).
-Public integration must bind installed current bytes/labels to this proof,
-test old defaults/resources and isolated API/CLI/ORG-DB exports, then add exact
-public function/file links to the variant table. A test-only builder is not
-an installed library feature.
+The original private emitter remains a reproducible experiment harness; the
+installed public feature has a separate self-contained implementation and
+exact function/file links in [the variant table](DECODER_VARIANTS.md).

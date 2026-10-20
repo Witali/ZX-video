@@ -126,7 +126,7 @@ _SELECTOR_INFO = {
 }
 
 
-def build(profile="fast", *, core=0x8000, core_limit=0xc000):
+def build(profile="fast", *, core=0x8000, core_limit=0xc000, cold_match_extension=False):
     """Return resident raw regions/labels/metadata for a fixed Hybrid layout.
 
     compact/balanced/fast include new-offset2..8 and repeat-offset4..8
@@ -137,6 +137,9 @@ def build(profile="fast", *, core=0x8000, core_limit=0xc000):
     Source and full output/history stay resident and separate from service
     storage. Add actual IRQ/hardware stack headroom separately. Writable
     operands are nonreentrant. No output quota or partial-input API is exposed.
+    Optional cold_match_extension uses a hot nibble-match fallthrough and a
+    short conditional branch to the unchanged byte/word/EOF escape. Classic
+    defaults retain their complete original bytes, labels and metadata.
     """
     if not isinstance(profile, str) or profile not in _GROUP_COUNTS:
         raise ValueError("unknown Hybrid profile; use compact, balanced, fast or their -base variants")
@@ -151,6 +154,7 @@ def build(profile="fast", *, core=0x8000, core_limit=0xc000):
         ranks[base] = rank
     specialized = not profile.endswith("-base")
     regions, labels, metadata = _wide_build(core=core, core_limit=core_limit,
+        cold_match_extension=cold_match_extension,
         short_lengths=range(2,9) if specialized else (),
         repeat_lengths=range(4,9) if specialized else (),
         _groups_by_body=groups, _fallthrough_order=ranks)
@@ -160,4 +164,11 @@ def build(profile="fast", *, core=0x8000, core_limit=0xc000):
         nominal_aligned_service_bytes=aligned_service,
         reference_real_tstates=real_tstates, reference_aligned_blob_sha256=aligned_sha,
         literal_fallthrough_ranks=[list(rank) for rank in _LL_RANKS])
+    if cold_match_extension:
+        # Frozen selectors still describe literal sharing. Their old CPU/hash
+        # are classic-layout baselines, not evidence for the changed decoder.
+        metadata.update(variant="hybrid-"+profile+"-cold-match-block",
+            nominal_aligned_service_bytes=aligned_service-1,
+            classic_reference_real_tstates=metadata.pop('reference_real_tstates'),
+            classic_reference_aligned_blob_sha256=metadata.pop('reference_aligned_blob_sha256'))
     return regions, labels, metadata

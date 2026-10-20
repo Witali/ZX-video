@@ -25,12 +25,22 @@ and required stacks. Keep the 10,000-byte cap and publish all slower cases.
 Faster/larger or smaller/slower experiments remain evidence, not promoted
 modes in this pass. [E00](libraries/NEXT_E00_BASELINE.md) is complete:
 946 ZX0 + 2,025 LZSA2 observer runs and 3,444 actual compressed-overlap
-plain/IRQ/relocation runs reproduce all frozen per-case counts. E01 is in
-progress; E02..E07 remain pending. [ZX0 E01](libraries/NEXT_E01_ZX0_BRANCHES.md)
-has17,028 complete native replays plus six FFFFh probes for six test-only
-branch candidates: -61/-13/-3 B and -339,934/-214,864/-970 real T, with no
-slower real block. Retain103/38/0 non-real regression lists; public API/CLI/
-wheel integration is still pending. LZSA2 cold-layout E01 remains running.
+plain/IRQ/relocation runs reproduce all frozen per-case counts. E01 is now
+complete; E02..E07 remain pending. [ZX0 E01](libraries/NEXT_E01_ZX0_BRANCHES.md)
+has17,028 complete native replays plus six FFFFh probes for six branch
+candidates: -61/-13/-3 B and -339,934/-214,864/-970 real T, with no slower
+real block. Public `zx0.maximum_branches.build(prefix_cap=228|127,
+policy='fast'|'real'|'corpus')` embeds fixed selectors; retain103/38/0
+non-real regression lists. [LZSA2 E01](libraries/NEXT_E01_LZSA.md) completes
+12x675 candidate plain/IRQ/relocation +actual minimum-safe overlap modes:
+48,600 candidate runs +8,100 independent classic observations. Its opt-in
+`cold_match_extension=True` saves1 B/18,123 real T in every qualified fixed
+Wide/Hybrid profile. All real blocks improve;586 non-real cases slow by at
+most37 T. Fast is9,499 B/14,926,306 T; compact4,998 B/15,030,346 T. Public
+wheel/API/export integration and74 library/24 selected toolkit tests bind
+current bytes to complete proofs; [68 linked calls](libraries/DECODER_VARIANTS.md)
+retain all50 older choices. Original defaults remain exact. Once the E01
+focused commit is made, proceed to bounded E02; E02..E07 are not completed.
 
 The user additionally requests using/adapting the C CPU from
 `C:/Work/z80-tester` for Spectrum and developing it inside this project.
@@ -53,7 +63,7 @@ divergence. Local generators repair the initially stale fused slice artifact.
 Instruction-level ULA contention and live banked guards remain unqualified;
 `Spectrum128(contention=True).attach(cpu)` is rejected. Preserve original protected
 IRQ/overlap/wrapper gates. No GUI, disk/movie qualification or main merge/push
-is implied. Continue E01 public integration and remaining E02..E07 experiments.
+is implied. Continue the remaining E02..E07 experiments after the E01 commit.
 
 ## Active codec goal — speed/service-memory frontier (2026-10-19)
 

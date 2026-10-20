@@ -54,6 +54,15 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
     if metadata.get('branch_tuned'):
         lines += ['; Optional measured conditional branches: JR 7/12 T versus JP 10 T.',
                   '; Conditions/flags are unchanged; some synthetic cases are slower.', '']
+    if metadata.get('variant')=='maximum-branches':
+        measured=metadata['qualified_corpus']
+        lines += [f'; Optional resident Maximum branch policy {metadata["maximum_branch_policy"]}: '
+                  f'{metadata["conditional_branch_site_count"]} fixed JP cc -> JR cc sites, one byte smaller each.',
+                  '; Before 10 T; after 7 T untaken / 12 T taken. Conditions and flags are unchanged.',
+                  f'; Retained 473-case regressions: {measured["slower_cases"]} cases, '
+                  f'{measured["slower_real_cases"]} real; maximum delta {measured["maximum_case_delta_tstates"]:+d} T.',
+                  '; Policies describe the measured input corpus; arbitrary streams can exercise slower outcomes.',
+                  '; Resident complete-input ABI only; no coroutine or guarded-input qualification.', '']
     if metadata.get('inline_tail_refill'):
         lines += ['; Optional Fast repeat-gamma tail refill: +3 bytes, save 18/5 T for stop bit 1/0.',
                   '; Exact input consumption, count, flags and copy continuation are unchanged.', '']

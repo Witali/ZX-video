@@ -6,6 +6,13 @@ and [hybrid-handler](WIDE_HYBRID_EXPERIMENT.md) experiments. The optional
 LZSA2 decoders. Existing Fast/Wide/Shared defaults retain their exact bytes
 and labels. Compatible data does not need recompression.
 
+The later [E01 cold-escape layout](NEXT_E01_LZSA.md) is selectable with
+`cold_match_extension=True`. Every fixed profile saves one service byte and
+18,123 real T against the values below. Hybrid compact/balanced/fast become
+4,998/6,499/9,499 B and 15,030,346/14,964,996/14,926,306 T. Retain its
+586 non-real regressions (maximum37 T); no real block slows. Omitting the
+option retains the complete original profiles documented here.
+
 ## Choose an implementation
 
 Same frozen 21-real-block corpus, 323,940 decoded bytes. These are complete

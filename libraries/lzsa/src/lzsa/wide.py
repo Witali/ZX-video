@@ -14,7 +14,7 @@ CALLER_STACK_BYTES = 6
 
 
 def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
-          short_lengths=(), repeat_lengths=(),
+          short_lengths=(), repeat_lengths=(), cold_match_extension=False,
           _boundary=None, _external_labels=None, _literal_guards=False,
           _groups_by_body=None, _fallthrough_order=None):
     """Return resident regions/labels/metadata; no input or output bounds checks.
@@ -33,6 +33,11 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
     only known token lengths. Word-escaped counts keep their existing path.
     These options and internal grouped layouts are raw-only; quota/guard hooks
     are rejected until their complete feature-equivalent profiles are proved.
+    cold_match_extension moves the byte/word/EOF length escape after the raw
+    return, so nibble-length matches fall through a shorter conditional JR.
+    It is raw-only and restricted to the six qualified fixed Wide selections
+    (plain Expanded/Shared, Shared new2..8 with/without repeat4..8, Expanded
+    new3..8 or new2..8), plus the internal fixed Hybrid layouts.
     """
     if not (0 <= core < core_limit <= 65536):
         raise ValueError('invalid wide code reservation')
@@ -44,9 +49,19 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
             not short_lengths<=set(range(2,9)) or not repeat_lengths<=set(range(4,9))):
         raise ValueError('new-offset lengths 2..8 and positive-gain repeats 4..8 only')
     grouped_layout=_groups_by_body is not None or _fallthrough_order is not None
-    if (short_lengths or repeat_lengths or grouped_layout) and (
+    if type(cold_match_extension) is not bool:
+        raise ValueError('cold_match_extension must be bool')
+    if (short_lengths or repeat_lengths or grouped_layout or cold_match_extension) and (
             _boundary is not None or _external_labels is not None or _literal_guards):
         raise ValueError('short/grouped Wide profiles require fully resident raw input without wrapper hooks')
+    if cold_match_extension and not grouped_layout:
+        qualified={(False,frozenset(),frozenset()),(True,frozenset(),frozenset()),
+            (True,frozenset(range(2,9)),frozenset()),
+            (True,frozenset(range(2,9)),frozenset(range(4,9))),
+            (False,frozenset(range(3,9)),frozenset()),
+            (False,frozenset(range(2,9)),frozenset())}
+        if (bool(shared_literals),short_lengths,repeat_lengths) not in qualified:
+            raise ValueError('cold match extension requires a qualified fixed Wide or Hybrid selection')
     groups_by_body={int(k):tuple(tuple(g) for g in v) for k,v in (_groups_by_body or {}).items()}
     fallthrough_order={int(k):tuple(v) for k,v in (_fallthrough_order or {}).items()}
     bases={(cls<<5)|length for cls in range(8) for length in range(8)}
@@ -75,14 +90,25 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
         emit(0x7e, 0xb7, 8, 0x7e);inc()
         emit(0x0f, 0x0f, 0x0f, 0x0f)
         a.label(label);emit(0xf6, 0xf0)
+    def extended_match():
+        # A>=24 is a byte escape, exact EOF, or a little-endian word count.
+        # Preserve carry/Z until their existing exits; B/C and the offset
+        # operand keep the ordinary copy ABI, including legal short words.
+        emit(0x86);inc();jp(0xd2, 'CopyMatchA');jp(0xca, 'done')
+        emit(0x4e);inc();emit(0x46);inc();jp(0xc3, 'MatchUseC')
     a.label('start')
     emit(0xd9, 0xe5, 0xd9, 0x06, 0, 0x37, 8)
     jp(0xc3, 'ReadToken')
     a.label('LongerMatch')
     nibble('LongMatchNibble')
-    emit(0xd6, 231, 0xfe, 24);jp(0xda, 'CopyMatchA')
-    emit(0x86);inc();jp(0xd2, 'CopyMatchA');jp(0xca, 'done')
-    emit(0x4e);inc();emit(0x46);inc();jp(0xc3, 'MatchUseC')
+    emit(0xd6, 231, 0xfe, 24)
+    if cold_match_extension:
+        # Hot nibble lengths use JR not-taken7 instead of JP10; escapes pay
+        # JR taken12. Moving the intact escape costs no additional exit jump
+        # and removes one byte. Both branch forms preserve the tested flags.
+        jr(0x30, 'ColdExtendedMatch')
+    else:
+        jp(0xda, 'CopyMatchA');extended_match()
     a.label('CopyMatchA');emit(0x4f)
     a.label('MatchUseC');emit(0xe5)
     a.labels['offset'] = a.pc+1;emit(0x21, 0, 0, 0x19)
@@ -97,6 +123,8 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
     # EOD is recognized before any dummy word fetch. The saved alternate HL
     # belongs to the caller even if no match/literal has ever been copied.
     a.label('done');emit(0xd9, 0xe1, 0xd9, 0xc9)
+    if cold_match_extension:
+        a.label('ColdExtendedMatch');extended_match()
     a.label('LongLiterals')
     nibble('LongLiteralNibble')
     emit(0x3c);jr(0x28, 'ManyLiterals');emit(0xd6, 238, 0x4f)
@@ -205,6 +233,9 @@ def build(*, core=0x8000, core_limit=0xc000, shared_literals=False,
     return [(core, bytes(blob))], a.labels, dict(entry='start', variant='wide-shared-block' if shared_literals else 'wide-block',
         one_shot=True, code_bytes=len(blob), table_bytes=512, alignment_padding=table-core,
         shared_literal_bodies=shared_literals or grouped_layout,
+        **(dict(cold_match_extension=True,raw_only=True,
+            match_extension_path_delta_tstates=dict(nibble_length=-3,extended_length=2))
+           if cold_match_extension else {}),
         **(dict(short_lengths=sorted(short_lengths),repeat_lengths=sorted(repeat_lengths))
            if short_lengths or repeat_lengths or grouped_layout else {}),
         **(dict(grouped_bodies=True,body_layout=body_layout,

@@ -19,7 +19,7 @@ def _after(phase):
 
 def build(*, core=0x8000, core_limit=None, prefix_cap=228, shared_prefixes=False,
           irq_code_bytes=0, irq_stack_bytes=0, service_limit=10000,
-          _quota_hook=None, _external_labels=None):
+          _quota_hook=None, _external_labels=None, _assembler=None):
     """Return absolute regions, labels and complete service-memory metadata.
 
     Call dzx0_mega with HL=complete resident input, DE=nonwrapping output and
@@ -175,6 +175,8 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228, shared_prefixes=False
             removed_word_shift_stages=dead_stages, word_copy_joins=word_joins,
             _quota_hook=_quota_hook)
     a = MiniAssembler(core)
+    if _assembler is not None:
+        a = _assembler(core)
     simple = {'push hl': (0xe5,), 'pop hl': (0xe1,), 'inc bc': (0x03,),
               'inc c': (0x0c,), 'inc hl': (0x23,), 'ldir': (0xed, 0xb0),
               'ldi': (0xed, 0xa0), 'add a,a': (0x87,), 'add hl,de': (0x19,),

@@ -19,6 +19,11 @@ the slower Standard/Small choices with the lowest measured service memory.
 
 ## Current resident choices
 
+The later E01 optional modes improve both time and service memory against
+their same-feature predecessors. [ZX0](NEXT_E01_ZX0_BRANCHES.md) offers three
+branch policies; [LZSA2](NEXT_E01_LZSA.md) offers a cold escape layout. Retain
+their complete non-real regression lists; every real block is no slower.
+
 | Codec/profile | Total service | Real CPU T | Gain vs Fast |
 | --- | ---: | ---: | ---: |
 | ZX0 Fast tuned | **197 B** | 153,706,279 | 1.478241% |
@@ -29,6 +34,8 @@ the slower Standard/Small choices with the lowest measured service memory.
 | ZX0 Maximum shared prefix 127 | **5,114 B** | 139,916,508 | 10.317128% |
 | ZX0 Maximum shared prefix 227 | **7,554 B** | 139,893,048 | 10.332166% |
 | ZX0 Maximum shared prefix 228 | **7,578 B** | 139,892,818 | 10.332313% |
+| ZX0 E01 shared127, `policy='fast'` | **5,053 B** | 139,576,574 | 10.535017% |
+| ZX0 E01 shared228, `policy='fast'` | **7,517 B** | 139,552,884 | 10.550202% |
 | LZSA2 Fast jumps +compact branches | **222 B** | 17,724,654 | 0.227637% |
 | LZSA2 Fast jumps +tuned branches +nibble prefill | **228 B** | 17,635,500 | 0.729487% |
 | LZSA2 Wide shared | **3,452 B** | 15,869,483 | 10.670425% |
@@ -37,6 +44,9 @@ the slower Standard/Small choices with the lowest measured service memory.
 | LZSA2 Hybrid compact | **4,999 B** | 15,048,469 | 15.291926% |
 | LZSA2 Hybrid balanced | **6,500 B** | 14,983,119 | 15.659782% |
 | LZSA2 Hybrid fast | **9,500 B** | 14,944,429 | 15.877569% |
+| LZSA2 E01 Hybrid compact | **4,998 B** | 15,030,346 | 15.393940% |
+| LZSA2 E01 Hybrid balanced | **6,499 B** | 14,964,996 | 15.761797% |
+| LZSA2 E01 Hybrid fast | **9,499 B** | 14,926,306 | 15.979583% |
 
 Baselines:156,012,520 T /364 real ZX0 blocks and 17,765,094 T /21 real LZSA2
 blocks. Totals include four caller-stack bytes, except raw Wide needs six;
@@ -49,7 +59,8 @@ The 197-byte ZX0 and 222-byte LZSA2 profiles are smaller and faster than their
 more bytes for further gains. Tuned Mega and shared Wide are useful middle
 choices. Shared prefix 127 keeps almost all tested ZX0 maximum speed with
 4,886 B left under the cap. Shared 228 spends 2,464 more bytes to save
-23,690 T beyond shared 127. Hybrid fast is the fastest measured resident
+23,690 T beyond shared 127; E01 saves another339,934 T and61 B from either
+cap with its fastest policy. E01 Hybrid fast is the fastest measured resident
 LZSA2 profile. A finite measured frontier does not prove global optimality.
 
 The optional [fixed LZSA2 hybrids](LZSA_HYBRID.md) use

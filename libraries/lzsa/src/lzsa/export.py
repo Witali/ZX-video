@@ -73,6 +73,12 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
         for name in labels:
             if name.startswith('body_'):
                 routines[name]='Shared offset/length body after unchanged literal parsing; AF\' owns the nibble cache, HL=input and DE=output.'
+    if metadata.get('cold_match_extension'):
+        lines += ['; Optional cold match extension: invert JP C into JR NC and let nibble lengths fall through.',
+                  '; Same CP 24 flags and length/cache ownership: nibble path 10 -> 7 T, byte/word/EOF 10 -> 12 T.',
+                  '; The extended block follows the terminal RET; one fewer code/service byte, no extra stack/state.',
+                  '; Corpus CPU improves; retain the measured non-real regressions for extended-heavy blocks.', '']
+        routines['ColdExtendedMatch']='Cold byte/word/EOF escape entered on NC after CP 24; retain exact EOF before dummy word reads and jump back with the decoded count.'
     if metadata.get('fast_jumps'):
         lines += ['; Optional core unconditional JR -> JP: 12 -> 10 T per execution, +1 byte/site.',
                   '; Conditional branches and cold input-wait retries keep their original encoding.',

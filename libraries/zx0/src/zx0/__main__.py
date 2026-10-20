@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     assembly = commands.add_parser('build', help='Export an improved Z80 decoder include')
-    assembly.add_argument('--variant', choices=('fast','turbo_tuned','standard','turbo','mega','fast-block','maximum','maximum-coroutine'), default='fast')
+    assembly.add_argument('--variant', choices=('fast','turbo_tuned','standard','turbo','mega','fast-block','maximum','maximum-coroutine','maximum-branches'), default='fast')
     assembly.add_argument('--output', type=Path, required=True)
     assembly.add_argument('--namespace', default='zx0')
     assembly.add_argument('--fast-jumps', action='store_true',
@@ -29,6 +29,8 @@ def main():
                           help='maximum profiles only: measured inline-copy frontier (resident default 228, coroutine 127)')
     assembly.add_argument('--shared-prefixes',action='store_true',
                           help='resident maximum only: share LDI chains and clone continuations, reducing size and CPU')
+    assembly.add_argument('--branch-policy',choices=('fast','real','corpus'),
+                          help='maximum-branches only: frozen resident conditional-branch selection (default fast)')
     for name in ('irq-code-bytes','irq-stack-bytes','service-limit'):
         assembly.add_argument('--'+name,type=int,
                               help='maximum profile only: complete service-memory accounting')
@@ -46,8 +48,11 @@ def main():
     decoder.add_argument('--limit', type=int, required=True)
     args = parser.parse_args()
     if args.command == 'build':
-        maximum=args.variant in ('maximum','maximum-coroutine')
+        maximum=args.variant in ('maximum','maximum-coroutine','maximum-branches')
         maximum_coroutine=args.variant=='maximum-coroutine'
+        maximum_branches=args.variant=='maximum-branches'
+        if args.branch_policy is not None and not maximum_branches:
+            parser.error('--branch-policy requires --variant maximum-branches')
         if args.shared_prefixes and args.variant!='maximum':
             parser.error('--shared-prefixes requires the resident maximum profile')
         if maximum:
@@ -72,14 +77,16 @@ def main():
         if args.fast_jumps and args.variant in ('fast','turbo_tuned'):
             parser.error('--fast-jumps is supported by resident profiles')
         if maximum:
-            if maximum_coroutine:from .maximum_coroutine import build as maximum_build
+            if maximum_branches:from .maximum_branches import build as maximum_build
+            elif maximum_coroutine:from .maximum_coroutine import build as maximum_build
             else:from .maximum import build as maximum_build
             try:
                 regions,labels,metadata=maximum_build(core=args.core,core_limit=args.core_limit,
                     prefix_cap=(127 if maximum_coroutine else 228) if args.prefix_cap is None else args.prefix_cap,
                     irq_code_bytes=args.irq_code_bytes or 0,irq_stack_bytes=args.irq_stack_bytes or 0,
                     service_limit=10000 if args.service_limit is None else args.service_limit,
-                    **(dict(prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base) if maximum_coroutine else dict(shared_prefixes=args.shared_prefixes)))
+                    **(dict(prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base) if maximum_coroutine else
+                       dict(policy=args.branch_policy or 'fast') if maximum_branches else dict(shared_prefixes=args.shared_prefixes)))
             except ValueError as error:parser.error(str(error))
         elif args.variant=='fast-block':
             from .block import build as block_build

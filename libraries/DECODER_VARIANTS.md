@@ -89,6 +89,24 @@ GUARDED = dict(core=0xa000, core_limit=0xbc00,
 | LZSA2 Wide shared +short +repeat | 4,228 | 15,188,829 | -14.5018% | -14.5139% | [lzsa.wide.build(**WIDE, shared_literals=True, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[4, 5, 6, 7, 8])](lzsa/src/lzsa/wide.py#L16) |
 | LZSA2 Wide expanded +short 3..8 | 9,524 | 14,999,606 | -15.5670% | -15.5789% | [lzsa.wide.build(**WIDE, shared_literals=False, short_lengths=[3, 4, 5, 6, 7, 8], repeat_lengths=[])](lzsa/src/lzsa/wide.py#L16) |
 | LZSA2 Wide expanded +short 2..8 | 9,748 | 14,975,960 | -15.7001% | -15.7120% | [lzsa.wide.build(**WIDE, shared_literals=False, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[])](lzsa/src/lzsa/wide.py#L16) |
+| ZX0 Maximum branches 127 fast | 5,053 | 139,576,574 | -10.5350% | -10.5350% | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L179) |
+| ZX0 Maximum branches 127 real | 5,101 | 139,701,644 | -10.4549% | -10.4549% | [zx0.maximum_branches.build(prefix_cap=127, policy='real')](zx0/src/zx0/maximum_branches.py#L179) |
+| ZX0 Maximum branches 127 corpus | 5,111 | 139,915,538 | -10.3178% | -10.3178% | [zx0.maximum_branches.build(prefix_cap=127, policy='corpus')](zx0/src/zx0/maximum_branches.py#L179) |
+| ZX0 Maximum branches 228 fast | 7,517 | 139,552,884 | -10.5502% | -10.5502% | [zx0.maximum_branches.build(prefix_cap=228, policy='fast')](zx0/src/zx0/maximum_branches.py#L179) |
+| ZX0 Maximum branches 228 real | 7,565 | 139,677,954 | -10.4700% | -10.4700% | [zx0.maximum_branches.build(prefix_cap=228, policy='real')](zx0/src/zx0/maximum_branches.py#L179) |
+| ZX0 Maximum branches 228 corpus | 7,575 | 139,891,848 | -10.3329% | -10.3329% | [zx0.maximum_branches.build(prefix_cap=228, policy='corpus')](zx0/src/zx0/maximum_branches.py#L179) |
+| LZSA2 Hybrid compact +cold extension | 4,998 | 15,030,346 | -15.3939% | -15.4059% | [lzsa.hybrid.build(**WIDE, profile='compact', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid balanced +cold extension | 6,499 | 14,964,996 | -15.7618% | -15.7737% | [lzsa.hybrid.build(**WIDE, profile='balanced', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid fast +cold extension | 9,499 | 14,926,306 | -15.9796% | -15.9915% | [lzsa.hybrid.build(**WIDE, profile='fast', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid compact-base +cold extension | 3,451 | 15,804,230 | -11.0377% | -11.0503% | [lzsa.hybrid.build(**WIDE, profile='compact-base', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid balanced-base +cold extension | 4,498 | 15,665,460 | -11.8189% | -11.8313% | [lzsa.hybrid.build(**WIDE, profile='balanced-base', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Hybrid fast-base +cold extension | 5,499 | 15,625,370 | -12.0445% | -12.0570% | [lzsa.hybrid.build(**WIDE, profile='fast-base', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
+| LZSA2 Wide expanded +cold extension | 7,003 | 15,605,830 | -12.1545% | -12.1670% | [lzsa.wide.build(**WIDE, cold_match_extension=True)](lzsa/src/lzsa/wide.py#L16) |
+| LZSA2 Wide shared +cold extension | 3,451 | 15,851,360 | -10.7724% | -10.7851% | [lzsa.wide.build(**WIDE, shared_literals=True, cold_match_extension=True)](lzsa/src/lzsa/wide.py#L16) |
+| LZSA2 Wide shared +short +cold extension | 4,137 | 15,203,367 | -14.4200% | -14.4321% | [lzsa.wide.build(**WIDE, shared_literals=True, short_lengths=[2, 3, 4, 5, 6, 7, 8], cold_match_extension=True)](lzsa/src/lzsa/wide.py#L16) |
+| LZSA2 Wide shared +short +repeat +cold extension | 4,227 | 15,170,706 | -14.6039% | -14.6159% | [lzsa.wide.build(**WIDE, shared_literals=True, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[4, 5, 6, 7, 8], cold_match_extension=True)](lzsa/src/lzsa/wide.py#L16) |
+| LZSA2 Wide expanded +short 3..8 +cold extension | 9,523 | 14,981,483 | -15.6690% | -15.6809% | [lzsa.wide.build(**WIDE, short_lengths=[3, 4, 5, 6, 7, 8], cold_match_extension=True)](lzsa/src/lzsa/wide.py#L16) |
+| LZSA2 Wide expanded +short 2..8 +cold extension | 9,747 | 14,957,837 | -15.8021% | -15.8140% | [lzsa.wide.build(**WIDE, short_lengths=[2, 3, 4, 5, 6, 7, 8], cold_match_extension=True)](lzsa/src/lzsa/wide.py#L16) |
 
 ## Ordinary output-demand coroutines
 
@@ -125,21 +143,77 @@ harness and its 21 real blocks; producer CPU and sector delivery are separate.
 | LZSA2 Wide shared call | 3,792 / 6,329 | 22,068,191 | -7.9025% | -7.9217% | [lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=False, shared_literals=True)](lzsa/src/lzsa/wide_coroutine.py#L16) |
 | LZSA2 Wide shared direct | 3,784 / 6,318 | 19,862,505 | -8.7037% | -8.7247% | [lzsa.wide_coroutine.build(**GUARDED, streaming=True, direct_header=True, shared_literals=True)](lzsa/src/lzsa/wide_coroutine.py#L16) |
 
+## E01 increments against the accepted resident variants
+
+These optional calls retain the same compressed data and resident ABI. The
+reference is the corresponding accepted `9c28b01f` implementation, rather than
+the older Fast references in the main tables. Service includes every emitted
+byte and required stack; the embedded two-byte offset is already in code.
+All six ZX0 and twelve LZSA2 candidates reduce both real CPU and service memory.
+No real block slows. Non-real regressions are explicit below; complete case
+names/deltas are retained in the linked native proofs and table validation JSON.
+
+| Variant | Accepted service B -> E01 B | Accepted real CPU T -> E01 T | Delta T | Slower non-real / maximum T |
+| --- | ---: | ---: | ---: | ---: |
+| ZX0 Maximum branches 127 fast | 5,114 -> 5,053 | 139,916,508 -> 139,576,574 | -339,934 | [103 / +38](evidence/next_e01_zx0_branches.json.gz) |
+| ZX0 Maximum branches 127 real | 5,114 -> 5,101 | 139,916,508 -> 139,701,644 | -214,864 | [38 / +11](evidence/next_e01_zx0_branches.json.gz) |
+| ZX0 Maximum branches 127 corpus | 5,114 -> 5,111 | 139,916,508 -> 139,915,538 | -970 | [0 / 0](evidence/next_e01_zx0_branches.json.gz) |
+| ZX0 Maximum branches 228 fast | 7,578 -> 7,517 | 139,892,818 -> 139,552,884 | -339,934 | [103 / +38](evidence/next_e01_zx0_branches.json.gz) |
+| ZX0 Maximum branches 228 real | 7,578 -> 7,565 | 139,892,818 -> 139,677,954 | -214,864 | [38 / +11](evidence/next_e01_zx0_branches.json.gz) |
+| ZX0 Maximum branches 228 corpus | 7,578 -> 7,575 | 139,892,818 -> 139,891,848 | -970 | [0 / 0](evidence/next_e01_zx0_branches.json.gz) |
+| LZSA2 Hybrid compact +cold extension | 4,999 -> 4,998 | 15,048,469 -> 15,030,346 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Hybrid balanced +cold extension | 6,500 -> 6,499 | 14,983,119 -> 14,964,996 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Hybrid fast +cold extension | 9,500 -> 9,499 | 14,944,429 -> 14,926,306 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Hybrid compact-base +cold extension | 3,452 -> 3,451 | 15,822,353 -> 15,804,230 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Hybrid balanced-base +cold extension | 4,499 -> 4,498 | 15,683,583 -> 15,665,460 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Hybrid fast-base +cold extension | 5,500 -> 5,499 | 15,643,493 -> 15,625,370 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Wide expanded +cold extension | 7,004 -> 7,003 | 15,623,953 -> 15,605,830 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Wide shared +cold extension | 3,452 -> 3,451 | 15,869,483 -> 15,851,360 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Wide shared +short +cold extension | 4,138 -> 4,137 | 15,221,490 -> 15,203,367 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Wide shared +short +repeat +cold extension | 4,228 -> 4,227 | 15,188,829 -> 15,170,706 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Wide expanded +short 3..8 +cold extension | 9,524 -> 9,523 | 14,999,606 -> 14,981,483 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+| LZSA2 Wide expanded +short 2..8 +cold extension | 9,748 -> 9,747 | 14,975,960 -> 14,957,837 | -18,123 | [586 / +37](evidence/next_e01_lzsa_full.json.gz) |
+
+ZX0 `fast` contracts 61 branches, `real` 13, and `corpus` 3. Their slower
+complete-case counts are 103/38/0 for either cap: 47/19/0 main non-real cases
+and 56/19/0 high-word cases, with maxima +38/+11/0 T. The `corpus` result
+means zero regressions on the tested 473 cases; these policy names do not
+promise the same result for arbitrary streams. Each contracted JP costs
+10 T before; JR costs 7 T untaken and 12 T taken.
+
+LZSA2 `cold_match_extension=True` removes one service byte and saves 18,123 T
+over the same 21 real blocks for every listed layout. Each has 89 faster and
+586 slower cases among 675, with all 586 slower cases non-real. The maximum
+is +37 T on `random-19`; a tiny single-nibble EOF adds 2 T. These 586 cases
+include corpus and directed inputs. They are additional comparisons with
+each corresponding classic layout, separate from the retained Hybrid
+regression lists against older Expanded. Cold extension supports raw resident
+calls only. It does not qualify coroutine or guarded-input wrappers.
+
+The new modes were checked with IRQ, relocation and actual minimum-safe
+compressed-input overlap in their complete saved native experiments. This
+document rebuild authenticates current bytes, labels, memory and exports
+against those proofs; it does not rerun those native measurements.
+
 ## Selection and runtime contracts
 
 - Smallest resident decoders: **ZX0 Standard 74 B** (68 code +6 stack),
   **LZSA2 Small 145 B** (137 code +8 stack). Both are slower than Fast.
-- Fastest measured resident choices: **ZX0 Maximum shared 228, 7,578 B** and
-  **LZSA2 Hybrid fast, 9,500 B**. Shared 127 uses 5,114 B and is faster
-  than the original unshared 228. Shared suffixes support resident calls only.
-- LZSA2 Hybrid compact uses 4,999 B and reduces CPU time by 3.683344%
-  versus the old 7,004-B Expanded. Hybrid fast saves 4.349245%; retain
-  its four directed +4-T regressions and the smaller profiles' full lists.
+- Fastest measured resident choices: **ZX0 Maximum branches 228 fast, 7,517 B**
+  (139,552,884 T) and **LZSA2 Hybrid fast +cold extension,
+  9,499 B** (14,926,306 T).
+  ZX0 branches127/fast uses 5,053 B and beats the preceding shared228.
+  Shared suffixes and the E01 policies support resident calls only.
+- The preceding Hybrid compact/fast rows remain selectable: 4,999/9,500 B,
+  3.683344%/4.349245% less CPU than old 7,004-B Expanded. Their saved
+  regression lists remain valid; E01 cold extension has its own lists above.
 - Useful intermediate choices include Mega tuned 674 B and Wide shared 3,452 B.
 - Maximum ZX0 coroutine requires Spectrum-style undocumented `CP IXH/IXL`.
   Caller IX is restored on every return; IRQ must preserve live IX and AF/AF'.
 - Wide figures assume an aligned core. Arbitrary alignment adds up to 255 B.
-  A full guarded reference can therefore exceed 10,000 B after relocation.
+  Cold Expanded +short2..8 reaches 10,000 B at core low-byte3 before IRQ;
+  low-bytes1/2 are rejected. The 13+6-B IRQ example would make 10,019 B there.
+  A full guarded reference can exceed 10,000 B after relocation.
 - Original unshared Maximum 228 has only 10 service bytes left. The 13-byte/six-stack-byte
   IRQ example makes 10,009 B; use 227 (9,985 B with that IRQ) or reserve the
   actual handler through `irq_code_bytes` / `irq_stack_bytes`. The verified
@@ -176,6 +250,7 @@ emitters behind a dispatcher, use these implementation functions:
 | ZX0 Standard / Turbo / Mega | [zx0.codec.emit_decoder](zx0/src/zx0/codec.py#L66) |
 | ZX0 Fast | [zx0.resumable.emit_fast](zx0/src/zx0/resumable.py#L138) |
 | ZX0 Maximum resident | [zx0.maximum.build](zx0/src/zx0/maximum.py#L20) |
+| ZX0 fixed E01 branch layouts | [zx0.maximum_branches.build](zx0/src/zx0/maximum_branches.py#L179) |
 | ZX0 shared-prefix layout | [zx0._shared_prefixes.transform](zx0/src/zx0/_shared_prefixes.py#L26) |
 | ZX0 Maximum coroutine | [zx0.maximum_coroutine.build](zx0/src/zx0/maximum_coroutine.py#L6) |
 | LZSA2 Small | [lzsa.compact.build](lzsa/src/lzsa/compact.py#L13) |
@@ -188,6 +263,10 @@ emitters behind a dispatcher, use these implementation functions:
 
 ## Evidence and reproduction
 
+[E01 ZX0 native branches](evidence/next_e01_zx0_branches.json.gz),
+[E01 ZX0 public binding](evidence/next_e01_zx0_public.json),
+[E01 LZSA2 native cold extension](evidence/next_e01_lzsa_full.json.gz),
+[E01 public API/wheel authentication](evidence/next_e01_public_verification.json),
 [Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),
 [shared-prefix contracts](ZX0_SHARED_PREFIXES.md),
 [Hybrid API/wheel/native binding](evidence/hybrid_public_verification.json),

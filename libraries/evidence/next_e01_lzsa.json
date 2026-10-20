@@ -1,0 +1,821 @@
+{
+  "date": "2026-10-20",
+  "stage": "E01",
+  "complete": true,
+  "release": false,
+  "baseline_revision": "a7d61019",
+  "fixed_decoder_baseline_revision": "9c28b01f",
+  "observation_head": "a7d610191ee13024452fa69640ca3b94fcc5f15f",
+  "backend": {
+    "name": "kosarev z80",
+    "version": "1.2.0",
+    "qualified": true,
+    "spectrum_backend_used": false
+  },
+  "source_sha256_lf": {
+    "libraries/lzsa/src/lzsa/wide.py": "3cf33e89d78586fb6c387a7e909d42bf90d7049cc0ca4922397ec7816d9029e5",
+    "libraries/lzsa/src/lzsa/hybrid.py": "73566fac896c0c67e5d1881c2a9cddc00b512efc75d61258a8f9b44c734634c7",
+    "libraries/lzsa/src/lzsa/_wide_kernels.py": "cdd98fd57309335948d23b64ce88bba80efcc6e33862a3efe3dc60001e46c114",
+    "libraries/lzsa/src/lzsa/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/lzsa/src/lzsa/codec.py": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775",
+    "libraries/tests/native_block.py": "94bb095d918546ee3e54af1088e814f8442ca26ce65efd519574e72f1f104b3e",
+    "libraries/tests/native_inplace_block.py": "a5b6806483d10b0d0aaed5ebbae24c5c1bcf57242c672e7b23927381bed171cd",
+    "libraries/tests/measure_next_cold_extension.py": "9520d0f8a6598da30f9b088d0e66a2b74d51abafcbd37a376d1008f3a69cb140",
+    "libraries/tests/test_cold_extension.py": "bb7cb6f5ba29c6e123625ad27bf4117955372842cdae6e58736a1642470e4bc6",
+    "libraries/tests/profile_branch_mix.py": "e0721a08dfa090ac160a879bb6e4a63815428d1cda29f6582b8ba6519318c9ac",
+    "libraries/Z80_TIMINGS.md": "bc99e811aaa00f50754e44c2e5b51eb1cd4a42bbdcae2a4cc01e216c0fdad18d"
+  },
+  "evidence_sha256": {
+    "libraries/evidence/wide_hybrid/wide_hybrid_experiment.json.gz": "8a4b5e8536fc80fc7a9ef97431143bfe32158e2024294f5e24170f4ae47f9cb3",
+    "libraries/evidence/wide_hybrid/wide_hybrid_experiment_short.json.gz": "9ad2515b61c27662615b568da777a4fe27ab54863db50cfd85971a5a128d7c16",
+    "libraries/evidence/wide_short_experiment_full.json.gz": "294d928dcfa4712eecde89f16adf8f6be6eeff5ace698a96c8cc53620116d325",
+    "libraries/evidence/ten_percent_full_token_dispatch.json": "ca6cf044ed69d6d1b5d8f1bec4973b7d7409c648d11f88e0205ee732a9c4dc1c",
+    "libraries/evidence/next_e00_lzsa_full.json.gz": "77fc0cb9fb485e1dfb68a676696965857b61422966c7d41fb6770f212e98e2b5",
+    "libraries/evidence/next_e01_lzsa_defaults.json.gz": "043a493ba9bc27f8c6473a81ecef92838350c7493404d348bbde4c9445fab4f3"
+  },
+  "corpus_cases": 95,
+  "directed_cases": 580,
+  "candidate_count": 1,
+  "classic_cpu_binding": "Hybrid/short/Expanded all675 use saved per-case native CPU; Shared95 uses saved native CPU and Shared580 uses saved Expanded/token-frequency equations, independently executed here.",
+  "policy": "cold_match_extension=True; defaults False are exact",
+  "per_path_tstates": {
+    "classic_conditional_jp": 10,
+    "candidate_nibble_jr_not_taken": 7,
+    "candidate_extended_jr_taken": 12,
+    "nibble_delta": -3,
+    "extended_delta": 2
+  },
+  "memory_contract": {
+    "scope": "code/tables/alignment/embedded and external state/caller and private stacks/scratch/internal buffers",
+    "input_output_history_excluded": true,
+    "example_irq_code_bytes": 13,
+    "example_irq_additional_stack_bytes": 6,
+    "embedded_offset_operand_bytes": 2,
+    "embedded_offset_already_in_code": true,
+    "caller_stack_includes_return": true,
+    "external_input_max": 15878,
+    "external_output_history_max": 15872
+  },
+  "exclusions": [
+    "coroutine/guarded features",
+    "unqualified Wide short/repeat combinations",
+    "physical disk/ROM",
+    "ULA/WAIT",
+    "movie timing"
+  ],
+  "accepted": true,
+  "candidate_native_runs": 48600,
+  "independent_classic_observer_runs": 8100,
+  "profiles": {
+    "hybrid-compact": {
+      "kwargs": {
+        "profile": "compact"
+      },
+      "module": "lzsa.hybrid",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 4993,
+          "sha256": "78bb1bd440ac23d95d8bd7c6337c075c47d68fe10ac36435c15c2c1d09ce2e51"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 4992,
+          "sha256": "adfcfb173d62f3634358ba3acd0f6ff2161d3a05c6cd96b81000757108f06cc8"
+        }
+      ],
+      "baseline_service_bytes": 4999,
+      "candidate_service_bytes": 4998,
+      "candidate_relocated_service_bytes": 5251,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 4998,
+        "candidate_service_max": 5253,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 5272
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 15048469,
+        "candidate_real_tstates": 15030346,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1522,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "hybrid-balanced": {
+      "kwargs": {
+        "profile": "balanced"
+      },
+      "module": "lzsa.hybrid",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 6494,
+          "sha256": "79b37ae3c5bee81646974096a6c005775b391a04bea43e227840bb94c4c87124"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 6493,
+          "sha256": "1eb85b95f28fa794187d2f6d45ad1b250a564d4ad6f3645aa37911ce1183670d"
+        }
+      ],
+      "baseline_service_bytes": 6500,
+      "candidate_service_bytes": 6499,
+      "candidate_relocated_service_bytes": 6752,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 6499,
+        "candidate_service_max": 6754,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 6773
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 14983119,
+        "candidate_real_tstates": 14964996,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1520,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "hybrid-fast": {
+      "kwargs": {
+        "profile": "fast"
+      },
+      "module": "lzsa.hybrid",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 9494,
+          "sha256": "9d25fccf551fa821c6894356e01dc4c9e1328b3ff20da15f4534cbec37101abd"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 9493,
+          "sha256": "899e5725f87a384cc77f5eb36c8888d1873d6d976719434fdcd0c5c7680d1c70"
+        }
+      ],
+      "baseline_service_bytes": 9500,
+      "candidate_service_bytes": 9499,
+      "candidate_relocated_service_bytes": 9752,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 9499,
+        "candidate_service_max": 9754,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 9773
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 14944429,
+        "candidate_real_tstates": 14926306,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1520,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "hybrid-compact-base": {
+      "kwargs": {
+        "profile": "compact-base"
+      },
+      "module": "lzsa.hybrid",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 3446,
+          "sha256": "2c1f8cc001d1005fcacaeb2edc248c34626f6681b4fef852759028b8c564b140"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 3445,
+          "sha256": "dea76062a1e1943c035503b2ed6659ad169dcab1c3cc6f90187d4f32ea273e1d"
+        }
+      ],
+      "baseline_service_bytes": 3452,
+      "candidate_service_bytes": 3451,
+      "candidate_relocated_service_bytes": 3704,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 3451,
+        "candidate_service_max": 3706,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 3725
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 15822353,
+        "candidate_real_tstates": 15804230,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1524,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "hybrid-balanced-base": {
+      "kwargs": {
+        "profile": "balanced-base"
+      },
+      "module": "lzsa.hybrid",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 4493,
+          "sha256": "ebb181368a0006780c52bf8f594920dafad1b40f3e425a534d53eeef81f46690"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 4492,
+          "sha256": "d2e16c9a777ca1659755efef07d32c3e4c86ccd13636572dd09cff9841845d3a"
+        }
+      ],
+      "baseline_service_bytes": 4499,
+      "candidate_service_bytes": 4498,
+      "candidate_relocated_service_bytes": 4751,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 4498,
+        "candidate_service_max": 4753,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 4772
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 15683583,
+        "candidate_real_tstates": 15665460,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1522,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "hybrid-fast-base": {
+      "kwargs": {
+        "profile": "fast-base"
+      },
+      "module": "lzsa.hybrid",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 5494,
+          "sha256": "3386fa41cd5fdb757f370e9c20a9fa2ea47d3b4e7fae743f7e6be4cb236d67c6"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 5493,
+          "sha256": "daff059515fa97ef5c2a9604f7c208acd4b60d4cd94a5a9f6582774680939079"
+        }
+      ],
+      "baseline_service_bytes": 5500,
+      "candidate_service_bytes": 5499,
+      "candidate_relocated_service_bytes": 5752,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 5499,
+        "candidate_service_max": 5754,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 5773
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 15643493,
+        "candidate_real_tstates": 15625370,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1522,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "wide-expanded": {
+      "kwargs": {},
+      "module": "lzsa.wide",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 6998,
+          "sha256": "233c435c3c1902c5ef651cc2fbc1d566604a44bc509dd5f32c7287aa0c270d8a"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 6997,
+          "sha256": "0321833216b734da38aa622a6d9ce678fe09ffa9b595c1374ddfb9dfa29853ed"
+        }
+      ],
+      "baseline_service_bytes": 7004,
+      "candidate_service_bytes": 7003,
+      "candidate_relocated_service_bytes": 7256,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 7003,
+        "candidate_service_max": 7258,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 7277
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 15623953,
+        "candidate_real_tstates": 15605830,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1522,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "wide-shared": {
+      "kwargs": {
+        "shared_literals": true
+      },
+      "module": "lzsa.wide",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 3446,
+          "sha256": "42026f90d505ee0ec5c6e15a3448380062b9005daa242662c0a21e5c27ba6a68"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 3445,
+          "sha256": "3dc3b76dead47a646f75e9c7eebce4873d7cff17a0a628cceceacfca759a63ad"
+        }
+      ],
+      "baseline_service_bytes": 3452,
+      "candidate_service_bytes": 3451,
+      "candidate_relocated_service_bytes": 3704,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 3451,
+        "candidate_service_max": 3706,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 3725
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 15869483,
+        "candidate_real_tstates": 15851360,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1524,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "wide-shared-new": {
+      "kwargs": {
+        "shared_literals": true,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "module": "lzsa.wide",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 4132,
+          "sha256": "10a4036e822e0ae321c0c8d322608cb72e354d55d6aabe121d7e06a05a596e7c"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 4131,
+          "sha256": "e15d917a2e5b2e4242e70445d9fe44eea6a5cbb6bf28c668e916186b11f208c5"
+        }
+      ],
+      "baseline_service_bytes": 4138,
+      "candidate_service_bytes": 4137,
+      "candidate_relocated_service_bytes": 4390,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 4137,
+        "candidate_service_max": 4392,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 4411
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 15221490,
+        "candidate_real_tstates": 15203367,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1522,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "wide-shared-new-repeat": {
+      "kwargs": {
+        "shared_literals": true,
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "repeat_lengths": [
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "module": "lzsa.wide",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 4222,
+          "sha256": "67b2e24283d16940d898a7e716ccff753f2d02257a4edc83b268645e3e1296e1"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 4221,
+          "sha256": "ec10cf5ab1797065cd48c7abcdee75e88c662e179c64cc9b44a1f10e21c230db"
+        }
+      ],
+      "baseline_service_bytes": 4228,
+      "candidate_service_bytes": 4227,
+      "candidate_relocated_service_bytes": 4480,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 4227,
+        "candidate_service_max": 4482,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 4501
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 15188829,
+        "candidate_real_tstates": 15170706,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1522,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "wide-new3": {
+      "kwargs": {
+        "short_lengths": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "module": "lzsa.wide",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 9518,
+          "sha256": "aa68d32f0b2cc238628815ce9143b5587b3b849dfa50bd34dad498b1470f151f"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 9517,
+          "sha256": "dfaf2231e9e614e09030a4d754b2dc7ea9527a6bc49d783350175a14e20b694a"
+        }
+      ],
+      "baseline_service_bytes": 9524,
+      "candidate_service_bytes": 9523,
+      "candidate_relocated_service_bytes": 9776,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 256,
+        "candidate_accepted": 256,
+        "candidate_rejected": 0,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 9523,
+        "candidate_service_max": 9778,
+        "candidate_irq_fitting_origins": 256,
+        "maximum_example_irq_bytes": 9797
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 14999606,
+        "candidate_real_tstates": 14981483,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1520,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    },
+    "wide-new2": {
+      "kwargs": {
+        "short_lengths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "module": "lzsa.wide",
+      "complete": true,
+      "baseline_regions": [
+        {
+          "address": 32768,
+          "bytes": 9742,
+          "sha256": "8dd5dbf0d9bfb8d374e277b278bc654e600ba2426ba55c2334025828398bb2d9"
+        }
+      ],
+      "candidate_regions": [
+        {
+          "address": 32768,
+          "bytes": 9741,
+          "sha256": "dd9675e6bfb585700f42183b46267e10e5dc51aa34bc9f49ba56dc926c3524a6"
+        }
+      ],
+      "baseline_service_bytes": 9748,
+      "candidate_service_bytes": 9747,
+      "candidate_relocated_service_bytes": 10000,
+      "alignment_summary": {
+        "origins": 256,
+        "classic_accepted": 253,
+        "candidate_accepted": 254,
+        "candidate_rejected": 2,
+        "classic_defaults_exact": true,
+        "candidate_service_min": 9747,
+        "candidate_service_max": 10000,
+        "candidate_irq_fitting_origins": 235,
+        "maximum_example_irq_bytes": 10019
+      },
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 14975960,
+        "candidate_real_tstates": 14957837,
+        "real_delta_tstates": -18123,
+        "all_delta_tstates": -16651,
+        "faster_cases": 89,
+        "equal_cases": 0,
+        "slower_case_count": 586,
+        "slower_real_cases": [],
+        "maximum_regression_tstates": 37,
+        "short_outcomes": 6447,
+        "extended_outcomes": 1345,
+        "maximum_plain_stack_bytes": 6,
+        "maximum_irq_stack_bytes": 12,
+        "injected_interrupts": 1520,
+        "all_per_case_models_exact": true,
+        "all_inplace_host_read_order_exact": true,
+        "irq_and_relocation_exact": true,
+        "dirty_offset_and_code_permissions_exact": true,
+        "slices": "Raw one-shot profile: complete blocks and individual length outcomes; no coroutine quota slices exposed."
+      },
+      "accepted": true
+    }
+  },
+  "full_evidence": {
+    "path": "libraries/evidence/next_e01_lzsa_full.json.gz",
+    "sha256": "ff348a5337de3cd21890becdc1d2048398b62aabf23a472e8ab2c180cb3a8ebb"
+  }
+}

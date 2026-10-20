@@ -2,11 +2,15 @@
 
 Research and testing plan, 2026-10-20. Baseline: `9c28b01f`, branch
 `codex/codec-speed-pass3`, worktree `.worktree/codec-speed-pass3`.
-Status: **E00 complete; E01 in progress; E02..E07 pending**.
-[ZX0 E01 native experiment](NEXT_E01_ZX0_BRANCHES.md) is complete for six
-test-only candidates; optional public integration remains pending. LZSA2 E01
-is running on the existing qualified backend. Baseline observer runs and
-predicted deltas alone do not qualify an optimization.
+Status: **E00/E01 complete; E02..E07 pending**.
+[ZX0 E01](NEXT_E01_ZX0_BRANCHES.md) completes six optional public branch
+layouts, bound to17,028 complete native replays plus six FFFFh probes.
+[LZSA2 E01](NEXT_E01_LZSA.md) completes12 optional cold-escape layouts with
+48,600 candidate native runs+8,100 independent baseline observations.
+[Public authentication](evidence/next_e01_public_verification.json) binds
+current APIs/wheels/exports to those proofs. All retain non-real regression
+lists and exact previous defaults. E02 starts from these accepted raw modes;
+baseline observer runs and predicted deltas alone do not qualify another gain.
 [E00 evidence and selected hypotheses](NEXT_E00_BASELINE.md) authenticate
 the fixed inputs, all target layouts and a new minimum-safe overlap runner.
 The additionally requested local Spectrum/C-core test platform is a separate

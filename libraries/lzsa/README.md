@@ -8,6 +8,15 @@ independent of ZX0 and ZX-video. The package covers the project's standard
 It retains Emmanuel Marty's zlib notice and spke/uniabis decoder credits.
 Pinned upstream revision: `15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5`.
 
+The optional fixed [Hybrid profiles](../LZSA_HYBRID.md) are available through
+`lzsa.hybrid.build(profile='fast')`, also with `'compact'` or `'balanced'`.
+To use the latest smaller/faster raw layout, pass `cold_match_extension=True`
+to that builder or to one of the qualified `lzsa.wide.build` selections.
+Hybrid fast then uses 9,499 aligned service bytes and 14,926,306 real-corpus T;
+compact uses 4,998 B/15,030,346 T. The [E01 report](../NEXT_E01_LZSA.md) lists
+exact calls, all regressions and IRQ/alignment limits. Defaults and coroutine
+implementations remain exact.
+
 ## Host use
 
 For a complete resident block, `lzsa.block.build(core=0x8000,core_limit=0x8400)`

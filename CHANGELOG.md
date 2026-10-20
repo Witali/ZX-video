@@ -1,5 +1,53 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Publish smaller/faster E01 resident branch layouts
+
+- **Objective/baseline:** Complete E01 from the authenticated E00 profiles
+  and fixed9c28b01f inputs. Retain a mode only when complete real decode CPU
+  and total service memory both fall against its same-feature predecessor.
+  Keep input/output/history separate; preserve defaults and every regression.
+- **ZX0 integration:** Publish six self-contained
+  [maximum_branches.build](libraries/zx0/src/zx0/maximum_branches.py) modes,
+  caps127/228 and fast/real/corpus policies. Reuse the complete17,028 native
+  replays+six FFFFh probes from the previous experiment by exact bytes/full
+  label maps, independently contracting the authenticated historical source.
+  All1,536 alignments/four native origins match. Fixed opcodes/targets,
+  intrinsic size and canonical emitted-code hash reject generator drift.
+  Fast228 is7,517 B/139,552,884 T versus7,578/139,892,818; fast127 is
+  5,053 B/139,576,574 T versus5,114/139,916,508. Policies save61/13/3 B and
+  339,934/214,864/970 real T. Keep103/38/0 non-real regressions, max38/11/0 T;
+  no real block slows. Add API, CLI and generated assembly comments.
+- **LZSA2 experiment:** Opt-in cold_match_extension moves the intact extended
+  parser after raw RET and uses JR NC with nibble fallthrough. CP24 flags and
+  cache/count ownership are unchanged. Old JP10 becomes JR7/12: every675-case
+  delta independently equals-3*short+2*extended. All12 fixed Wide/Hybrid
+  selections save1 B/18,123 real T. Compact/balanced/fast become
+  4,998/6,499/9,499 B and15,030,346/14,964,996/14,926,306 T. Every real block
+  improves298..1,090 T;89 complete cases improve and586 non-real cases slow,
+  maximum37 T at random-19. Retain their full named lists.
+- **Native gates/memory:**8,100 independent LZSA classic observations plus
+  48,600 candidate replays cover plain/IRQ/relocation and actual minimum-safe
+  input/output overlap equivalents. Exact output/EOF/cursors, host read-order
+  digests, dirty offset, permitted code writes, caller/alternate registers and
+  stack6/12 B pass on the original qualified kosarev backend. All3,069 accepted
+  classic layouts in12x256 origin inventory remain exact. New2..8 at low03h
+  now fits exactly10,000 intrinsic B, leaving no diagnostic-IRQ room; low01h/
+  02h still reject. No extra state/stack/scratch or changed payload is hidden.
+- **Public verification:**74 library tests,24 selected toolkit tests,31 frozen
+  defaults/resources and both isolated wheels pass;18 new calls produce48
+  byte/label/metadata-exact origin exports. Expand the function-linked table
+  from50 to68 calls, authenticating all preceding50 unchanged. Reaudit the
+  local emulator's archived proof: current baseline bytes/ABI/service remain
+  exact despite optional generator-source changes; no new CPU/Spectrum run
+  is claimed by that audit. [Public reproducer](libraries/tests/verify_next_e01_public.py),
+  [package evidence](libraries/evidence/next_e01_public_verification.json),
+  [ZX0 decision](libraries/NEXT_E01_ZX0_BRANCHES.md),
+  [LZSA2 decision/reproducer](libraries/NEXT_E01_LZSA.md).
+- **Decision:** Accept these optional resident modes. E00/E01 complete;
+  E02..E07 remain pending. Reject unqualified raw/wrapper combinations. No
+  coroutine/guarded-input promotion, contention/disk/movie qualification,
+  default replacement or main merge/push is implied.
+
 ## 2026-10-20 — Develop the Z80 Tester CPU and Spectrum128 test platform locally
 
 - **Objective/baseline:** Follow the user's request to adapt the Z80 Tester
