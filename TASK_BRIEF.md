@@ -42,8 +42,18 @@ host test acceleration before using it for optimization evidence. Experiments
 may continue on the existing qualified backend while the new platform is
 developed independently; do not mix unqualified backend results into proofs. Host
 emulator memory is separate from the target decoder's service inventory.
-Finish the bounded test-platform qualification before adopting that backend; no GUI,
-disk/movie qualification or main merge/push is implied.
+The [native platform](emulator/README.md) is now qualified for flat guarded
+CPU screening and uncontended Spectrum128 bank/frame tests:31 tests,1,148
+cross-core cases,1,092 Spectrum cases+300 IRQ configurations, all1,392
+Spectrum configurations revalidated on the final compiled artifact. Host
+guarded speedup medians are4.10x ZX0 /6.76x LZSA2 (three repetitions), with
+target decoder CPU/service memory unchanged. Ten non-real LZSA2 AF' F3/F5
+differences are explicit and hardware-backed; no documented-flag/ABI/RAM/T
+divergence. Local generators repair the initially stale fused slice artifact.
+Instruction-level ULA contention and live banked guards remain unqualified;
+`Spectrum128(contention=True).attach(cpu)` is rejected. Preserve original protected
+IRQ/overlap/wrapper gates. No GUI, disk/movie qualification or main merge/push
+is implied. Continue E01 public integration and remaining E02..E07 experiments.
 
 ## Active codec goal — speed/service-memory frontier (2026-10-19)
 

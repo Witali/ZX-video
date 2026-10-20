@@ -1,5 +1,42 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Develop the Z80 Tester CPU and Spectrum128 test platform locally
+
+- **Objective/baseline:** Follow the user's request to adapt the Z80 Tester
+  C core to Spectrum and develop it inside ZX-video. Import the pinned
+  floooh/chips9e88298c header from clean external d45d8889 read-only; retain
+  zlib license/provenance. Runtime/build/generators now live under emulator/
+  and need no external checkout. Preserve all target decoder bytes and data.
+- **Implementation:** Native C guards/branch counters, ABI2 state/pin/phase
+  API, single-T/fused flat modes, local generated slices/Q table and reusable
+  Python API. Native Spectrum128 bus adds physical RAM/ROM/7FFD aliases/lock,
+  screen/ROM selection, frame INT and separate CPU/wait counters. Banked
+  runner checks all eight final RAM banks and rejects source/code aliases.
+- **Failures/corrections:** Imported ignored slices were stale: eight repeat
+  hooks present in their generator were absent. Regenerate locally and add
+  actually fused repeat-boundary tests. An initial full comparison stopped
+  on the verifier's empty-output allocation; correct it before final proof.
+  LZSA2 literal18 exposes LDIR-repeat and SCF/Q undocumented-flag differences
+  versus kosarev; save exact vectors/trace. Do not alter hardware-backed
+  behavior to imitate the older core or silently claim full-state equality.
+- **Verification:**31 CPU/bus/API/decoder tests pass. Final1,148-case flat
+  comparison has exact CPU/full64K RAM/source/stack; all12 ZX0 registers
+  match, while ten non-real LZSA2 cases differ only clobbered AF' F3/F5.
+  Documented flags/preserved registers and every real input are exact.
+  Spectrum has1,092 normal cases plus300 IRQ configurations across six safe
+  banks/five phases, exact plain+95T/ack and final-bank checks. Revalidate
+  all1,392 configurations on the final DLL with exact compiled source hashes.
+- **Measured host result:** Three rotated-order repetitions give guarded
+  medians1.08403vs4.44859s ZX0 (4.10x) and0.07344vs0.49677s LZSA2 (6.76x).
+  Bare kosarev native remains faster; this gain removes protected Python
+  callback overhead. Target decoder instruction delta0 T/service delta0 B.
+- **Decision/limits:** Adopt this local host platform for qualified flat
+  screening/profiling and uncontended Spectrum tests; retain independent
+  protected overlap/IRQ/wrapper gates. Tested standalone contention helpers
+  do not yet qualify whole-instruction ULA timing; enabled CPU attachment
+  rejects until cycle/address hooks are proved. No AY/disk/ROM boot/movie
+  release claim. [API, build, timing table, reports and verifier](emulator/README.md).
+
 ## 2026-10-20 — Verify E01 ZX0 branch contraction candidates
 
 - **Objective/baseline:** Test E00's three bounded selection strategies for

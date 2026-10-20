@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-20",
+  "complete": true,
+  "release": false,
+  "native_abi": 2,
+  "spectrum_bus_abi": 1,
+  "unit_integration_tests": 31,
+  "native_cases": 1148,
+  "spectrum_normal_cases": 1092,
+  "spectrum_irq_probes": 300,
+  "final_artifact_revalidated_configurations": 1392,
+  "real_cpu_tstates": {
+    "zx0": 139892818,
+    "lzsa2": 14944429
+  },
+  "median_guarded_host_speedup": {
+    "zx0": 4.1037540377268735,
+    "lzsa2": 6.764181012829595
+  },
+  "clobbered_undocumented_flag_differences": [
+    {
+      "case": "literal-18",
+      "native": 4641,
+      "reference": 4609,
+      "xor": 32
+    },
+    {
+      "case": "literal-257",
+      "native": 289,
+      "reference": 257,
+      "xor": 32
+    },
+    {
+      "case": "literal-511",
+      "native": 265,
+      "reference": 257,
+      "xor": 8
+    },
+    {
+      "case": "literal-800",
+      "native": 297,
+      "reference": 257,
+      "xor": 40
+    },
+    {
+      "case": "literal-15872",
+      "native": 297,
+      "reference": 257,
+      "xor": 40
+    },
+    {
+      "case": "word-literal-3",
+      "native": 289,
+      "reference": 257,
+      "xor": 32
+    },
+    {
+      "case": "word-literal-15",
+      "native": 297,
+      "reference": 257,
+      "xor": 40
+    },
+    {
+      "case": "word-literal-18",
+      "native": 289,
+      "reference": 257,
+      "xor": 32
+    },
+    {
+      "case": "word-literal-24",
+      "native": 265,
+      "reference": 257,
+      "xor": 8
+    },
+    {
+      "case": "word-literal-2",
+      "native": 289,
+      "reference": 257,
+      "xor": 32
+    }
+  ],
+  "compiled_sources_exact": true,
+  "current_baseline_emitted_regions_abi_and_service_exact": true,
+  "library_source_matches_observed": {
+    "libraries/lzsa/src/lzsa/_wide_kernels.py": true,
+    "libraries/lzsa/src/lzsa/hybrid.py": true,
+    "libraries/lzsa/src/lzsa/wide.py": true,
+    "libraries/tests/native_block.py": true,
+    "libraries/zx0/src/zx0/maximum.py": true
+  },
+  "artifacts": {
+    "flag_difference_trace.json.gz": {
+      "sha256": "d35130c0b2f7b7abb4d65aae5a482a763503418c9b34159242add7052fa1dfb2",
+      "decoded_sha256": "95414805511a4598d8200b398f81d6220b127fffbe6675f9da2d012caaf89884"
+    },
+    "native_build.json": {
+      "sha256": "d250038dd178f3b2c4d4fcca5f111be79963acca6516d62faf28cbe5be3cdc14",
+      "decoded_sha256": null
+    },
+    "native_comparison.json.gz": {
+      "sha256": "7c4fdf6addfeeb8f5c476bc6265bb28d508670d47207c445834ab8d292f36dbe",
+      "decoded_sha256": "e611e90d237935927b1b4dd387fd21d4aa1a767edc46caafeb8a99d3a77438a7"
+    },
+    "platform-tests.log.gz": {
+      "sha256": "7b76f5a1b21c19a4394a0580a308b7a5fc0ddef5273c41b383bb78eb7674d0da",
+      "decoded_sha256": "5504049c8feba5b39ad686a3098ef6384f0e5cda83c6e7bd1a18f0cb1667fe9d"
+    },
+    "prototype_trace_sources.json.gz": {
+      "sha256": "8bda8802b66469b02abd5ec75c91bf47c48ef84a7a88ce6f66d53587d30d89df",
+      "decoded_sha256": "5ba3b14566d079a1c221bd2881c718a4d6e16ca6ae4c88dcd58f7520ef68de5a"
+    },
+    "spectrum_decoder_baseline.json.gz": {
+      "sha256": "d7b99143489fe7c1ccd407a5dedab6b43aede39aad74cf0fc8d165b842570bbc",
+      "decoded_sha256": "b9e7e687f431fc393c1d6bf0724d837103539b9dc133bc9ff46d88be0978b887"
+    }
+  },
+  "exclusions": [
+    "instruction-level ULA contention",
+    "live banked source/write guards",
+    "ROM boot",
+    "coroutine/guarded supplier qualification",
+    "AY/disk/movie release"
+  ],
+  "verification_source_sha256_lf": "935be9af1792bdbf1233f8fa60d1ef0d4d5a6ae52e388df63a2c5af5a272793d"
+}
