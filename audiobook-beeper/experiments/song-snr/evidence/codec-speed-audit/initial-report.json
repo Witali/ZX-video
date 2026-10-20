@@ -1,0 +1,243 @@
+{
+  "complete": true,
+  "date": "2026-10-20",
+  "scope": "Audit retained speed evidence without encoding, decoding or filtering audio.",
+  "configuration_sha256": "7ffc8042b5ffedde39ac9f262b9cb85736706dfa5092946eb79a00b2285868fd",
+  "manifests": [
+    {
+      "path": "codec-speed-profile/manifest.json",
+      "sha256": "6353d2665a6ae035c292eef6c2923feb826f2f1475133ad35fe754b3ad8da14d",
+      "indexed_files": 36,
+      "indexed_bytes": 143151,
+      "historical_initial_index": false,
+      "explicitly_covered_by_final_index": [],
+      "all_hashes_and_gzip_pass": true
+    },
+    {
+      "path": "codec-speed-full/manifest.json",
+      "sha256": "076882acfec054a6100337f3fbeb47ec29663ba6529e9e00f005e0b029554c66",
+      "indexed_files": 12,
+      "indexed_bytes": 698843,
+      "historical_initial_index": false,
+      "explicitly_covered_by_final_index": [],
+      "all_hashes_and_gzip_pass": true
+    },
+    {
+      "path": "native-prepare-speed/initial-manifest.json",
+      "sha256": "e2d3739c8fb6f32a737fb85ba2766e5803b8fd74453fb9f72cdb22ed954519d4",
+      "indexed_files": 59,
+      "indexed_bytes": 184375,
+      "historical_initial_index": true,
+      "explicitly_covered_by_final_index": [
+        "README.md",
+        "manifest.json"
+      ],
+      "all_hashes_and_gzip_pass": true
+    },
+    {
+      "path": "native-prepare-speed/manifest.json",
+      "sha256": "a703a3e04a9f995007d335255f4df4895a570231d210cacf6ea4d0fa20b1beb8",
+      "indexed_files": 61,
+      "indexed_bytes": 196761,
+      "historical_initial_index": false,
+      "explicitly_covered_by_final_index": [],
+      "all_hashes_and_gzip_pass": true
+    },
+    {
+      "path": "native-prepare-hash-speed/initial-manifest.json",
+      "sha256": "a169759dd8312d55cb316cda6b05ed846355d92fb5b8dc4c78546629cbf9144c",
+      "indexed_files": 60,
+      "indexed_bytes": 187306,
+      "historical_initial_index": true,
+      "explicitly_covered_by_final_index": [
+        "README.md",
+        "manifest.json"
+      ],
+      "all_hashes_and_gzip_pass": true
+    },
+    {
+      "path": "native-prepare-hash-speed/manifest.json",
+      "sha256": "38b3f7a5c8abd8db7ae7043317de8a2eea1ec0ef01e705c03b2bc8b7797de5ff",
+      "indexed_files": 62,
+      "indexed_bytes": 200973,
+      "historical_initial_index": false,
+      "explicitly_covered_by_final_index": [],
+      "all_hashes_and_gzip_pass": true
+    },
+    {
+      "path": "table-pdm-decode-speed/manifest.json",
+      "sha256": "90a304746cd471e68d96e025824698b7fbb9bdb640a627afb6056bd2a358bd92",
+      "indexed_files": 9,
+      "indexed_bytes": 157787,
+      "historical_initial_index": false,
+      "explicitly_covered_by_final_index": [],
+      "all_hashes_and_gzip_pass": true
+    },
+    {
+      "path": "table-pdm-decode-speed-final/manifest.json",
+      "sha256": "6a05bdcf0e69e5f9ff0125a04f63ee65bbce0cdd88459005b4c3b0c0e7f22266",
+      "indexed_files": 9,
+      "indexed_bytes": 157762,
+      "historical_initial_index": false,
+      "explicitly_covered_by_final_index": [],
+      "all_hashes_and_gzip_pass": true
+    },
+    {
+      "path": "codec-speed-integration/manifest.json",
+      "sha256": "18f523b0407bc89980213b692955e512f8f74f999faaa050bc56e8f16b1bc7d1",
+      "indexed_files": 90,
+      "indexed_bytes": 2028700,
+      "historical_initial_index": false,
+      "explicitly_covered_by_final_index": [],
+      "all_hashes_and_gzip_pass": true
+    },
+    {
+      "path": "codec-speed-integration/optimized/manifest.json",
+      "sha256": "fc71d55b7a3d79461e696709d62d5925c4e7320d7be37976b7ed358e5c2e4e65",
+      "indexed_files": 60,
+      "indexed_bytes": 1889245,
+      "historical_initial_index": false,
+      "explicitly_covered_by_final_index": [],
+      "all_hashes_and_gzip_pass": true
+    },
+    {
+      "path": "codec-speed-z80-review/manifest.json",
+      "sha256": "d8e173ef695084b29b655a59456746a89169fcf4ba29e89899725adfcfec3450",
+      "indexed_files": 5,
+      "indexed_bytes": 19699,
+      "historical_initial_index": false,
+      "explicitly_covered_by_final_index": [],
+      "all_hashes_and_gzip_pass": true
+    }
+  ],
+  "manifest_count": 11,
+  "unique_artifact_files_including_indexes": 292,
+  "producer_snapshot_sets": [
+    {
+      "directory": "native-prepare-speed",
+      "producers": 12,
+      "all_snapshot_source_hashes_pass": true
+    },
+    {
+      "directory": "native-prepare-hash-speed",
+      "producers": 13,
+      "all_snapshot_source_hashes_pass": true
+    },
+    {
+      "directory": "codec-speed-integration",
+      "producers": 25,
+      "all_snapshot_source_hashes_pass": true
+    }
+  ],
+  "original_unchanged_sources": [
+    {
+      "path": "ima_waveform_encoder.py",
+      "sha256": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae",
+      "baseline_and_live_identical": true
+    },
+    {
+      "path": "ima_beam.py",
+      "sha256": "571f2e55c43788e6afc2ccd4164b5b2cc92679037b9589a2527e23b62a44c15a",
+      "baseline_and_live_identical": true
+    },
+    {
+      "path": "ima_codec.py",
+      "sha256": "263d52677e423e9f9f55636b84fe108aa3eed1751bf1c09ce751b65a22f3349b",
+      "baseline_and_live_identical": true
+    },
+    {
+      "path": "waveform_kernel.py",
+      "sha256": "2272effc955fefff986b4de9665246acaf741948888e77077e524609bf4b0004",
+      "baseline_and_live_identical": true
+    },
+    {
+      "path": "native_waveform_encoder.py",
+      "sha256": "f80d5359d0eea321876a27576880723a1c1adf50f48a9fa6db32cc6753af5dd1",
+      "baseline_and_live_identical": true
+    },
+    {
+      "path": "precompensate_voice.py",
+      "sha256": "85ea58afe93c2af8cde6143db2e9c1f7a796bfa5f549f0ab81a174d00d20d5b8",
+      "baseline_and_live_identical": true
+    },
+    {
+      "path": "probe_feedback_packets.py",
+      "sha256": "933a4132c75d3243a46a817bda67bace0bb65ed997c6caab6bfa7d3338bafb0d",
+      "baseline_and_live_identical": true
+    },
+    {
+      "path": "verify_direct.py",
+      "sha256": "0fef35c8653e6f8df7f82b1c8ec8aee1d13538ad96410be3e4e8b72272f6867a",
+      "baseline_and_live_identical": true
+    },
+    {
+      "path": "build_pdm.py",
+      "sha256": "6d9fd77e2bd2f9eaf45f8c6c0ef502ed60c76520b9e90dbf7cadf9930a4cc018",
+      "baseline_and_live_identical": true
+    }
+  ],
+  "delivered_disks": [
+    {
+      "path": "C:\\Work\\ZX-video\\ZX-music-Sea-Foam-SNR20-RAM-auto.trd",
+      "bytes": 655360,
+      "sha256": "b96763cad15810d8d1755870f5a02ee2bfa1a708e787921fadf581f654a9e28e",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Work\\ZX-video\\ZX-music-Sea-Foam-RAM-auto.trd",
+      "bytes": 655360,
+      "sha256": "226388fb795ac70cfd940545a9eb73e3e81b6c7e96533dc6deb0c215257338ea",
+      "unchanged": true
+    }
+  ],
+  "full_search": {
+    "whole_song_runs": 6,
+    "samples_each": 720384,
+    "packed_bytes_each": 360192,
+    "expected_packed_sha256": "44a07e303522dfc4eef31d4654ba35dc6f275d82f6a07d2b3e723155a4d58d06",
+    "all_statistics_source_and_packed_hashes_exact": true,
+    "saved_timing_summaries_recomputed": true
+  },
+  "preparation": [
+    {
+      "directory": "native-prepare-speed",
+      "complete_sources": 9,
+      "nonuniform_controls": 2,
+      "workset_pairs": 22,
+      "all_recorded_arrays_and_worksets_match": true
+    },
+    {
+      "directory": "native-prepare-hash-speed",
+      "complete_sources": 9,
+      "nonuniform_controls": 2,
+      "workset_pairs": 22,
+      "all_recorded_arrays_and_worksets_match": true
+    }
+  ],
+  "decoder": [
+    {
+      "directory": "table-pdm-decode-speed",
+      "complete_streams": 18,
+      "source_samples_per_family": 1195520,
+      "historical_words_states_pcm_and_compressed_hashes_match": true,
+      "transition_cases": 14192,
+      "Z80_Tstate_delta": 0
+    },
+    {
+      "directory": "table-pdm-decode-speed-final",
+      "complete_streams": 18,
+      "source_samples_per_family": 1195520,
+      "historical_words_states_pcm_and_compressed_hashes_match": true,
+      "transition_cases": 14192,
+      "Z80_Tstate_delta": 0
+    }
+  ],
+  "integration": {
+    "whole_sources": 9,
+    "total_samples": 1195520,
+    "every_compressed_byte_prior_and_workset_hash_exact": true,
+    "recorded_decoded_pcm_and_statistics_match": true,
+    "per_source_completion_markers_pass": true
+  },
+  "no_codec_native_emulator_filter_or_encode_rerun": true
+}

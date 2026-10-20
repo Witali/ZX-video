@@ -47,6 +47,7 @@ ARCHIVED_RMS_TOLERANCE = 2e-10
 PRODUCERS = (
     'ima_waveform_encoder.py', 'ima_beam.py', 'ima_codec.py',
     'native_waveform_encoder.py', 'native_waveform_encoder.c',
+    'native_waveform_prepare.py', 'native_waveform_prepare.c',
     'waveform_kernel.py', 'precompensate_voice.py',
     'probe_feedback_packets.py', 'verify_direct.py', 'build_pdm.py',
     'convert_mulaw_audio.py', 'assess_snr.py',
@@ -172,7 +173,7 @@ def encode(source, times, model, scratch):
         raise ValueError('Physical settling guard would discard source content')
     changed_guard = int(np.count_nonzero(target[-128:] != 128))
     target[-128:] = 128
-    desired, features, ids, nxt, quantization = prepare(source, times, model)
+    desired, features, ids, nxt, quantization = prepare(source, times, model, backend='native')
     prepared_seconds = time.perf_counter() - started
     workset = write_workset(scratch / 'workset.bin', target, desired, features, ids, nxt,
         width=32, block_size=128, commit_size=64, regularization=.1)

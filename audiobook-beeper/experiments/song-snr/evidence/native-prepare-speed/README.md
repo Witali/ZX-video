@@ -1,0 +1,11 @@
+# Exact native waveform-reference preparation, first component
+
+Measured on 2026-10-20 after the user requested faster encoding and decoding without changing the data format. This component accelerates the six-state source-filter recurrence and target gathering. It calls the same installed NumPy ILP64 OpenBLAS GEMV, preserves strict scalar operation order, and avoids the original N*16*6 gathering temporaries. The original Python implementation remains executable and unchanged. This first component retains NumPy's complete structured-row unique sort.
+
+All nine entire sources and two explicit 16,384-sample song-prefix fixtures at the existing nonuniform 448/449-T schedules pass. The prefix fixtures replace their final128 samples with a test-only silent guard and carry no quality claim. Every float64 target bit, feature/ID, source prior and complete NWFB001/NWFB002 workset matches the original Python path. There are22 matching workset pairs; both bias0 and bias512 are exercised. Source and producer hashes were checked after the run. The frozen source snapshot reproduces this intermediate component even though the live native module subsequently adds unique-row hashing.
+
+For the complete720,384-sample song, model preparation takes10.799335s in the Python worker and6.499542s in the native worker, a1.662x speedup. Windows peak process working set changes from2,998,775,808 to747,876,352 bytes. The nine-source preparation sums are18.007427/11.052509s. These are paired observations under the current host load, not guaranteed durations. Each worker is a fresh process; the native binary is warm. Peak memory includes imports, model preparation and workset serialization.
+
+The version1 song workset remains138,493,944 bytes with SHA256 `2c62776a8c3d94ec61c941c4bf44839e3191d9025bef20d437a5bec83b24853a`. No encoding, quality rendering, Z80 timing, data-format change or release/TRD construction is claimed here. See the succeeding native-prepare-hash-speed experiment for the additional sorting optimization.
+
+Reproduce with the frozen producer-source/native_prepare_speed.py.gz and corresponding native module snapshots. The initial manifest predates this explanatory README; its unchanged bytes are preserved as initial-manifest.json, and the final manifest authenticates both.

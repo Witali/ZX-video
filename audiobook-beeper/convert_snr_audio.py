@@ -57,6 +57,7 @@ BASE_AUDIO_BYTES = 91392
 PRODUCERS = (
     'convert_snr_audio.py', 'convert_audio.py', 'audio_dynamics.py',
     'native_waveform_encoder.py', 'native_waveform_encoder.c',
+    'native_waveform_prepare.py', 'native_waveform_prepare.c',
     'native_ima_encoder.py', 'native_ima_encoder.c',
     'ima_waveform_encoder.py', 'waveform_kernel.py', 'ima_beam.py', 'ima_codec.py',
     'precompensate_voice.py', 'probe_feedback_packets.py', 'build_stream_trd.py',
@@ -328,7 +329,9 @@ def convert(input_path, output, *, cover=None, prepared_pcm=False, encoder='c',
         phase = time.perf_counter()
         times = instruction_timeline(len(source), pentagon_ordinary_tstates)
         target, coverage = compensated_prior(source, times)
-        desired, features, ids, nxt, quantization = prepare_waveform(source, times, model)
+        preparation_backend = 'native' if encoder == 'c' else 'python'
+        desired, features, ids, nxt, quantization = prepare_waveform(
+            source, times, model, backend=preparation_backend)
         timings['model_preparation_seconds'] = time.perf_counter() - phase
         phase = time.perf_counter()
         statistics = {}
@@ -380,7 +383,8 @@ def convert(input_path, output, *, cover=None, prepared_pcm=False, encoder='c',
         timings['host_quality_and_preview_io_seconds'] = time.perf_counter() - phase
     if not unchanged_producers(hashes):
         raise RuntimeError('producer sources changed during conversion; generated artifacts are not a reproducible completed run')
-    report = dict(complete=True, encoder=encoder, parameters=parameters, model=model,
+    report = dict(complete=True, encoder=encoder, model_preparation_backend=preparation_backend,
+                  parameters=parameters, model=model,
                   preparation=preparation, source_sha256=sha(source.tobytes()), packed_sha256=sha(packed),
                   trd_sha256=sha(disk), producer_sha256=hashes,
                   original_python_reference_unchanged=True,

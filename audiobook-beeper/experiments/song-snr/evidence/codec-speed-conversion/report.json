@@ -1,0 +1,50 @@
+{
+  "complete": true,
+  "rows": [
+    {
+      "engine": "baseline",
+      "external_complete_process_seconds": 73.43617960007396,
+      "timings": {
+        "source_preparation_seconds": 0.0009932999964803457,
+        "producer_snapshot_seconds": 0.2469616000307724,
+        "model_preparation_seconds": 8.777664500055835,
+        "waveform_encoding_seconds_including_workset_io_and_cold_compile": 26.900670400005765,
+        "baseline_encoding_seconds_including_cold_compile": 9.286821599933319,
+        "trd_assembly_and_artifact_io_seconds": 3.5740141000133008,
+        "host_quality_and_preview_io_seconds": 22.44419289997313,
+        "total_conversion_seconds": 73.1783503999468,
+        "optional_verification_seconds": 0.0,
+        "grand_total_seconds_including_requested_verification": 73.179156600032,
+        "scope": "Monotonic wall time includes imports in CLI mode, source preparation, model preparation, cold compiler work, file I/O, TRD assembly, host quality and temporary cleanup; optional verification is separate and included in the grand total"
+      },
+      "packed_sha256": "2b30481f7340698b26e256bfea6636adfd8b8a162bf5030dc5b08d16078f49f1",
+      "trd_sha256": "b96763cad15810d8d1755870f5a02ee2bfa1a708e787921fadf581f654a9e28e"
+    },
+    {
+      "engine": "optimized",
+      "external_complete_process_seconds": 68.50532549992204,
+      "timings": {
+        "source_preparation_seconds": 0.0011723999632522464,
+        "producer_snapshot_seconds": 0.08327290008310229,
+        "model_preparation_seconds": 3.418044799938798,
+        "waveform_encoding_seconds_including_workset_io_and_cold_compile": 24.809748400002718,
+        "baseline_encoding_seconds_including_cold_compile": 10.089670500019565,
+        "trd_assembly_and_artifact_io_seconds": 3.814634299953468,
+        "host_quality_and_preview_io_seconds": 23.6649828000227,
+        "total_conversion_seconds": 68.16454649996012,
+        "optional_verification_seconds": 0.0,
+        "grand_total_seconds_including_requested_verification": 68.16547640005592,
+        "scope": "Monotonic wall time includes imports in CLI mode, source preparation, model preparation, cold compiler work, file I/O, TRD assembly, host quality and temporary cleanup; optional verification is separate and included in the grand total"
+      },
+      "packed_sha256": "2b30481f7340698b26e256bfea6636adfd8b8a162bf5030dc5b08d16078f49f1",
+      "trd_sha256": "b96763cad15810d8d1755870f5a02ee2bfa1a708e787921fadf581f654a9e28e"
+    }
+  ],
+  "old_and_new_TRD_identical_to_delivered_disk": true,
+  "format_changed": false,
+  "exact_player_hot_path_delta_tstates": 0,
+  "ratio": 1.0719776756649018,
+  "warm_compiler_cache": true,
+  "optional_full_Fuse_repeated": false,
+  "scope": "One sequential paired full public conversion, including imports, preparation, C search, guards, baseline encoding, TRD assembly, filtering, previews, file I/O and cleanup; current frontend with explicit old-engine intervention"
+}

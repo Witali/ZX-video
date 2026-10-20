@@ -35,17 +35,24 @@ PARAMETERS=dict(profile='pentagon',source_rate_hz=8000,lanczos_radius=16,
                 source_specific_fitted_clock_gain_delay=False)
 
 
-def prepare(source,times,model):
+def prepare(source,times,model,*,backend='python'):
     """Build analytic search features from the complete closed packet table.
 
     Pentagon times are expressed in Spectrum-reference T states. Rounding only
     search quadrature queries to the existing1/80-T lookup grid introduces at
-    most1.763 ns; the final renderer and all clocks remain unrounded.
+    most1.763 ns; the final renderer and all clocks remain unrounded. The
+    explicit native backend preserves every float64 row and query result;
+    Python remains the independent default and needs no C compiler.
     """
+    if backend not in ('python','native'):
+        raise ValueError('preparation backend must be python or native')
+    if backend=='native':
+        from native_waveform_prepare import reference,unique_holds
     count=len(source)-128
     assert np.all(source[-128:]==128),'settling tail must contain no source content'
     holds=np.diff(times)[:count*16].reshape(count,16)
-    unique,ids=np.unique(holds,axis=0,return_inverse=True)
+    unique,ids=(unique_holds(holds) if backend=='native' else
+                np.unique(holds,axis=0,return_inverse=True))
     words,nxt,_=integral_table(64,2,holds=model['holds'],beta=model['beta'],
                               extent=model['extent'],pcm_origin=model.get('pcm_origin',.5))
     shifts=np.arange(15,-1,-1)
@@ -56,7 +63,8 @@ def prepare(source,times,model):
         features.append((a,l,signed@r.T,signed@b.T,row/(CPU_CLOCK/8000)))
     queries=((times[:count*16]+times[1:count*16+1])/2).reshape(count,16)
     rounded=np.rint(queries*80)/80
-    desired=analog.reference(source,rounded)
+    desired=(reference(analog,source,rounded) if backend=='native' else
+             analog.reference(source,rounded))
     return desired,features,ids,nxt,float(np.max(abs(queries-rounded))/CPU_CLOCK)
 
 

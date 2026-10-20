@@ -1,5 +1,46 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Integrate exact native preparation and measure full TRD conversion
+
+- **Objective/baseline:** Finish the user's format-preserving speed request,
+  keeping original Python as an executable reference and measuring the entire
+  program. Preserve all nine sources, model/query grid, source clocks and
+  search parameters. Native C evaluates the same six-state recurrence with
+  the same NumPy ILP64 OpenBLAS, avoiding large temporary arrays; exact hash
+  deduplication sorts only unique positive finite float64 pulse rows.
+- **Retained intermediate/results:** The initial recurrence-only component
+  prepares song10.7993->6.4995s (1.66x). Final native row hashing reaches
+  8.97457->1.71147s (5.244x) in its paired comparison; peak process working set
+  2998796288->747761664B,75.06% less. Both intermediate evidence sets remain.
+  All22 complete NWFB001/NWFB002 pairs over9 full sources and nonuniform448/
+  449 fixtures are byte-exact, including features/targets/priors/IDs/guards.
+- **Integration:** Default C converter and matched C driver select native
+  preparation explicitly; Python backend keeps Python preparation/reference.
+  Producer snapshots include the new C/Python module. All9 integrated full
+  streams/1195520samples retain exact IMA/worksets/prior WAV/decoded PCM16,
+  source identities, clipping guards, iterations and final0/0. Same-driver
+  song21.5775s versus historical35.6612s, all9sum46.0884 versus65.5138s; these
+  historical comparisons are distinct from controlled phase benchmarks.
+- **Complete public conversion:** One sequential warm-cache pair uses current
+  frontend with explicit old Python preparation/frozen878c C search control
+  versus normal optimized C path, full720384-sample song, original cover/UI.
+  External wall73.4362->68.5053s,6.714% shorter. Public nonuniform model prep
+  8.7777->3.4180s; search/workset26.9007->24.8097s. Baseline encode9.2868/10.0897
+  and quality/previews22.4442/23.6650s remain substantial; do not claim the32%
+  uniform-search gain as full-conversion acceleration. Compilation is warm
+  and fixed-order pair/load variation limits timing generality. Both complete
+  TRDs match delivered b96763ca and all source/prior/preview WAV bytes match.
+- **Verification/decision:** Final28 regression tests pass, no skips, including
+  Unicode C/Python whole-TRD identity, unsupported inputs/guards and requested
+  short full native/Fuse verification. Original Python encoder files unchanged.
+  Independent final audit passes13 manifests/366 unique artifact files over
+  10 evidence sets and rehashes28 actual conversion artifacts. Its initial
+  harness incorrectly assumed3 rather than6 int32 fields per saved boundary
+  case; retain failed harness/trace and successful corrected14192-case audit.
+  Accept exact native preparation and C integration. Live Z80 delta0T; no new
+  SNR result, full-song emulator run, physical test or release acceptance.
+  [Implementation, complete measurements and reproduction](audiobook-beeper/CODEC_SPEED.md).
+
 ## 2026-10-20 — Buffer exact host IMA decoding; retain live Z80 schedule
 
 - **Objective/baseline:** Accelerate decoding without format/semantic changes,
@@ -20,7 +61,7 @@
   lacks integrated timing proof; keep player unchanged. Initial static review
   fixture parser failure and correction are retained; no failed result is
   accepted. Adopt only exact host acceleration. No new quality/release claim.
-  [Decoder evidence](audiobook-beeper/experiments/song-snr/evidence/table-pdm-decode-speed-final/README.md),
+  [Decoder evidence](audiobook-beeper/experiments/song-snr/evidence/table-pdm-decode-speed-final/report.json),
   [Z80 ledger and limits](audiobook-beeper/experiments/song-snr/evidence/codec-speed-z80-review/README.md).
 
 ## 2026-10-20 — Accelerate exact C waveform beam selection

@@ -154,6 +154,7 @@ class AutomaticConverterTests(unittest.TestCase):
             report = converter.convert(path, dest, prepared_pcm=True, encoder=encoder, ffmpeg=shutil.which('ffmpeg'))
             reports.append(report)
             self.assertTrue(report['complete'])
+            self.assertEqual(report['model_preparation_backend'], 'native' if encoder == 'c' else 'python')
             self.assertFalse(report['release_accepted'])
             self.assertEqual(report['source_samples'], len(source))
             self.assertEqual(report['original_python_reference_sha256'], reference_hash)

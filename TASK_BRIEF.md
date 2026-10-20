@@ -35,6 +35,38 @@ quality on a different clone without its own measurements.
 
 ### Current continuation checkpoint
 
+Latest user steering2026-10-20 requests faster encoding and decoding while
+preserving the data format. The bounded PC acceleration now preserves exact
+bytes: native model preparation5.24x faster with75% less peak working set;
+full-song standalone C search median30.612->20.748s across three alternating
+pairs, CPU28.672->19.734s. All six song outputs retain44a07e30 IMA and0/0.
+The integrated matched driver reproduces all9 original complete worksets,
+IMA streams, priors and decoded PCM16:1195520samples; same-driver song
+21.577s versus historical35.661s, all9total46.088s versus65.514s. Label the
+latter timings historical, not controlled simultaneous pairs. Preparation
+also proves22 complete NWFB001/002 pairs including nonuniform448/449 fixtures.
+Original Python encoders remain unchanged/executable; public`--encoder c`
+uses native preparation and`--encoder python` retains Python preparation.
+
+Offline host C decoding is2.8055x faster including I/O; all18 streams and
+2391040samples match word/state/PCM bytes,1424 transitions/14192 boundary
+cases pass. Live Z80 decoder remains49T/57T withEXX, delta0T;449T ordinary
+period and14/243T page/Pentagon bank costs remain unchanged. Padding89 rows
+to256B costs an unavailable extra17088B. Do not call the host gain a live
+Spectrum speedup. Memoization/SSE2 controls have no reliable gain and remain
+unmerged. Full-converter measurements, final tests, source snapshots and
+limits are consolidated in [codec performance](audiobook-beeper/CODEC_SPEED.md).
+No data migration, new SNR result or quality/release promotion is involved.
+One complete public449-T warm-cache conversion pair, including quality and
+previews, is73.436->68.505s (6.71% shorter), reproducing the entire delivered
+b96763ca TRD and all WAV bytes. Its nonuniform model differs from the uniform
+matched-search benchmark; do not quote32% as full-conversion acceleration.
+Final integrated suite passes28 tests without skips, including short native/
+Fuse checks and Unicode C/Python TRD parity. Separate retained full-song disk
+identity reuses existing execution evidence; no new full-song replay claimed.
+Final independent audit authenticates13 manifests/366 unique artifacts,
+actual conversion bytes and original Python/disk identities without reruns.
+
 Latest user steering2026-10-20 requests trying faster tabled output with
 equal PDM intervals. New isolated residentPCM8 component proves16x28T=448T
 per sample,8k/128kHz on Pentagon3.584MHz, versus old449T/-1T.286704 native
