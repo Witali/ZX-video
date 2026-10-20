@@ -2,9 +2,11 @@
 
 Research and testing plan, 2026-10-20. Baseline: `9c28b01f`, branch
 `codex/codec-speed-pass3`, worktree `.worktree/codec-speed-pass3`.
-Status: **E00 complete; E01..E07 pending**.
-No candidate below has been implemented or benchmarked. Baseline observer
-runs and predicted deltas do not qualify an optimization.
+Status: **E00 complete; E01 in progress; E02..E07 pending**.
+[ZX0 E01 native experiment](NEXT_E01_ZX0_BRANCHES.md) is complete for six
+test-only candidates; optional public integration remains pending. LZSA2 E01
+is running on the existing qualified backend. Baseline observer runs and
+predicted deltas alone do not qualify an optimization.
 [E00 evidence and selected hypotheses](NEXT_E00_BASELINE.md) authenticate
 the fixed inputs, all target layouts and a new minimum-safe overlap runner.
 The additionally requested local Spectrum/C-core test platform is a separate

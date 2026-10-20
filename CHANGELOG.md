@@ -1,5 +1,26 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Verify E01 ZX0 branch contraction candidates
+
+- **Objective/baseline:** Test E00's three bounded selection strategies for
+  shared Maximum127/228 against fixed `9c28b01f`, unchanged inputs and ABI.
+- **Measured result:** Six test-only candidates reduce service by61/13/3 B
+  and real CPU by339,934/214,864/970 T. Fast shared228 is7,517 B and
+  139,552,884 T; fast shared127 is5,053 B and139,576,574 T. No real block
+  slows. Preserve all103/38/0 slower-case lists, maxima38/11/0 T, with correct
+  main non-real/high-word classification (47+56 /19+19 /0).
+- **Verification:**17,028 protected native replays cover all417+56 cases,
+  each plain/IRQ/relocated in disjoint and true minimum-safe overlapping
+  input/output layouts. Six FFFFh probes and1,536 alignment builds pass.
+  An independent binary/label relocation oracle and every complete-case
+  `2*taken-3*not_taken` equation match. Stack, registers, exact EOF, dirty
+  offset, patch permissions and host overlap digests remain exact.
+- **Decision/limits:** Accept experimental faster-and-smaller candidates for
+  optional public integration, not a default/wrapper/release promotion. Old
+  public ZX0 decoder instruction delta0 T; installed API/CLI/wheel/table
+  integration is still pending. New C/Spectrum infrastructure was not used
+  for this proof. [Results, reproducer and complete evidence](libraries/NEXT_E01_ZX0_BRANCHES.md).
+
 ## 2026-10-20 — Authenticate E00 baselines and actual compressed overlap
 
 - **Objective/baseline:** Complete E00 against `9c28b01f` before changing

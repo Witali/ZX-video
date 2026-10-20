@@ -25,8 +25,12 @@ and required stacks. Keep the 10,000-byte cap and publish all slower cases.
 Faster/larger or smaller/slower experiments remain evidence, not promoted
 modes in this pass. [E00](libraries/NEXT_E00_BASELINE.md) is complete:
 946 ZX0 + 2,025 LZSA2 observer runs and 3,444 actual compressed-overlap
-plain/IRQ/relocation runs reproduce all frozen per-case counts. E01..E07
-remain pending; branch-selection gains are predictions only.
+plain/IRQ/relocation runs reproduce all frozen per-case counts. E01 is in
+progress; E02..E07 remain pending. [ZX0 E01](libraries/NEXT_E01_ZX0_BRANCHES.md)
+has17,028 complete native replays plus six FFFFh probes for six test-only
+branch candidates: -61/-13/-3 B and -339,934/-214,864/-970 real T, with no
+slower real block. Retain103/38/0 non-real regression lists; public API/CLI/
+wheel integration is still pending. LZSA2 cold-layout E01 remains running.
 
 The user additionally requests using/adapting the C CPU from
 `C:/Work/z80-tester` for Spectrum and developing it inside this project.
