@@ -42,15 +42,17 @@ def main():
 
     # This generated catalog is a discovery input, not a timing oracle. Hash a
     # stable selection subset: the root table will add accounting columns and
-    # an audit-report link without invalidating these71 names/bytes/old counts.
+    # an audit-report link without invalidating selection names/bytes/counts.
     table_path=LIB/'evidence/decoder_variants_verification.json'
     table_blob=table_path.read_bytes();table=json.loads(table_blob)
-    assert table['complete'] and table['checked_public_calls_and_exact_exports']==71
+    assert table['complete']
+    selection_count=table['checked_public_calls_and_exact_exports']
+    assert selection_count>=71
     fields=('name','codec','kind','builder','kwargs','real_cpu_tstates','regions')
     catalog=[{field:row[field] for field in fields} for row in table['profiles']]
-    assert len(catalog)==71
+    assert len(catalog)==selection_count
     modes=Counter(row['kind'] for row in catalog)
-    assert modes==dict(block=55,coroutine=12,**{'guarded-call':2,'guarded-direct':2})
+    assert modes==dict(block=selection_count-16,coroutine=12,**{'guarded-call':2,'guarded-direct':2})
     for row in table['profiles']:
         source('libraries/'+row['source_file'])
     for relative,digest in table['evidence_sha256'].items():
@@ -123,6 +125,7 @@ def main():
 
     ledgers=dict(
         zx0_standard=dict(instructions=[['LD BC,FFFF',10],['PUSH BC',11],['INC BC',6],['LD A,80',7]],tstates=34),
+        zx0_standard_smc=dict(instructions=[['LD BC,FFFF',10],['LD(offset),BC',20],['INC BC',6],['LD A,80',7]],tstates=43),
         zx0_turbo=dict(instructions=[['LD BC,FFFF',10],['LD(offset),BC',20],['INC BC',6],['LD A,80',7],['JR literals',12]],tstates=55),
         zx0_fast=dict(instructions=[['LD BC,FFFF',10],['LD(offset),BC',20],['INC BC',6],['LD A,80',7],['JP literals',10]],tstates=53),
         zx0_mega=dict(instructions=[['LD BC,FFFF',10],['LD(offset),BC',20],['INC BC',6],['JR literals0',12]],tstates=48),
@@ -256,6 +259,10 @@ def main():
         if row['kind']=='block':
             item.update(primary_cpu_tstates=row['real_cpu_tstates'],benchmark_boundary='metadata raw entry through EOF RET',
                 required_external_library_initializer_tstates=0,required_entry_initialization_included=True)
+            if row['builder']=='zx0.small.build':
+                item['included_entry_setup_tstates']=43 if row['kwargs']['profile']=='smc' else 34
+            elif row['builder']=='lzsa.compact.build' and row['kwargs'].get('compact_eof'):
+                item['included_entry_setup_tstates']=24
         elif row['kind']=='coroutine':
             item.update(primary_cpu_tstates=row['real_cpu_tstates'],benchmark_boundary='begin first invocation plus every slice_until entry through its RET; sum all invocations',
                 required_external_library_initializer_tstates=0,required_entry_initialization_included=True)
@@ -273,21 +280,21 @@ def main():
         application_limits='Binary loading, caller argument preparation, disk/ROM latency, ULA, real IRQ scheduling and a complete application cold boot are outside this service-entry benchmark. Do not call it complete application CPU.',
         no_double_counting='Initialization, begin/sync, guard setup and updates are subsets of the reported entry or producer totals. Add only separately reported standalone guard helper time to its decode-only counter; never add it to producer+decoder again.')
     result=dict(date=date.today().isoformat(),complete=True,accounting_only=True,native_cases_reexecuted=0,
-        profiles=profiles,profile_count=71,mode_counts=dict(modes),guarded_profiles=guarded_profiles,
+        profiles=profiles,profile_count=selection_count,mode_counts=dict(modes),guarded_profiles=guarded_profiles,
         initialization_scope=scope,entry_instruction_ledgers=ledgers,ordinary_begin_costs=ordinary_init,
         ordinary_derivation=ordinary_derivation,source_references=references,input_bindings=stream_bindings,
         retained_stream_sha256=native['retained_stream_sha256'],
         catalog_discovery=dict(path=str(table_path.relative_to(ROOT)).replace('\\','/'),
             required_timing_anchor=False,
             stable_selection_fields=list(fields),stable_selection_sha256=sha(json.dumps(catalog,sort_keys=True,separators=(',',':')).encode()),
-            note='Regenerating table accounting fields/evidence links is allowed; the unchanged 71 selection subset is the catalog identity.'),
+            note='Regenerating accounting fields/evidence links is allowed; the selection subset is the catalog identity. New qualified resident calls extend it.'),
         source_sha256_lf=sources,evidence_sha256=evidence)
     assert all(sha((ROOT/name).read_bytes().replace(b'\r\n',b'\n'))==digest for name,digest in sources.items()),'Audited source changed during accounting'
     doc=render(result)
     DOC_PATH.write_text(doc,encoding='utf-8',newline='\n')
     result['document_sha256']=sha(DOC_PATH.read_bytes())
     JSON_PATH.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n',encoding='utf-8',newline='\n')
-    print(json.dumps(dict(complete=True,profiles=71,native_cases_reexecuted=0,
+    print(json.dumps(dict(complete=True,profiles=selection_count,native_cases_reexecuted=0,
         guarded_real_totals={key:row['real_total_tstates'] for key,row in guarded_profiles.items()},
         report_sha256=sha(JSON_PATH.read_bytes())),sort_keys=True))
     return result
@@ -298,10 +305,10 @@ def render(report):
         item=report['source_references'][key]
         return f"[{item['file']}:{item['line']}](../{item['file']}#L{item['line']})"
     lines=['# Benchmark initialization accounting','',
-        'Accounting audit of the 71 linked selections, '+report['date']+'. No target code or saved native measurements are changed; no CPU replay is run.','',
+        'Accounting audit of the '+str(report['profile_count'])+' linked selections, '+report['date']+'. No target code or saved native measurements are changed; no CPU replay is run.','',
         'The primary guarded service metric is **producer + decoder**, including producer initialization, descriptor/frontier publication, carry handling and guard patching. The preceding decoder-only counts remain historical components. All resident and ordinary-coroutine entry initialization was already included.','',
         '## Counter boundaries','',
-        '- **55 resident selections:** start at the metadata entry and stop after exact EOF/restoration/RET. Offset/cache setup is inside this interval. '+link('resident_timer')+'.',
+        '- **'+str(report['mode_counts']['block'])+' resident selections:** start at the metadata entry and stop after exact EOF/restoration/RET. Offset/cache setup is inside this interval. '+link('resident_timer')+'.',
         '- **12 ordinary coroutines:** the first timed invocation selects `begin`; every later invocation selects `slice_until`. The first cost is retained in the sum, including sync, private-stack setup, raw initialization, yields and final return. '+link('ordinary_begin')+', '+link('ordinary_total')+', '+link('compact_begin')+', '+link('maximum_begin')+'.',
         '- **4 guarded selections:** producer `begin` is timed first; decoder timing starts before its `begin`, and supplier steps are separately timed. The full sum includes both. '+link('producer_begin')+', '+link('producer_decoder_timer')+', '+link('producer_totals')+'.','',
         'All external caller CALL instructions (17 T each) and argument publication are outside the entry-through-RET convention. Raw HL/DE and coroutine input_pointer/block_end/slice_target are ready at entry. Host writes of these API inputs are not timed guest instructions: '+link('ordinary_arguments')+', '+link('ordinary_target')+', '+link('producer_target')+'. Their application-specific loads/stores must be added when benchmarking a concrete caller. This is not full application CPU or a cold-boot benchmark.','',
@@ -309,7 +316,7 @@ def render(report):
         '## Included initialization ledgers','',
         'Static Z80 instruction counts below identify setup already inside the measured paths, before the first parser work. They are not additional costs to add again.','',
         '| Raw family | Included entry setup T |','| --- | ---: |']
-    names=dict(zx0_standard='ZX0 Standard',zx0_turbo='ZX0 Turbo',zx0_fast='ZX0 Fast',zx0_mega='ZX0 original Mega',zx0_maximum='ZX0 Maximum / tuned Mega with JP',lzsa_fast='LZSA2 Fast',lzsa_small='LZSA2 Small',lzsa_wide='LZSA2 Wide / Hybrid / Hot')
+    names=dict(zx0_standard='ZX0 Standard / gamma-JP',zx0_standard_smc='ZX0 Small SMC',zx0_turbo='ZX0 Turbo',zx0_fast='ZX0 Fast',zx0_mega='ZX0 original Mega',zx0_maximum='ZX0 Maximum / tuned Mega with JP',lzsa_fast='LZSA2 Fast',lzsa_small='LZSA2 Small / compact EOF',lzsa_wide='LZSA2 Wide / Hybrid / Hot')
     lines += [f"| {names[key]} | {row['tstates']} |" for key,row in report['entry_instruction_ledgers'].items() if key in names]
     lines += ['', 'Ordinary ZX0 Fast `begin` through raw setup is 269 T, or 295 T with the extra literal-prefix sync stores. Maximum index-quota initialization is 304 T (309 T when the initial demand equals block end). Ordinary LZSA2 Fast is 256/261 T, compact-sync 248/253 T, and Wide 275/280 T. Guarded Fast is 286/291 T; guarded Wide 305/310 T. These pairs differ only by the final-demand sync branch. Full instruction components and source hashes are in the JSON.','',
         'The producer initializer is 70 T per block: 4410 T across 63 retained cases and 1470 T across 21 real cases. Both amounts are already inside producer totals. The decoder’s own `begin` is a different initializer and is inside decoder totals.','',
@@ -336,7 +343,7 @@ def render(report):
     lines += ['', 'The separate flat-native guarded runner executes and times `update_guards` outside the decode-slice counter. Its returned `tstates` alone excludes this work; use `tstates + guard_update_tstates` for its consumer-plus-patcher cost. The JSON records both components and their sum at every saved placement. '+link('native_guard_helper')+', '+link('native_guard_separate_total')+'. Do not add that standalone helper to the producer+decoder totals: the producer already executes its inline implementation.','',
         '## Reproduction and provenance','',
         '```powershell','python libraries/tests/audit_benchmark_initialization.py','```','',
-        '[Machine-readable audit](evidence/benchmark_initialization.json) lists all 71 selection names/calls, the four guarded keys, exact source lines, instruction ledgers, native-proof/stream/input hashes, standalone helper costs and full source/evidence SHA256. It derives totals from complete retained proof; it runs no emulator or decoder. The mutable generated table is discovery metadata, not the timing oracle.','']
+        '[Machine-readable audit](evidence/benchmark_initialization.json) lists all '+str(report['profile_count'])+' selection names/calls, the four guarded keys, exact source lines, instruction ledgers, native-proof/stream/input hashes, standalone helper costs and full source/evidence SHA256. It derives totals from complete retained proof; it runs no emulator or decoder. The mutable generated table is discovery metadata, not the timing oracle.','']
     return '\n'.join(lines)
 
 

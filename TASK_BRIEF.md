@@ -28,7 +28,7 @@ Include all required Z80 library initialization in benchmarks: every per-block
 setup and any separate one-time preparation. Show setup/decode components,
 cold-start latency and batch totals; no required initialization is free.
 [The completed accounting audit](libraries/BENCHMARK_INITIALIZATION.md) checks
-all71 current calls: resident/ordinary begin work was already timed; guarded
+all74 current calls: resident/ordinary begin work was already timed; guarded
 tables now show producer+decoder totals, including70T producer begin/block
 and initial/repeated guard patching. Expanded CALL/direct real service CPU
 is23,106,239/20,892,688 T, improving same-mode pass Fast8.4733%/9.2876%.
@@ -43,7 +43,7 @@ their original rule; their useful tradeoffs now need reevaluation.
 946 ZX0 + 2,025 LZSA2 observer runs and 3,444 actual compressed-overlap
 plain/IRQ/relocation runs reproduce all frozen per-case counts. E01 is now
 complete; E02/E03 screens are complete under their earlier rule. Frontier
-follow-up F00 is complete; minimum-size audit S01 and E04..E07 remain pending.
+follow-up F00 and minimum-size audit S01 are complete; E04..E07 remain pending.
 [ZX0 E01](libraries/NEXT_E01_ZX0_BRANCHES.md)
 has17,028 complete native replays plus six FFFFh probes for six branch
 candidates: -61/-13/-3 B and -339,934/-214,864/-970 real T, with no slower
@@ -88,8 +88,19 @@ wheels/74 API exports/three CLI profiles pass. The71-call table retains every
 preceding68 call and identifies aggregate resident Pareto points. Existing
 defaults stay exact; quota/guarded hot wrappers remain unqualified.
 E04 cap255 can now qualify as faster/larger if nondominated;
-growth alone no longer rejects it. Add bounded S01 audits of the smallest
-ZX0 Standard/LZSA2 Small profiles, rather than only tuning large kernels.
+growth alone no longer rejects it.
+[S01](libraries/NEXT_S01_MINIMUM.md) completes the bounded minimum-size audit:
+ZX0 Standard74 B remains smallest; `zx0.small.build('gamma-jp'|'smc')` adds
+75/78-B points at199,881,370/189,794,309 real T, including34/43-T startup.
+SMC's20-T reset is included. Both473-case baselines improve; preserve76
+non-real SMC regressions against existing both-JP. LZSA2 compact EOF reduces
+Small145 ->144 B,20,423,420 real T (-126), including24T/block setup;
+643 non-real cases slow up to232T and all675 total adds8,536T. Tagged variants
+are dominated; RST28 cannot use Spectrum ROM. All9,801 useful-candidate
+protected configurations,107 library/24 selected toolkit tests,83 isolated
+API exports/three CLIs and all256 origins pass. The74-call table retains all
+preceding71 calls; defaults remain exact. E04 cap255 is next, then E05/E06/E07;
+these component gains do not complete the broader goal.
 Retain E02's two-byte cold-tail tradeoff for E06 dominance/refit review.
 
 The user additionally requests using/adapting the C CPU from
@@ -113,7 +124,7 @@ divergence. Local generators repair the initially stale fused slice artifact.
 Instruction-level ULA contention and live banked guards remain unqualified;
 `Spectrum128(contention=True).attach(cpu)` is rejected. Preserve original protected
 IRQ/overlap/wrapper gates. No GUI, disk/movie qualification or main merge/push
-is implied. Continue S01 and E04..E07 with one focused completed stage
+is implied. Continue E04..E07 with one focused completed stage
 per commit; independent source review may run in parallel.
 
 ## Active codec goal — speed/service-memory frontier (2026-10-19)

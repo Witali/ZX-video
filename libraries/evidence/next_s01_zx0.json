@@ -1,0 +1,727 @@
+{
+  "C_complete": true,
+  "attempts": [],
+  "baseline": {
+    "all_tstates": 224503164,
+    "cases": 473,
+    "real_tstates": 201490104,
+    "service_bytes": 74
+  },
+  "benchmark_scope": "complete start, all per-call setup, EOF and RET; no omitted target initializer",
+  "bounded_designs": {
+    "rst": {
+      "caller_stack_bytes": 6,
+      "helper_address": 40,
+      "helper_bytes": 15,
+      "main_code_bytes": 49,
+      "reason": "RST28 helper0028..0036 requires replacing Spectrum ROM; not an arbitrarily relocatable RAM decoder",
+      "status": "rejected before CPU execution",
+      "theoretical_service_bytes": 70
+    },
+    "selective_jump": {
+      "caller_stack_bytes": 6,
+      "code_bytes": 69,
+      "model": "-2 per selected unconditional jump",
+      "predicted_copy_delta": -476054,
+      "predicted_gamma_delta": -1608734,
+      "real_copy_back_jumps": 238027,
+      "real_gamma_back_jumps": 804367,
+      "scope": "selection optimizes aggregate real CPU; other valid inputs can favor the unselected jump",
+      "selected": "gamma-jp",
+      "selection": "greatest real aggregate execution count at equal service",
+      "service_bytes": 75,
+      "static_only_unselected_layout_emitted": true
+    },
+    "smc": {
+      "caller_stack_bytes": 4,
+      "code_bytes": 74,
+      "copy_delta_bytes": 1,
+      "full_entry_reset_tstates": 20,
+      "model": "9-28*match_copies-10*new_offset_entries+9*(new_offset_entries-1)",
+      "new_offset_delta_bytes": 2,
+      "service_bytes": 78,
+      "startup_delta_bytes": 3,
+      "startup_delta_tstates": 9
+    }
+  },
+  "complete": true,
+  "date": "2026-10-20",
+  "decision": "No smaller Spectrum-valid service layout found in these three bounded designs; two useful faster/larger raw intermediates completely qualified. Fixed-ROM RST proposal rejected, not a public minimum or a global impossibility proof.",
+  "existing_both_jumps": {
+    "byte_regions": [
+      {
+        "address": 32768,
+        "bytes": 70,
+        "sha256": "67e4253a977d8ba067c16d70247cb0561d541946cf945aad072fa51f60604650"
+      }
+    ],
+    "caller_stack_bytes": 6,
+    "code_bytes": 70,
+    "historical_complete_main_cases": 417,
+    "real_tstates": 199405316,
+    "scope": "existing public profile; archived417-case CPU independently agrees with counted -2T at both sites",
+    "service_bytes": 76
+  },
+  "final_source_sha256_lf": {
+    "emulator/cpu.py": "4a43446648f032ba442025e8804582cef661435e1ef199f0c4715fed78d1128e",
+    "libraries/tests/measure_bit_phases.py": "4649acbe8390a7040de55763f7c8743ed2b8dcb7d5a325c2f66e0d61fe8daaf1",
+    "libraries/tests/measure_mega_prefix.py": "5258b48b8e547f8419a771a1eb477702b38da099d716d1d6c52e20b7af7f0c31",
+    "libraries/tests/native_block.py": "94bb095d918546ee3e54af1088e814f8442ca26ce65efd519574e72f1f104b3e",
+    "libraries/tests/native_inplace_block.py": "a5b6806483d10b0d0aaed5ebbae24c5c1bcf57242c672e7b23927381bed171cd",
+    "libraries/tests/next_s01_zx0_measure.py": "23874c9bdf189e2fa3fd687ec65a16bffcf3382abcb44ec5a4d20ca2cdaffdf2",
+    "libraries/tests/next_s01_zx0_profiles.py": "f4b94c0228dc61f27d07995f2bd6ac1889d2432de2807496251c5ec1215e423b",
+    "libraries/tests/profile_branch_mix.py": "e0721a08dfa090ac160a879bb6e4a63815428d1cda29f6582b8ba6519318c9ac",
+    "libraries/zx0/src/zx0/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/zx0/src/zx0/asm/dzx0_standard.asm": "95b5dde1cfb334cb09d8be566728662bd94eb867f8c2f5437c31d78f2f4647b0",
+    "libraries/zx0/src/zx0/block.py": "cad29f8ffa3b104d012787d87ca78adf2d81b6bc5de2ffece605f51320ed2c46",
+    "libraries/zx0/src/zx0/codec.py": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91",
+    "libraries/zx0/src/zx0/inplace.py": "57693ad1d72805bb251daac1a3ed8afec365fb64fd6403519c67c761a9ac72dc",
+    "libraries/zx0/src/zx0/tokens.py": "48555eea40aa0d8fc4a9be67a5263a75c2cf6231b7879b17780afae803e46268",
+    "toolkit/zx0_speed.py": "61badbf610c61e39b220fa0dde575a2b69d159749bd04f8682407b821b4479ec"
+  },
+  "full_evidence": {
+    "path": "libraries/evidence/next_s01_zx0_full.json.gz",
+    "sha256": "2a202c04484bc67ce1d32e15e68d130b2a97bc17a21d32947561728ac6fc6223"
+  },
+  "historical_proofs": {
+    "fast_jumps.json": "95f2a71a0bdc2225365fc520ad41e541ed19bb56f5f226d370289b28f5083fc0",
+    "trick_23.json": "8df00ca5a655a5ff29d447bb6289897306e72acdad4f2451bc248ba6516ab9b6"
+  },
+  "launch_source_sha256_lf": {
+    "emulator/cpu.py": "4a43446648f032ba442025e8804582cef661435e1ef199f0c4715fed78d1128e",
+    "libraries/tests/measure_bit_phases.py": "4649acbe8390a7040de55763f7c8743ed2b8dcb7d5a325c2f66e0d61fe8daaf1",
+    "libraries/tests/measure_mega_prefix.py": "5258b48b8e547f8419a771a1eb477702b38da099d716d1d6c52e20b7af7f0c31",
+    "libraries/tests/native_block.py": "94bb095d918546ee3e54af1088e814f8442ca26ce65efd519574e72f1f104b3e",
+    "libraries/tests/native_inplace_block.py": "a5b6806483d10b0d0aaed5ebbae24c5c1bcf57242c672e7b23927381bed171cd",
+    "libraries/tests/next_s01_zx0_measure.py": "23874c9bdf189e2fa3fd687ec65a16bffcf3382abcb44ec5a4d20ca2cdaffdf2",
+    "libraries/tests/next_s01_zx0_profiles.py": "f4b94c0228dc61f27d07995f2bd6ac1889d2432de2807496251c5ec1215e423b",
+    "libraries/tests/profile_branch_mix.py": "e0721a08dfa090ac160a879bb6e4a63815428d1cda29f6582b8ba6519318c9ac",
+    "libraries/zx0/src/zx0/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/zx0/src/zx0/asm/dzx0_standard.asm": "95b5dde1cfb334cb09d8be566728662bd94eb867f8c2f5437c31d78f2f4647b0",
+    "libraries/zx0/src/zx0/block.py": "cad29f8ffa3b104d012787d87ca78adf2d81b6bc5de2ffece605f51320ed2c46",
+    "libraries/zx0/src/zx0/codec.py": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91",
+    "libraries/zx0/src/zx0/inplace.py": "57693ad1d72805bb251daac1a3ed8afec365fb64fd6403519c67c761a9ac72dc",
+    "libraries/zx0/src/zx0/tokens.py": "48555eea40aa0d8fc4a9be67a5263a75c2cf6231b7879b17780afae803e46268",
+    "toolkit/zx0_speed.py": "61badbf610c61e39b220fa0dde575a2b69d159749bd04f8682407b821b4479ec"
+  },
+  "metric_scope": "service includes all code/state/tables/padding/scratch/required stacks; input/output/history excluded",
+  "minimum_baseline": "Standard68code+6callerstack=74service",
+  "native_C": {
+    "build_sha256": "d250038dd178f3b2c4d4fcca5f111be79963acca6516d62faf28cbe5be3cdc14",
+    "path": "C:\\Work\\ZX-video\\.worktree\\codec-speed-pass3\\.tmp\\codec-cpu-qualified\\codec_cpu.dll",
+    "sha256": "21e89129d040c6c29112c8977b5cb28573ae09f75632f5b993308204a76b2db8"
+  },
+  "native_kosarev_files": {
+    "C:\\Work\\ZX-video\\.tmp\\library-test-deps\\z80\\__init__.py": "ed7ee94935c64c4dcbac28378d314403812a826a6de9749aec825624fe314f17",
+    "C:\\Work\\ZX-video\\.tmp\\library-test-deps\\z80\\_z80.cp312-win_amd64.pyd": "fa9faf874754877962b88ed2dc6a4e184dc03ea0b79b3e4745f3115626b98cbb"
+  },
+  "observed_base_commit": "2d998229",
+  "profiles": {
+    "gamma-jp": {
+      "C_complete": true,
+      "FFFF_output_cursor_probes": [
+        {
+          "case": "literal-1",
+          "modes": {
+            "irq": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 6,
+              "tstates": 660,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "26b25d457597a7b0463f9620f666dd10aa2c4373a505967c7c8d70922a2d6ece"
+            },
+            "plain": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 6,
+              "tstates": 634,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "26b25d457597a7b0463f9620f666dd10aa2c4373a505967c7c8d70922a2d6ece"
+            },
+            "relocated": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 6,
+              "tstates": 634,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "26b25d457597a7b0463f9620f666dd10aa2c4373a505967c7c8d70922a2d6ece"
+            }
+          },
+          "output_cursor": 65535
+        },
+        {
+          "case": "match-1",
+          "modes": {
+            "irq": {
+              "exact": true,
+              "injected_interrupts": 3,
+              "stack_bytes": 12,
+              "tstates": 335054,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "a7c1fe376cdd1c1e8a01335ce608bb9308ffe0424c8ce123d7d5f243a9671f27"
+            },
+            "plain": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 6,
+              "tstates": 334743,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "a7c1fe376cdd1c1e8a01335ce608bb9308ffe0424c8ce123d7d5f243a9671f27"
+            },
+            "relocated": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 6,
+              "tstates": 334743,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "a7c1fe376cdd1c1e8a01335ce608bb9308ffe0424c8ce123d7d5f243a9671f27"
+            }
+          },
+          "output_cursor": 65535
+        },
+        {
+          "case": "high-word-offset-1-length-49151",
+          "modes": {
+            "irq": {
+              "exact": true,
+              "injected_interrupts": 10,
+              "stack_bytes": 12,
+              "tstates": 1034713,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "518fd223995fae65650d87542abce785cb745fc1356bf173ee5122ccb848118f"
+            },
+            "plain": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 6,
+              "tstates": 1033737,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "518fd223995fae65650d87542abce785cb745fc1356bf173ee5122ccb848118f"
+            },
+            "relocated": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 6,
+              "tstates": 1033737,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "518fd223995fae65650d87542abce785cb745fc1356bf173ee5122ccb848118f"
+            }
+          },
+          "output_cursor": 65535
+        }
+      ],
+      "high_word": {
+        "labels": {
+          "dzx0_standard": 2048,
+          "dzx0s_copy": 2066,
+          "dzx0s_elias": 2101,
+          "dzx0s_elias_backtrack": 2109,
+          "dzx0s_elias_loop": 2102,
+          "dzx0s_elias_skip": 2108,
+          "dzx0s_literals": 2055,
+          "dzx0s_new_offset": 2076
+        },
+        "labels_sha256": "8cba17c11845182afd022db5b099423b9bf2120061f234d17dd8300c6a117228",
+        "metadata": {
+          "ROM_compatible": true,
+          "caller_stack_bytes": 6,
+          "code_bytes": 69,
+          "code_sha256": "8a4f186c60480c541e50e65ace1a4b84a305be9bf84875f18ec9a1f59898a84a",
+          "embedded_mutable_bytes": 0,
+          "embedded_state_counted_once_in_code": true,
+          "entry": "dzx0_standard",
+          "initialization_scope": "all required setup is inside each start-through-EOF call",
+          "nonreentrant": false,
+          "patched_addresses": [],
+          "raw_only": true,
+          "service_memory": {
+            "caller_stack_bytes": 6,
+            "code_tables_alignment_and_embedded_state_bytes": 69,
+            "internal_buffer_bytes": 0,
+            "scratch_bytes": 0,
+            "variables": 0
+          },
+          "service_memory_bytes": 75,
+          "target_initializer_required": false,
+          "test_only": true,
+          "variant": "next-s01-zx0-gamma-jp"
+        },
+        "regions": [
+          {
+            "address": 2048,
+            "bytes": 69,
+            "sha256": "8a4f186c60480c541e50e65ace1a4b84a305be9bf84875f18ec9a1f59898a84a"
+          }
+        ]
+      },
+      "high_word_relocated": {
+        "labels": {
+          "dzx0_standard": 1795,
+          "dzx0s_copy": 1813,
+          "dzx0s_elias": 1848,
+          "dzx0s_elias_backtrack": 1856,
+          "dzx0s_elias_loop": 1849,
+          "dzx0s_elias_skip": 1855,
+          "dzx0s_literals": 1802,
+          "dzx0s_new_offset": 1823
+        },
+        "labels_sha256": "e01303ebc02c648e59b9dd2d10fd4f0d09119561b14299354a037e818518af71",
+        "metadata": {
+          "ROM_compatible": true,
+          "caller_stack_bytes": 6,
+          "code_bytes": 69,
+          "code_sha256": "f9f6e4ffe5a0001cebe224113b001c04a989c6a9b94cada0dfce3daa2703b26f",
+          "embedded_mutable_bytes": 0,
+          "embedded_state_counted_once_in_code": true,
+          "entry": "dzx0_standard",
+          "initialization_scope": "all required setup is inside each start-through-EOF call",
+          "nonreentrant": false,
+          "patched_addresses": [],
+          "raw_only": true,
+          "service_memory": {
+            "caller_stack_bytes": 6,
+            "code_tables_alignment_and_embedded_state_bytes": 69,
+            "internal_buffer_bytes": 0,
+            "scratch_bytes": 0,
+            "variables": 0
+          },
+          "service_memory_bytes": 75,
+          "target_initializer_required": false,
+          "test_only": true,
+          "variant": "next-s01-zx0-gamma-jp"
+        },
+        "regions": [
+          {
+            "address": 1795,
+            "bytes": 69,
+            "sha256": "f9f6e4ffe5a0001cebe224113b001c04a989c6a9b94cada0dfce3daa2703b26f"
+          }
+        ]
+      },
+      "labels_sha256": "334c44e8b6ed5e63a68495ccd364ceb59483ffbdbc5d4e6a0842e2b2f49171a4",
+      "metadata": {
+        "ROM_compatible": true,
+        "caller_stack_bytes": 6,
+        "code_bytes": 69,
+        "code_sha256": "8137ee2990b6f209ebcaf4a350b38933aa0a9252b85f8951fd1a34a6ae198867",
+        "embedded_mutable_bytes": 0,
+        "embedded_state_counted_once_in_code": true,
+        "entry": "dzx0_standard",
+        "initialization_scope": "all required setup is inside each start-through-EOF call",
+        "nonreentrant": false,
+        "patched_addresses": [],
+        "raw_only": true,
+        "service_memory": {
+          "caller_stack_bytes": 6,
+          "code_tables_alignment_and_embedded_state_bytes": 69,
+          "internal_buffer_bytes": 0,
+          "scratch_bytes": 0,
+          "variables": 0
+        },
+        "service_memory_bytes": 75,
+        "target_initializer_required": false,
+        "test_only": true,
+        "variant": "next-s01-zx0-gamma-jp"
+      },
+      "native_complete": true,
+      "qualification": {
+        "FFFF_configs": 9,
+        "actual_overlap_cases": 473,
+        "all_required_initialization_inside_measured_call": true,
+        "cases": 473,
+        "complete": true,
+        "dirty_offset_reset_tested": false,
+        "high_word_cases": 56,
+        "host_native_input_write_digests_exact": true,
+        "injected_interrupts": 3992,
+        "maximum_inplace_irq_stack_bytes": 12,
+        "maximum_intrinsic_service_bytes": 75,
+        "maximum_irq_stack_bytes": 12,
+        "maximum_plain_stack_bytes": 6,
+        "modes_per_case": 6,
+        "native_configs": 2838,
+        "with_reference13B_IRQ_and6B_extra_stack": 94
+      },
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 69,
+          "sha256": "8137ee2990b6f209ebcaf4a350b38933aa0a9252b85f8951fd1a34a6ae198867"
+        }
+      ],
+      "relocated": {
+        "labels": {
+          "dzx0_standard": 37123,
+          "dzx0s_copy": 37141,
+          "dzx0s_elias": 37176,
+          "dzx0s_elias_backtrack": 37184,
+          "dzx0s_elias_loop": 37177,
+          "dzx0s_elias_skip": 37183,
+          "dzx0s_literals": 37130,
+          "dzx0s_new_offset": 37151
+        },
+        "labels_sha256": "ebc326249dcbefd28501e6308302af36ade84a4a2ca5df0e7e63feb56e28de7d",
+        "metadata": {
+          "ROM_compatible": true,
+          "caller_stack_bytes": 6,
+          "code_bytes": 69,
+          "code_sha256": "102c15e1d56fb07654dea86ee01a583a8fe318b327187e86cf8725f00a0a6014",
+          "embedded_mutable_bytes": 0,
+          "embedded_state_counted_once_in_code": true,
+          "entry": "dzx0_standard",
+          "initialization_scope": "all required setup is inside each start-through-EOF call",
+          "nonreentrant": false,
+          "patched_addresses": [],
+          "raw_only": true,
+          "service_memory": {
+            "caller_stack_bytes": 6,
+            "code_tables_alignment_and_embedded_state_bytes": 69,
+            "internal_buffer_bytes": 0,
+            "scratch_bytes": 0,
+            "variables": 0
+          },
+          "service_memory_bytes": 75,
+          "target_initializer_required": false,
+          "test_only": true,
+          "variant": "next-s01-zx0-gamma-jp"
+        },
+        "regions": [
+          {
+            "address": 37123,
+            "bytes": 69,
+            "sha256": "102c15e1d56fb07654dea86ee01a583a8fe318b327187e86cf8725f00a0a6014"
+          }
+        ]
+      },
+      "summary": {
+        "all_delta_tstates": -1627522,
+        "all_tstates": 222875642,
+        "cases": 473,
+        "equal_cases": 0,
+        "faster_cases": 473,
+        "maximum_regression_tstates": 0,
+        "real_cases": 364,
+        "real_delta_tstates": -1608734,
+        "real_tstates": 199881370,
+        "slower_cases": []
+      }
+    },
+    "smc": {
+      "C_complete": true,
+      "FFFF_output_cursor_probes": [
+        {
+          "case": "literal-1",
+          "modes": {
+            "irq": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 4,
+              "tstates": 675,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "26b25d457597a7b0463f9620f666dd10aa2c4373a505967c7c8d70922a2d6ece"
+            },
+            "plain": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 4,
+              "tstates": 649,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "26b25d457597a7b0463f9620f666dd10aa2c4373a505967c7c8d70922a2d6ece"
+            },
+            "relocated": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 4,
+              "tstates": 649,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "26b25d457597a7b0463f9620f666dd10aa2c4373a505967c7c8d70922a2d6ece"
+            }
+          },
+          "output_cursor": 65535
+        },
+        {
+          "case": "match-1",
+          "modes": {
+            "irq": {
+              "exact": true,
+              "injected_interrupts": 3,
+              "stack_bytes": 10,
+              "tstates": 335067,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "a7c1fe376cdd1c1e8a01335ce608bb9308ffe0424c8ce123d7d5f243a9671f27"
+            },
+            "plain": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 4,
+              "tstates": 334756,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "a7c1fe376cdd1c1e8a01335ce608bb9308ffe0424c8ce123d7d5f243a9671f27"
+            },
+            "relocated": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 4,
+              "tstates": 334756,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "a7c1fe376cdd1c1e8a01335ce608bb9308ffe0424c8ce123d7d5f243a9671f27"
+            }
+          },
+          "output_cursor": 65535
+        },
+        {
+          "case": "high-word-offset-1-length-49151",
+          "modes": {
+            "irq": {
+              "exact": true,
+              "injected_interrupts": 10,
+              "stack_bytes": 10,
+              "tstates": 1034730,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "518fd223995fae65650d87542abce785cb745fc1356bf173ee5122ccb848118f"
+            },
+            "plain": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 4,
+              "tstates": 1033754,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "518fd223995fae65650d87542abce785cb745fc1356bf173ee5122ccb848118f"
+            },
+            "relocated": {
+              "exact": true,
+              "injected_interrupts": 0,
+              "stack_bytes": 4,
+              "tstates": 1033754,
+              "unavailable_interrupt_events": 0,
+              "write_input_cursors_sha256": "518fd223995fae65650d87542abce785cb745fc1356bf173ee5122ccb848118f"
+            }
+          },
+          "output_cursor": 65535
+        }
+      ],
+      "high_word": {
+        "labels": {
+          "dzx0_standard": 2048,
+          "dzx0s_copy": 2069,
+          "dzx0s_elias": 2107,
+          "dzx0s_elias_backtrack": 2115,
+          "dzx0s_elias_loop": 2108,
+          "dzx0s_elias_skip": 2114,
+          "dzx0s_literals": 2058,
+          "dzx0s_new_offset": 2080,
+          "s01_offset": 2071
+        },
+        "labels_sha256": "dbd8e604eb85b3cd3720423cddc1d6f294d3447bf68ade789df90b2806af3332",
+        "metadata": {
+          "ROM_compatible": false,
+          "caller_stack_bytes": 4,
+          "code_bytes": 74,
+          "code_sha256": "39a96c66b04a5f64f751ffddaf5643d16155128d7dd6bfb1a9f993f4874b6095",
+          "embedded_mutable_bytes": 2,
+          "embedded_state_counted_once_in_code": true,
+          "entry": "dzx0_standard",
+          "initialization_scope": "all required setup is inside each start-through-EOF call",
+          "nonreentrant": true,
+          "patched_addresses": [
+            2071,
+            2072
+          ],
+          "raw_only": true,
+          "service_memory": {
+            "caller_stack_bytes": 4,
+            "code_tables_alignment_and_embedded_state_bytes": 74,
+            "internal_buffer_bytes": 0,
+            "scratch_bytes": 0,
+            "variables": 0
+          },
+          "service_memory_bytes": 78,
+          "target_initializer_required": false,
+          "test_only": true,
+          "variant": "next-s01-zx0-smc"
+        },
+        "regions": [
+          {
+            "address": 2048,
+            "bytes": 74,
+            "sha256": "39a96c66b04a5f64f751ffddaf5643d16155128d7dd6bfb1a9f993f4874b6095"
+          }
+        ]
+      },
+      "high_word_relocated": {
+        "labels": {
+          "dzx0_standard": 1795,
+          "dzx0s_copy": 1816,
+          "dzx0s_elias": 1854,
+          "dzx0s_elias_backtrack": 1862,
+          "dzx0s_elias_loop": 1855,
+          "dzx0s_elias_skip": 1861,
+          "dzx0s_literals": 1805,
+          "dzx0s_new_offset": 1827,
+          "s01_offset": 1818
+        },
+        "labels_sha256": "d7fca09d8469c2084a38079247502fcd2fb1f488269c70d499461ce6845adb82",
+        "metadata": {
+          "ROM_compatible": false,
+          "caller_stack_bytes": 4,
+          "code_bytes": 74,
+          "code_sha256": "38300b4837d848d9457f64a5dd1a502ee5a8d64c32abd3594d8797aecdb69dd2",
+          "embedded_mutable_bytes": 2,
+          "embedded_state_counted_once_in_code": true,
+          "entry": "dzx0_standard",
+          "initialization_scope": "all required setup is inside each start-through-EOF call",
+          "nonreentrant": true,
+          "patched_addresses": [
+            1818,
+            1819
+          ],
+          "raw_only": true,
+          "service_memory": {
+            "caller_stack_bytes": 4,
+            "code_tables_alignment_and_embedded_state_bytes": 74,
+            "internal_buffer_bytes": 0,
+            "scratch_bytes": 0,
+            "variables": 0
+          },
+          "service_memory_bytes": 78,
+          "target_initializer_required": false,
+          "test_only": true,
+          "variant": "next-s01-zx0-smc"
+        },
+        "regions": [
+          {
+            "address": 1795,
+            "bytes": 74,
+            "sha256": "38300b4837d848d9457f64a5dd1a502ee5a8d64c32abd3594d8797aecdb69dd2"
+          }
+        ]
+      },
+      "labels_sha256": "b4a3ff77214fdc342f2de89a46f2d1835311179a07cee531f1ef2d44215617da",
+      "metadata": {
+        "ROM_compatible": false,
+        "caller_stack_bytes": 4,
+        "code_bytes": 74,
+        "code_sha256": "c762bd11c865f59252fade8346602b5b20c607c4be1b4b7d256ff02929184ef5",
+        "embedded_mutable_bytes": 2,
+        "embedded_state_counted_once_in_code": true,
+        "entry": "dzx0_standard",
+        "initialization_scope": "all required setup is inside each start-through-EOF call",
+        "nonreentrant": true,
+        "patched_addresses": [
+          32791,
+          32792
+        ],
+        "raw_only": true,
+        "service_memory": {
+          "caller_stack_bytes": 4,
+          "code_tables_alignment_and_embedded_state_bytes": 74,
+          "internal_buffer_bytes": 0,
+          "scratch_bytes": 0,
+          "variables": 0
+        },
+        "service_memory_bytes": 78,
+        "target_initializer_required": false,
+        "test_only": true,
+        "variant": "next-s01-zx0-smc"
+      },
+      "native_complete": true,
+      "qualification": {
+        "FFFF_configs": 9,
+        "actual_overlap_cases": 473,
+        "all_required_initialization_inside_measured_call": true,
+        "cases": 473,
+        "complete": true,
+        "dirty_offset_reset_tested": true,
+        "high_word_cases": 56,
+        "host_native_input_write_digests_exact": true,
+        "injected_interrupts": 3808,
+        "maximum_inplace_irq_stack_bytes": 10,
+        "maximum_intrinsic_service_bytes": 78,
+        "maximum_irq_stack_bytes": 10,
+        "maximum_plain_stack_bytes": 4,
+        "modes_per_case": 6,
+        "native_configs": 2838,
+        "with_reference13B_IRQ_and6B_extra_stack": 97
+      },
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 74,
+          "sha256": "c762bd11c865f59252fade8346602b5b20c607c4be1b4b7d256ff02929184ef5"
+        }
+      ],
+      "relocated": {
+        "labels": {
+          "dzx0_standard": 37123,
+          "dzx0s_copy": 37144,
+          "dzx0s_elias": 37182,
+          "dzx0s_elias_backtrack": 37190,
+          "dzx0s_elias_loop": 37183,
+          "dzx0s_elias_skip": 37189,
+          "dzx0s_literals": 37133,
+          "dzx0s_new_offset": 37155,
+          "s01_offset": 37146
+        },
+        "labels_sha256": "966dd49ca4046b5c8a1fac4744e83bad8971d6cf9e9fefb24e6c32e0c9080fee",
+        "metadata": {
+          "ROM_compatible": false,
+          "caller_stack_bytes": 4,
+          "code_bytes": 74,
+          "code_sha256": "4cdbfff4e811e75236de05eb12e6e2d2eedfc3c7cf128e7e8bdbb45e14aa390f",
+          "embedded_mutable_bytes": 2,
+          "embedded_state_counted_once_in_code": true,
+          "entry": "dzx0_standard",
+          "initialization_scope": "all required setup is inside each start-through-EOF call",
+          "nonreentrant": true,
+          "patched_addresses": [
+            37146,
+            37147
+          ],
+          "raw_only": true,
+          "service_memory": {
+            "caller_stack_bytes": 4,
+            "code_tables_alignment_and_embedded_state_bytes": 74,
+            "internal_buffer_bytes": 0,
+            "scratch_bytes": 0,
+            "variables": 0
+          },
+          "service_memory_bytes": 78,
+          "target_initializer_required": false,
+          "test_only": true,
+          "variant": "next-s01-zx0-smc"
+        },
+        "regions": [
+          {
+            "address": 37123,
+            "bytes": 74,
+            "sha256": "4cdbfff4e811e75236de05eb12e6e2d2eedfc3c7cf128e7e8bdbb45e14aa390f"
+          }
+        ]
+      },
+      "summary": {
+        "all_delta_tstates": -11719993,
+        "all_tstates": 212783171,
+        "cases": 473,
+        "equal_cases": 0,
+        "faster_cases": 473,
+        "maximum_regression_tstates": 0,
+        "real_cases": 364,
+        "real_delta_tstates": -11695795,
+        "real_tstates": 189794309,
+        "slower_cases": []
+      }
+    }
+  },
+  "protected_changes": "IY and alternateAF sentinels, arbitrary AF/BC entry, output-write input-cursor digest; no guest timing changes",
+  "protected_source_sha256": "cd4ff645c79369e62c1d6b56ddcbce0cb4f23fc9c10a081e9f226da32ae09fc0",
+  "public_changes": false,
+  "raw_qualification_complete": true,
+  "release": false,
+  "stage": "S01-ZX0",
+  "unperformed": [
+    "Spectrum contention/ROM/disk/movie timing",
+    "public API/wheel integration",
+    "unbounded minimum-size search"
+  ]
+}

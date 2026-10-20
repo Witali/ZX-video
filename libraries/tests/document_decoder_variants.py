@@ -51,6 +51,8 @@ def main():
     shared_zx0=read('evidence/shared_zero_prefix_native.json.gz')
     hybrid_lzsa=read('evidence/hybrid_public_verification.json')
     initialization=read('evidence/benchmark_initialization.json')
+    s01_auth=read('evidence/next_s01_public_verification.json')
+    s01_prior=read('evidence/next_s01_prior_sources.json.gz')
     assert initialization['complete'] and initialization['native_cases_reexecuted']==0
     originals={
         ('zx0','block'):old_zx['summary']['fast']['real_tstates'],
@@ -159,9 +161,14 @@ def main():
     small=add('LZSA2 Small (minimum)','lzsa2','block','lzsa.block',dict(variant='small'),layout='SMALL',
               cpu=old_lz['summary']['real_candidate_tstates'],stack=old_lz['summary']['stack_bytes'])
     assert small[2]==old_lz['candidate_metadata']
-    assert sources['lzsa/src/lzsa/block.py']==integrated['source_sha256_lf']['libraries/lzsa/src/lzsa/block.py']
+    # The new optional Small EOF path changes these two Python sources while
+    # preserving all old emitted layouts/default metadata. Keep both the old
+    # source witness and the current package authentication explicit.
+    assert s01_prior['libraries/lzsa/src/lzsa/block.py']['sha256_lf']==integrated['source_sha256_lf']['libraries/lzsa/src/lzsa/block.py']
+    assert sources['lzsa/src/lzsa/block.py']==s01_auth['source_sha256_lf']['libraries/lzsa/src/lzsa/block.py']
     compact_source=LIB/'lzsa/src/lzsa/compact.py'
-    assert sha(compact_source.read_bytes().replace(b'\r\n',b'\n'))==second['source_sha256_lf']['lzsa\\src\\lzsa\\compact.py']
+    assert s01_prior['libraries/lzsa/src/lzsa/compact.py']['sha256_lf']==second['source_sha256_lf']['lzsa\\src\\lzsa\\compact.py']
+    assert sha(compact_source.read_bytes().replace(b'\r\n',b'\n'))==s01_auth['source_sha256_lf']['libraries/lzsa/src/lzsa/compact.py']
     add('LZSA2 Fast compact branches','lzsa2','block','lzsa.block',dict(fast_jumps=True,compact_branches=True),
         layout='SMALL',catalog='lzsa-small-fast')
     add('LZSA2 Fast tuned +prefill','lzsa2','block','lzsa.block',dict(fast_jumps=True,branch_tuned=True,nibble_prefill=True),
@@ -219,11 +226,19 @@ def main():
     f00_auth=read('evidence/next_f00_public_verification.json')
     f00_native=read('evidence/next_f00_full.json.gz')
     f00_prior=read('evidence/next_f00_prior_sources.json.gz')
+    s01_zx=read('evidence/next_s01_zx0_full.json.gz')
+    s01_lz=read('evidence/next_s01_lzsa_full.json.gz')
+    assert s01_auth['complete'] and s01_zx['complete'] and s01_lz['complete']
+    for filename in ('next_s01_zx0_full.json.gz','next_s01_lzsa_full.json.gz','next_s01_prior_sources.json.gz'):
+        assert s01_auth['proof_sha256'][filename]==used['evidence/'+filename],filename
+    for relative,digest in s01_auth['source_sha256_lf'].items():
+        assert sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))==digest,relative
     assert f00_auth['complete'] and f00_native['complete']
     assert f00_auth['proof_sha256']['next_f00_full.json.gz']==used['evidence/next_f00_full.json.gz']
     assert f00_auth['proof_sha256']['next_e01_public_verification.json']==used['evidence/next_e01_public_verification.json']
     for relative,digest in f00_auth['source_sha256_lf'].items():
-        assert sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))==digest,relative
+        current=sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))
+        if current!=digest:assert s01_auth['source_sha256_lf'][relative]==current,relative
     assert all(proof['complete'] for proof in (zx_branches,zx_public,lz_cold,e01_auth))
     assert len(zx_branches['profiles'])==len(zx_public['current_public_calls'])==6
     assert len(lz_cold['profiles'])==12 and lz_cold['accepted']
@@ -233,9 +248,7 @@ def main():
     for relative,digest in e01_auth['source_sha256_lf'].items():
         current=sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))
         if current!=digest:
-            assert relative in {f'libraries/lzsa/src/lzsa/{name}.py'
-                                for name in ('wide','hybrid','__main__','export')},relative
-            assert f00_auth['source_sha256_lf'][relative]==current
+            assert s01_auth['source_sha256_lf'][relative]==current,relative
 
     def stage(reference,public,proof,slower,cases,baseline_cpu):
         assert not any(row['real'] for row in slower)
@@ -315,6 +328,32 @@ def main():
             slower_supplemental_cases=public['slower_supplemental_cases'],
             qualification=public['qualification'],initialization=f00_auth['initialization'])
     assert len(records)==71
+    preceding_s01=json.loads(s01_prior['libraries/evidence/decoder_variants_verification.json']['text'])['profiles']
+    assert [{key:row[key] for key in LEGACY_FIELDS} for row in records]==[
+        {key:row[key] for key in LEGACY_FIELDS} for row in preceding_s01]
+    for public in s01_auth['current_public_calls']:
+        codec=public['codec'];native=s01_zx if codec=='zx0' else s01_lz
+        saved=native['profiles'][public['native_profile']]
+        assert saved['C_complete'] and saved['native_complete']
+        assert public['regions']==saved['regions'] and public['labels']==saved['labels']
+        assert public['real_cpu_tstates']==saved['summary']['real_tstates']
+        stack=4 if codec=='zx0' and public['native_profile']=='smc' else 6 if codec=='zx0' else 8
+        name=('ZX0 Small '+public['native_profile']) if codec=='zx0' else 'LZSA2 Small compact EOF (minimum)'
+        profile=add(name,codec,'block',public['module'],public['kwargs'],layout='SMALL',
+            cpu=public['real_cpu_tstates'],stack=stack,frozen=public)
+        assert profile[1]==public['labels']
+        assert json.loads(json.dumps(profile[2]))==public['metadata']
+        records[-1]['s01']=dict(native_proof='evidence/'+public['native_proof'],
+            public_authentication='evidence/next_s01_public_verification.json',
+            baseline_service_bytes=74 if codec=='zx0' else 145,
+            baseline_real_tstates=201490104 if codec=='zx0' else 20423546,
+            service_delta_bytes=public['service_bytes']-(74 if codec=='zx0' else 145),
+            real_delta_tstates=saved['summary']['real_delta_tstates'],
+            slower_baseline_cases=saved['summary']['slower_cases'],
+            maximum_regression_tstates=saved['summary'].get('maximum_regression_tstates',0),
+            qualification=public['qualification'],
+            initialization_tstates=43 if codec=='zx0' and public['native_profile']=='smc' else 34 if codec=='zx0' else 24)
+    assert len(records)==74
 
     # Compare like features and the documented aligned placement. This is an
     # aggregate real-workload frontier, not a universal per-block ordering.
@@ -439,12 +478,13 @@ def main():
             memory=number(row['service_bytes'])
             if row['full_reference_service_bytes'] is not None:memory+=' / '+number(row['full_reference_service_bytes'])
             call=f'[{row["display_call"]}]({row["source_file"]}#L{row["source_line"]})'
+            display_name='LZSA2 Small (classic)' if row['name']=='LZSA2 Small (minimum)' else row['name']
             if guarded_table:
-                lines.append(f'| {row["name"]} | {memory} | {number(row["real_total_benchmark_tstates"])} | '
+                lines.append(f'| {display_name} | {memory} | {number(row["real_total_benchmark_tstates"])} | '
                     f'{number(row["real_cpu_tstates"])} | {percent(row["delta_time_vs_pass_percent"])} / '
                     f'{percent(row["delta_time_vs_original_percent"])} | {call} |')
             else:
-                lines.append(f'| {row["name"]} | {memory} | {number(row["real_cpu_tstates"])} | '
+                lines.append(f'| {display_name} | {memory} | {number(row["real_cpu_tstates"])} | '
                     f'{percent(row["delta_time_vs_pass_percent"])} | {percent(row["delta_time_vs_original_percent"])} | {call} |')
         lines.append('')
     lines += ['## Guarded total benchmark comparisons','',
@@ -464,6 +504,7 @@ def main():
     lines.append('')
     e01_records=[row for row in records if 'e01' in row]
     f00_records=[row for row in records if 'f00' in row]
+    s01_records=[row for row in records if 's01' in row]
     fastest={codec:min((row for row in records if row['codec']==codec and row['kind']=='block'),
                        key=lambda row:row['real_cpu_tstates']) for codec in ('zx0','lzsa2')}
     lines += ['## E01 increments against the accepted resident variants','',
@@ -519,6 +560,29 @@ def main():
         'configurations are retained. Arbitrary alignment adds up to255 B; with the',
         '13+6-byte IRQ example the largest profile is9,819 B. Raw qualification does',
         'not qualify quota/guarded wrappers. [F00 report](NEXT_F00_HOT_PATHS.md).','',
+        '## S01 compact resident choices','',
+        'These new points retain complete initialization and the original format/ABI.',
+        'Original ZX0 Standard remains the smallest tested Spectrum-valid choice at74 B.',
+        'LZSA2 compact EOF reduces the retained minimum145 ->144 B. Compared with the',
+        'corresponding Standard/Small predecessor:','',
+        '| Variant | Service B / delta | Real CPU T / delta | Included setup T/block | Slower cases / max T |',
+        '| --- | ---: | ---: | ---: | ---: |']
+    for row in s01_records:
+        item=row['s01']
+        lines.append(f'| {row["name"]} | {number(row["service_bytes"])} / {item["service_delta_bytes"]:+d} | '
+            f'{number(row["real_cpu_tstates"])} / {number(item["real_delta_tstates"])} | '
+            f'{item["initialization_tstates"]} | {len(item["slower_baseline_cases"])} / '
+            f'{item["maximum_regression_tstates"]} |')
+    lines += ['','ZX0 SMC uses writable nonreentrant offset bytes; its43-T entry includes the',
+        '20-T reset every call. Gamma-JP stays ROM-compatible with34-T setup.',
+        'All473 cases improve against Standard. Against existing both-JP Standard',
+        '(76 B/199,405,316 T), SMC slows76 non-real cases by at most50 T; no real case',
+        'slows. Gamma-JP trades one fewer service byte for476,054 more real T.',
+        'LZSA2 retains24-T setup. EOF saves6 T, word dispatch adds14 T: all21 real',
+        'blocks improve, but643 non-real cases slow by at most232 T. On the full675',
+        'case batch the change adds8,536 T. All lists are retained; aggregate real',
+        'improvement does not imply universal speed improvement.',
+        '[S01 report](NEXT_S01_MINIMUM.md) records rejected ROM/tag designs and full gates.','',
         '## Nondominated resident size/speed choices','',
         'These are the best tested points on the complete real-corpus aggregate at',
         'the aligned placements above, with the same resident format/ABI. A point',
@@ -533,7 +597,7 @@ def main():
                 f'[{row["display_call"]}]({row["source_file"]}#L{row["source_line"]}) |')
     lines += ['','## Selection and runtime contracts','',
         '- Smallest resident decoders: **ZX0 Standard 74 B** (68 code +6 stack),',
-        '  **LZSA2 Small 145 B** (137 code +8 stack). Both are slower than Fast.',
+        '  **LZSA2 Small compact EOF 144 B** (136 code +8 stack). Both are slower than Fast.',
         f'- Fastest measured resident choices: **{fastest["zx0"]["name"]}, {number(fastest["zx0"]["service_bytes"])} B**',
         f'  ({number(fastest["zx0"]["real_cpu_tstates"])} T) and **{fastest["lzsa2"]["name"]},',
         f'  {number(fastest["lzsa2"]["service_bytes"])} B** ({number(fastest["lzsa2"]["real_cpu_tstates"])} T).',
@@ -574,6 +638,7 @@ def main():
         '| --- | --- |']
     for family,module,function in (
         ('ZX0 Standard / Turbo / Mega','zx0.codec','emit_decoder'),
+        ('ZX0 compact Standard-derived profiles','zx0.small','build'),
         ('ZX0 Fast','zx0.resumable','emit_fast'),
         ('ZX0 Maximum resident','zx0.maximum','build'),
         ('ZX0 fixed E01 branch layouts','zx0.maximum_branches','build'),
@@ -600,6 +665,9 @@ def main():
         '[F00 full native proof](evidence/next_f00_full.json.gz),',
         '[F00 public/wheel authentication](evidence/next_f00_public_verification.json),',
         '[Initialization and guarded-total audit](evidence/benchmark_initialization.json),',
+        '[S01 ZX0 native proof](evidence/next_s01_zx0_full.json.gz),',
+        '[S01 LZSA2 native proof](evidence/next_s01_lzsa_full.json.gz),',
+        '[S01 public/wheel authentication](evidence/next_s01_public_verification.json),',
         '[Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),',
         '[shared-prefix contracts](ZX0_SHARED_PREFIXES.md),',
         '[Hybrid API/wheel/native binding](evidence/hybrid_public_verification.json),',
@@ -633,6 +701,7 @@ def main():
         profiles=records,evidence_sha256=used,source_sha256_lf=sources,
         preceding_public_calls_exact=50,preceding_selection_memory_cpu_region_sha256=legacy_sha,
         preceding_e01_table_calls_exact=68,optional_f00_public_calls=len(f00_records),
+        preceding_f00_table_calls_exact=71,optional_s01_public_calls=len(s01_records),
         resident_real_frontier={codec:[dict(name=row['name'],service_bytes=row['service_bytes'],
             real_cpu_tstates=row['real_cpu_tstates'],builder=row['builder'],kwargs=row['kwargs'])
             for row in points] for codec,points in frontier.items()},

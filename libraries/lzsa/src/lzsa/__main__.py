@@ -28,6 +28,7 @@ def main():
     assembly.add_argument('--fast-jumps', action='store_true',
                           help='use 10-T JP for core unconditional JR; one extra byte per site')
     assembly.add_argument('--compact-branches', action='store_true',help='shorten only the measured Case11x conditional branch; saves one byte')
+    assembly.add_argument('--compact-eof', action='store_true',help='Small only: share the EOF/word return through dead BC; saves one service byte')
     assembly.add_argument('--branch-tuned', action='store_true',
                           help='select conditional JR/JP forms measured on the frozen real corpus')
     assembly.add_argument('--nibble-prefill', action='store_true',
@@ -46,6 +47,8 @@ def main():
     decoder.add_argument('--limit', type=int, required=True)
     args = parser.parse_args()
     if args.command == 'build':
+        if args.compact_eof and args.profile!='small-block':
+            parser.error('--compact-eof requires --profile small-block')
         coroutine_defaults=dict(prefix=0x7c00,prefix_limit=0x7d50,stack=0x7be0,output_base=0xc000)
         supplied_coroutine_layout=set(coroutine_defaults)&set(vars(args))
         for name,value in coroutine_defaults.items():
@@ -83,7 +86,8 @@ def main():
             if variant in ('wide','wide-shared') and (args.long_copy or args.near_literals or args.fast_jumps or args.branch_tuned or args.nibble_prefill or args.compact_branches):
                 parser.error('wide profiles use their own copy/branch layout')
             regions,labels,metadata=block_build(variant,core=args.core,core_limit=args.core_limit,
-                long_copy=args.long_copy,near_literals=args.near_literals,fast_jumps=args.fast_jumps,branch_tuned=args.branch_tuned,compact_branches=args.compact_branches,nibble_prefill=args.nibble_prefill)
+                long_copy=args.long_copy,near_literals=args.near_literals,fast_jumps=args.fast_jumps,branch_tuned=args.branch_tuned,compact_branches=args.compact_branches,nibble_prefill=args.nibble_prefill,
+                **(dict(compact_eof=True) if args.compact_eof else {}))
         else:
             regions, labels, metadata = build(core=args.core,core_limit=args.core_limit,
                 prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,

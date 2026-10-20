@@ -92,7 +92,7 @@ GUARDED = dict(core=0xa000, core_limit=0xbc00,
 | ZX0 Maximum shared 228 | 7,578 | 139,892,818 | -10.3323% | -10.3323% | [zx0.maximum.build(prefix_cap=228, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
 | LZSA2 Fast (original) | 222 | 17,767,606 | +0.0141% | 0.0000% | [lzsa.block.build(**SMALL, fast_jumps=False)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Fast (pass baseline) | 223 | 17,765,094 | 0.0000% | -0.0141% | [lzsa.block.build(**SMALL, fast_jumps=True)](lzsa/src/lzsa/block.py#L5) |
-| LZSA2 Small (minimum) | 145 | 20,423,546 | +14.9645% | +14.9482% | [lzsa.block.build(**SMALL, variant='small')](lzsa/src/lzsa/block.py#L5) |
+| LZSA2 Small (classic) | 145 | 20,423,546 | +14.9645% | +14.9482% | [lzsa.block.build(**SMALL, variant='small')](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Fast compact branches | 222 | 17,724,654 | -0.2276% | -0.2417% | [lzsa.block.build(**SMALL, fast_jumps=True, compact_branches=True)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Fast tuned +prefill | 228 | 17,635,500 | -0.7295% | -0.7435% | [lzsa.block.build(**SMALL, fast_jumps=True, branch_tuned=True, nibble_prefill=True)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Wide shared | 3,452 | 15,869,483 | -10.6704% | -10.6831% | [lzsa.block.build(**WIDE, variant='wide-shared')](lzsa/src/lzsa/block.py#L5) |
@@ -128,6 +128,9 @@ GUARDED = dict(core=0xa000, core_limit=0xbc00,
 | LZSA2 Hot literals | 9,529 | 14,913,435 | -16.0520% | -16.0639% | [lzsa.hot.build(**WIDE, profile='literals')](lzsa/src/lzsa/hot.py#L214) |
 | LZSA2 Hot nibble | 9,515 | 14,918,596 | -16.0230% | -16.0349% | [lzsa.hot.build(**WIDE, profile='nibble')](lzsa/src/lzsa/hot.py#L214) |
 | LZSA2 Hot combined | 9,545 | 14,905,725 | -16.0954% | -16.1073% | [lzsa.hot.build(**WIDE, profile='combined')](lzsa/src/lzsa/hot.py#L214) |
+| ZX0 Small smc | 78 | 189,794,309 | +21.6533% | +21.6533% | [zx0.small.build(**SMALL, profile='smc')](zx0/src/zx0/small.py#L20) |
+| ZX0 Small gamma-jp | 75 | 199,881,370 | +28.1188% | +28.1188% | [zx0.small.build(**SMALL, profile='gamma-jp')](zx0/src/zx0/small.py#L20) |
+| LZSA2 Small compact EOF (minimum) | 144 | 20,423,420 | +14.9638% | +14.9475% | [lzsa.compact.build(**SMALL, compact_eof=True)](lzsa/src/lzsa/compact.py#L13) |
 
 ## Ordinary output-demand coroutines
 
@@ -250,6 +253,30 @@ configurations are retained. Arbitrary alignment adds up to255 B; with the
 13+6-byte IRQ example the largest profile is9,819 B. Raw qualification does
 not qualify quota/guarded wrappers. [F00 report](NEXT_F00_HOT_PATHS.md).
 
+## S01 compact resident choices
+
+These new points retain complete initialization and the original format/ABI.
+Original ZX0 Standard remains the smallest tested Spectrum-valid choice at74 B.
+LZSA2 compact EOF reduces the retained minimum145 ->144 B. Compared with the
+corresponding Standard/Small predecessor:
+
+| Variant | Service B / delta | Real CPU T / delta | Included setup T/block | Slower cases / max T |
+| --- | ---: | ---: | ---: | ---: |
+| ZX0 Small smc | 78 / +4 | 189,794,309 / -11,695,795 | 43 | 0 / 0 |
+| ZX0 Small gamma-jp | 75 / +1 | 199,881,370 / -1,608,734 | 34 | 0 / 0 |
+| LZSA2 Small compact EOF (minimum) | 144 / -1 | 20,423,420 / -126 | 24 | 643 / 232 |
+
+ZX0 SMC uses writable nonreentrant offset bytes; its43-T entry includes the
+20-T reset every call. Gamma-JP stays ROM-compatible with34-T setup.
+All473 cases improve against Standard. Against existing both-JP Standard
+(76 B/199,405,316 T), SMC slows76 non-real cases by at most50 T; no real case
+slows. Gamma-JP trades one fewer service byte for476,054 more real T.
+LZSA2 retains24-T setup. EOF saves6 T, word dispatch adds14 T: all21 real
+blocks improve, but643 non-real cases slow by at most232 T. On the full675
+case batch the change adds8,536 T. All lists are retained; aggregate real
+improvement does not imply universal speed improvement.
+[S01 report](NEXT_S01_MINIMUM.md) records rejected ROM/tag designs and full gates.
+
 ## Nondominated resident size/speed choices
 
 These are the best tested points on the complete real-corpus aggregate at
@@ -261,6 +288,8 @@ Per-case regressions still matter; this finite set establishes no global optimum
 | Codec / variant | Service B | Real CPU T | Function / file |
 | --- | ---: | ---: | --- |
 | ZX0 Standard (minimum) | 74 | 201,490,104 | [zx0.block.build(**SMALL, variant='standard')](zx0/src/zx0/block.py#L7) |
+| ZX0 Small gamma-jp | 75 | 199,881,370 | [zx0.small.build(**SMALL, profile='gamma-jp')](zx0/src/zx0/small.py#L20) |
+| ZX0 Small smc | 78 | 189,794,309 | [zx0.small.build(**SMALL, profile='smc')](zx0/src/zx0/small.py#L20) |
 | ZX0 Turbo | 130 | 160,653,056 | [zx0.block.build(**SMALL, variant='turbo')](zx0/src/zx0/block.py#L7) |
 | ZX0 Fast tuned | 197 | 153,706,279 | [zx0.block.build(**SMALL, branch_tuned=True)](zx0/src/zx0/block.py#L7) |
 | ZX0 Fast tuned +prefix +tail | 202 | 152,776,831 | [zx0.block.build(**SMALL, branch_tuned=True, literal_prefix=True, inline_tail_refill=True)](zx0/src/zx0/block.py#L7) |
@@ -269,7 +298,7 @@ Per-case regressions still matter; this finite set establishes no global optimum
 | ZX0 Maximum shared 63 | 3,578 | 140,403,868 | [zx0.maximum.build(prefix_cap=63, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
 | ZX0 Maximum branches 127 fast | 5,053 | 139,576,574 | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L179) |
 | ZX0 Maximum branches 228 fast | 7,517 | 139,552,884 | [zx0.maximum_branches.build(prefix_cap=228, policy='fast')](zx0/src/zx0/maximum_branches.py#L179) |
-| LZSA2 Small (minimum) | 145 | 20,423,546 | [lzsa.block.build(**SMALL, variant='small')](lzsa/src/lzsa/block.py#L5) |
+| LZSA2 Small compact EOF (minimum) | 144 | 20,423,420 | [lzsa.compact.build(**SMALL, compact_eof=True)](lzsa/src/lzsa/compact.py#L13) |
 | LZSA2 Fast compact branches | 222 | 17,724,654 | [lzsa.block.build(**SMALL, fast_jumps=True, compact_branches=True)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Fast tuned +prefill | 228 | 17,635,500 | [lzsa.block.build(**SMALL, fast_jumps=True, branch_tuned=True, nibble_prefill=True)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Hybrid compact-base +cold extension | 3,451 | 15,804,230 | [lzsa.hybrid.build(**WIDE, profile='compact-base', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
@@ -285,7 +314,7 @@ Per-case regressions still matter; this finite set establishes no global optimum
 ## Selection and runtime contracts
 
 - Smallest resident decoders: **ZX0 Standard 74 B** (68 code +6 stack),
-  **LZSA2 Small 145 B** (137 code +8 stack). Both are slower than Fast.
+  **LZSA2 Small compact EOF 144 B** (136 code +8 stack). Both are slower than Fast.
 - Fastest measured resident choices: **ZX0 Maximum branches 228 fast, 7,517 B**
   (139,552,884 T) and **LZSA2 Hot combined,
   9,545 B** (14,905,725 T).
@@ -335,6 +364,7 @@ emitters behind a dispatcher, use these implementation functions:
 | Decoder family | Implementation function / file |
 | --- | --- |
 | ZX0 Standard / Turbo / Mega | [zx0.codec.emit_decoder](zx0/src/zx0/codec.py#L66) |
+| ZX0 compact Standard-derived profiles | [zx0.small.build](zx0/src/zx0/small.py#L20) |
 | ZX0 Fast | [zx0.resumable.emit_fast](zx0/src/zx0/resumable.py#L138) |
 | ZX0 Maximum resident | [zx0.maximum.build](zx0/src/zx0/maximum.py#L20) |
 | ZX0 fixed E01 branch layouts | [zx0.maximum_branches.build](zx0/src/zx0/maximum_branches.py#L179) |
@@ -358,6 +388,9 @@ emitters behind a dispatcher, use these implementation functions:
 [F00 full native proof](evidence/next_f00_full.json.gz),
 [F00 public/wheel authentication](evidence/next_f00_public_verification.json),
 [Initialization and guarded-total audit](evidence/benchmark_initialization.json),
+[S01 ZX0 native proof](evidence/next_s01_zx0_full.json.gz),
+[S01 LZSA2 native proof](evidence/next_s01_lzsa_full.json.gz),
+[S01 public/wheel authentication](evidence/next_s01_public_verification.json),
 [Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),
 [shared-prefix contracts](ZX0_SHARED_PREFIXES.md),
 [Hybrid API/wheel/native binding](evidence/hybrid_public_verification.json),

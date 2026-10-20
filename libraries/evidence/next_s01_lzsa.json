@@ -1,0 +1,222 @@
+{
+  "date": "2026-10-20",
+  "stage": "S01 LZSA2",
+  "complete": true,
+  "release": false,
+  "public_changes": false,
+  "full_report": {
+    "path": "libraries/evidence/next_s01_lzsa_full.json.gz",
+    "sha256": "05cf06edbb09b2c1aea741f46aebabe13c6964370bd370875f994524b154f48f"
+  },
+  "baseline": {
+    "code_bytes": 137,
+    "caller_stack_bytes": 8,
+    "service_bytes": 145,
+    "timing_components": {
+      "required_one_time_initialization_tstates": 0,
+      "per_block_setup_tstates": 24,
+      "first_real_cold_start_tstates": 979209,
+      "first_real_setup_tstates": 24,
+      "first_real_decode_tstates": 979185,
+      "real_batch_tstates": 20423546,
+      "real_batch_setup_tstates": 504,
+      "real_batch_decode_tstates": 20423042,
+      "all_cases_batch_tstates": 136625756,
+      "all_cases_batch_setup_tstates": 16200,
+      "all_cases_batch_decode_tstates": 136609556
+    },
+    "baseline_native_C_and_kosarev_cases": 683
+  },
+  "resident_data_requirements": {
+    "compressed_input_max_bytes": 15878,
+    "output_history_max_bytes": 15872,
+    "retained_input": "Complete compressed block; excluded from service.",
+    "retained_output_history": "Complete nonwrapping output/history; excluded from service."
+  },
+  "profiles": {
+    "combined": {
+      "code_bytes": 138,
+      "caller_stack_bytes": 6,
+      "service_bytes": 144,
+      "diagnostic_irq_code_bytes": 13,
+      "additional_irq_stack_bytes": 6,
+      "diagnostic_irq_inclusive_service_bytes": 163,
+      "stats": {
+        "cases": 675,
+        "equal_cases": 244,
+        "faster_cases": 268,
+        "maximum_regression_tstates": 18421,
+        "real_cases": 21,
+        "real_delta_tstates": 324628,
+        "real_tstates": 20748174,
+        "slower_real_cases": 21,
+        "slower_case_count": 163
+      },
+      "timing_components": {
+        "required_one_time_initialization_tstates": 0,
+        "per_block_setup_tstates": 24,
+        "first_real_cold_start_tstates": 993607,
+        "first_real_setup_tstates": 24,
+        "first_real_decode_tstates": 993583,
+        "real_batch_tstates": 20748174,
+        "real_batch_setup_tstates": 504,
+        "real_batch_decode_tstates": 20747670,
+        "all_cases_batch_tstates": 136947651,
+        "all_cases_batch_setup_tstates": 16200,
+        "all_cases_batch_decode_tstates": 136931451
+      },
+      "decision": "rejected: dominated in complete real CPU/service screen",
+      "native_complete": false,
+      "qualification": null,
+      "native_gates_unperformed": [
+        "IRQ",
+        "relocated runtime",
+        "actual minimum in-place runtime",
+        "FFFF cursor"
+      ]
+    },
+    "eof_stack": {
+      "code_bytes": 136,
+      "caller_stack_bytes": 8,
+      "service_bytes": 144,
+      "diagnostic_irq_code_bytes": 13,
+      "additional_irq_stack_bytes": 6,
+      "diagnostic_irq_inclusive_service_bytes": 163,
+      "stats": {
+        "cases": 675,
+        "equal_cases": 0,
+        "faster_cases": 32,
+        "maximum_regression_tstates": 232,
+        "real_cases": 21,
+        "real_delta_tstates": -126,
+        "real_tstates": 20423420,
+        "slower_real_cases": 0,
+        "slower_case_count": 643
+      },
+      "timing_components": {
+        "required_one_time_initialization_tstates": 0,
+        "per_block_setup_tstates": 24,
+        "first_real_cold_start_tstates": 979203,
+        "first_real_setup_tstates": 24,
+        "first_real_decode_tstates": 979179,
+        "real_batch_tstates": 20423420,
+        "real_batch_setup_tstates": 504,
+        "real_batch_decode_tstates": 20422916,
+        "all_cases_batch_tstates": 136634292,
+        "all_cases_batch_setup_tstates": 16200,
+        "all_cases_batch_decode_tstates": 136618092
+      },
+      "decision": "useful nondominated raw candidate; public integration not performed",
+      "native_complete": true,
+      "qualification": {
+        "FFFF_configs": 9,
+        "complete": true,
+        "frozen_cases": 675,
+        "maximum_inplace_irq_stack_bytes": 12,
+        "maximum_irq_stack_bytes": 12,
+        "maximum_plain_stack_bytes": 8,
+        "native_configs": 4098,
+        "supplemental_cases": 8
+      },
+      "native_gates_unperformed": []
+    },
+    "tagged": {
+      "code_bytes": 139,
+      "caller_stack_bytes": 6,
+      "service_bytes": 145,
+      "diagnostic_irq_code_bytes": 13,
+      "additional_irq_stack_bytes": 6,
+      "diagnostic_irq_inclusive_service_bytes": 164,
+      "stats": {
+        "cases": 675,
+        "equal_cases": 0,
+        "faster_cases": 570,
+        "maximum_regression_tstates": 18427,
+        "real_cases": 21,
+        "real_delta_tstates": 324754,
+        "real_tstates": 20748300,
+        "slower_real_cases": 21,
+        "slower_case_count": 105
+      },
+      "timing_components": {
+        "required_one_time_initialization_tstates": 0,
+        "per_block_setup_tstates": 24,
+        "first_real_cold_start_tstates": 993613,
+        "first_real_setup_tstates": 24,
+        "first_real_decode_tstates": 993589,
+        "real_batch_tstates": 20748300,
+        "real_batch_setup_tstates": 504,
+        "real_batch_decode_tstates": 20747796,
+        "all_cases_batch_tstates": 136939115,
+        "all_cases_batch_setup_tstates": 16200,
+        "all_cases_batch_decode_tstates": 136922915
+      },
+      "decision": "rejected: dominated in complete real CPU/service screen",
+      "native_complete": false,
+      "qualification": null,
+      "native_gates_unperformed": [
+        "IRQ",
+        "relocated runtime",
+        "actual minimum in-place runtime",
+        "FFFF cursor"
+      ]
+    }
+  },
+  "prior_reporting_failure": {
+    "kind": "reporting-only completed previous attempt",
+    "process_exit_code": 1,
+    "archive": "libraries/evidence/next_s01_lzsa_reporting_attempt.json.gz",
+    "archive_sha256": "41ca133395ed51177bdc9fe9dc4aef8886d40614b907e8550e1368a699237b9b",
+    "measurement_source_sha256_lf": "1f42574a82f5811be5b4778db6b30c6eb85c0139087e4d82324e29f26dabe2fb",
+    "error": "ValueError(\"'libraries\\\\\\\\evidence\\\\\\\\next_s01_lzsa_full.json.gz' is not in the subpath of 'C:\\\\\\\\Work\\\\\\\\ZX-video\\\\\\\\.worktree\\\\\\\\codec-speed-pass3'\")",
+    "native_matrix_complete": true,
+    "decoder_failure": false,
+    "repair": "Resolve output path before measurement; suppress huge console lists. Guest generation/oracles/runners unchanged. Clean full rerun exited0.",
+    "clean_rerun_guest_regions_and_all_candidate_C_results_exact": true
+  },
+  "source_binding": "Launch/final measured source hashes and qualifiedDLL/build/proof hashes retained in full report; measured sources unchanged during clean exit0 run.",
+  "static_alignments": {
+    "baseline": 256,
+    "candidate_profiles": 3,
+    "origins_each": 256,
+    "alignment_padding_bytes": 0
+  },
+  "state_exhaustion": {
+    "alternate_flag_values": 256,
+    "boundary_tokens": [
+      0,
+      31,
+      32,
+      63,
+      128,
+      159,
+      160,
+      191
+    ],
+    "complete": true,
+    "nibbles": 16,
+    "scope": "Analytical tag/arithmetic exhaust; native guarded cases separately execute emitted instructions.",
+    "token_phase_nibble_flag_states": 1048576,
+    "tokens": 256
+  },
+  "path_timing_model": {
+    "eof_old_tstates": 27,
+    "eof_new_tstates": 21,
+    "word_dispatch_old_tstates": 12,
+    "word_dispatch_new_tstates": 26,
+    "eof_candidate_delta": "14*word_escapes - 6*EOFs",
+    "tagged_length_delta": {
+      "cached": -9,
+      "refill": -13
+    },
+    "tagged_offset_delta": {
+      "cached": 18,
+      "refill": 14
+    }
+  },
+  "unperformed": [
+    "Public package/API/export/wheel integration",
+    "Coroutine/quota/input readiness",
+    "Spectrum contention/ROM/disk/movie release"
+  ]
+}

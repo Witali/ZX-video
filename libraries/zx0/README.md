@@ -32,6 +32,18 @@ bytes must include any framing overhead owned by the caller.
 
 ## Z80 use
 
+Compact resident alternatives are available from `zx0.small.build('gamma-jp')`
+and `zx0.small.build('smc')`: **75 B / 199,881,370 T** and
+**78 B / 189,794,309 T** on the retained real corpus. Totals include code,
+embedded state and six/four caller-stack bytes. Original Standard remains
+the smallest tested Spectrum-valid choice at 74 B. Gamma-JP remains
+ROM-compatible; SMC requires writable nonreentrant offset bytes. Its 43-T
+startup includes the 20-T reset on every call; Gamma-JP includes 34-T setup.
+CLI variants are `small-gamma-jp` and `small-smc`, with optional explicit
+`--core 0x8000 --core-limit 0x8400`. These complete-input resident profiles
+preserve the existing format; [S01](../NEXT_S01_MINIMUM.md) records all
+regressions, proofs and selection details.
+
 ```python
 from zx0.resumable import build
 from zx0.export import export

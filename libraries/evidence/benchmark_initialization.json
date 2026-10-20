@@ -1,7 +1,7 @@
 {
   "accounting_only": true,
   "catalog_discovery": {
-    "note": "Regenerating table accounting fields/evidence links is allowed; the unchanged 71 selection subset is the catalog identity.",
+    "note": "Regenerating accounting fields/evidence links is allowed; the selection subset is the catalog identity. New qualified resident calls extend it.",
     "path": "libraries/evidence/decoder_variants_verification.json",
     "required_timing_anchor": false,
     "stable_selection_fields": [
@@ -13,11 +13,11 @@
       "real_cpu_tstates",
       "regions"
     ],
-    "stable_selection_sha256": "975867bbbb3641c2594c62220f66869840406392cf6c274b606ca924018b41b0"
+    "stable_selection_sha256": "3b235eeb3c212ade183698839f28d4eaf2797ab16b1586268d343f30e6cbf511"
   },
   "complete": true,
   "date": "2026-10-20",
-  "document_sha256": "a4680b1b96fad608e0cedb51edde9f78629895d629c318b913d3779a31a84854",
+  "document_sha256": "fe7077487b2297a5dd865afef2f2dd7d732fe057bbb819ef462fbbb854be236d",
   "entry_instruction_ledgers": {
     "lzsa_fast": {
       "instructions": [
@@ -215,6 +215,27 @@
       ],
       "tstates": 34
     },
+    "zx0_standard_smc": {
+      "instructions": [
+        [
+          "LD BC,FFFF",
+          10
+        ],
+        [
+          "LD(offset),BC",
+          20
+        ],
+        [
+          "INC BC",
+          6
+        ],
+        [
+          "LD A,80",
+          7
+        ]
+      ],
+      "tstates": 43
+    },
     "zx0_turbo": {
       "instructions": [
         [
@@ -258,6 +279,10 @@
     "libraries/evidence/next_f00_full.json.gz": "00b1facac131ba65f880989af84e0a013958bec9fe66a24733f7c09873c5ad66",
     "libraries/evidence/next_f00_prior_sources.json.gz": "9a7a0e07e3b45266260ab19ca6461289198480711f70bb679f5ee94a0a5535b2",
     "libraries/evidence/next_f00_public_verification.json": "2421192c84e7bd0a054c1d384c1643dd7bb4ec37b9db1a9af7789068651e8367",
+    "libraries/evidence/next_s01_lzsa_full.json.gz": "05cf06edbb09b2c1aea741f46aebabe13c6964370bd370875f994524b154f48f",
+    "libraries/evidence/next_s01_prior_sources.json.gz": "176d974d6335a21ca73c1a80a36fb55f575ed63447bb3bddde7d1e4b98da7bdb",
+    "libraries/evidence/next_s01_public_verification.json": "2a8fecf2b3341ac99ee91cb0eb6e39589cdfc59e71d9b44f6eacc3487cf45618",
+    "libraries/evidence/next_s01_zx0_full.json.gz": "2a202c04484bc67ce1d32e15e68d130b2a97bc17a21d32947561728ac6fc6223",
     "libraries/evidence/shared_zero_prefix_native.json.gz": "fcb80906d6ab6b40983add657850c70bf38f3e41de64611b94eb9751dafa91e1",
     "libraries/evidence/trick_23.json": "8df00ca5a655a5ff29d447bb6289897306e72acdad4f2451bc248ba6516ab9b6",
     "libraries/evidence/trick_29.json": "13a479847d660b7cfefe670597cb6e69411a7d230290906652a2804d4649e9d2",
@@ -1491,7 +1516,7 @@
     }
   ],
   "mode_counts": {
-    "block": 55,
+    "block": 58,
     "coroutine": 12,
     "guarded-call": 2,
     "guarded-direct": 2
@@ -1560,7 +1585,7 @@
     "zx0_prefix_sync": 138,
     "zx0_sync": 112
   },
-  "profile_count": 71,
+  "profile_count": 74,
   "profiles": [
     {
       "benchmark_boundary": "metadata raw entry through EOF RET",
@@ -3382,6 +3407,78 @@
       ],
       "required_entry_initialization_included": true,
       "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.small.build",
+      "codec": "zx0",
+      "included_entry_setup_tstates": 43,
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "profile": "smc"
+      },
+      "name": "ZX0 Small smc",
+      "primary_cpu_tstates": 189794309,
+      "real_cpu_tstates": 189794309,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 74,
+          "sha256": "c762bd11c865f59252fade8346602b5b20c607c4be1b4b7d256ff02929184ef5"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "zx0.small.build",
+      "codec": "zx0",
+      "included_entry_setup_tstates": 34,
+      "kind": "block",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "profile": "gamma-jp"
+      },
+      "name": "ZX0 Small gamma-jp",
+      "primary_cpu_tstates": 199881370,
+      "real_cpu_tstates": 199881370,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 69,
+          "sha256": "8137ee2990b6f209ebcaf4a350b38933aa0a9252b85f8951fd1a34a6ae198867"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
+    },
+    {
+      "benchmark_boundary": "metadata raw entry through EOF RET",
+      "builder": "lzsa.compact.build",
+      "codec": "lzsa2",
+      "included_entry_setup_tstates": 24,
+      "kind": "block",
+      "kwargs": {
+        "compact_eof": true,
+        "core": 32768,
+        "core_limit": 33792
+      },
+      "name": "LZSA2 Small compact EOF (minimum)",
+      "primary_cpu_tstates": 20423420,
+      "real_cpu_tstates": 20423420,
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 136,
+          "sha256": "a670ea1ab71df87132c7c6388ee26a7fe2903b3a4b55abc1031b67c98af14f41"
+        }
+      ],
+      "required_entry_initialization_included": true,
+      "required_external_library_initializer_tstates": 0
     }
   ],
   "retained_stream_sha256": "b92b8fcd06f76d12ccd2697a3096bbc29e587038f2989bb1b88ec1e926192a20",
@@ -3576,7 +3673,8 @@
     "emulator/cpu.py": "4a43446648f032ba442025e8804582cef661435e1ef199f0c4715fed78d1128e",
     "emulator/src/codec_cpu.c": "90d505995a3fb8b90de6610da034c3eac8d6b3470764f7400988d7d849503a38",
     "libraries/lzsa/src/lzsa/_branch_tuning.py": "5a209f6251f5b39bb33a950656c6c6e7acb07d2b4299e6e8eddf648d4b1db3aa",
-    "libraries/lzsa/src/lzsa/block.py": "f909370ee4c475ae7115bd47b1011c9482e70aa20811286f74783c9e673dac0a",
+    "libraries/lzsa/src/lzsa/block.py": "f13a24db38d738d4ef2fedd9cff958dd02b092c8995382f57be5d78ac465222a",
+    "libraries/lzsa/src/lzsa/compact.py": "d63cf93c14c3a6b6419d6c2462128be038d8b3f85bfc87c1d1a89a9f439465b8",
     "libraries/lzsa/src/lzsa/hot.py": "525f7922b967c46f01a675a13e4fdaba7d249447b05060b2bf285bc4971577b5",
     "libraries/lzsa/src/lzsa/hybrid.py": "a7a5258382c13339c300b8f21440da1637a407c5fac3f4cdab4bc177c306379a",
     "libraries/lzsa/src/lzsa/native.py": "536c5a202b16988b280d0627a0e973f10d942caf76c2ae2ed810c8949194010e",
@@ -3584,7 +3682,7 @@
     "libraries/lzsa/src/lzsa/streaming.py": "8cdf842acc989b253c31bf7d0dc2e5e238afd6e975436f8a988002eb15c80aaa",
     "libraries/lzsa/src/lzsa/wide.py": "9aeca47bc02de53710ffdd82b2ec30b2149b6a5a7bc275c96053ee45e8ae1a89",
     "libraries/lzsa/src/lzsa/wide_coroutine.py": "02bd6b2e041534e658a8ff4c4dbc133c62db83711f5e010fd1dcccda884cfd30",
-    "libraries/tests/audit_benchmark_initialization.py": "a32f1d4b27b110ed19aed1a6a85b11b7e49c10f294fbfe147260596ad3fa6e85",
+    "libraries/tests/audit_benchmark_initialization.py": "45f45c42688c9e8f00cdb3f2acc95b431a236c456e5a10448c0335b2fd833566",
     "libraries/tests/maximum_coroutine_native.py": "69aa478c4fbc6bc51bb4a88a901d0121c07a360f65b22144ed69b29f2645b833",
     "libraries/tests/measure_bit_phases.py": "4649acbe8390a7040de55763f7c8743ed2b8dcb7d5a325c2f66e0d61fe8daaf1",
     "libraries/tests/measure_compact_branches.py": "a1a9aac0025abf08f50da0f2631a6218bd40509fc62a8510931c1d8b70c178d1",
@@ -3610,6 +3708,7 @@
     "libraries/zx0/src/zx0/maximum_branches.py": "96c4a792548a1f7414bbb301a835b7d4f1bd9873a5edc8cb1ec9fad31eca2d28",
     "libraries/zx0/src/zx0/maximum_coroutine.py": "3c14dafba5efac6696e6e96a5947012285cab490d07164ba70de7f5b5d580139",
     "libraries/zx0/src/zx0/resumable.py": "f2a614b3ef6c9b4b9977c0e56fe0ef533ef41019ac1bf5617a521757205d6ddd",
+    "libraries/zx0/src/zx0/small.py": "1905a92d4c450f89d05ccc65b6692945ab36cc9c1ce65edc86989bb24506805d",
     "toolkit/benchmark_inplace_slot.py": "f840275a215aa3f2c8dbc03a0cfd71ec60072bfc26f39a842f255d128a076a9e",
     "toolkit/benchmark_inplace_streaming.py": "dc811b4746c9bdd9a0e414fa9199c3b1294f0f12c0d80380385249d2c00200be",
     "toolkit/inplace_slot_input_z80.py": "aed5462418016e17a64708b313e38dfc48a886f1c40bd006dd4db7370f1d5319",

@@ -48,6 +48,15 @@ All95 native blocks pass, but the21 real blocks cost14.948% more CPU than
 resident Fast. Both cores still round to one256-byte raw code sector. Choose
 this profile explicitly for code space; the speed-first default is unchanged.
 
+Optional `lzsa.compact.build(compact_eof=True)` or
+`lzsa.block.build('small', compact_eof=True)` reduces Small to **136 code +8
+stack =144 service bytes**. Its complete real-corpus CPU is20,423,420 T,
+126 T less than classic Small, with all24 T of per-block setup included.
+EOF saves6 T; word escapes add14 T, retaining643 non-real regressions with
+maximum232 T. All legal short word forms remain valid. CLI uses
+`--profile small-block --compact-eof`. Classic defaults remain exact;
+[S01](../NEXT_S01_MINIMUM.md) preserves the complete measurements and limits.
+
 For a larger resident speed profile, use `lzsa.block.build('wide',
 core=0x8000, core_limit=0xb000)` or the intermediate `'wide-shared'` variant:
 

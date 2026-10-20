@@ -2,7 +2,7 @@
 
 Research and testing plan, 2026-10-20. Baseline: `9c28b01f`, branch
 `codex/codec-speed-pass3`, worktree `.worktree/codec-speed-pass3`.
-Status: **E00..E03/F00 complete; S01/E04..E07 pending**.
+Status: **E00..E03/F00/S01 complete; E04..E07 pending**.
 [ZX0 E01](NEXT_E01_ZX0_BRANCHES.md) completes six optional public branch
 layouts, bound to17,028 complete native replays plus six FFFFh probes.
 [LZSA2 E01](NEXT_E01_LZSA.md) completes12 optional cold-escape layouts with
@@ -26,7 +26,12 @@ optional hot profiles:9,515/9,529/9,545 service B and14,918,596/14,913,435/
 14,905,725 real T. All13,257 native configurations and public package gates
 pass; retain the four supplemental+10T word-literal regressions for clones.
 Every block's44T entry setup and28T restoration/RET are included, with no
-external target initializer. S01 and E04..E07 remain pending.
+external target initializer.
+[S01](NEXT_S01_MINIMUM.md) keeps ZX0's74-B minimum and adds75/78-B compact
+points at199,881,370/189,794,309 real T. LZSA2 minimum becomes144 B at
+20,423,420 T. All9,801 useful protected configurations and public gates pass;
+retain643 non-real LZSA2 regressions and different-reference ZX0 lists.
+Entry initialization34/43/24T is included. E04..E07 remain pending.
 [E00 evidence and selected hypotheses](NEXT_E00_BASELINE.md) authenticate
 the fixed inputs, all target layouts and a new minimum-safe overlap runner.
 The additionally requested local Spectrum/C-core test platform is a separate
@@ -150,13 +155,15 @@ existing defaults exact. [F00](NEXT_F00_HOT_PATHS.md) records the complete gates
 E02's -2B/+2,028T cold-tail point remains for E06 dominance/refit review;
 shared-fast SMC is already dominated by compact, despite reducing its size.
 
-S01 audits ZX0 Standard74 service B and LZSA2 Small145 B before final selection.
+S01 audited ZX0 Standard74 service B and LZSA2 Small145 B before final selection.
 Inspect actual code/state/stack minima; do not silently replace their valid
 format/ABI with a narrower shortcut. For each codec choose at most three
 concrete peephole/helper/stack layouts. Count any CPU increase and preserved
 register cost, test legal short escaped literals and exact EOF, then apply
 all common promotion gates to useful points. A measured/proven rejection
 is complete; current minimum choices remain when no candidate improves them.
+The completed result is ZX0 Standard74 B unchanged, LZSA2 compact EOF144 B,
+plus two fully qualified faster/larger ZX0 intermediates; see the S01 report.
 
 ### E00 — Freeze evidence and profile the remaining work
 

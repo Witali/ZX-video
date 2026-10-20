@@ -10,13 +10,18 @@ from pathlib import Path
 from ._z80 import MiniAssembler,sha
 
 
-def build(*,core=0x8000,core_limit=0x8400):
+def build(*,core=0x8000,core_limit=0x8400,compact_eof=False):
     """Resident valid raw-v2 input/history; HL=input, DE=nonwrapping output.
 
     Caller stack, writable offset; AF/AF'/BC/DE/HL clobbered. IRQ preserves
     these registers including the shared nibble cache's S flag. No quotas,
     paging, coroutine state or output-size enforcement. See block.build.
+    compact_eof shares the carry-word/EOF stack cleanup: one code byte and
+    six EOF T-states saved, with fourteen extra T-states per word escape.
+    Both layouts include24T per-block initialization and require8B of caller
+    stack including the return. No separate initialization routine exists.
     """
+    if type(compact_eof) is not bool:raise ValueError('compact-eof must be boolean')
     if not 0<=core<core_limit<=65536:raise ValueError('invalid code reservation')
     a=MiniAssembler(core);rows=[]
     def emit(name,code,t):
@@ -61,7 +66,15 @@ def build(*,core=0x8000,core_limit=0x8400):
     # Z with carry is exact EOD. At a match, the token AF has already been
     # popped, so remove only ExtendedCode's return then return to the caller.
     # Literal EOD is invalid. Word lengths take the distinct NZ path.
-    jr(0x20,'WordLength');emit('POP BC',(0xc1,),10);ret()
+    if compact_eof:
+        # BC temporarily holds ExtendedCode's return. POP/PUSH preserve Z;
+        # EOF returns directly, while a word restores the return before its
+        # reader overwrites B and the caller overwrites C. This also holds
+        # for legal word literals1/2 and word matches2+. IRQ must preserve BC
+        # while it holds the return, as required for all live working state.
+        emit('POP BC',(0xc1,),10);ret(0xc8);emit('PUSH BC',(0xc5,),11)
+    else:
+        jr(0x20,'WordLength');emit('POP BC',(0xc1,),10);ret()
     a.label('WordLength');emit('LD A,(HL)',(0x7e,),7);inc();emit('LD B,(HL)',(0x46,),7);inc();ret()
     a.label('ReadNibble');emit('LD C,A',(0x4f,),4)
     a.label('NibbleSkipC');emit('XOR A',(0xaf,),4);emit('EX AF,AF\'',(8,),4);ret(0xf8)
@@ -70,9 +83,28 @@ def build(*,core=0x8000,core_limit=0x8400):
     for _ in range(4):emit('RRCA',(0x0f,),4)
     ret()
     if a.pc>core_limit:raise ValueError('compact LZSA2 exceeds core-limit')
-    return [(core,a.resolve())],a.labels,dict(entry='start',variant='small-block',one_shot=True,
+    metadata=dict(entry='start',variant='small-block',one_shot=True,
         code_bytes=a.pc-core,core_end=a.pc,patched_addresses=[a.labels['offset']+i for i in (0,1)],
         instruction_listing=rows,state_bytes=0,private_stack_bytes=0,
         upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
         upstream_sha256=sha((Path(__file__).parent/'asm/unlzsa2_small.asm').read_bytes()),
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf')
+    if compact_eof:
+        # The two writable offset bytes are already executable operand bytes;
+        # AF' cache is a clobbered register, not additional service RAM. The
+        #8B peak is caller return+token AF+ExtendedCode return+nibble return.
+        code=a.pc-core
+        service=dict(code_tables_alignment_and_embedded_state_bytes=code,
+            extra_variables=0,caller_stack_bytes=8,scratch_bytes=0,internal_buffer_bytes=0)
+        metadata.update(variant='small-block-compact-eof',compact_eof=True,
+            service_memory=service,service_memory_bytes=code+8,total_storage_bytes=code+8,
+            caller_stack_bytes=8,decoder_stack_bytes=6,embedded_mutable_bytes=2,
+            embedded_state_counted_once_in_code=True,table_bytes=0,alignment_padding=0,
+            scratch_bytes=0,internal_buffer_bytes=0,per_block_setup_tstates=24,
+            external_initialization_tstates=0,initialization_included_in_decode_tstates=True,
+            compact_eof_path_delta_tstates=dict(eof=-6,word_escape=14),
+            reference_real_tstates=20423420,reference_real_cases=21,
+            qualified_frozen_cases=675,qualified_supplemental_cases=8,
+            raw_eof_qualified=True,coroutine_qualified=False,
+            qualification_proof_sha256='05cf06edbb09b2c1aea741f46aebabe13c6964370bd370875f994524b154f48f')
+    return [(core,a.resolve())],a.labels,metadata

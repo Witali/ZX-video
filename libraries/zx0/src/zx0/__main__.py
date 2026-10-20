@@ -12,7 +12,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     assembly = commands.add_parser('build', help='Export an improved Z80 decoder include')
-    assembly.add_argument('--variant', choices=('fast','turbo_tuned','standard','turbo','mega','fast-block','maximum','maximum-coroutine','maximum-branches'), default='fast')
+    assembly.add_argument('--variant', choices=('fast','turbo_tuned','standard','turbo','mega','fast-block','maximum','maximum-coroutine','maximum-branches',
+                                              'small-smc','small-gamma-jp'), default='fast')
     assembly.add_argument('--output', type=Path, required=True)
     assembly.add_argument('--namespace', default='zx0')
     assembly.add_argument('--fast-jumps', action='store_true',
@@ -51,6 +52,12 @@ def main():
         maximum=args.variant in ('maximum','maximum-coroutine','maximum-branches')
         maximum_coroutine=args.variant=='maximum-coroutine'
         maximum_branches=args.variant=='maximum-branches'
+        small_profile=args.variant in ('small-smc','small-gamma-jp')
+        if small_profile:
+            if args.fast_jumps or args.branch_tuned or args.literal_prefix or args.inline_tail_refill or args.mega_tuned:
+                parser.error('small profiles require their fixed copy/gamma layout')
+            if any(getattr(args,name) is not None for name in ('prefix','prefix_limit','stack','output_base')):
+                parser.error('small profiles use the caller stack and complete resident input/output')
         if args.branch_policy is not None and not maximum_branches:
             parser.error('--branch-policy requires --variant maximum-branches')
         if args.shared_prefixes and args.variant!='maximum':
@@ -62,8 +69,8 @@ def main():
                 parser.error('maximum uses the caller stack and resident input/output; coroutine layout flags do not apply')
         elif any(getattr(args,name) is not None for name in ('prefix_cap','irq_code_bytes','irq_stack_bytes','service_limit')):
             parser.error('--prefix-cap and service-memory options require a maximum profile')
-        if args.core is None:args.core=0x8000 if maximum else 0x8df2
-        if args.core_limit is None and not maximum:args.core_limit=0x8f09
+        if args.core is None:args.core=0x8000 if maximum or small_profile else 0x8df2
+        if args.core_limit is None and not maximum:args.core_limit=0x8400 if small_profile else 0x8f09
         for name,default in (('prefix',0x7c00),('prefix_limit',0x7d50),('stack',0x7be0),('output_base',0xc000)):
             if maximum_coroutine:default={'prefix':0x7000,'prefix_limit':0x7400,'stack':0x6fe0,'output_base':0xc000}[name]
             if getattr(args,name) is None:setattr(args,name,default)
@@ -76,7 +83,11 @@ def main():
             parser.error('--inline-tail-refill requires a Fast profile')
         if args.fast_jumps and args.variant in ('fast','turbo_tuned'):
             parser.error('--fast-jumps is supported by resident profiles')
-        if maximum:
+        if small_profile:
+            from .small import build as small_build
+            regions,labels,metadata=small_build(args.variant.removeprefix('small-'),
+                core=args.core,core_limit=args.core_limit)
+        elif maximum:
             if maximum_branches:from .maximum_branches import build as maximum_build
             elif maximum_coroutine:from .maximum_coroutine import build as maximum_build
             else:from .maximum import build as maximum_build

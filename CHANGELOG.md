@@ -1,5 +1,52 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Publish minimum-memory and compact intermediate decoders
+
+- **Objective/baselines:** Complete S01, at most three designs per codec,
+  against ZX0 Standard74 service B/201,490,104 real T and LZSA2 Small145 B/
+  20,423,546 T. Preserve473/675 frozen inputs, valid formats and raw ABI.
+  Include required initialization and all code/state/tables/alignment/scratch/
+  buffers/stacks; exclude input/output/history.
+- **ZX0:** Gamma-JP75 B/199,881,370 T saves1,608,734 T; SMC78 B/189,794,309 T
+  saves11,695,795 T (5.804650% vsStandard). Both improve all473 baseline cases.
+  SMC43-T entry includes20T offset reset; original/gamma setup is34T. Exact
+  delta=-28*matchCopies-newOffsetEntries, including setup/EOF. Existing both-JP
+  Standard76 B/199,405,316 T remains a comparator: gamma is smaller/slower;
+  SMC slows76 non-real cases by at most50T, no real case. RST28's theoretical
+  70B needs Spectrum ROM at0028..0036 and is rejected before execution. At
+  equal75B,804,367/238,027 real gamma/copy jumps select gamma for runtime;
+  the unselected copy-only layout receives static oracle checks only.
+- **LZSA2:** Compact EOF136code+8stack=144 B/20,423,420 real T saves1B/126T.
+  POP BC/RET Z/PUSH BC changes EOF27->21T and word dispatch12->26T;
+  model14*wordEscapes-6*EOFs. Every real input gains6T;643 non-real cases slow,
+  max232T. All675 batch adds8,536T; eight legal word-literal1/2 and word-
+  match2/3 supplemental cases add8T. All24T/block setup is included. Tagged/
+  combined modes use145/144B but20,748,300/20,748,174 real T: reject both as
+  dominated. Repair token80 discriminator collision before emission;
+  1,048,576 analytical states and every C-case model pass.
+- **Qualification:** Qualified C/original baselines and independent observers
+  agree. Useful candidates pass9,801 protected configurations with disjoint/
+  minimum-safe overlap, plain/IRQ/relocation andFFFFh probes. EOF/frontiers,
+  code permissions, dirty operands, IX/IY/alternates/SP/stack and host/native
+  cursor digests pass; all256 origins are authenticated. Observed plain/IRQ
+  stacks are4/10,6/12 and8/12B; reserve8+6 for LZSA2 IRQ headroom.
+- **Attempts:** Correct preliminary static byte inventories before emission.
+  First LZSA2 matrix passes but relative-path summary output fails; preserve
+  full source/data archive. Normalize output path, rerun frozen matrix exit0,
+  then attach provenance with a reporting-only finalizer. Measured launch/final
+  hashes and archived old compact source remain distinct from public source.
+- **Integration/decision:** Publish `zx0.small.build`, optional Small
+  `compact_eof=True`, CLI and commented exports. Defaults stay exact. All107
+  library/24 selected toolkit tests,31 defaults/six resources,83 isolated API
+  exports/three CLI selectors and wheels pass. The74-call table retains prior71
+  selections and all regressions; initialization audit extends to74. ZX0's
+  minimum remains74B; LZSA2 becomes144B. No global optimum, broad goal or
+  wrapper/player/movie completion. S01 complete; E04..E07 pending.
+  [Report/reproduction](libraries/NEXT_S01_MINIMUM.md),
+  [ZX0 proof](libraries/evidence/next_s01_zx0_full.json.gz),
+  [LZSA2 proof](libraries/evidence/next_s01_lzsa_full.json.gz),
+  [public authentication](libraries/evidence/next_s01_public_verification.json).
+
 ## 2026-10-20 — Include initialization and guard work in benchmark accounting
 
 - **Objective/scope:** The user requires preliminary library initialization

@@ -6,9 +6,9 @@
   "metric": "100*(candidate_CPU_T/reference_CPU_T-1); negative is faster",
   "original_reference": "adapted Fast before optional policies, same features/corpus",
   "pass_reference": "f5a0362c Fast; LZSA2 includes fast_jumps",
-  "document_sha256": "e2020c9de5099e8a66693d315c48b1592b02112b35dec7cf74242f3bd1dbee0d",
-  "checked_public_calls_and_exact_exports": 71,
-  "checked_local_links": 147,
+  "document_sha256": "60c1b2e34d2da6e92b54321d34803ac0d4aa53e95c127e63fae4ae11cfa7458d",
+  "checked_public_calls_and_exact_exports": 74,
+  "checked_local_links": 157,
   "references": [
     {
       "codec": "zx0",
@@ -654,7 +654,7 @@
           "sha256": "768649a26470989e971e111ad7926ad615ffe3149e913e0e55eb2a4d9e4085db"
         }
       ],
-      "resident_real_frontier": true,
+      "resident_real_frontier": false,
       "real_total_benchmark_tstates": 20423546
     },
     {
@@ -41257,6 +41257,3394 @@
       },
       "resident_real_frontier": true,
       "real_total_benchmark_tstates": 14905725
+    },
+    {
+      "name": "ZX0 Small smc",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.small.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "profile": "smc"
+      },
+      "display_call": "zx0.small.build(**SMALL, profile='smc')",
+      "source_file": "zx0/src/zx0/small.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 74,
+      "service_bytes": 78,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 189794309,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "21.65325513619035190252679720",
+      "delta_time_vs_original_percent": "21.65325513619035190252679720",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 74,
+          "sha256": "c762bd11c865f59252fade8346602b5b20c607c4be1b4b7d256ff02929184ef5"
+        }
+      ],
+      "s01": {
+        "native_proof": "evidence/next_s01_zx0_full.json.gz",
+        "public_authentication": "evidence/next_s01_public_verification.json",
+        "baseline_service_bytes": 74,
+        "baseline_real_tstates": 201490104,
+        "service_delta_bytes": 4,
+        "real_delta_tstates": -11695795,
+        "slower_baseline_cases": [],
+        "maximum_regression_tstates": 0,
+        "qualification": {
+          "FFFF_configs": 9,
+          "actual_overlap_cases": 473,
+          "all_required_initialization_inside_measured_call": true,
+          "cases": 473,
+          "complete": true,
+          "dirty_offset_reset_tested": true,
+          "high_word_cases": 56,
+          "host_native_input_write_digests_exact": true,
+          "injected_interrupts": 3808,
+          "maximum_inplace_irq_stack_bytes": 10,
+          "maximum_intrinsic_service_bytes": 78,
+          "maximum_irq_stack_bytes": 10,
+          "maximum_plain_stack_bytes": 4,
+          "modes_per_case": 6,
+          "native_configs": 2838,
+          "with_reference13B_IRQ_and6B_extra_stack": 97
+        },
+        "initialization_tstates": 43
+      },
+      "resident_real_frontier": true,
+      "real_total_benchmark_tstates": 189794309
+    },
+    {
+      "name": "ZX0 Small gamma-jp",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.small.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "profile": "gamma-jp"
+      },
+      "display_call": "zx0.small.build(**SMALL, profile='gamma-jp')",
+      "source_file": "zx0/src/zx0/small.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 69,
+      "service_bytes": 75,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 199881370,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "28.11880097828046108094401650",
+      "delta_time_vs_original_percent": "28.11880097828046108094401650",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 69,
+          "sha256": "8137ee2990b6f209ebcaf4a350b38933aa0a9252b85f8951fd1a34a6ae198867"
+        }
+      ],
+      "s01": {
+        "native_proof": "evidence/next_s01_zx0_full.json.gz",
+        "public_authentication": "evidence/next_s01_public_verification.json",
+        "baseline_service_bytes": 74,
+        "baseline_real_tstates": 201490104,
+        "service_delta_bytes": 1,
+        "real_delta_tstates": -1608734,
+        "slower_baseline_cases": [],
+        "maximum_regression_tstates": 0,
+        "qualification": {
+          "FFFF_configs": 9,
+          "actual_overlap_cases": 473,
+          "all_required_initialization_inside_measured_call": true,
+          "cases": 473,
+          "complete": true,
+          "dirty_offset_reset_tested": false,
+          "high_word_cases": 56,
+          "host_native_input_write_digests_exact": true,
+          "injected_interrupts": 3992,
+          "maximum_inplace_irq_stack_bytes": 12,
+          "maximum_intrinsic_service_bytes": 75,
+          "maximum_irq_stack_bytes": 12,
+          "maximum_plain_stack_bytes": 6,
+          "modes_per_case": 6,
+          "native_configs": 2838,
+          "with_reference13B_IRQ_and6B_extra_stack": 94
+        },
+        "initialization_tstates": 34
+      },
+      "resident_real_frontier": true,
+      "real_total_benchmark_tstates": 199881370
+    },
+    {
+      "name": "LZSA2 Small compact EOF (minimum)",
+      "codec": "lzsa2",
+      "kind": "block",
+      "builder": "lzsa.compact.build",
+      "kwargs": {
+        "core": 32768,
+        "core_limit": 33792,
+        "compact_eof": true
+      },
+      "display_call": "lzsa.compact.build(**SMALL, compact_eof=True)",
+      "source_file": "lzsa/src/lzsa/compact.py",
+      "source_line": 13,
+      "code_state_table_padding_bytes": 136,
+      "service_bytes": 144,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 20423420,
+      "pass_baseline_cpu_tstates": 17765094,
+      "original_fast_cpu_tstates": 17767606,
+      "delta_time_vs_pass_percent": "14.96375983149878069882433500",
+      "delta_time_vs_original_percent": "14.94750615248897347228433590",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 136,
+          "sha256": "a670ea1ab71df87132c7c6388ee26a7fe2903b3a4b55abc1031b67c98af14f41"
+        }
+      ],
+      "s01": {
+        "native_proof": "evidence/next_s01_lzsa_full.json.gz",
+        "public_authentication": "evidence/next_s01_public_verification.json",
+        "baseline_service_bytes": 145,
+        "baseline_real_tstates": 20423546,
+        "service_delta_bytes": -1,
+        "real_delta_tstates": -126,
+        "slower_baseline_cases": [
+          {
+            "case": "literal-256",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "literal-257",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "literal-511",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "literal-800",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "literal-4096",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "literal-15872",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "match-1",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "match-2",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "match-32",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "match-33",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "match-511",
+            "delta_tstates": 22,
+            "real": false
+          },
+          {
+            "case": "match-512",
+            "delta_tstates": 22,
+            "real": false
+          },
+          {
+            "case": "match-513",
+            "delta_tstates": 22,
+            "real": false
+          },
+          {
+            "case": "match-8704",
+            "delta_tstates": 22,
+            "real": false
+          },
+          {
+            "case": "match-8705",
+            "delta_tstates": 22,
+            "real": false
+          },
+          {
+            "case": "random-0",
+            "delta_tstates": 232,
+            "real": false
+          },
+          {
+            "case": "random-1",
+            "delta_tstates": 106,
+            "real": false
+          },
+          {
+            "case": "random-2",
+            "delta_tstates": 134,
+            "real": false
+          },
+          {
+            "case": "random-3",
+            "delta_tstates": 148,
+            "real": false
+          },
+          {
+            "case": "random-4",
+            "delta_tstates": 64,
+            "real": false
+          },
+          {
+            "case": "random-5",
+            "delta_tstates": 148,
+            "real": false
+          },
+          {
+            "case": "random-6",
+            "delta_tstates": 64,
+            "real": false
+          },
+          {
+            "case": "random-7",
+            "delta_tstates": 176,
+            "real": false
+          },
+          {
+            "case": "random-8",
+            "delta_tstates": 134,
+            "real": false
+          },
+          {
+            "case": "random-9",
+            "delta_tstates": 78,
+            "real": false
+          },
+          {
+            "case": "random-10",
+            "delta_tstates": 50,
+            "real": false
+          },
+          {
+            "case": "random-11",
+            "delta_tstates": 64,
+            "real": false
+          },
+          {
+            "case": "random-12",
+            "delta_tstates": 106,
+            "real": false
+          },
+          {
+            "case": "random-13",
+            "delta_tstates": 106,
+            "real": false
+          },
+          {
+            "case": "random-14",
+            "delta_tstates": 78,
+            "real": false
+          },
+          {
+            "case": "random-15",
+            "delta_tstates": 106,
+            "real": false
+          },
+          {
+            "case": "random-16",
+            "delta_tstates": 176,
+            "real": false
+          },
+          {
+            "case": "random-17",
+            "delta_tstates": 120,
+            "real": false
+          },
+          {
+            "case": "random-18",
+            "delta_tstates": 134,
+            "real": false
+          },
+          {
+            "case": "random-19",
+            "delta_tstates": 190,
+            "real": false
+          },
+          {
+            "case": "random-20",
+            "delta_tstates": 134,
+            "real": false
+          },
+          {
+            "case": "random-21",
+            "delta_tstates": 106,
+            "real": false
+          },
+          {
+            "case": "random-22",
+            "delta_tstates": 106,
+            "real": false
+          },
+          {
+            "case": "random-23",
+            "delta_tstates": 190,
+            "real": false
+          },
+          {
+            "case": "random-24",
+            "delta_tstates": 106,
+            "real": false
+          },
+          {
+            "case": "random-25",
+            "delta_tstates": 64,
+            "real": false
+          },
+          {
+            "case": "random-26",
+            "delta_tstates": 92,
+            "real": false
+          },
+          {
+            "case": "random-27",
+            "delta_tstates": 106,
+            "real": false
+          },
+          {
+            "case": "random-28",
+            "delta_tstates": 92,
+            "real": false
+          },
+          {
+            "case": "random-29",
+            "delta_tstates": 120,
+            "real": false
+          },
+          {
+            "case": "random-30",
+            "delta_tstates": 92,
+            "real": false
+          },
+          {
+            "case": "random-31",
+            "delta_tstates": 148,
+            "real": false
+          },
+          {
+            "case": "word-literal-3",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-literal-4",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-literal-15",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-literal-16",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-literal-17",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-literal-18",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-literal-24",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-literal-255",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-match-2",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-match-3",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-match-8",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-match-9",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-match-15",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-match-16",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-match-17",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-match-23",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-match-24",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-match-255",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-00-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-01-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-02-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-03-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-04-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-05-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-06-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-07-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-08-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-09-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0a-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0b-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0c-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0d-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0e-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0f-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-10-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-11-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-12-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-13-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-14-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-15-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-16-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-17-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-18-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-19-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1a-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1b-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1c-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1d-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1e-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1f-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-20-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-21-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-22-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-23-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-24-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-25-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-26-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-27-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-28-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-29-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2a-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2b-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2c-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2d-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2e-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2f-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-30-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-31-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-32-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-33-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-34-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-35-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-36-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-37-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-38-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-39-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3a-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3b-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3c-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3d-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3e-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3f-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-40-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-41-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-42-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-43-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-44-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-45-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-46-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-47-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-48-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-49-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4a-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4b-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4c-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4d-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4e-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4f-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-50-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-51-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-52-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-53-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-54-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-55-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-56-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-57-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-58-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-59-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5a-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5b-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5c-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5d-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5e-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5f-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-60-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-61-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-62-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-63-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-64-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-65-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-66-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-67-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-68-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-69-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6a-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6b-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6c-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6d-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6e-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6f-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-70-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-71-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-72-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-73-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-74-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-75-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-76-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-77-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-78-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-79-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7a-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7b-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7c-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7d-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7e-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7f-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-80-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-81-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-82-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-83-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-84-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-85-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-86-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-87-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-88-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-89-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8a-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8b-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8c-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8d-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8e-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8f-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-90-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-91-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-92-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-93-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-94-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-95-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-96-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-97-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-98-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-99-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9a-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9b-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9c-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9d-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9e-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9f-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a0-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a1-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a2-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a3-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a4-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a5-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a6-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a7-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a8-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a9-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-aa-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ab-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ac-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ad-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ae-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-af-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b0-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b1-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b2-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b3-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b4-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b5-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b6-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b7-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b8-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b9-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ba-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-bb-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-bc-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-bd-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-be-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-bf-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c0-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c1-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c2-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c3-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c4-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c5-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c6-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c7-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c8-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c9-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ca-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-cb-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-cc-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-cd-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ce-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-cf-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d0-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d1-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d2-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d3-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d4-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d5-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d6-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d7-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d8-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d9-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-da-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-db-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-dc-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-dd-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-de-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-df-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e0-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e1-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e2-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e3-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e4-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e5-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e6-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e7-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e8-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e9-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ea-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-eb-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ec-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ed-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ee-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ef-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f0-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f1-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f2-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f3-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f4-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f5-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f6-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f7-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f8-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f9-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-fa-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-fb-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-fc-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-fd-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-fe-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ff-empty",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-00-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-01-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-02-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-03-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-04-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-05-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-06-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-07-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-08-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-09-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0a-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0b-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0c-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0d-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0e-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-0f-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-10-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-11-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-12-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-13-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-14-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-15-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-16-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-17-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-18-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-19-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1a-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1b-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1c-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1d-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1e-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-1f-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-20-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-21-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-22-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-23-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-24-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-25-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-26-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-27-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-28-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-29-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2a-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2b-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2c-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2d-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2e-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-2f-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-30-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-31-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-32-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-33-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-34-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-35-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-36-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-37-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-38-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-39-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3a-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3b-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3c-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3d-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3e-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-3f-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-40-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-41-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-42-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-43-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-44-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-45-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-46-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-47-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-48-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-49-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4a-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4b-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4c-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4d-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4e-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-4f-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-50-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-51-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-52-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-53-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-54-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-55-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-56-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-57-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-58-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-59-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5a-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5b-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5c-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5d-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5e-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-5f-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-60-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-61-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-62-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-63-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-64-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-65-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-66-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-67-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-68-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-69-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6a-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6b-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6c-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6d-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6e-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-6f-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-70-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-71-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-72-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-73-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-74-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-75-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-76-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-77-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-78-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-79-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7a-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7b-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7c-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7d-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7e-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-7f-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-80-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-81-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-82-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-83-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-84-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-85-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-86-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-87-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-88-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-89-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8a-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8b-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8c-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8d-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8e-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-8f-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-90-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-91-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-92-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-93-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-94-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-95-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-96-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-97-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-98-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-99-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9a-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9b-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9c-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9d-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9e-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-9f-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a0-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a1-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a2-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a3-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a4-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a5-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a6-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a7-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a8-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-a9-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-aa-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ab-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ac-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ad-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ae-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-af-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b0-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b1-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b2-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b3-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b4-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b5-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b6-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b7-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b8-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-b9-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ba-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-bb-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-bc-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-bd-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-be-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-bf-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c0-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c1-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c2-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c3-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c4-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c5-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c6-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c7-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c8-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-c9-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ca-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-cb-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-cc-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-cd-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ce-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-cf-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d0-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d1-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d2-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d3-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d4-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d5-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d6-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d7-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d8-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-d9-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-da-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-db-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-dc-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-dd-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-de-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-df-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e0-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e1-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e2-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e3-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e4-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e5-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e6-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e7-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e8-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-e9-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ea-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-eb-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ec-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ed-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ee-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ef-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f0-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f1-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f2-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f3-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f4-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f5-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f6-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f7-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f8-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-f9-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-fa-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-fb-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-fc-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-fd-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-fe-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "token-ff-full",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-0",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-1",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-2",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-3",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-4",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-5",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-6",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-7",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-8",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-9",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-10",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-11",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-12",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-13",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-14",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-0-15",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-0",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-1",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-2",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-3",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-4",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-5",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-6",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-7",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-8",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-9",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-10",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-11",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-12",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-13",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-14",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-1-15",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-0",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-1",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-2",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-3",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-4",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-5",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-6",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-7",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-8",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-9",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-10",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-11",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-12",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-13",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-14",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-4-15",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-0",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-1",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-2",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-3",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-4",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-5",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-6",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-7",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-8",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-9",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-10",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-11",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-12",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-13",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-14",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "offset-nibble-5-15",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-literal-1",
+            "delta_tstates": 8,
+            "real": false
+          },
+          {
+            "case": "word-literal-2",
+            "delta_tstates": 8,
+            "real": false
+          }
+        ],
+        "maximum_regression_tstates": 232,
+        "qualification": {
+          "FFFF_configs": 9,
+          "complete": true,
+          "frozen_cases": 675,
+          "maximum_inplace_irq_stack_bytes": 12,
+          "maximum_irq_stack_bytes": 12,
+          "maximum_plain_stack_bytes": 8,
+          "native_configs": 4098,
+          "supplemental_cases": 8
+        },
+        "initialization_tstates": 24
+      },
+      "resident_real_frontier": true,
+      "real_total_benchmark_tstates": 20423420
     }
   ],
   "evidence_sha256": {
@@ -41270,7 +44658,9 @@
     "second_pass_verification.json": "f159ef38fe0c91f5ee6f96e315d7980d0707999d42029372ffc5241ef96a6db0",
     "evidence/shared_zero_prefix_native.json.gz": "fcb80906d6ab6b40983add657850c70bf38f3e41de64611b94eb9751dafa91e1",
     "evidence/hybrid_public_verification.json": "7cd02f0aed406633cd8531ef86de11f7dbb3f0688f1420d7a55dc89aa3b7d77f",
-    "evidence/benchmark_initialization.json": "4b9620e91bbafe63b60e62972b47f31eb97c604a47f09649ca450d08539298f3",
+    "evidence/benchmark_initialization.json": "5dda9e30b17a9a477dc79eae94b41a41ee954875bbded99067608c7292d3d05e",
+    "evidence/next_s01_public_verification.json": "2a8fecf2b3341ac99ee91cb0eb6e39589cdfc59e71d9b44f6eacc3487cf45618",
+    "evidence/next_s01_prior_sources.json.gz": "176d974d6335a21ca73c1a80a36fb55f575ed63447bb3bddde7d1e4b98da7bdb",
     "evidence/fast_jumps_streaming/fast-jumps-call-before.json.gz": "14393b61d1de789ef6db4fe80a1b6b46328484e59421758029c8ad57d52156c5",
     "evidence/fast_jumps_streaming/fast-jumps-call-after.json.gz": "7c35c9423070738bfc9915ee44adbe819ba19760745a176399f29b249f82699b",
     "evidence/fast_jumps_streaming/fast-jumps-direct-before.json.gz": "353c665bc6dd5b94586263660b8d362004b39417bdb841f7b2c10f598496ea9f",
@@ -41281,12 +44671,14 @@
     "evidence/next_e01_public_verification.json": "9c0f7a09a5b5023a8224386cdf3cf9821fd33b19d256444799e4de15fe9b4780",
     "evidence/next_f00_public_verification.json": "2421192c84e7bd0a054c1d384c1643dd7bb4ec37b9db1a9af7789068651e8367",
     "evidence/next_f00_full.json.gz": "00b1facac131ba65f880989af84e0a013958bec9fe66a24733f7c09873c5ad66",
-    "evidence/next_f00_prior_sources.json.gz": "9a7a0e07e3b45266260ab19ca6461289198480711f70bb679f5ee94a0a5535b2"
+    "evidence/next_f00_prior_sources.json.gz": "9a7a0e07e3b45266260ab19ca6461289198480711f70bb679f5ee94a0a5535b2",
+    "evidence/next_s01_zx0_full.json.gz": "2a202c04484bc67ce1d32e15e68d130b2a97bc17a21d32947561728ac6fc6223",
+    "evidence/next_s01_lzsa_full.json.gz": "05cf06edbb09b2c1aea741f46aebabe13c6964370bd370875f994524b154f48f"
   },
   "source_sha256_lf": {
     "zx0/src/zx0/block.py": "cad29f8ffa3b104d012787d87ca78adf2d81b6bc5de2ffece605f51320ed2c46",
     "zx0/src/zx0/maximum.py": "88a22fe1c79af6a2491fc2f17e21d79d0ac48878e90550fedfa2fd0c2e72cb84",
-    "lzsa/src/lzsa/block.py": "f909370ee4c475ae7115bd47b1011c9482e70aa20811286f74783c9e673dac0a",
+    "lzsa/src/lzsa/block.py": "f13a24db38d738d4ef2fedd9cff958dd02b092c8995382f57be5d78ac465222a",
     "lzsa/src/lzsa/hybrid.py": "a7a5258382c13339c300b8f21440da1637a407c5fac3f4cdab4bc177c306379a",
     "lzsa/src/lzsa/wide.py": "9aeca47bc02de53710ffdd82b2ec30b2149b6a5a7bc275c96053ee45e8ae1a89",
     "zx0/src/zx0/resumable.py": "f2a614b3ef6c9b4b9977c0e56fe0ef533ef41019ac1bf5617a521757205d6ddd",
@@ -41295,15 +44687,18 @@
     "lzsa/src/lzsa/wide_coroutine.py": "02bd6b2e041534e658a8ff4c4dbc133c62db83711f5e010fd1dcccda884cfd30",
     "zx0/src/zx0/maximum_branches.py": "96c4a792548a1f7414bbb301a835b7d4f1bd9873a5edc8cb1ec9fad31eca2d28",
     "lzsa/src/lzsa/hot.py": "525f7922b967c46f01a675a13e4fdaba7d249447b05060b2bf285bc4971577b5",
+    "zx0/src/zx0/small.py": "1905a92d4c450f89d05ccc65b6692945ab36cc9c1ce65edc86989bb24506805d",
+    "lzsa/src/lzsa/compact.py": "d63cf93c14c3a6b6419d6c2462128be038d8b3f85bfc87c1d1a89a9f439465b8",
     "zx0/src/zx0/codec.py": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91",
     "zx0/src/zx0/_shared_prefixes.py": "1718009817e2fe260582f8de6446fc6f3c749ed566a6dd90616dd995a88ec2b3",
-    "lzsa/src/lzsa/compact.py": "0d382910264a4341002c751845420e795ed1357c94989db10974514722cd6676",
     "lzsa/src/lzsa/_wide_kernels.py": "cdd98fd57309335948d23b64ce88bba80efcc6e33862a3efe3dc60001e46c114"
   },
   "preceding_public_calls_exact": 50,
   "preceding_selection_memory_cpu_region_sha256": "0fc085794ccd314648771a0a5771b03796b0dfc512591f0589e7805110285258",
   "preceding_e01_table_calls_exact": 68,
   "optional_f00_public_calls": 3,
+  "preceding_f00_table_calls_exact": 71,
+  "optional_s01_public_calls": 3,
   "resident_real_frontier": {
     "zx0": [
       {
@@ -41315,6 +44710,28 @@
           "core": 32768,
           "core_limit": 33792,
           "variant": "standard"
+        }
+      },
+      {
+        "name": "ZX0 Small gamma-jp",
+        "service_bytes": 75,
+        "real_cpu_tstates": 199881370,
+        "builder": "zx0.small.build",
+        "kwargs": {
+          "core": 32768,
+          "core_limit": 33792,
+          "profile": "gamma-jp"
+        }
+      },
+      {
+        "name": "ZX0 Small smc",
+        "service_bytes": 78,
+        "real_cpu_tstates": 189794309,
+        "builder": "zx0.small.build",
+        "kwargs": {
+          "core": 32768,
+          "core_limit": 33792,
+          "profile": "smc"
         }
       },
       {
@@ -41408,14 +44825,14 @@
     ],
     "lzsa2": [
       {
-        "name": "LZSA2 Small (minimum)",
-        "service_bytes": 145,
-        "real_cpu_tstates": 20423546,
-        "builder": "lzsa.block.build",
+        "name": "LZSA2 Small compact EOF (minimum)",
+        "service_bytes": 144,
+        "real_cpu_tstates": 20423420,
+        "builder": "lzsa.compact.build",
         "kwargs": {
           "core": 32768,
           "core_limit": 33792,
-          "variant": "small"
+          "compact_eof": true
         }
       },
       {
@@ -41599,7 +45016,7 @@
       }
     }
   },
-  "reproducer_sha256_lf": "952afbca4f384cf85e082d96428cd7b976af3ecead797da0f5fd65f23afbaf57",
+  "reproducer_sha256_lf": "22e52cb8d9e6a5451bd020d1f3344159f5ec0ce839c5684a54aa3121479c8877",
   "default_code_delta_bytes": 0,
   "default_instruction_delta_tstates": 0
 }

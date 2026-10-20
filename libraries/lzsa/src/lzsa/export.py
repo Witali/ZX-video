@@ -98,6 +98,13 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
             routines['e03_hot_first']='Read the class5 offset nibble, retaining both cached/refill paths and the unchanged negative-offset store.'
             routines['e03_hot_cached']='Cached offset nibble: AF\' is now empty. Prepare BC/offset, then enter the known-empty match-length reader, saving15 T over the full pair.'
             routines['e03_known_empty_LongMatchNibble']='Proved empty AF\' cache; refill exactly one input byte and retain the ordinary low-nibble cache/carry protocol. Entry skips SCF/EX/JR only.'
+    if metadata.get('compact_eof'):
+        lines += ['; Optional Small EOF layout: POP BC; RET Z; PUSH BC replaces JR NZ,word; POP BC; RET.',
+                  '; EOF27 ->21 T; word dispatch12 ->26 T. BC holds only the temporary return; word parsing overwrites B and the caller overwrites C.',
+                  '; One fewer code/service byte. Stack reservation8 bytes, including return; AF\' cache and exact byte EOF retained.',
+                  '; All24 T of per-block initialization is measured; there is no external target initializer.', '']
+        routines['ExtraByte']='Carry/Z is exact EOF. On carry, temporarily pop ExtendedCode return into dead BC; RET Z returns to the block caller, otherwise PUSH BC restores the word-reader continuation. Flags survive POP/PUSH.'
+        routines['WordLength']='Read exact low A/high B word count, including legal literals1/2; return then replace C with A. Temporary BC return-address data cannot affect the decoded length.'
     if metadata.get('fast_jumps'):
         lines += ['; Optional core unconditional JR -> JP: 12 -> 10 T per execution, +1 byte/site.',
                   '; Conditional branches and cold input-wait retries keep their original encoding.',

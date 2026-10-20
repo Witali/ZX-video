@@ -34,6 +34,11 @@ target preparation is0 T. Future one-time preparation must enter cold-start
 and batch totals. The linked variant table identifies all nondominated
 resident points on the measured real aggregate, with function/file links.
 
+[S01](NEXT_S01_MINIMUM.md) keeps ZX0 Standard's74-B minimum, adds compact
+75/78-B gamma/SMC choices and reduces LZSA2 Small145 ->144 B. Every entry
+initializer is included; SMC's43-T startup includes its20-T offset reset.
+The74-call table preserves prior choices and all slower-case lists.
+
 ## Current resident choices
 
 The later E01 optional modes improve both time and service memory against
@@ -43,6 +48,8 @@ their complete non-real regression lists; every real block is no slower.
 
 | Codec/profile | Total service | Real CPU T | Gain vs Fast |
 | --- | ---: | ---: | ---: |
+| ZX0 Small gamma-JP | **75 B** | 199,881,370 | -28.118801% |
+| ZX0 Small SMC | **78 B** | 189,794,309 | -21.653255% |
 | ZX0 Fast tuned | **197 B** | 153,706,279 | 1.478241% |
 | ZX0 Fast tuned +literal prefix +tail refill | **202 B** | 152,776,831 | 2.073993% |
 | ZX0 Mega tuned +fast jumps | **674 B** | 145,701,295 | 6.609229% |
@@ -54,6 +61,7 @@ their complete non-real regression lists; every real block is no slower.
 | ZX0 E01 shared127, `policy='fast'` | **5,053 B** | 139,576,574 | 10.535017% |
 | ZX0 E01 shared228, `policy='fast'` | **7,517 B** | 139,552,884 | 10.550202% |
 | LZSA2 Fast jumps +compact branches | **222 B** | 17,724,654 | 0.227637% |
+| LZSA2 Small compact EOF | **144 B** | 20,423,420 | -14.963760% |
 | LZSA2 Fast jumps +tuned branches +nibble prefill | **228 B** | 17,635,500 | 0.729487% |
 | LZSA2 Wide shared | **3,452 B** | 15,869,483 | 10.670425% |
 | LZSA2 Wide expanded | **7,004 B** | 15,623,953 | 12.052517% |
@@ -69,7 +77,8 @@ their complete non-real regression lists; every real block is no slower.
 | LZSA2 Hot combined | **9,545 B** | 14,905,725 | 16.095434% |
 
 Baselines:156,012,520 T /364 real ZX0 blocks and 17,765,094 T /21 real LZSA2
-blocks. Totals include four caller-stack bytes, except raw Wide needs six;
+blocks. Totals include four caller-stack bytes; gamma-JP/Wide need six and
+Small LZSA2 needs eight;
 the caller return counts. All static state,512-byte Wide tables and alignment
 padding already emitted in the code regions count once. Wide totals above
 assume aligned code; arbitrary alignment adds at most 255 B (3,707/7,259 B).

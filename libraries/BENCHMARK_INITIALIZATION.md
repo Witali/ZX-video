@@ -1,12 +1,12 @@
 # Benchmark initialization accounting
 
-Accounting audit of the 71 linked selections, 2026-10-20. No target code or saved native measurements are changed; no CPU replay is run.
+Accounting audit of the 74 linked selections, 2026-10-20. No target code or saved native measurements are changed; no CPU replay is run.
 
 The primary guarded service metric is **producer + decoder**, including producer initialization, descriptor/frontier publication, carry handling and guard patching. The preceding decoder-only counts remain historical components. All resident and ordinary-coroutine entry initialization was already included.
 
 ## Counter boundaries
 
-- **55 resident selections:** start at the metadata entry and stop after exact EOF/restoration/RET. Offset/cache setup is inside this interval. [libraries/tests/native_block.py:68](../libraries/tests/native_block.py#L68).
+- **58 resident selections:** start at the metadata entry and stop after exact EOF/restoration/RET. Offset/cache setup is inside this interval. [libraries/tests/native_block.py:68](../libraries/tests/native_block.py#L68).
 - **12 ordinary coroutines:** the first timed invocation selects `begin`; every later invocation selects `slice_until`. The first cost is retained in the sum, including sync, private-stack setup, raw initialization, yields and final return. [libraries/lzsa/src/lzsa/native.py:61](../libraries/lzsa/src/lzsa/native.py#L61), [libraries/lzsa/src/lzsa/native.py:89](../libraries/lzsa/src/lzsa/native.py#L89), [libraries/tests/measure_compact_sync.py:48](../libraries/tests/measure_compact_sync.py#L48), [libraries/tests/maximum_coroutine_native.py:58](../libraries/tests/maximum_coroutine_native.py#L58).
 - **4 guarded selections:** producer `begin` is timed first; decoder timing starts before its `begin`, and supplier steps are separately timed. The full sum includes both. [toolkit/benchmark_inplace_streaming.py:61](../toolkit/benchmark_inplace_streaming.py#L61), [toolkit/benchmark_inplace_streaming.py:84](../toolkit/benchmark_inplace_streaming.py#L84), [toolkit/benchmark_inplace_streaming.py:110](../toolkit/benchmark_inplace_streaming.py#L110).
 
@@ -20,13 +20,14 @@ Static Z80 instruction counts below identify setup already inside the measured p
 
 | Raw family | Included entry setup T |
 | --- | ---: |
-| ZX0 Standard | 34 |
+| ZX0 Standard / gamma-JP | 34 |
+| ZX0 Small SMC | 43 |
 | ZX0 Turbo | 55 |
 | ZX0 Fast | 53 |
 | ZX0 original Mega | 48 |
 | ZX0 Maximum / tuned Mega with JP | 46 |
 | LZSA2 Fast | 25 |
-| LZSA2 Small | 24 |
+| LZSA2 Small / compact EOF | 24 |
 | LZSA2 Wide / Hybrid / Hot | 44 |
 
 Ordinary ZX0 Fast `begin` through raw setup is 269 T, or 295 T with the extra literal-prefix sync stores. Maximum index-quota initialization is 304 T (309 T when the initial demand equals block end). Ordinary LZSA2 Fast is 256/261 T, compact-sync 248/253 T, and Wide 275/280 T. Guarded Fast is 286/291 T; guarded Wide 305/310 T. These pairs differ only by the final-demand sync branch. Full instruction components and source hashes are in the JSON.
@@ -72,4 +73,4 @@ The separate flat-native guarded runner executes and times `update_guards` outsi
 python libraries/tests/audit_benchmark_initialization.py
 ```
 
-[Machine-readable audit](evidence/benchmark_initialization.json) lists all 71 selection names/calls, the four guarded keys, exact source lines, instruction ledgers, native-proof/stream/input hashes, standalone helper costs and full source/evidence SHA256. It derives totals from complete retained proof; it runs no emulator or decoder. The mutable generated table is discovery metadata, not the timing oracle.
+[Machine-readable audit](evidence/benchmark_initialization.json) lists all 74 selection names/calls, the four guarded keys, exact source lines, instruction ledgers, native-proof/stream/input hashes, standalone helper costs and full source/evidence SHA256. It derives totals from complete retained proof; it runs no emulator or decoder. The mutable generated table is discovery metadata, not the timing oracle.

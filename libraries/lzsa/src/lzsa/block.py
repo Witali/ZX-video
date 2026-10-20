@@ -2,7 +2,7 @@
 from .resumable import build as _build
 
 
-def build(variant='fast',*,core=0x8000,core_limit=0x8400,long_copy=False,near_literals=False,fast_jumps=False,branch_tuned=False,nibble_prefill=False,compact_branches=False):
+def build(variant='fast',*,core=0x8000,core_limit=0x8400,long_copy=False,near_literals=False,fast_jumps=False,branch_tuned=False,nibble_prefill=False,compact_branches=False,compact_eof=False):
     """Return regions/labels/metadata for a valid fully resident raw-v2 block.
 
     Call start with HL=input, DE=output and the caller stack. AF/AF'/BC/DE/HL
@@ -13,7 +13,10 @@ def build(variant='fast',*,core=0x8000,core_limit=0x8400,long_copy=False,near_li
     wide/wide-shared use full-token tables under a 10,000-byte total budget;
     reserve a larger core_limit explicitly. Their caller stack peaks at six
     bytes including return, plus IRQ headroom; HL' is preserved at raw EOF.
+    compact_eof selects the smaller exact-EOF layout for variant='small'.
     """
+    if type(compact_eof) is not bool:raise ValueError('compact-eof must be boolean')
+    if compact_eof and variant!='small':raise ValueError('compact-eof supports the small raw profile only')
     if variant in ('wide', 'wide-shared'):
         if long_copy or near_literals or fast_jumps or branch_tuned or nibble_prefill or compact_branches:
             raise ValueError('wide profiles use their own copy/branch layout')
@@ -22,6 +25,7 @@ def build(variant='fast',*,core=0x8000,core_limit=0x8400,long_copy=False,near_li
     if variant=='small':
         if long_copy or near_literals or fast_jumps or branch_tuned or nibble_prefill or compact_branches:raise ValueError('compact profile does not support fast copy/jump options')
         from .compact import build as compact_build
+        if compact_eof:return compact_build(core=core,core_limit=core_limit,compact_eof=True)
         return compact_build(core=core,core_limit=core_limit)
     if variant!='fast':raise ValueError('unknown block decoder')
     return _build(core=core,core_limit=core_limit,long_copy=long_copy,

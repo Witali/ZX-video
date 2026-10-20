@@ -71,6 +71,28 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
                   '; Four reuse exits use JP 10 T versus JR 7/12 T; total code -4 bytes.',
                   '; Individual untaken exits cost +3 T; complete retained blocks improve. No coroutine ABI.', '']
     routines = dict(ROUTINES)
+    if metadata.get('small_profile'):
+        profile=metadata['small_profile']
+        lines += ['; Fixed compact Standard-derived profile: '+profile+'. Full forward ZX0 v2 counts remain valid.',
+                  '; All per-block initialization and exact EOF return are included in measured CPU.',
+                  '; Complete service includes emitted code/embedded state and required caller stack.',
+                  '; No tables, alignment padding, scratch, internal buffers or external target initializer.', '']
+        if profile=='smc':
+            lines += ['; SMC startup is43 T, including20 T to reset the negative offset on every call.',
+                      '; Copy setup/restoration70 ->42 T; total delta=-28*matchCopies-newOffsetEntries.',
+                      '; The embedded offset needs writable nonreentrant code; plain stack peak4 bytes including return.', '']
+            routines['dzx0_standard']='HL=input, DE=output. Set BC=FFFF, reset the embedded offset, then BC=0 and A=80. All43 T of entry setup is inside the benchmark.'
+            routines['dzx0s_copy']='BC=positive count. Save input HL, load the patched negative offset, add DE and copy forward with LDIR, then restore input. Stack peak4 including caller return.'
+            routines['s01_offset']='Two-byte mutable negative offset embedded in LD HL,nn. Entry resets it; every valid new offset replaces it. Already counted in emitted code.'
+        else:
+            lines += ['; Gamma-only backward JR12 -> JP10, one extra code byte; copy-back JR is retained.',
+                      '; Startup remains34 T; persistent offset stays on caller stack. ROM-compatible, stack peak6 bytes.', '']
+            routines['dzx0_standard']='HL=input, DE=output. Initialize the persistent stack offset and bit reservoir in34 T, included in the measured call; code remains ROM-compatible.'
+            routines['dzx0s_copy']='Swap saved source/offset through the caller stack, copy the positive BC count forward and restore source/offset. Six-byte peak includes the caller return.'
+        routines['dzx0s_literals']='Decode the complete positive Elias literal count and copy exactly BC input bytes; retain bit reservoir A and the input cursor.'
+        routines['dzx0s_new_offset']='Decode inverted offset MSB and exact EOF before reading the LSB. Incoming B is discarded by LD B,C; ADD A,A replaces dead RL B flags. Full word shifts remain in all count paths.'
+        routines['dzx0s_elias']='Positive full16-bit interlaced Elias count; BC accumulates data, A carries bits and HL advances only on refill.'
+        routines['dzx0s_elias_backtrack']='Append the current data bit with RL C/RL B, then return to control-bit parsing. The gamma-jp profile saves2 T on this backward branch.'
     if metadata.get('literal_prefix'):
         lines += ['; Optional literal prefix: BC>=2 takes LDI then LDIR, saving 5 T/run.',
                   '; The BC=1 entry skips LDI. Coroutine checks quota before either copy.',
