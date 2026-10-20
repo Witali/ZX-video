@@ -39,6 +39,13 @@ resident points on the measured real aggregate, with function/file links.
 initializer is included; SMC's43-T startup includes its20-T offset reset.
 The74-call table preserves prior choices and all slower-case lists.
 
+[E04](NEXT_E04_PREFIX255.md) adds the fastest tested resident ZX0 endpoint:
+cap255-fast,8,165 B/139,546,674 real T. It trades648 B for6,210 T against
+cap228-fast, with no slower frozen case. Every46-T startup includes its20-T
+offset reset; no external target preparation is omitted. All3,054 protected
+configurations plus nine FFFFh probes pass. The75-call table preserves the
+preceding74 selections. Coroutine/guarded qualification remains separate.
+
 ## Current resident choices
 
 The later E01 optional modes improve both time and service memory against
@@ -60,6 +67,7 @@ their complete non-real regression lists; every real block is no slower.
 | ZX0 Maximum shared prefix 228 | **7,578 B** | 139,892,818 | 10.332313% |
 | ZX0 E01 shared127, `policy='fast'` | **5,053 B** | 139,576,574 | 10.535017% |
 | ZX0 E01 shared228, `policy='fast'` | **7,517 B** | 139,552,884 | 10.550202% |
+| ZX0 E04 shared255, `policy='fast'` | **8,165 B** | 139,546,674 | 10.554182% |
 | LZSA2 Fast jumps +compact branches | **222 B** | 17,724,654 | 0.227637% |
 | LZSA2 Small compact EOF | **144 B** | 20,423,420 | -14.963760% |
 | LZSA2 Fast jumps +tuned branches +nibble prefill | **228 B** | 17,635,500 | 0.729487% |

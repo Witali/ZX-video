@@ -28,7 +28,7 @@ Include all required Z80 library initialization in benchmarks: every per-block
 setup and any separate one-time preparation. Show setup/decode components,
 cold-start latency and batch totals; no required initialization is free.
 [The completed accounting audit](libraries/BENCHMARK_INITIALIZATION.md) checks
-all74 current calls: resident/ordinary begin work was already timed; guarded
+all75 current calls: resident/ordinary begin work was already timed; guarded
 tables now show producer+decoder totals, including70T producer begin/block
 and initial/repeated guard patching. Expanded CALL/direct real service CPU
 is23,106,239/20,892,688 T, improving same-mode pass Fast8.4733%/9.2876%.
@@ -43,7 +43,8 @@ their original rule; their useful tradeoffs now need reevaluation.
 946 ZX0 + 2,025 LZSA2 observer runs and 3,444 actual compressed-overlap
 plain/IRQ/relocation runs reproduce all frozen per-case counts. E01 is now
 complete; E02/E03 screens are complete under their earlier rule. Frontier
-follow-up F00 and minimum-size audit S01 are complete; E04..E07 remain pending.
+follow-up F00 and minimum-size audit S01 are complete. E04 now completes the
+cap255 endpoint below; E05..E07 remain pending.
 [ZX0 E01](libraries/NEXT_E01_ZX0_BRANCHES.md)
 has17,028 complete native replays plus six FFFFh probes for six branch
 candidates: -61/-13/-3 B and -339,934/-214,864/-970 real T, with no slower
@@ -99,8 +100,16 @@ Small145 ->144 B,20,423,420 real T (-126), including24T/block setup;
 are dominated; RST28 cannot use Spectrum ROM. All9,801 useful-candidate
 protected configurations,107 library/24 selected toolkit tests,83 isolated
 API exports/three CLIs and all256 origins pass. The74-call table retains all
-preceding71 calls; defaults remain exact. E04 cap255 is next, then E05/E06/E07;
+preceding71 calls; defaults remain exact. E04 cap255 is completed below;
 these component gains do not complete the broader goal.
+[E04](libraries/NEXT_E04_PREFIX255.md) qualifies shared255-fast at8,165 B/
+139,546,674 real T: +648 B/-6,210 T versus228-fast. All473 frozen cases are
+equal or faster;3,054 protected configurations plus nine FFFFh probes pass,
+including36 boundary combinations and genuine compressed overlap. All256
+alignments fit8,184 B with the13+6-byte IRQ example. Its46-T startup includes
+the20-T offset reset;364 real setups total16,744 T already within139,546,674.
+Public API/CLI/wheels,113 library/24 toolkit tests and the75-call table preserve
+all74 prior selections/defaults. E05 is next; wrappers/player remain separate.
 Retain E02's two-byte cold-tail tradeoff for E06 dominance/refit review.
 
 The user additionally requests using/adapting the C CPU from
@@ -124,7 +133,7 @@ divergence. Local generators repair the initially stale fused slice artifact.
 Instruction-level ULA contention and live banked guards remain unqualified;
 `Spectrum128(contention=True).attach(cpu)` is rejected. Preserve original protected
 IRQ/overlap/wrapper gates. No GUI, disk/movie qualification or main merge/push
-is implied. Continue E04..E07 with one focused completed stage
+is implied. Continue E05..E07 with one focused completed stage
 per commit; independent source review may run in parallel.
 
 ## Active codec goal — speed/service-memory frontier (2026-10-19)

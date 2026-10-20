@@ -1,4 +1,4 @@
-"""Optional resident shared Maximum with six fixed measured branch layouts.
+"""Optional resident shared Maximum with fixed measured branch layouts.
 
 Each selected JP cc becomes JR cc: one less service byte, -3 T when untaken,
 +2 T when taken. Policies describe selection on the retained corpus, not a
@@ -148,6 +148,7 @@ _POLICY_INDICES = {
 }
 
 _QUALIFIED = {
+    (255, 'fast'): {'native_profile': '255-fast', 'canonical_code_sha256': '6f59e27d67ac567fc2a6b30c76f8520403c3fd00e3e415d396023d8a99394553', 'real_baseline_tstates': 139552884, 'real_tstates': 139546674, 'intrinsic_service_bytes': 8165, 'slower_real_cases': 0, 'slower_cases': 0, 'maximum_case_delta_tstates': 0},
     (228, 'fast'): {'native_profile': '228-all_profitable_reachable', 'canonical_code_sha256': '5a12b921418813e7d40afe2791a28c77f49ad333146ef88a47a3d433323087f4', 'real_baseline_tstates': 139892818, 'real_tstates': 139552884, 'intrinsic_service_bytes': 7517, 'slower_real_cases': 0, 'slower_cases': 103, 'maximum_case_delta_tstates': 38},
     (228, 'real'): {'native_profile': '228-no_individual_real_block_regression', 'canonical_code_sha256': '4be4133cd55ce55cfb64b1901713c95a706ea98bf7d543022e8a7d9151785dc0', 'real_baseline_tstates': 139892818, 'real_tstates': 139677954, 'intrinsic_service_bytes': 7565, 'slower_real_cases': 0, 'slower_cases': 38, 'maximum_case_delta_tstates': 11},
     (228, 'corpus'): {'native_profile': '228-no_individual_corpus_case_regression', 'canonical_code_sha256': '95516988e99c38fe794427bb835d32dce70c38e71bf73a731a06959770566e62', 'real_baseline_tstates': 139892818, 'real_tstates': 139891848, 'intrinsic_service_bytes': 7575, 'slower_real_cases': 0, 'slower_cases': 0, 'maximum_case_delta_tstates': 0},
@@ -186,18 +187,25 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228, policy='fast',
     four-byte stack reservation includes caller return and live source word.
     IRQ preserves live registers; add actual IRQ code/extra stack explicitly.
 
-    fast contracts 61 sites, real 13, corpus 3. All improve measured real CPU
-    and reduce service bytes. fast/real retain non-real-case regressions;
+    At caps127/228, fast contracts61 sites, real13, corpus3. Each improves
+    measured real CPU and reduces service versus its uncontracted same-cap
+    shared layout. fast/real retain non-real-case regressions;
     corpus had no regression among the retained 417+56 cases. Policy names
     describe this finite measured selection and establish no global optimum.
+    Cap255/fast extends each of twelve proven word-count chains by27 LDI
+    instructions: +648 service bytes, -135 T per word entry versus cap228/fast.
+    Its46-T per-block setup includes the20-T offset reset in measured CPU.
     """
-    if type(prefix_cap) is not int or prefix_cap not in (127, 228):
-        raise ValueError('maximum branches requires qualified prefix-cap 127 or 228')
+    if type(prefix_cap) is not int or prefix_cap not in (127, 228, 255):
+        raise ValueError('maximum branches requires qualified prefix-cap 127, 228 or 255')
     if type(policy) is not str or policy not in _POLICY_INDICES:
         raise ValueError('maximum branch policy must be fast, real or corpus')
     if _quota_hook is not None:
         raise ValueError('maximum branches supports resident raw decoding only')
-    sites = tuple(_SITES[prefix_cap][index] for index in _POLICY_INDICES[policy])
+    if prefix_cap == 255 and policy != 'fast':
+        raise ValueError('prefix-cap255 supports only the qualified fast policy')
+    site_cap = 228 if prefix_cap == 255 else prefix_cap
+    sites = tuple(_SITES[site_cap][index] for index in _POLICY_INDICES[policy])
     instances = []
 
     def assembler(origin):
@@ -207,7 +215,8 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228, policy='fast',
 
     regions, labels, original = _maximum(core=core, core_limit=core_limit,
         prefix_cap=prefix_cap, shared_prefixes=True, irq_code_bytes=irq_code_bytes,
-        irq_stack_bytes=irq_stack_bytes, service_limit=service_limit, _assembler=assembler)
+        irq_stack_bytes=irq_stack_bytes, service_limit=service_limit, _assembler=assembler,
+        **(dict(_allow_prefix255=True) if prefix_cap == 255 else {}))
     emitter, = instances
     if {row['baseline_offset'] for row in emitter.changes} != {row[0] for row in sites}:
         raise ValueError('qualified Maximum branch selection was not fully emitted')
@@ -243,4 +252,23 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228, policy='fast',
         baseline_service_memory_bytes=original['service_memory_bytes']+len(emitter.changes),
         service_delta_bytes=-len(emitter.changes), qualified_corpus=qualified,
         coroutine_supported=False)
+    if prefix_cap == 255:
+        # The measured E04 baseline is actual cap228-fast, not an inferred
+        # uncontracted cap255 binary. Branch timing remains historical lineage.
+        qualified.update(fixed_decoder_revision='9fbd9ce7',
+            comparison='accepted shared cap228-fast before the cap255 extension',
+            native_proof='next_e04_full.json.gz',
+            native_proof_sha256='7c0b3565b19e4da0c0de0e13f96fc9ea2a1eea0a96cf05e4edc34568f4bae009')
+        metadata.update(baseline_service_memory_bytes=7517+irq_code_bytes+irq_stack_bytes,
+            service_delta_bytes=648, prefix_extension_delta_formula='-135*word_prefix_entries',
+            startup_tstates=46, offset_reset_tstates=20,
+            target_initializer_required=False,
+            benchmark_call_scope='entry including offset reset through exact EOF and RET',
+            branch_delta_scope='inherited E01 substitutions; not the E04 incremental CPU delta',
+            conditional_branch_lineage=dict(prefix_cap=228, policy='fast',
+                native_profile=_QUALIFIED[228, 'fast']['native_profile'],
+                native_proof='next_e01_zx0_branches.json.gz',
+                site_count=61, branch_delta_formula='2*taken - 3*not_taken',
+                real_delta_tstates=-339934, service_delta_bytes=-61,
+                historical_slower_cases=103, historical_maximum_delta_tstates=38))
     return regions, labels, metadata

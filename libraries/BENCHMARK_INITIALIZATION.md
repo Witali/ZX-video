@@ -1,12 +1,12 @@
 # Benchmark initialization accounting
 
-Accounting audit of the 74 linked selections, 2026-10-20. No target code or saved native measurements are changed; no CPU replay is run.
+Accounting audit of the 75 linked selections, 2026-10-20. No target code or saved native measurements are changed; no CPU replay is run.
 
 The primary guarded service metric is **producer + decoder**, including producer initialization, descriptor/frontier publication, carry handling and guard patching. The preceding decoder-only counts remain historical components. All resident and ordinary-coroutine entry initialization was already included.
 
 ## Counter boundaries
 
-- **58 resident selections:** start at the metadata entry and stop after exact EOF/restoration/RET. Offset/cache setup is inside this interval. [libraries/tests/native_block.py:68](../libraries/tests/native_block.py#L68).
+- **59 resident selections:** start at the metadata entry and stop after exact EOF/restoration/RET. Offset/cache setup is inside this interval. [libraries/tests/native_block.py:68](../libraries/tests/native_block.py#L68).
 - **12 ordinary coroutines:** the first timed invocation selects `begin`; every later invocation selects `slice_until`. The first cost is retained in the sum, including sync, private-stack setup, raw initialization, yields and final return. [libraries/lzsa/src/lzsa/native.py:61](../libraries/lzsa/src/lzsa/native.py#L61), [libraries/lzsa/src/lzsa/native.py:89](../libraries/lzsa/src/lzsa/native.py#L89), [libraries/tests/measure_compact_sync.py:48](../libraries/tests/measure_compact_sync.py#L48), [libraries/tests/maximum_coroutine_native.py:58](../libraries/tests/maximum_coroutine_native.py#L58).
 - **4 guarded selections:** producer `begin` is timed first; decoder timing starts before its `begin`, and supplier steps are separately timed. The full sum includes both. [toolkit/benchmark_inplace_streaming.py:61](../toolkit/benchmark_inplace_streaming.py#L61), [toolkit/benchmark_inplace_streaming.py:84](../toolkit/benchmark_inplace_streaming.py#L84), [toolkit/benchmark_inplace_streaming.py:110](../toolkit/benchmark_inplace_streaming.py#L110).
 
@@ -73,4 +73,4 @@ The separate flat-native guarded runner executes and times `update_guards` outsi
 python libraries/tests/audit_benchmark_initialization.py
 ```
 
-[Machine-readable audit](evidence/benchmark_initialization.json) lists all 74 selection names/calls, the four guarded keys, exact source lines, instruction ledgers, native-proof/stream/input hashes, standalone helper costs and full source/evidence SHA256. It derives totals from complete retained proof; it runs no emulator or decoder. The mutable generated table is discovery metadata, not the timing oracle.
+[Machine-readable audit](evidence/benchmark_initialization.json) lists all 75 selection names/calls, the four guarded keys, exact source lines, instruction ledgers, native-proof/stream/input hashes, standalone helper costs and full source/evidence SHA256. It derives totals from complete retained proof; it runs no emulator or decoder. The mutable generated table is discovery metadata, not the timing oracle.

@@ -53,6 +53,14 @@ def main():
     initialization=read('evidence/benchmark_initialization.json')
     s01_auth=read('evidence/next_s01_public_verification.json')
     s01_prior=read('evidence/next_s01_prior_sources.json.gz')
+    e04_auth=read('evidence/next_e04_public_verification.json')
+    e04_prior=read('evidence/next_e04_prior_sources.json.gz')
+    e04_native=read('evidence/next_e04_full.json.gz')
+    assert e04_auth['complete'] and e04_native['raw_qualification_complete']
+    for filename in ('next_e04_full.json.gz','next_e04_prior_sources.json.gz'):
+        assert e04_auth['proof_sha256'][filename]==used['evidence/'+filename]
+    for relative,digest in e04_auth['source_sha256_lf'].items():
+        assert sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))==digest,relative
     assert initialization['complete'] and initialization['native_cases_reexecuted']==0
     originals={
         ('zx0','block'):old_zx['summary']['fast']['real_tstates'],
@@ -232,13 +240,16 @@ def main():
     for filename in ('next_s01_zx0_full.json.gz','next_s01_lzsa_full.json.gz','next_s01_prior_sources.json.gz'):
         assert s01_auth['proof_sha256'][filename]==used['evidence/'+filename],filename
     for relative,digest in s01_auth['source_sha256_lf'].items():
-        assert sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))==digest,relative
+        current=sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))
+        if current!=digest:
+            assert e04_prior[relative]['sha256_lf']==digest,relative
+            assert e04_auth['source_sha256_lf'][relative]==current,relative
     assert f00_auth['complete'] and f00_native['complete']
     assert f00_auth['proof_sha256']['next_f00_full.json.gz']==used['evidence/next_f00_full.json.gz']
     assert f00_auth['proof_sha256']['next_e01_public_verification.json']==used['evidence/next_e01_public_verification.json']
     for relative,digest in f00_auth['source_sha256_lf'].items():
         current=sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))
-        if current!=digest:assert s01_auth['source_sha256_lf'][relative]==current,relative
+        if current!=digest:assert e04_auth['source_sha256_lf'][relative]==current,relative
     assert all(proof['complete'] for proof in (zx_branches,zx_public,lz_cold,e01_auth))
     assert len(zx_branches['profiles'])==len(zx_public['current_public_calls'])==6
     assert len(lz_cold['profiles'])==12 and lz_cold['accepted']
@@ -248,7 +259,7 @@ def main():
     for relative,digest in e01_auth['source_sha256_lf'].items():
         current=sha((ROOT/relative).read_bytes().replace(b'\r\n',b'\n'))
         if current!=digest:
-            assert s01_auth['source_sha256_lf'][relative]==current,relative
+            assert e04_auth['source_sha256_lf'][relative]==current,relative
 
     def stage(reference,public,proof,slower,cases,baseline_cpu):
         assert not any(row['real'] for row in slower)
@@ -354,6 +365,25 @@ def main():
             qualification=public['qualification'],
             initialization_tstates=43 if codec=='zx0' and public['native_profile']=='smc' else 34 if codec=='zx0' else 24)
     assert len(records)==74
+    preceding_e04=json.loads(e04_prior['libraries/evidence/decoder_variants_verification.json']['text'])['profiles']
+    assert [{key:row[key] for key in LEGACY_FIELDS} for row in records]==[
+        {key:row[key] for key in LEGACY_FIELDS} for row in preceding_e04]
+    for public in e04_auth['current_public_calls']:
+        saved=e04_native['candidate']
+        assert saved['native_complete'] and saved['C_complete']
+        assert public['regions']==saved['regions'] and public['labels']==saved['labels']
+        assert public['real_cpu_tstates']==saved['summary']['real_tstates']
+        profile=add('ZX0 Maximum branches 255 fast','zx0','block',public['module'],public['kwargs'],
+            cpu=public['real_cpu_tstates'],stack=4,frozen=public)
+        assert profile[1]==public['labels']
+        assert json.loads(json.dumps(profile[2]))==public['metadata']
+        records[-1]['e04']=dict(native_proof='evidence/next_e04_full.json.gz',
+            public_authentication='evidence/next_e04_public_verification.json',
+            baseline_service_bytes=7517,baseline_real_tstates=139552884,
+            service_delta_bytes=648,real_delta_tstates=-6210,
+            slower_cases=saved['summary']['slower_cases'],
+            qualification=public['qualification'],initialization=e04_auth['initialization'])
+    assert len(records)==75
 
     # Compare like features and the documented aligned placement. This is an
     # aggregate real-workload frontier, not a universal per-block ordering.
@@ -583,6 +613,16 @@ def main():
         'case batch the change adds8,536 T. All lists are retained; aggregate real',
         'improvement does not imply universal speed improvement.',
         '[S01 report](NEXT_S01_MINIMUM.md) records rejected ROM/tag designs and full gates.','',
+        '## E04 maximum-speed endpoint','',
+        '`zx0.maximum_branches.build(prefix_cap=255, policy="fast")` uses8,165 B',
+        'and139,546,674 real T: +648 B /-6,210 T versus cap228-fast. All473',
+        'frozen cases are equal or faster. All3,054 protected configurations plus',
+        'nine FFFFh probes pass, including36 boundary combinations and actual',
+        'compressed overlap. The46-T entry includes the20-T offset reset on every',
+        'block; no external target initializer is required. All256 alignments',
+        'use8,184 B with the13+6-byte IRQ example. The61 E01 branch choices are',
+        'inherited; their historical regression list is a separate comparison.',
+        '[E04 report](NEXT_E04_PREFIX255.md).','',
         '## Nondominated resident size/speed choices','',
         'These are the best tested points on the complete real-corpus aggregate at',
         'the aligned placements above, with the same resident format/ABI. A point',
@@ -668,6 +708,8 @@ def main():
         '[S01 ZX0 native proof](evidence/next_s01_zx0_full.json.gz),',
         '[S01 LZSA2 native proof](evidence/next_s01_lzsa_full.json.gz),',
         '[S01 public/wheel authentication](evidence/next_s01_public_verification.json),',
+        '[E04 full native proof](evidence/next_e04_full.json.gz),',
+        '[E04 public/wheel authentication](evidence/next_e04_public_verification.json),',
         '[Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),',
         '[shared-prefix contracts](ZX0_SHARED_PREFIXES.md),',
         '[Hybrid API/wheel/native binding](evidence/hybrid_public_verification.json),',
@@ -702,6 +744,7 @@ def main():
         preceding_public_calls_exact=50,preceding_selection_memory_cpu_region_sha256=legacy_sha,
         preceding_e01_table_calls_exact=68,optional_f00_public_calls=len(f00_records),
         preceding_f00_table_calls_exact=71,optional_s01_public_calls=len(s01_records),
+        preceding_s01_table_calls_exact=74,optional_e04_public_calls=len(e04_auth['current_public_calls']),
         resident_real_frontier={codec:[dict(name=row['name'],service_bytes=row['service_bytes'],
             real_cpu_tstates=row['real_cpu_tstates'],builder=row['builder'],kwargs=row['kwargs'])
             for row in points] for codec,points in frontier.items()},

@@ -2,7 +2,7 @@
 
 Research and testing plan, 2026-10-20. Baseline: `9c28b01f`, branch
 `codex/codec-speed-pass3`, worktree `.worktree/codec-speed-pass3`.
-Status: **E00..E03/F00/S01 complete; E04..E07 pending**.
+Status: **E00..E04/F00/S01 complete; E05..E07 pending**.
 [ZX0 E01](NEXT_E01_ZX0_BRANCHES.md) completes six optional public branch
 layouts, bound to17,028 complete native replays plus six FFFFh probes.
 [LZSA2 E01](NEXT_E01_LZSA.md) completes12 optional cold-escape layouts with
@@ -31,7 +31,13 @@ external target initializer.
 points at199,881,370/189,794,309 real T. LZSA2 minimum becomes144 B at
 20,423,420 T. All9,801 useful protected configurations and public gates pass;
 retain643 non-real LZSA2 regressions and different-reference ZX0 lists.
-Entry initialization34/43/24T is included. E04..E07 remain pending.
+Entry initialization34/43/24T is included.
+[E04](NEXT_E04_PREFIX255.md) qualifies one shared cap255-fast endpoint at
+8,165 B/139,546,674 real T: +648 B/-6,210 T against accepted cap228-fast.
+All473 frozen cases are equal or faster; all3,054 protected configurations
+plus nine FFFFh probes pass, including36 boundary combinations. Its46-T entry
+includes the20-T reset on every block, with0T external preparation. The75-call
+table and public package proof retain all74 prior calls. E05..E07 remain pending.
 [E00 evidence and selected hypotheses](NEXT_E00_BASELINE.md) authenticate
 the fixed inputs, all target layouts and a new minimum-safe overlap runner.
 The additionally requested local Spectrum/C-core test platform is a separate

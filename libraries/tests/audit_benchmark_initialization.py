@@ -263,6 +263,9 @@ def main():
                 item['included_entry_setup_tstates']=43 if row['kwargs']['profile']=='smc' else 34
             elif row['builder']=='lzsa.compact.build' and row['kwargs'].get('compact_eof'):
                 item['included_entry_setup_tstates']=24
+            elif row['builder'] in ('zx0.maximum.build','zx0.maximum_branches.build'):
+                item['included_entry_setup_tstates']=46
+                item['included_offset_reset_tstates']=20
         elif row['kind']=='coroutine':
             item.update(primary_cpu_tstates=row['real_cpu_tstates'],benchmark_boundary='begin first invocation plus every slice_until entry through its RET; sum all invocations',
                 required_external_library_initializer_tstates=0,required_entry_initialization_included=True)

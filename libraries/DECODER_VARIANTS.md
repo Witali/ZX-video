@@ -107,12 +107,12 @@ GUARDED = dict(core=0xa000, core_limit=0xbc00,
 | LZSA2 Wide shared +short +repeat | 4,228 | 15,188,829 | -14.5018% | -14.5139% | [lzsa.wide.build(**WIDE, shared_literals=True, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[4, 5, 6, 7, 8])](lzsa/src/lzsa/wide.py#L16) |
 | LZSA2 Wide expanded +short 3..8 | 9,524 | 14,999,606 | -15.5670% | -15.5789% | [lzsa.wide.build(**WIDE, shared_literals=False, short_lengths=[3, 4, 5, 6, 7, 8], repeat_lengths=[])](lzsa/src/lzsa/wide.py#L16) |
 | LZSA2 Wide expanded +short 2..8 | 9,748 | 14,975,960 | -15.7001% | -15.7120% | [lzsa.wide.build(**WIDE, shared_literals=False, short_lengths=[2, 3, 4, 5, 6, 7, 8], repeat_lengths=[])](lzsa/src/lzsa/wide.py#L16) |
-| ZX0 Maximum branches 127 fast | 5,053 | 139,576,574 | -10.5350% | -10.5350% | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L179) |
-| ZX0 Maximum branches 127 real | 5,101 | 139,701,644 | -10.4549% | -10.4549% | [zx0.maximum_branches.build(prefix_cap=127, policy='real')](zx0/src/zx0/maximum_branches.py#L179) |
-| ZX0 Maximum branches 127 corpus | 5,111 | 139,915,538 | -10.3178% | -10.3178% | [zx0.maximum_branches.build(prefix_cap=127, policy='corpus')](zx0/src/zx0/maximum_branches.py#L179) |
-| ZX0 Maximum branches 228 fast | 7,517 | 139,552,884 | -10.5502% | -10.5502% | [zx0.maximum_branches.build(prefix_cap=228, policy='fast')](zx0/src/zx0/maximum_branches.py#L179) |
-| ZX0 Maximum branches 228 real | 7,565 | 139,677,954 | -10.4700% | -10.4700% | [zx0.maximum_branches.build(prefix_cap=228, policy='real')](zx0/src/zx0/maximum_branches.py#L179) |
-| ZX0 Maximum branches 228 corpus | 7,575 | 139,891,848 | -10.3329% | -10.3329% | [zx0.maximum_branches.build(prefix_cap=228, policy='corpus')](zx0/src/zx0/maximum_branches.py#L179) |
+| ZX0 Maximum branches 127 fast | 5,053 | 139,576,574 | -10.5350% | -10.5350% | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
+| ZX0 Maximum branches 127 real | 5,101 | 139,701,644 | -10.4549% | -10.4549% | [zx0.maximum_branches.build(prefix_cap=127, policy='real')](zx0/src/zx0/maximum_branches.py#L180) |
+| ZX0 Maximum branches 127 corpus | 5,111 | 139,915,538 | -10.3178% | -10.3178% | [zx0.maximum_branches.build(prefix_cap=127, policy='corpus')](zx0/src/zx0/maximum_branches.py#L180) |
+| ZX0 Maximum branches 228 fast | 7,517 | 139,552,884 | -10.5502% | -10.5502% | [zx0.maximum_branches.build(prefix_cap=228, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
+| ZX0 Maximum branches 228 real | 7,565 | 139,677,954 | -10.4700% | -10.4700% | [zx0.maximum_branches.build(prefix_cap=228, policy='real')](zx0/src/zx0/maximum_branches.py#L180) |
+| ZX0 Maximum branches 228 corpus | 7,575 | 139,891,848 | -10.3329% | -10.3329% | [zx0.maximum_branches.build(prefix_cap=228, policy='corpus')](zx0/src/zx0/maximum_branches.py#L180) |
 | LZSA2 Hybrid compact +cold extension | 4,998 | 15,030,346 | -15.3939% | -15.4059% | [lzsa.hybrid.build(**WIDE, profile='compact', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
 | LZSA2 Hybrid balanced +cold extension | 6,499 | 14,964,996 | -15.7618% | -15.7737% | [lzsa.hybrid.build(**WIDE, profile='balanced', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
 | LZSA2 Hybrid fast +cold extension | 9,499 | 14,926,306 | -15.9796% | -15.9915% | [lzsa.hybrid.build(**WIDE, profile='fast', cold_match_extension=True)](lzsa/src/lzsa/hybrid.py#L129) |
@@ -131,6 +131,7 @@ GUARDED = dict(core=0xa000, core_limit=0xbc00,
 | ZX0 Small smc | 78 | 189,794,309 | +21.6533% | +21.6533% | [zx0.small.build(**SMALL, profile='smc')](zx0/src/zx0/small.py#L20) |
 | ZX0 Small gamma-jp | 75 | 199,881,370 | +28.1188% | +28.1188% | [zx0.small.build(**SMALL, profile='gamma-jp')](zx0/src/zx0/small.py#L20) |
 | LZSA2 Small compact EOF (minimum) | 144 | 20,423,420 | +14.9638% | +14.9475% | [lzsa.compact.build(**SMALL, compact_eof=True)](lzsa/src/lzsa/compact.py#L13) |
+| ZX0 Maximum branches 255 fast | 8,165 | 139,546,674 | -10.5542% | -10.5542% | [zx0.maximum_branches.build(prefix_cap=255, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
 
 ## Ordinary output-demand coroutines
 
@@ -277,6 +278,18 @@ case batch the change adds8,536 T. All lists are retained; aggregate real
 improvement does not imply universal speed improvement.
 [S01 report](NEXT_S01_MINIMUM.md) records rejected ROM/tag designs and full gates.
 
+## E04 maximum-speed endpoint
+
+`zx0.maximum_branches.build(prefix_cap=255, policy="fast")` uses8,165 B
+and139,546,674 real T: +648 B /-6,210 T versus cap228-fast. All473
+frozen cases are equal or faster. All3,054 protected configurations plus
+nine FFFFh probes pass, including36 boundary combinations and actual
+compressed overlap. The46-T entry includes the20-T offset reset on every
+block; no external target initializer is required. All256 alignments
+use8,184 B with the13+6-byte IRQ example. The61 E01 branch choices are
+inherited; their historical regression list is a separate comparison.
+[E04 report](NEXT_E04_PREFIX255.md).
+
 ## Nondominated resident size/speed choices
 
 These are the best tested points on the complete real-corpus aggregate at
@@ -296,8 +309,9 @@ Per-case regressions still matter; this finite set establishes no global optimum
 | ZX0 Mega tuned | 674 | 145,701,295 | [zx0.block.build(**SMALL, variant='mega', mega_tuned=True, fast_jumps=True)](zx0/src/zx0/block.py#L7) |
 | ZX0 Maximum shared 31 | 2,810 | 141,342,108 | [zx0.maximum.build(prefix_cap=31, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
 | ZX0 Maximum shared 63 | 3,578 | 140,403,868 | [zx0.maximum.build(prefix_cap=63, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
-| ZX0 Maximum branches 127 fast | 5,053 | 139,576,574 | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L179) |
-| ZX0 Maximum branches 228 fast | 7,517 | 139,552,884 | [zx0.maximum_branches.build(prefix_cap=228, policy='fast')](zx0/src/zx0/maximum_branches.py#L179) |
+| ZX0 Maximum branches 127 fast | 5,053 | 139,576,574 | [zx0.maximum_branches.build(prefix_cap=127, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
+| ZX0 Maximum branches 228 fast | 7,517 | 139,552,884 | [zx0.maximum_branches.build(prefix_cap=228, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
+| ZX0 Maximum branches 255 fast | 8,165 | 139,546,674 | [zx0.maximum_branches.build(prefix_cap=255, policy='fast')](zx0/src/zx0/maximum_branches.py#L180) |
 | LZSA2 Small compact EOF (minimum) | 144 | 20,423,420 | [lzsa.compact.build(**SMALL, compact_eof=True)](lzsa/src/lzsa/compact.py#L13) |
 | LZSA2 Fast compact branches | 222 | 17,724,654 | [lzsa.block.build(**SMALL, fast_jumps=True, compact_branches=True)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Fast tuned +prefill | 228 | 17,635,500 | [lzsa.block.build(**SMALL, fast_jumps=True, branch_tuned=True, nibble_prefill=True)](lzsa/src/lzsa/block.py#L5) |
@@ -315,8 +329,8 @@ Per-case regressions still matter; this finite set establishes no global optimum
 
 - Smallest resident decoders: **ZX0 Standard 74 B** (68 code +6 stack),
   **LZSA2 Small compact EOF 144 B** (136 code +8 stack). Both are slower than Fast.
-- Fastest measured resident choices: **ZX0 Maximum branches 228 fast, 7,517 B**
-  (139,552,884 T) and **LZSA2 Hot combined,
+- Fastest measured resident choices: **ZX0 Maximum branches 255 fast, 8,165 B**
+  (139,546,674 T) and **LZSA2 Hot combined,
   9,545 B** (14,905,725 T).
   ZX0 branches127/fast uses 5,053 B and beats the preceding shared228.
   Shared suffixes and the E01 policies support resident calls only.
@@ -367,7 +381,7 @@ emitters behind a dispatcher, use these implementation functions:
 | ZX0 compact Standard-derived profiles | [zx0.small.build](zx0/src/zx0/small.py#L20) |
 | ZX0 Fast | [zx0.resumable.emit_fast](zx0/src/zx0/resumable.py#L138) |
 | ZX0 Maximum resident | [zx0.maximum.build](zx0/src/zx0/maximum.py#L20) |
-| ZX0 fixed E01 branch layouts | [zx0.maximum_branches.build](zx0/src/zx0/maximum_branches.py#L179) |
+| ZX0 fixed E01 branch layouts | [zx0.maximum_branches.build](zx0/src/zx0/maximum_branches.py#L180) |
 | ZX0 shared-prefix layout | [zx0._shared_prefixes.transform](zx0/src/zx0/_shared_prefixes.py#L26) |
 | ZX0 Maximum coroutine | [zx0.maximum_coroutine.build](zx0/src/zx0/maximum_coroutine.py#L6) |
 | LZSA2 Small | [lzsa.compact.build](lzsa/src/lzsa/compact.py#L13) |
@@ -391,6 +405,8 @@ emitters behind a dispatcher, use these implementation functions:
 [S01 ZX0 native proof](evidence/next_s01_zx0_full.json.gz),
 [S01 LZSA2 native proof](evidence/next_s01_lzsa_full.json.gz),
 [S01 public/wheel authentication](evidence/next_s01_public_verification.json),
+[E04 full native proof](evidence/next_e04_full.json.gz),
+[E04 public/wheel authentication](evidence/next_e04_public_verification.json),
 [Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),
 [shared-prefix contracts](ZX0_SHARED_PREFIXES.md),
 [Hybrid API/wheel/native binding](evidence/hybrid_public_verification.json),

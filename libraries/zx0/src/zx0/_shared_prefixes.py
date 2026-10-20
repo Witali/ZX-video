@@ -24,7 +24,7 @@ def _unconditional(line):
 
 
 def transform(lines, *, prefix_cap, prefixes, removed_word_shift_stages=(),
-              word_copy_joins=(), _quota_hook=None):
+              word_copy_joins=(), _quota_hook=None, _allow_prefix255=False):
     """Return transformed normalized assembly lines and an explicit audit.
 
     Inputs are the resident Maximum generator's lines/metadata before assembly.
@@ -34,7 +34,9 @@ def transform(lines, *, prefix_cap, prefixes, removed_word_shift_stages=(),
     """
     if _quota_hook is not None or any(line.startswith('@quota ') for line in lines):
         raise ValueError('zero-penalty shared prefixes support resident raw code only')
-    if prefix_cap not in (31, 63, 127, 227, 228):
+    if type(_allow_prefix255) is not bool or (_allow_prefix255 and prefix_cap != 255):
+        raise ValueError('invalid internal prefix255 gate')
+    if prefix_cap not in (31, 63, 127, 227, 228) and not _allow_prefix255:
         raise ValueError('unsupported Maximum prefix cap')
     original = list(lines)
     starts = {line[:-1]: i for i, line in enumerate(original) if line.endswith(':')}

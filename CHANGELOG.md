@@ -1,5 +1,58 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Qualify the larger ZX0 cap255 speed endpoint
+
+- **Objective/baseline:** Complete bounded E04 with one resident candidate,
+  extending accepted cap228-fast7517 service B/139,552,884 real T. Retain the
+  same61 E01 branch choices,473 frozen compressed inputs and full raw ABI.
+  The current rule permits useful faster/larger Pareto points below10,000 B.
+- **Change/results:** Twelve chains each add27 LDI instructions: +648 B,
+  8161 code+4 caller-stack=8165 service B. Embedded offset counts once; no
+  tables/padding/extra variables/scratch/internal buffers. Entry BC>=256
+  leaves at least1 for LDIR. Each word entry saves135 T;46 real entries save
+  6,210 T, giving139,546,674 real T (-0.004450%). All473 total161,800,568 T
+  (-25,110);105 cases improve,368 equal,0 slower. Independent binary insertion
+  and every label match; all61 JR spans stay unchanged. All256 origins use
+  8184 B with the13+6-byte IRQ example.
+- **Initialization:** Every46-T entry includes20-T offset reset; required
+  external target initialization is0 T. Real364-call setup16744 T plus
+  remaining139,529,930 T equals139,546,674 T. All473 setups21758 T plus
+  remaining161,778,810 T equals161,800,568 T. Cold per-block proofs include
+  reset and EOF/RET; public accounting retains the first real cold call and
+  its hashes. Caller CALL17/argument publication and hardware latency remain
+  explicit exclusions from this service-entry convention.
+- **Qualification:** Qualified C screening reproduces old native counts and
+  every independent word-entry delta. All509 inputs (473+36 directed) pass
+  six protected modes,3054 configurations plus9 FFFFh probes. All473 genuine
+  overlap cases, read/frontier digests, dirty operands, code permissions,
+  exact EOF, IX/IY/alternates including AF', SP and stack pass. Peaks4/10 B;
+  2806 IRQs. Directed lengths255/256/257 cover three families/four phases.
+  Four origins include flat low-origin high-word stress, not Spectrum ROM
+  placement. Native launch/final hashes match before public source edits.
+- **Integration/attempts:** Publish only
+  `zx0.maximum_branches.build(prefix_cap=255, policy='fast')`; other policies,
+  plain Maximum and coroutine paths reject255. The old six metadata remain
+  exact; new primary comparison is actual228-fast, with103 older E01
+  non-real regressions retained separately as branch lineage. First focused
+  CLI test hits the sandbox's default TEMP permissions; local TMP/TEMP fixes
+  the environment. All113 library/24 selected toolkit tests pass. Public
+  proof checks74 prior full metadata,31 defaults/six resources, all256
+  alignments/four native placements,78 isolated wheel exports/two CLI calls.
+  Public integration reuses the frozen native proof by exact bytes/every
+  label and does not rewrite its executed-source provenance. The75-call
+  table and initialization audit preserve earlier choices and measurements.
+  Final source review corrects a docstring unit to27 LDI instructions per
+  chain (54 B), and scopes the old size reduction to same-cap branch lineage.
+  Rebuild wheels/public authentication after these documentation-only edits;
+  emitted instructions, metadata and the native proof remain exact.
+- **Decision:** Keep255-fast as the fastest tested resident ZX0 endpoint and
+  retain smaller228-fast. No frozen E04 regression, global optimum, extra10%
+  goal completion, wrapper/player or physical disk/ULA qualification is
+  claimed. E04 complete; E05..E07 remain pending.
+  [Report/reproduction](libraries/NEXT_E04_PREFIX255.md),
+  [native proof](libraries/evidence/next_e04_full.json.gz),
+  [public authentication](libraries/evidence/next_e04_public_verification.json).
+
 ## 2026-10-20 — Publish minimum-memory and compact intermediate decoders
 
 - **Objective/baselines:** Complete S01, at most three designs per codec,

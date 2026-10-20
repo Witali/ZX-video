@@ -56,6 +56,13 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
                   '; Conditions/flags are unchanged; some synthetic cases are slower.', '']
     if metadata.get('variant')=='maximum-branches':
         measured=metadata['qualified_corpus']
+        if metadata['prefix_cap']==255:
+            lines += ['; Cap255 extends the accepted cap228-fast layout; all61 E01 branch choices are inherited.',
+                      '; Twelve word-count chains each add27 LDI instructions: +648 service bytes.',
+                      '; Word entry BC>=256 leaves BC>=1 for LDIR; each extended entry saves135 T.',
+                      '; Measured real CPU139552884 ->139546674 T; service7517 ->8165 bytes.',
+                      '; Every call includes46-T setup, including20-T offset reset; external initialization0 T.',
+                      '; The following regression counts compare cap255-fast with cap228-fast.', '']
         lines += [f'; Optional resident Maximum branch policy {metadata["maximum_branch_policy"]}: '
                   f'{metadata["conditional_branch_site_count"]} fixed JP cc -> JR cc sites, one byte smaller each.',
                   '; Before 10 T; after 7 T untaken / 12 T taken. Conditions and flags are unchanged.',
@@ -71,6 +78,8 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
                   '; Four reuse exits use JP 10 T versus JR 7/12 T; total code -4 bytes.',
                   '; Individual untaken exits cost +3 T; complete retained blocks improve. No coroutine ABI.', '']
     routines = dict(ROUTINES)
+    if metadata.get('prefix_cap')==255:
+        routines['dzx0_mega']='HL=input, DE=output. Initialize BC=FFFF, reset the embedded negative offset, set BC=0 and jump to phase0. All46 T are included in the benchmark.'
     if metadata.get('small_profile'):
         profile=metadata['small_profile']
         lines += ['; Fixed compact Standard-derived profile: '+profile+'. Full forward ZX0 v2 counts remain valid.',

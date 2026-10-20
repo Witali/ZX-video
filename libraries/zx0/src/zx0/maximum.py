@@ -19,7 +19,8 @@ def _after(phase):
 
 def build(*, core=0x8000, core_limit=None, prefix_cap=228, shared_prefixes=False,
           irq_code_bytes=0, irq_stack_bytes=0, service_limit=10000,
-          _quota_hook=None, _external_labels=None, _assembler=None):
+          _quota_hook=None, _external_labels=None, _assembler=None,
+          _allow_prefix255=False):
     """Return absolute regions, labels and complete service-memory metadata.
 
     Call dzx0_mega with HL=complete resident input, DE=nonwrapping output and
@@ -46,7 +47,16 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228, shared_prefixes=False
         raise ValueError('shared-prefixes must be boolean')
     if shared_prefixes and _quota_hook is not None:
         raise ValueError('shared prefixes support resident raw code only')
-    if type(prefix_cap) is not int or prefix_cap not in (31, 63, 127, 227, 228):
+    # Cap255 is qualified only with the fixed resident branch layout. Keep
+    # the original public caps/default metadata exact; its wrapper supplies
+    # both this internal gate and the authenticated assembler factory.
+    if type(_allow_prefix255) is not bool:
+        raise ValueError('internal prefix255 gate must be boolean')
+    if _allow_prefix255 and (prefix_cap != 255 or not shared_prefixes
+            or _assembler is None or _quota_hook is not None or _external_labels is not None):
+        raise ValueError('prefix255 requires the fixed resident branch layout')
+    if type(prefix_cap) is not int or (prefix_cap not in (31, 63, 127, 227, 228)
+            and not _allow_prefix255):
         raise ValueError('prefix-cap must be one of the measured 31, 63, 127, 227, 228 profiles')
     if (type(core) is not int or (core_limit is not None and type(core_limit) is not int)
             or not 0 <= core < (65536 if core_limit is None else core_limit) <= 65536):
@@ -173,7 +183,7 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228, shared_prefixes=False
         from ._shared_prefixes import transform
         lines, shared_audit = transform(lines, prefix_cap=prefix_cap, prefixes=prefixes,
             removed_word_shift_stages=dead_stages, word_copy_joins=word_joins,
-            _quota_hook=_quota_hook)
+            _quota_hook=_quota_hook, _allow_prefix255=_allow_prefix255)
     a = MiniAssembler(core)
     if _assembler is not None:
         a = _assembler(core)

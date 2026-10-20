@@ -6,9 +6,9 @@
   "metric": "100*(candidate_CPU_T/reference_CPU_T-1); negative is faster",
   "original_reference": "adapted Fast before optional policies, same features/corpus",
   "pass_reference": "f5a0362c Fast; LZSA2 includes fast_jumps",
-  "document_sha256": "60c1b2e34d2da6e92b54321d34803ac0d4aa53e95c127e63fae4ae11cfa7458d",
-  "checked_public_calls_and_exact_exports": 74,
-  "checked_local_links": 157,
+  "document_sha256": "2e28d181fa8a02b6151c2d002fd8b7860f94691be9f956c7bb48dc4654e85af2",
+  "checked_public_calls_and_exact_exports": 75,
+  "checked_local_links": 162,
   "references": [
     {
       "codec": "zx0",
@@ -2444,7 +2444,7 @@
       },
       "display_call": "zx0.maximum_branches.build(prefix_cap=127, policy='fast')",
       "source_file": "zx0/src/zx0/maximum_branches.py",
-      "source_line": 179,
+      "source_line": 180,
       "code_state_table_padding_bytes": 5049,
       "service_bytes": 5053,
       "full_reference_service_bytes": null,
@@ -3148,7 +3148,7 @@
       },
       "display_call": "zx0.maximum_branches.build(prefix_cap=127, policy='real')",
       "source_file": "zx0/src/zx0/maximum_branches.py",
-      "source_line": 179,
+      "source_line": 180,
       "code_state_table_padding_bytes": 5097,
       "service_bytes": 5101,
       "full_reference_service_bytes": null,
@@ -3462,7 +3462,7 @@
       },
       "display_call": "zx0.maximum_branches.build(prefix_cap=127, policy='corpus')",
       "source_file": "zx0/src/zx0/maximum_branches.py",
-      "source_line": 179,
+      "source_line": 180,
       "code_state_table_padding_bytes": 5107,
       "service_bytes": 5111,
       "full_reference_service_bytes": null,
@@ -3547,7 +3547,7 @@
       },
       "display_call": "zx0.maximum_branches.build(prefix_cap=228, policy='fast')",
       "source_file": "zx0/src/zx0/maximum_branches.py",
-      "source_line": 179,
+      "source_line": 180,
       "code_state_table_padding_bytes": 7513,
       "service_bytes": 7517,
       "full_reference_service_bytes": null,
@@ -4251,7 +4251,7 @@
       },
       "display_call": "zx0.maximum_branches.build(prefix_cap=228, policy='real')",
       "source_file": "zx0/src/zx0/maximum_branches.py",
-      "source_line": 179,
+      "source_line": 180,
       "code_state_table_padding_bytes": 7561,
       "service_bytes": 7565,
       "full_reference_service_bytes": null,
@@ -4565,7 +4565,7 @@
       },
       "display_call": "zx0.maximum_branches.build(prefix_cap=228, policy='corpus')",
       "source_file": "zx0/src/zx0/maximum_branches.py",
-      "source_line": 179,
+      "source_line": 180,
       "code_state_table_padding_bytes": 7571,
       "service_bytes": 7575,
       "full_reference_service_bytes": null,
@@ -44645,6 +44645,114 @@
       },
       "resident_real_frontier": true,
       "real_total_benchmark_tstates": 20423420
+    },
+    {
+      "name": "ZX0 Maximum branches 255 fast",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum_branches.build",
+      "kwargs": {
+        "prefix_cap": 255,
+        "policy": "fast"
+      },
+      "display_call": "zx0.maximum_branches.build(prefix_cap=255, policy='fast')",
+      "source_file": "zx0/src/zx0/maximum_branches.py",
+      "source_line": 180,
+      "code_state_table_padding_bytes": 8161,
+      "service_bytes": 8165,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 139546674,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-10.55418244638314924981661728",
+      "delta_time_vs_original_percent": "-10.55418244638314924981661728",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 8161,
+          "sha256": "6f59e27d67ac567fc2a6b30c76f8520403c3fd00e3e415d396023d8a99394553"
+        }
+      ],
+      "e04": {
+        "native_proof": "evidence/next_e04_full.json.gz",
+        "public_authentication": "evidence/next_e04_public_verification.json",
+        "baseline_service_bytes": 7517,
+        "baseline_real_tstates": 139552884,
+        "service_delta_bytes": 648,
+        "real_delta_tstates": -6210,
+        "slower_cases": [],
+        "qualification": {
+          "BC_word_entry_and_positive_LDIR_exact": true,
+          "FFFF_configs": 9,
+          "actual_overlap_cases": 473,
+          "complete": true,
+          "dirty_offset_reset_tested": true,
+          "frozen_cases": 473,
+          "host_native_input_write_digests_exact": true,
+          "injected_interrupts": 2806,
+          "intrinsic_service_bytes": 8165,
+          "maximum_inplace_irq_stack_bytes": 10,
+          "maximum_irq_stack_bytes": 10,
+          "maximum_plain_stack_bytes": 4,
+          "modes_per_case": 6,
+          "native_configs": 3054,
+          "supplemental_cases": 36,
+          "with_reference13B_IRQ_and6B_extra_stack": 8184
+        },
+        "initialization": {
+          "per_block_setup_tstates_included": 46,
+          "offset_reset_tstates_included": 20,
+          "external_target_initializer_tstates": 0,
+          "caller_CALL_excluded_tstates": 17,
+          "timer_scope": "Each cold block enters dzx0_mega; includes reset/cache setup, decode, EOF and RET. Caller CALL17 and ABI argument publication are outside this entry boundary.",
+          "real": {
+            "blocks": 364,
+            "setup_tstates": 16744,
+            "remaining_tstates": 139529930,
+            "total_tstates": 139546674
+          },
+          "all": {
+            "blocks": 473,
+            "setup_tstates": 21758,
+            "remaining_tstates": 161778810,
+            "total_tstates": 161800568
+          },
+          "cold_first_real": {
+            "case": "real-1-0",
+            "payload_sha256": "f8b35900a01feb501019cdeafc8d823365996871ad5f1d42c5983c44fb6bdb6a",
+            "raw_sha256": "56eff2234b50f789cd93de5c6d424229c61fc81f4281b193240b88ca70fed66a",
+            "total_tstates": 207318,
+            "setup_tstates": 46,
+            "remaining_tstates": 207272
+          },
+          "baseline_per_block_setup_tstates_included": 46,
+          "static_tables": "No table or target-side table generator; emitted image/offset operand is resident. Offset is reset on every measured entry.",
+          "entry_instruction_ledger": [
+            {
+              "address": 32768,
+              "instruction": "LD BC,FFFFh",
+              "tstates": 10
+            },
+            {
+              "address": 32771,
+              "instruction": "LD (last_offset+1),BC",
+              "tstates": 20
+            },
+            {
+              "address": 32775,
+              "instruction": "INC BC",
+              "tstates": 6
+            },
+            {
+              "address": 32776,
+              "instruction": "JP literals0",
+              "tstates": 10
+            }
+          ]
+        }
+      },
+      "resident_real_frontier": true,
+      "real_total_benchmark_tstates": 139546674
     }
   ],
   "evidence_sha256": {
@@ -44658,9 +44766,12 @@
     "second_pass_verification.json": "f159ef38fe0c91f5ee6f96e315d7980d0707999d42029372ffc5241ef96a6db0",
     "evidence/shared_zero_prefix_native.json.gz": "fcb80906d6ab6b40983add657850c70bf38f3e41de64611b94eb9751dafa91e1",
     "evidence/hybrid_public_verification.json": "7cd02f0aed406633cd8531ef86de11f7dbb3f0688f1420d7a55dc89aa3b7d77f",
-    "evidence/benchmark_initialization.json": "5dda9e30b17a9a477dc79eae94b41a41ee954875bbded99067608c7292d3d05e",
+    "evidence/benchmark_initialization.json": "b83eef0abccd260f1500884a872f6de5c17f232b484ceb6453c9505af05d26d3",
     "evidence/next_s01_public_verification.json": "2a8fecf2b3341ac99ee91cb0eb6e39589cdfc59e71d9b44f6eacc3487cf45618",
     "evidence/next_s01_prior_sources.json.gz": "176d974d6335a21ca73c1a80a36fb55f575ed63447bb3bddde7d1e4b98da7bdb",
+    "evidence/next_e04_public_verification.json": "f014104ec9a2db2bb6ca6c4057f238f4c643d4f0431a74b29adeeede67e31cb8",
+    "evidence/next_e04_prior_sources.json.gz": "083a6dbe7a1fa21df378d7c518906d8ddb8d2610f3a5a8febb5fe63665d71a3b",
+    "evidence/next_e04_full.json.gz": "7c0b3565b19e4da0c0de0e13f96fc9ea2a1eea0a96cf05e4edc34568f4bae009",
     "evidence/fast_jumps_streaming/fast-jumps-call-before.json.gz": "14393b61d1de789ef6db4fe80a1b6b46328484e59421758029c8ad57d52156c5",
     "evidence/fast_jumps_streaming/fast-jumps-call-after.json.gz": "7c35c9423070738bfc9915ee44adbe819ba19760745a176399f29b249f82699b",
     "evidence/fast_jumps_streaming/fast-jumps-direct-before.json.gz": "353c665bc6dd5b94586263660b8d362004b39417bdb841f7b2c10f598496ea9f",
@@ -44677,7 +44788,7 @@
   },
   "source_sha256_lf": {
     "zx0/src/zx0/block.py": "cad29f8ffa3b104d012787d87ca78adf2d81b6bc5de2ffece605f51320ed2c46",
-    "zx0/src/zx0/maximum.py": "88a22fe1c79af6a2491fc2f17e21d79d0ac48878e90550fedfa2fd0c2e72cb84",
+    "zx0/src/zx0/maximum.py": "4193fb1df5848e78a5d0a3c09bd7b0e522c6273fa0a75bab8756239dfdb3020f",
     "lzsa/src/lzsa/block.py": "f13a24db38d738d4ef2fedd9cff958dd02b092c8995382f57be5d78ac465222a",
     "lzsa/src/lzsa/hybrid.py": "a7a5258382c13339c300b8f21440da1637a407c5fac3f4cdab4bc177c306379a",
     "lzsa/src/lzsa/wide.py": "9aeca47bc02de53710ffdd82b2ec30b2149b6a5a7bc275c96053ee45e8ae1a89",
@@ -44685,12 +44796,12 @@
     "zx0/src/zx0/maximum_coroutine.py": "3c14dafba5efac6696e6e96a5947012285cab490d07164ba70de7f5b5d580139",
     "lzsa/src/lzsa/resumable.py": "bd6a4559e30b66d65c483e458348589b99497539001f4f1de1a1f98651bd0f40",
     "lzsa/src/lzsa/wide_coroutine.py": "02bd6b2e041534e658a8ff4c4dbc133c62db83711f5e010fd1dcccda884cfd30",
-    "zx0/src/zx0/maximum_branches.py": "96c4a792548a1f7414bbb301a835b7d4f1bd9873a5edc8cb1ec9fad31eca2d28",
+    "zx0/src/zx0/maximum_branches.py": "e798dc8dcf2eb054948baf738acf25080f3bcc3fbefccd91050100ffa97bd0dc",
     "lzsa/src/lzsa/hot.py": "525f7922b967c46f01a675a13e4fdaba7d249447b05060b2bf285bc4971577b5",
     "zx0/src/zx0/small.py": "1905a92d4c450f89d05ccc65b6692945ab36cc9c1ce65edc86989bb24506805d",
     "lzsa/src/lzsa/compact.py": "d63cf93c14c3a6b6419d6c2462128be038d8b3f85bfc87c1d1a89a9f439465b8",
     "zx0/src/zx0/codec.py": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91",
-    "zx0/src/zx0/_shared_prefixes.py": "1718009817e2fe260582f8de6446fc6f3c749ed566a6dd90616dd995a88ec2b3",
+    "zx0/src/zx0/_shared_prefixes.py": "051d1bef6f0411191dc00db3a691460ee96f19da6d59e5908d5138dd8ce33241",
     "lzsa/src/lzsa/_wide_kernels.py": "cdd98fd57309335948d23b64ce88bba80efcc6e33862a3efe3dc60001e46c114"
   },
   "preceding_public_calls_exact": 50,
@@ -44699,6 +44810,8 @@
   "optional_f00_public_calls": 3,
   "preceding_f00_table_calls_exact": 71,
   "optional_s01_public_calls": 3,
+  "preceding_s01_table_calls_exact": 74,
+  "optional_e04_public_calls": 1,
   "resident_real_frontier": {
     "zx0": [
       {
@@ -44819,6 +44932,16 @@
         "builder": "zx0.maximum_branches.build",
         "kwargs": {
           "prefix_cap": 228,
+          "policy": "fast"
+        }
+      },
+      {
+        "name": "ZX0 Maximum branches 255 fast",
+        "service_bytes": 8165,
+        "real_cpu_tstates": 139546674,
+        "builder": "zx0.maximum_branches.build",
+        "kwargs": {
+          "prefix_cap": 255,
           "policy": "fast"
         }
       }
@@ -44995,12 +45118,12 @@
   "optional_e01_public_calls": 18,
   "fastest_resident": {
     "zx0": {
-      "name": "ZX0 Maximum branches 228 fast",
-      "service_bytes": 7517,
-      "real_cpu_tstates": 139552884,
+      "name": "ZX0 Maximum branches 255 fast",
+      "service_bytes": 8165,
+      "real_cpu_tstates": 139546674,
       "builder": "zx0.maximum_branches.build",
       "kwargs": {
-        "prefix_cap": 228,
+        "prefix_cap": 255,
         "policy": "fast"
       }
     },
@@ -45016,7 +45139,7 @@
       }
     }
   },
-  "reproducer_sha256_lf": "22e52cb8d9e6a5451bd020d1f3344159f5ec0ce839c5684a54aa3121479c8877",
+  "reproducer_sha256_lf": "3d09f823274f42036c082dc902ff7f8a82697084ffa9aa0e6259e51a2b9ac7d7",
   "default_code_delta_bytes": 0,
   "default_instruction_delta_tstates": 0
 }

@@ -26,7 +26,7 @@ def main():
                           help='inline exhausted repeat-gamma refill in Fast profiles; +3 bytes')
     assembly.add_argument('--mega-tuned',action='store_true',
                           help='remove dead offset shifts and tune reuse exits in resident Mega; -4 bytes')
-    assembly.add_argument('--prefix-cap',type=int,choices=(31,63,127,227,228),
+    assembly.add_argument('--prefix-cap',type=int,choices=(31,63,127,227,228,255),
                           help='maximum profiles only: measured inline-copy frontier (resident default 228, coroutine 127)')
     assembly.add_argument('--shared-prefixes',action='store_true',
                           help='resident maximum only: share LDI chains and clone continuations, reducing size and CPU')
@@ -53,6 +53,8 @@ def main():
         maximum_coroutine=args.variant=='maximum-coroutine'
         maximum_branches=args.variant=='maximum-branches'
         small_profile=args.variant in ('small-smc','small-gamma-jp')
+        if args.prefix_cap == 255 and (not maximum_branches or (args.branch_policy or 'fast') != 'fast'):
+            parser.error('--prefix-cap255 requires --variant maximum-branches --branch-policy fast')
         if small_profile:
             if args.fast_jumps or args.branch_tuned or args.literal_prefix or args.inline_tail_refill or args.mega_tuned:
                 parser.error('small profiles require their fixed copy/gamma layout')

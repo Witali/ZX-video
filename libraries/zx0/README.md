@@ -32,6 +32,16 @@ bytes must include any framing overhead owned by the caller.
 
 ## Z80 use
 
+The fastest tested resident selection is
+`zx0.maximum_branches.build(prefix_cap=255, policy='fast')`, using
+**8,165 service B / 139,546,674 real T**. This adds648 B and saves6,210 T
+against cap228-fast (7,517 B /139,552,884 T). The46-T entry setup, including
+the20-T offset reset on every block, is inside the measured total. No external
+initializer is required. CLI: `build --variant maximum-branches --prefix-cap
+255 --branch-policy fast --output build/zx0`. Cap255 supports this fixed raw
+resident layout only. [E04](../NEXT_E04_PREFIX255.md) records complete memory,
+timing, overlap/IRQ/relocation and package qualification.
+
 Compact resident alternatives are available from `zx0.small.build('gamma-jp')`
 and `zx0.small.build('smc')`: **75 B / 199,881,370 T** and
 **78 B / 189,794,309 T** on the retained real corpus. Totals include code,
