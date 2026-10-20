@@ -26,6 +26,10 @@ fast choice gaining 4.349245%. Use `lzsa.hybrid.build(profile='compact')` or
 `profile='fast'`, then the normal exporter. All token forms remain valid;
 these new profiles are resident-only and retain directed regression lists.
 
+[Next Z80 experiments](NEXT_TRICKS_PLAN.md) records the researched follow-up
+queue, fixed current baselines, memory/timing bounds and complete test gates.
+Its candidates are planned hypotheses, not newly benchmarked improvements.
+
 These are two independently installable libraries extracted from ZX-video.
 Copy either directory to another project or install it from this checkout:
 

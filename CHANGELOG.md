@@ -1,5 +1,27 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Research and plan the next Z80 decoder trick tests
+
+- **Objective/baseline:** Answer the user's internet-research and testing-plan
+  requests against the current `9c28b01f` public frontier in the existing
+  `codex/codec-speed-pass3` worktree. Preserve all prior measured decisions.
+- **Research/plan:** Review Zilog, WikiTI, original LZSA2 source/format, ZX0
+  and Grauw. Link primary sources and distinguish our proposed applications
+  from their authors' claims. Queue new-layout branch tuning, selected LL3
+  continuation clones, nibble-state specialization, bounded shared-prefix
+  growth, small Elias lookahead, fixed hybrid refitting and later wrapper
+  qualification in [NEXT_TRICKS_PLAN.md](libraries/NEXT_TRICKS_PLAN.md).
+- **Bounds/verification scope:** Reuse saved 45,247-token/4,870-LL3 and46-word-
+  entry counts, not new benchmarks. Label 82,790-T helper and6,210-T cap255
+  bounds as estimates. Account for all service memory, padding and IRQ: fast
+  LZSA2 has only226 B left with worst padding/diagnostic IRQ. Define full
+  417+56 /95+580 case gates, independent cycle equations, correct in-place
+  runner requirements, regression classification and isolated exports.
+- **Decision:** Save a sequential experiment plan and link it from the README
+  and task brief. No decoder, default or compressed input changes (0 T).
+  No new native run/release qualification is claimed; only documentation
+  links, arithmetic and source/baseline references are checked for this change.
+
 ## 2026-10-20 — Publish the verified resident LZSA2 short/hybrid frontier
 
 - **Objective/baseline:** Finish optional public integration after the completed

@@ -8,6 +8,14 @@ Read it before calculating changed hot paths; it includes indexed operands,
 taken/not-taken branches, block-repeat termination and stack-transfer costs.
 Use plain CPU counts separately from Spectrum contention, IRQ and disk time.
 
+The user-requested next research/testing plan is
+[NEXT_TRICKS_PLAN.md](libraries/NEXT_TRICKS_PLAN.md), fixed at `9c28b01f`.
+It queues E00 hotspot authentication, new-layout branches, LZSA2 literal
+continuation cloning/nibble-state specialization, bounded ZX0 prefix255/
+Elias lookahead, hybrid refitting and separate wrapper qualification. These
+are planned hypotheses; no new candidate or timing is qualified by the plan.
+Complete one bounded experiment and its focused commit before the next.
+
 ## Active codec goal — speed/service-memory frontier (2026-10-19)
 
 The user requests roughly another 10% speed improvement for each library,
