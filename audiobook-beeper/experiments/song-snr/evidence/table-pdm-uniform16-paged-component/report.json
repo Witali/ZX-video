@@ -1,0 +1,67 @@
+{
+  "complete": true,
+  "date": "2026-10-20",
+  "elapsed_seconds": 2.905999999959022,
+  "mechanism": "Resident PCM8, same64-level integral PDM table, specializedSECOND and self-patchedFIRST",
+  "states": [
+    8,
+    12,
+    16,
+    17,
+    21,
+    25
+  ],
+  "FIRST_patterns": 97,
+  "SECOND_variants": 151,
+  "kernel_bytes": 15346,
+  "code_end": 48114,
+  "map_address": 48896,
+  "table_allocated_bytes": 16384,
+  "table_used_bytes": 1536,
+  "fixed_allocation_bytes": 31986,
+  "all_cell_cases": 1536,
+  "trajectory": {
+    "samples": 32766,
+    "initial_address": 49152,
+    "initial_state": 16,
+    "actual_source_banks": 2,
+    "page_events": [
+      {
+        "tstate": 7339551,
+        "value": 25,
+        "after_speaker_outputs": 262127,
+        "source_cursor": 65535,
+        "already_prefetched_old_final_PCM": 30
+      }
+    ],
+    "outputs": 524256,
+    "sample_period_tstates": 448,
+    "every_speaker_hold_tstates": 28,
+    "bits_exact": true,
+    "successor_lookup_exact": true,
+    "source_order_exact": true,
+    "bits_sha256": "359eab4727f7c0a34eda99b274e79aebf93c19d7cd1e3e2fcde1f250c45455c3",
+    "times_sha256": "9811e14b63d69aa248b38eea3e6c46599044ad192653a10a2ece139171e72826",
+    "fixed_RAM_CPU_mutable_bytes": 194,
+    "source_RAM_CPU_unchanged": true
+  },
+  "total_outputs": 647136,
+  "ordinary_page_bank_source_period_tstates": 448,
+  "all_actual_speaker_holds_tstates": 28,
+  "original_ordinary_tstates": 449,
+  "ordinary_delta_tstates": -1,
+  "original_bank_extra_tstates": 243,
+  "cached_byte_previous_bank_extra_tstates": 229,
+  "new_static_bank_extra_tstates": 0,
+  "changed_register_contract": "ALT HL=10FE constant; ALT B7F remains port high and ALT H16 emits the single alternate normal high pulse; FIRST restores ALT C fromL",
+  "scope": "Native CPU plus a real two-bank memory-window callback; one static0->1 map per run. No general descriptor reader, full-song or actualFuse proof.",
+  "not_proved": [
+    "Dynamic bank sequence/descriptor lookup",
+    "PCM16 or liveIMA decoding",
+    "FinalEOF and insufficientRAM refills",
+    "Cover, progress, bootableTRD and independentcoldboot",
+    "PhysicalPentagonpaging/otherclonecontention",
+    "Audioquality"
+  ],
+  "decision": "A complete448T residentPCM8 table loop with ordinary pages and one static bankhandoff is proven in native execution. Additional bank metadata still requires a distinct integration step."
+}

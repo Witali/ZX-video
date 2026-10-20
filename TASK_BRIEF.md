@@ -35,6 +35,49 @@ quality on a different clone without its own measurements.
 
 ### Current continuation checkpoint
 
+Latest user steering2026-10-20 requests trying faster tabled output with
+equal PDM intervals. New isolated residentPCM8 component proves16x28T=448T
+per sample,8k/128kHz on Pentagon3.584MHz, versus old449T/-1T.286704 native
+outputs cover256PCM8×6states plus16383 variedsamples and63 pagecrossings,
+allbits/pointers/states/registers exact. Code8132B, fixedcomponent24772B;
+189output+139useful+120paddingT. It omits liveIMAdecode and does not prove a
+compressed-player speedup. Separate2097280-case paging primitive proves
+14680960 speakerwrites every28T plus separate7FFD writes; its168T distributed
+bridge is not a fullbanked448T player. The subsequentstatic two-bank table
+component DOES prove647136actual28T outputs/448T samples withcorrectreal
+mapping after1536forcedcases and32766samples through126pages/onebankhandoff.
+Code15346B +16Klookup(1536Bused)+256map=31986B beforeloader/UI/workspace.
+Selfmodded194JPoperandbytesonly; IY/IXpreserved;97FIRST/151SECONDvariants.
+Its failedFFFFlookahead fixture is retained; successfulguardFFFE leavesEOF
+anddynamicwhole-songbanksunproved. Boundarysupplement adds1536cases across
+all384effectivecells/122880OUTs, total770016pagedOUTs. Failed frame-event harness and later
+manifest-README indexing audit are retained and corrected.
+
+Common matched standaloneC encoder now covers all9/1195520 original samples,
+samebeam32/horizon128/commit64/reg.1, sourceprior exactlyoriginal, unclipped,
+allfinalpredictor/index0/0. Song360192B encodes35.661s, all9total65.514s.
+Fullhostuniform-clock song22.781483124dB vs deliveredown44920.250315887,
++2.531167237. Quiet tones, loudtone, multitone, speech and Entertainer improve
+against their own old clocks; steps loses0.516276dB. Silenceflat-model RMS
+1.86114e-9 is not hardwareproof. Sameuniform-clock canonicalIMAcontrol gives
+21.193927344dB; matchedgain1.587556dB. Artifactdiagnostics against that same-
+clock control show27AM/21delay/17line numerical increases and42 inconclusives,
+so artifact/releaseacceptance remainsfalse. Nativeclock regularity and
+signal-error phase fits are separate facts.
+
+An initial complete hostcontrol used rawPentagon28/448T as3546900-Hz renderer
+ticks (actual7917.1875Hz), wrongly labelled8k. Preserveit asinvalidclock;
+correctedhost usesreferenceCPU/8000 and/128000, reuses exactsameCwords/states
+andrerenders only. Audits authenticatebefore/after producers andall9counts.
+Finalaudit authenticates301artifacts/13retainedsets andboth1536pagedcase
+collections, all384pagedrecords/524256trajectorybits/times;9originalsource
+files andbothmainTRDs match55b0f007 byte/LFSidentities.
+Source canonicalIMA comesfromgeneral/inputs, not old449compensated streams.
+Currentdisk b96763ca and originalC/Python/player remainunchanged. The
+residentPCM8 song720384B is1024K-only inprinciple; loader/dynamicbank/EOF,
+512Kfallback andactualcompleteFuse remainunproved. Do notpromote orclaim
+verified22dB playback. See [uniform table investigation](audiobook-beeper/TABLE_PDM_UNIFORM.md).
+
 Latest user steering2026-10-19 prioritizes trying the stronger audio codec
 from `C:/Work/z80-tester`. DHA is now integrated as an isolated C host trial;
 the unfinished PCM16 player experiment below remains preserved. Complete

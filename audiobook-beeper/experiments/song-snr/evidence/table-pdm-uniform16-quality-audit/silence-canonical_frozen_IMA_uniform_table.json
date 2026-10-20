@@ -1,0 +1,281 @@
+{
+  "source": "silence",
+  "variant": "canonical_frozen_IMA_uniform_table",
+  "reference_float64_sha256": "032a9f8b98de1919b5dfaa26ff2e5dddd6d7f7fbd7a4c95f9c6712eb9f27e8fb",
+  "actual_float64_sha256": "97e617e7756a4ad363a09ddaf2e124a02c76d5cff0ccb2c560fed28687e5a375",
+  "ideal_float64_sha256": "032a9f8b98de1919b5dfaa26ff2e5dddd6d7f7fbd7a4c95f9c6712eb9f27e8fb",
+  "waveform": {
+    "samples": 93140,
+    "measured_samples": 84320,
+    "rate_hz": 44100,
+    "edge_exclusion_seconds": 0.1,
+    "scope": "Original source clock; complete signal except fixed edges; no fitted gain/delay/clock",
+    "source_rms": 0.0,
+    "error_rms": 1.861136808676979e-09,
+    "error_rms_dbfs": -174.6044340304563,
+    "error_peak": 2.649695372488912e-09,
+    "output_dc": 3.796107504719261e-13,
+    "error_dc": 3.796107504719261e-13,
+    "fixed_clock_snr_db": null,
+    "silence_reference": true,
+    "coherent_unfitted_error_components": [
+      {
+        "hz": 50.0,
+        "peak": 3.8772992316382884e-13,
+        "cosine": 3.78151360439188e-14,
+        "sine": -3.8588146988759196e-13,
+        "peak_dbfs": -248.22941361805778
+      },
+      {
+        "hz": 100.0,
+        "peak": 6.192070526511593e-13,
+        "cosine": 4.693973382165521e-13,
+        "sine": 4.038359975635546e-13,
+        "peak_dbfs": -244.1632821153005
+      },
+      {
+        "hz": 150.0,
+        "peak": 5.918201959725615e-13,
+        "cosine": 3.9293158317547576e-13,
+        "sine": -4.4255611542968795e-13,
+        "peak_dbfs": -244.55620437087566
+      },
+      {
+        "hz": 200.0,
+        "peak": 1.943831178675706e-13,
+        "cosine": -1.773405508914102e-14,
+        "sine": 1.9357246653905395e-13,
+        "peak_dbfs": -254.2268291231055
+      }
+    ],
+    "error_spectrum": {
+      "available": true,
+      "window_samples": 32768,
+      "windows": 5,
+      "bin_width_hz": 1.3458251953125,
+      "window": "Hann;50-percent overlap;one-sided density",
+      "bands": [
+        {
+          "low_hz": 0,
+          "high_hz": 20,
+          "rms": 5.786971317064268e-12,
+          "rms_dbfs": -224.7509734039528
+        },
+        {
+          "low_hz": 20,
+          "high_hz": 200,
+          "rms": 1.8114483341238918e-12,
+          "rms_dbfs": -234.83948096678577
+        },
+        {
+          "low_hz": 200,
+          "high_hz": 1000,
+          "rms": 1.552587293891488e-13,
+          "rms_dbfs": -256.1788794469944
+        },
+        {
+          "low_hz": 1000,
+          "high_hz": 3500,
+          "rms": 3.58427635911189e-13,
+          "rms_dbfs": -248.91197024465032
+        },
+        {
+          "low_hz": 3500,
+          "high_hz": 4500,
+          "rms": 2.1669304253983862e-14,
+          "rms_dbfs": -273.2831006508592
+        },
+        {
+          "low_hz": 4500,
+          "high_hz": 22050.0,
+          "rms": 1.8611226329099494e-09,
+          "rms_dbfs": -174.60450018873996
+        }
+      ],
+      "every_error_sample_inside_a_window": true,
+      "spectral_total_error_rms": 1.8611325525488387e-09,
+      "strongest_error_bins": [
+        {
+          "hz": 33.6456298828125,
+          "density_per_hz": 2.369549311374475e-25,
+          "three_bin_error_power_fraction": 2.529740774783833e-07
+        },
+        {
+          "hz": 32.2998046875,
+          "density_per_hz": 2.256344848433917e-25,
+          "three_bin_error_power_fraction": 2.4204372429141594e-07
+        },
+        {
+          "hz": 34.991455078125,
+          "density_per_hz": 1.8850201099095986e-25,
+          "three_bin_error_power_fraction": 2.068388890198595e-07
+        },
+        {
+          "hz": 30.9539794921875,
+          "density_per_hz": 1.6037004061381154e-25,
+          "three_bin_error_power_fraction": 1.7985279187129115e-07
+        },
+        {
+          "hz": 36.3372802734375,
+          "density_per_hz": 1.068941538715753e-25,
+          "three_bin_error_power_fraction": 1.2835512874254233e-07
+        },
+        {
+          "hz": 53.8330078125,
+          "density_per_hz": 8.555766973332017e-26,
+          "three_bin_error_power_fraction": 9.177334385174697e-08
+        },
+        {
+          "hz": 43.06640625,
+          "density_per_hz": 8.218834618245868e-26,
+          "three_bin_error_power_fraction": 8.472113906826306e-08
+        },
+        {
+          "hz": 44.4122314453125,
+          "density_per_hz": 8.060593014000102e-26,
+          "three_bin_error_power_fraction": 8.42610668397058e-08
+        }
+      ],
+      "caveat": "On non-silent sources these are error peaks, not independently identified background. Welch windows include the whole declared edge-cropped scope."
+    },
+    "modulation": [
+      {
+        "hz": 0.244140625,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 0.48828125,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 2.0,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 5.0,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 10.0,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 15.625,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 25.0,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 31.25,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 50.0,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 62.5,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 100.0,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      },
+      {
+        "hz": 125.0,
+        "available": false,
+        "reason": "Rank-deficient source/diagnostic matrix",
+        "condition": 1.00456424437596e+30,
+        "fitted_diagnostic_only": true
+      }
+    ],
+    "limitations": "Fits are diagnostic only. Inapplicable/rank-deficient fits are inconclusive. Music error harmonics alone cannot distinguish added hum from changed source content. Silence absolute noise and generated tone controls are required."
+  },
+  "whole_error_spectrum": {
+    "cropped_samples": 84320,
+    "bin_width_hz": 0.5230075901328273,
+    "filter_scope": "Complete output after the unchanged listening filter; fixed100ms edges; no fitted gain, delay or clock",
+    "error_power_fraction_above4000_hz": 0.9999894008330861,
+    "error_power_fraction_above4500_hz": 0.9999894008001857,
+    "strongest_bins": [
+      {
+        "hz": 12099.780597722962,
+        "total_power_fraction": 0.529885555357617,
+        "three_bin_total_power_fraction": 0.9878229342334661
+      },
+      {
+        "hz": 12100.303605313095,
+        "total_power_fraction": 0.427432444610415,
+        "three_bin_total_power_fraction": 0.9686154287048887
+      },
+      {
+        "hz": 12099.25759013283,
+        "total_power_fraction": 0.030504934265433964,
+        "three_bin_total_power_fraction": 0.5608495677959268
+      },
+      {
+        "hz": 12100.826612903227,
+        "total_power_fraction": 0.011297428736856466,
+        "three_bin_total_power_fraction": 0.43902683024549943
+      },
+      {
+        "hz": 12098.734582542696,
+        "total_power_fraction": 0.0004590781728757048,
+        "three_bin_total_power_fraction": 0.03101137119431504
+      },
+      {
+        "hz": 12101.34962049336,
+        "total_power_fraction": 0.0002969568982279249,
+        "three_bin_total_power_fraction": 0.011629741653120534
+      },
+      {
+        "hz": 12098.211574952564,
+        "total_power_fraction": 4.735875600537166e-05,
+        "three_bin_total_power_fraction": 0.0005158759156417841
+      },
+      {
+        "hz": 12101.872628083493,
+        "total_power_fraction": 3.5356018036140884e-05,
+        "three_bin_total_power_fraction": 0.00033987306657673125
+      }
+    ]
+  },
+  "source_clock_hz": 8000,
+  "host_counterfactual": true,
+  "integrated_native_player": false
+}

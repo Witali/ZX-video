@@ -1,5 +1,64 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Uniform128-kHz table output proved; matched C model reaches22.78dB
+
+- **Objective/baseline:** Follow the user's request to accelerate table output
+  and equalize PDM intervals. Preserve original C/Python/player and b96763ca
+  disk. Old ordinary16-decision449T holds span16..46T, plus14/243T page/bank
+  overhead. New bounded residentPCM8 mechanism uses16×28T=448T, exactly8k PCM
+  and128k PDM at Pentagon3.584MHz, ordinarydelta-1T. This equalizes timing;
+  256kHz and fullcompressed-player acceleration are not implemented.
+- **Native component:** Same64-level beta.5/extent.5 zero-origin table closes
+  to6states,97FIRST/88SECOND. Avoid indexed14TPOP/15TADD and invalid direct
+  H/L-to-index copies. All1536 input/state cases and16383 variedsamples pass,
+  286704actualOUTs every28T through63 sourcepages. Code8132B; lookup/map make
+  24772B fixedcomponent. Exact189OUT+139useful+120padding=448T. Input is
+  residentPCM8, so omitted IMA work prevents a like-for-like CPU-savings claim.
+- **Separate native bank mechanism:**2097280 cases cover all seven-bit patterns,
+  256pagebytes and64sourcehighs, yielding14680960speakerwrites at28T and
+  2097280separate7FFD writes. Sixslots168T redistribute paging work; full
+  standalone fragment190T does not prove a complete448T bankedplayer. Initial
+  harness frame-event stop is preserved and corrected; no bad native result
+  is promoted. A later README-not-indexed audit failure is retained; the old
+  manifest and corrected complete artifact index are both saved.
+- **Integrated static two-bank proof:** Specialized151SECOND variants include
+  successorstate and4-byte records; selfmodifiedFIRSTjump removesindexedcopy
+  work. Code15346B,31986B withlookup/map beforeboot/UI/workspace. All1536forced
+  bankcells and32766samples through126pages/oneactualmapchange pass647136OUTs
+  every28T and448Tsample clocks, correctbits/state/sourceorder; IX/IY preserved
+  andonly194fixedcodeoperandbytesmaychange. InitialFFFFguardoverread attempt
+  isretained; FFFEguard success explicitlyleavesEOF anddynamicbanksunproved.
+  Boundarysupplement1536cases coversall384effectivecells atbankdecision,
+  adding122880OUTs for770016pagedOUTs total; historicalinitialmanifest retained.
+- **Clock-control correction:** First full9-source host control incorrectly
+  interpreted nativePentagonT as3546900-Hz referenceunits, producing7917.1875Hz
+  under an8k label. Retain alloutputs/producer as invalidclock evidence. Use
+  actual referenceCPU/8000 and/128000 edges in corrected controls, authenticating
+  and reusing the identical C words/states; no encoder repeat. Canonical frozen
+  uniform8kIMA song scores21.193927344dB total/28.422342677PDM-only. Avoid old
+  clock-compensated449IMA on this new uniformclock.
+- **Matched C encoding and complete host scope:** One preset32beam/128horizon/
+  64commit/reg.1 covers9whole sources1195520samples with exactsource priors,
+  allcontent/guards, zero clipping andfinalpredictor/index0/0. Song360192B,
+  35.661s encoding; all9total65.514s. Actual fullautomaticTRD timing is absent.
+  Matched song22.781483124dB total/28.561539782PDM-only; +2.531167237 versus
+  delivered own-clock20.250315887. Quiet440/997 improve.379672/3.237068dB,
+  loud3000/multitone11.834633/4.297423, speech/Entertainer2.125452/2.122083;
+  steps regresses.516276dB. Flat-model silenceRMS1.86114e-9, nothardwareproof.
+- **Audit/decision:** Native/canonical audit126artifacts and matched-quality
+  audit171inputs/35artifacts pass fullcount, Cdecoder/word/state and producer
+  history checks without extra encoding/filtering. Sameuniformclock canonical
+  to matched SNR improves all8non-silent sources, but diagnostic fits show
+  27AM/21delay/17line numerical increases and42inconclusives; song6/3/1. Phase
+  fits are unreliable on bothquiettones. Retain promising components and
+  candidate without unconditionaldefault, artifactacceptance or verified22dB
+  player claim. Resident720384B audio is plausible onlyon1024K beforefullmap;
+  compresseddecode/dynamicbanks/EOF/loader/otherclones/fullFuse remainopen.
+  Finalindependentaudit authenticates301artifacts/13sets, all384pagedrecords,
+  retained524256trajectorybits/times andboth1536casecollections. Nineoriginal
+  C/Python/player files match55b0f007 byteexact; bothmainTRDs retainbaselineLFS.
+  [Evidence, reproducing tools and limits](audiobook-beeper/TABLE_PDM_UNIFORM.md).
+
 ## 2026-10-20 — DHA C codec tried on the full corpus; quality/storage tradeoff retained
 
 - **Objective/baseline:** Follow the user's2026-10-19 request to try the codec

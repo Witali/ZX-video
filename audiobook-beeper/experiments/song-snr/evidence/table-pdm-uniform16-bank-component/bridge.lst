@@ -1,0 +1,3986 @@
+                 	
+                 	; Bounded uncontended Z80 component, not a complete audio player.
+                 	; Main BC ends in FE, D=16, E and HL/IX/IY/SP retain their caller values.
+                 	; ALT HL is the live IMA row and must survive. ALT BC delta and ALT DE source
+                 	; are dead: both nibbles of the last source byte were already consumed/cached.
+                 	; AF' remains live and is untouched. Main A/F are scratch.
+                 	;
+                 	; The source-high/page immediate word is a host-patched static descriptor.
+                 	; ALT DE first holds D=page byte/E=next source high, then returns to the next
+                 	; source address (high<<8). No lookup SP, stack, RAM workspace or calls are used.
+                 	;
+                 	; Normal OUT(C),r takes12T, immediate OUT(FE),A takes11T. Count from one real
+                 	; speaker-write callback to the next; the NEXT output instruction belongs to
+                 	; each interval. The switch gap therefore has17T body plus11T immediate OUT.
+                 	; The page gap is pageOUT12 + EXX4 + normalOUT12 =28T, with no ULA port alias.
+8000              	 ORG 0x8000
+                 	bridge_0:
+8000 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8002 D9           	 EXX
+8003 3E 00        	 LD A,0
+8005 03           	 INC BC
+8006 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8008 01 FD 7F     	 LD BC,0x7FFD
+800B 3E 00        	 LD A,0
+800D D3 FE        	 OUT (0xFE),A
+                 	descriptor_0:
+800F 11 C0 18     	 LD DE,0x18C0
+8012 3E 00        	 LD A,0
+8014 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8016 ED 51        	 OUT (C),D
+8018 D9           	 EXX
+8019 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+801B D9           	 EXX
+801C 53           	 LD D,E
+801D D9           	 EXX
+801E 00           	 NOP
+801F 71           	 DB 0xED,0x71
+8021 D9           	 EXX
+8022 AF           	 XOR A
+8023 5F           	 LD E,A
+8024 D9           	 EXX
+8025 71           	 DB 0xED,0x71
+8027 C3 00 95     	 JP complete
+                 	bridge_1:
+802A 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+802C D9           	 EXX
+802D 3E 00        	 LD A,0
+802F 03           	 INC BC
+8030 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8032 01 FD 7F     	 LD BC,0x7FFD
+8035 3E 00        	 LD A,0
+8037 D3 FE        	 OUT (0xFE),A
+                 	descriptor_1:
+8039 11 C0 18     	 LD DE,0x18C0
+803C 3E 00        	 LD A,0
+803E D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8040 ED 51        	 OUT (C),D
+8042 D9           	 EXX
+8043 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8045 D9           	 EXX
+8046 53           	 LD D,E
+8047 D9           	 EXX
+8048 00           	 NOP
+8049 71           	 DB 0xED,0x71
+804B D9           	 EXX
+804C AF           	 XOR A
+804D 5F           	 LD E,A
+804E D9           	 EXX
+804F ED 51        	 OUT (C),D
+8051 C3 00 95     	 JP complete
+                 	bridge_2:
+8054 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8056 D9           	 EXX
+8057 3E 00        	 LD A,0
+8059 03           	 INC BC
+805A D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+805C 01 FD 7F     	 LD BC,0x7FFD
+805F 3E 00        	 LD A,0
+8061 D3 FE        	 OUT (0xFE),A
+                 	descriptor_2:
+8063 11 C0 18     	 LD DE,0x18C0
+8066 3E 00        	 LD A,0
+8068 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+806A ED 51        	 OUT (C),D
+806C D9           	 EXX
+806D 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+806F D9           	 EXX
+8070 53           	 LD D,E
+8071 D9           	 EXX
+8072 00           	 NOP
+8073 ED 51        	 OUT (C),D
+8075 D9           	 EXX
+8076 AF           	 XOR A
+8077 5F           	 LD E,A
+8078 D9           	 EXX
+8079 71           	 DB 0xED,0x71
+807B C3 00 95     	 JP complete
+                 	bridge_3:
+807E 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8080 D9           	 EXX
+8081 3E 00        	 LD A,0
+8083 03           	 INC BC
+8084 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8086 01 FD 7F     	 LD BC,0x7FFD
+8089 3E 00        	 LD A,0
+808B D3 FE        	 OUT (0xFE),A
+                 	descriptor_3:
+808D 11 C0 18     	 LD DE,0x18C0
+8090 3E 00        	 LD A,0
+8092 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8094 ED 51        	 OUT (C),D
+8096 D9           	 EXX
+8097 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8099 D9           	 EXX
+809A 53           	 LD D,E
+809B D9           	 EXX
+809C 00           	 NOP
+809D ED 51        	 OUT (C),D
+809F D9           	 EXX
+80A0 AF           	 XOR A
+80A1 5F           	 LD E,A
+80A2 D9           	 EXX
+80A3 ED 51        	 OUT (C),D
+80A5 C3 00 95     	 JP complete
+                 	bridge_4:
+80A8 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+80AA D9           	 EXX
+80AB 3E 00        	 LD A,0
+80AD 03           	 INC BC
+80AE D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+80B0 01 FD 7F     	 LD BC,0x7FFD
+80B3 3E 00        	 LD A,0
+80B5 D3 FE        	 OUT (0xFE),A
+                 	descriptor_4:
+80B7 11 C0 18     	 LD DE,0x18C0
+80BA 3E 00        	 LD A,0
+80BC D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+80BE ED 51        	 OUT (C),D
+80C0 D9           	 EXX
+80C1 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+80C3 D9           	 EXX
+80C4 53           	 LD D,E
+80C5 D9           	 EXX
+80C6 00           	 NOP
+80C7 71           	 DB 0xED,0x71
+80C9 D9           	 EXX
+80CA AF           	 XOR A
+80CB 5F           	 LD E,A
+80CC D9           	 EXX
+80CD 71           	 DB 0xED,0x71
+80CF C3 00 95     	 JP complete
+                 	bridge_5:
+80D2 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+80D4 D9           	 EXX
+80D5 3E 00        	 LD A,0
+80D7 03           	 INC BC
+80D8 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+80DA 01 FD 7F     	 LD BC,0x7FFD
+80DD 3E 00        	 LD A,0
+80DF D3 FE        	 OUT (0xFE),A
+                 	descriptor_5:
+80E1 11 C0 18     	 LD DE,0x18C0
+80E4 3E 00        	 LD A,0
+80E6 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+80E8 ED 51        	 OUT (C),D
+80EA D9           	 EXX
+80EB ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+80ED D9           	 EXX
+80EE 53           	 LD D,E
+80EF D9           	 EXX
+80F0 00           	 NOP
+80F1 71           	 DB 0xED,0x71
+80F3 D9           	 EXX
+80F4 AF           	 XOR A
+80F5 5F           	 LD E,A
+80F6 D9           	 EXX
+80F7 ED 51        	 OUT (C),D
+80F9 C3 00 95     	 JP complete
+                 	bridge_6:
+80FC 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+80FE D9           	 EXX
+80FF 3E 00        	 LD A,0
+8101 03           	 INC BC
+8102 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8104 01 FD 7F     	 LD BC,0x7FFD
+8107 3E 00        	 LD A,0
+8109 D3 FE        	 OUT (0xFE),A
+                 	descriptor_6:
+810B 11 C0 18     	 LD DE,0x18C0
+810E 3E 00        	 LD A,0
+8110 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8112 ED 51        	 OUT (C),D
+8114 D9           	 EXX
+8115 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8117 D9           	 EXX
+8118 53           	 LD D,E
+8119 D9           	 EXX
+811A 00           	 NOP
+811B ED 51        	 OUT (C),D
+811D D9           	 EXX
+811E AF           	 XOR A
+811F 5F           	 LD E,A
+8120 D9           	 EXX
+8121 71           	 DB 0xED,0x71
+8123 C3 00 95     	 JP complete
+                 	bridge_7:
+8126 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8128 D9           	 EXX
+8129 3E 00        	 LD A,0
+812B 03           	 INC BC
+812C D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+812E 01 FD 7F     	 LD BC,0x7FFD
+8131 3E 00        	 LD A,0
+8133 D3 FE        	 OUT (0xFE),A
+                 	descriptor_7:
+8135 11 C0 18     	 LD DE,0x18C0
+8138 3E 00        	 LD A,0
+813A D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+813C ED 51        	 OUT (C),D
+813E D9           	 EXX
+813F ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8141 D9           	 EXX
+8142 53           	 LD D,E
+8143 D9           	 EXX
+8144 00           	 NOP
+8145 ED 51        	 OUT (C),D
+8147 D9           	 EXX
+8148 AF           	 XOR A
+8149 5F           	 LD E,A
+814A D9           	 EXX
+814B ED 51        	 OUT (C),D
+814D C3 00 95     	 JP complete
+                 	bridge_8:
+8150 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8152 D9           	 EXX
+8153 3E 00        	 LD A,0
+8155 03           	 INC BC
+8156 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8158 01 FD 7F     	 LD BC,0x7FFD
+815B 3E 00        	 LD A,0
+815D D3 FE        	 OUT (0xFE),A
+                 	descriptor_8:
+815F 11 C0 18     	 LD DE,0x18C0
+8162 3E 10        	 LD A,16
+8164 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8166 ED 51        	 OUT (C),D
+8168 D9           	 EXX
+8169 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+816B D9           	 EXX
+816C 53           	 LD D,E
+816D D9           	 EXX
+816E 00           	 NOP
+816F 71           	 DB 0xED,0x71
+8171 D9           	 EXX
+8172 AF           	 XOR A
+8173 5F           	 LD E,A
+8174 D9           	 EXX
+8175 71           	 DB 0xED,0x71
+8177 C3 00 95     	 JP complete
+                 	bridge_9:
+817A 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+817C D9           	 EXX
+817D 3E 00        	 LD A,0
+817F 03           	 INC BC
+8180 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8182 01 FD 7F     	 LD BC,0x7FFD
+8185 3E 00        	 LD A,0
+8187 D3 FE        	 OUT (0xFE),A
+                 	descriptor_9:
+8189 11 C0 18     	 LD DE,0x18C0
+818C 3E 10        	 LD A,16
+818E D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8190 ED 51        	 OUT (C),D
+8192 D9           	 EXX
+8193 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8195 D9           	 EXX
+8196 53           	 LD D,E
+8197 D9           	 EXX
+8198 00           	 NOP
+8199 71           	 DB 0xED,0x71
+819B D9           	 EXX
+819C AF           	 XOR A
+819D 5F           	 LD E,A
+819E D9           	 EXX
+819F ED 51        	 OUT (C),D
+81A1 C3 00 95     	 JP complete
+                 	bridge_10:
+81A4 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+81A6 D9           	 EXX
+81A7 3E 00        	 LD A,0
+81A9 03           	 INC BC
+81AA D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+81AC 01 FD 7F     	 LD BC,0x7FFD
+81AF 3E 00        	 LD A,0
+81B1 D3 FE        	 OUT (0xFE),A
+                 	descriptor_10:
+81B3 11 C0 18     	 LD DE,0x18C0
+81B6 3E 10        	 LD A,16
+81B8 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+81BA ED 51        	 OUT (C),D
+81BC D9           	 EXX
+81BD 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+81BF D9           	 EXX
+81C0 53           	 LD D,E
+81C1 D9           	 EXX
+81C2 00           	 NOP
+81C3 ED 51        	 OUT (C),D
+81C5 D9           	 EXX
+81C6 AF           	 XOR A
+81C7 5F           	 LD E,A
+81C8 D9           	 EXX
+81C9 71           	 DB 0xED,0x71
+81CB C3 00 95     	 JP complete
+                 	bridge_11:
+81CE 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+81D0 D9           	 EXX
+81D1 3E 00        	 LD A,0
+81D3 03           	 INC BC
+81D4 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+81D6 01 FD 7F     	 LD BC,0x7FFD
+81D9 3E 00        	 LD A,0
+81DB D3 FE        	 OUT (0xFE),A
+                 	descriptor_11:
+81DD 11 C0 18     	 LD DE,0x18C0
+81E0 3E 10        	 LD A,16
+81E2 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+81E4 ED 51        	 OUT (C),D
+81E6 D9           	 EXX
+81E7 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+81E9 D9           	 EXX
+81EA 53           	 LD D,E
+81EB D9           	 EXX
+81EC 00           	 NOP
+81ED ED 51        	 OUT (C),D
+81EF D9           	 EXX
+81F0 AF           	 XOR A
+81F1 5F           	 LD E,A
+81F2 D9           	 EXX
+81F3 ED 51        	 OUT (C),D
+81F5 C3 00 95     	 JP complete
+                 	bridge_12:
+81F8 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+81FA D9           	 EXX
+81FB 3E 00        	 LD A,0
+81FD 03           	 INC BC
+81FE D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8200 01 FD 7F     	 LD BC,0x7FFD
+8203 3E 00        	 LD A,0
+8205 D3 FE        	 OUT (0xFE),A
+                 	descriptor_12:
+8207 11 C0 18     	 LD DE,0x18C0
+820A 3E 10        	 LD A,16
+820C D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+820E ED 51        	 OUT (C),D
+8210 D9           	 EXX
+8211 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8213 D9           	 EXX
+8214 53           	 LD D,E
+8215 D9           	 EXX
+8216 00           	 NOP
+8217 71           	 DB 0xED,0x71
+8219 D9           	 EXX
+821A AF           	 XOR A
+821B 5F           	 LD E,A
+821C D9           	 EXX
+821D 71           	 DB 0xED,0x71
+821F C3 00 95     	 JP complete
+                 	bridge_13:
+8222 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8224 D9           	 EXX
+8225 3E 00        	 LD A,0
+8227 03           	 INC BC
+8228 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+822A 01 FD 7F     	 LD BC,0x7FFD
+822D 3E 00        	 LD A,0
+822F D3 FE        	 OUT (0xFE),A
+                 	descriptor_13:
+8231 11 C0 18     	 LD DE,0x18C0
+8234 3E 10        	 LD A,16
+8236 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8238 ED 51        	 OUT (C),D
+823A D9           	 EXX
+823B ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+823D D9           	 EXX
+823E 53           	 LD D,E
+823F D9           	 EXX
+8240 00           	 NOP
+8241 71           	 DB 0xED,0x71
+8243 D9           	 EXX
+8244 AF           	 XOR A
+8245 5F           	 LD E,A
+8246 D9           	 EXX
+8247 ED 51        	 OUT (C),D
+8249 C3 00 95     	 JP complete
+                 	bridge_14:
+824C 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+824E D9           	 EXX
+824F 3E 00        	 LD A,0
+8251 03           	 INC BC
+8252 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8254 01 FD 7F     	 LD BC,0x7FFD
+8257 3E 00        	 LD A,0
+8259 D3 FE        	 OUT (0xFE),A
+                 	descriptor_14:
+825B 11 C0 18     	 LD DE,0x18C0
+825E 3E 10        	 LD A,16
+8260 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8262 ED 51        	 OUT (C),D
+8264 D9           	 EXX
+8265 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8267 D9           	 EXX
+8268 53           	 LD D,E
+8269 D9           	 EXX
+826A 00           	 NOP
+826B ED 51        	 OUT (C),D
+826D D9           	 EXX
+826E AF           	 XOR A
+826F 5F           	 LD E,A
+8270 D9           	 EXX
+8271 71           	 DB 0xED,0x71
+8273 C3 00 95     	 JP complete
+                 	bridge_15:
+8276 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8278 D9           	 EXX
+8279 3E 00        	 LD A,0
+827B 03           	 INC BC
+827C D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+827E 01 FD 7F     	 LD BC,0x7FFD
+8281 3E 00        	 LD A,0
+8283 D3 FE        	 OUT (0xFE),A
+                 	descriptor_15:
+8285 11 C0 18     	 LD DE,0x18C0
+8288 3E 10        	 LD A,16
+828A D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+828C ED 51        	 OUT (C),D
+828E D9           	 EXX
+828F ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8291 D9           	 EXX
+8292 53           	 LD D,E
+8293 D9           	 EXX
+8294 00           	 NOP
+8295 ED 51        	 OUT (C),D
+8297 D9           	 EXX
+8298 AF           	 XOR A
+8299 5F           	 LD E,A
+829A D9           	 EXX
+829B ED 51        	 OUT (C),D
+829D C3 00 95     	 JP complete
+                 	bridge_16:
+82A0 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+82A2 D9           	 EXX
+82A3 3E 00        	 LD A,0
+82A5 03           	 INC BC
+82A6 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+82A8 01 FD 7F     	 LD BC,0x7FFD
+82AB 3E 10        	 LD A,16
+82AD D3 FE        	 OUT (0xFE),A
+                 	descriptor_16:
+82AF 11 C0 18     	 LD DE,0x18C0
+82B2 3E 00        	 LD A,0
+82B4 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+82B6 ED 51        	 OUT (C),D
+82B8 D9           	 EXX
+82B9 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+82BB D9           	 EXX
+82BC 53           	 LD D,E
+82BD D9           	 EXX
+82BE 00           	 NOP
+82BF 71           	 DB 0xED,0x71
+82C1 D9           	 EXX
+82C2 AF           	 XOR A
+82C3 5F           	 LD E,A
+82C4 D9           	 EXX
+82C5 71           	 DB 0xED,0x71
+82C7 C3 00 95     	 JP complete
+                 	bridge_17:
+82CA 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+82CC D9           	 EXX
+82CD 3E 00        	 LD A,0
+82CF 03           	 INC BC
+82D0 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+82D2 01 FD 7F     	 LD BC,0x7FFD
+82D5 3E 10        	 LD A,16
+82D7 D3 FE        	 OUT (0xFE),A
+                 	descriptor_17:
+82D9 11 C0 18     	 LD DE,0x18C0
+82DC 3E 00        	 LD A,0
+82DE D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+82E0 ED 51        	 OUT (C),D
+82E2 D9           	 EXX
+82E3 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+82E5 D9           	 EXX
+82E6 53           	 LD D,E
+82E7 D9           	 EXX
+82E8 00           	 NOP
+82E9 71           	 DB 0xED,0x71
+82EB D9           	 EXX
+82EC AF           	 XOR A
+82ED 5F           	 LD E,A
+82EE D9           	 EXX
+82EF ED 51        	 OUT (C),D
+82F1 C3 00 95     	 JP complete
+                 	bridge_18:
+82F4 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+82F6 D9           	 EXX
+82F7 3E 00        	 LD A,0
+82F9 03           	 INC BC
+82FA D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+82FC 01 FD 7F     	 LD BC,0x7FFD
+82FF 3E 10        	 LD A,16
+8301 D3 FE        	 OUT (0xFE),A
+                 	descriptor_18:
+8303 11 C0 18     	 LD DE,0x18C0
+8306 3E 00        	 LD A,0
+8308 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+830A ED 51        	 OUT (C),D
+830C D9           	 EXX
+830D 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+830F D9           	 EXX
+8310 53           	 LD D,E
+8311 D9           	 EXX
+8312 00           	 NOP
+8313 ED 51        	 OUT (C),D
+8315 D9           	 EXX
+8316 AF           	 XOR A
+8317 5F           	 LD E,A
+8318 D9           	 EXX
+8319 71           	 DB 0xED,0x71
+831B C3 00 95     	 JP complete
+                 	bridge_19:
+831E 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8320 D9           	 EXX
+8321 3E 00        	 LD A,0
+8323 03           	 INC BC
+8324 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8326 01 FD 7F     	 LD BC,0x7FFD
+8329 3E 10        	 LD A,16
+832B D3 FE        	 OUT (0xFE),A
+                 	descriptor_19:
+832D 11 C0 18     	 LD DE,0x18C0
+8330 3E 00        	 LD A,0
+8332 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8334 ED 51        	 OUT (C),D
+8336 D9           	 EXX
+8337 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8339 D9           	 EXX
+833A 53           	 LD D,E
+833B D9           	 EXX
+833C 00           	 NOP
+833D ED 51        	 OUT (C),D
+833F D9           	 EXX
+8340 AF           	 XOR A
+8341 5F           	 LD E,A
+8342 D9           	 EXX
+8343 ED 51        	 OUT (C),D
+8345 C3 00 95     	 JP complete
+                 	bridge_20:
+8348 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+834A D9           	 EXX
+834B 3E 00        	 LD A,0
+834D 03           	 INC BC
+834E D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8350 01 FD 7F     	 LD BC,0x7FFD
+8353 3E 10        	 LD A,16
+8355 D3 FE        	 OUT (0xFE),A
+                 	descriptor_20:
+8357 11 C0 18     	 LD DE,0x18C0
+835A 3E 00        	 LD A,0
+835C D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+835E ED 51        	 OUT (C),D
+8360 D9           	 EXX
+8361 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8363 D9           	 EXX
+8364 53           	 LD D,E
+8365 D9           	 EXX
+8366 00           	 NOP
+8367 71           	 DB 0xED,0x71
+8369 D9           	 EXX
+836A AF           	 XOR A
+836B 5F           	 LD E,A
+836C D9           	 EXX
+836D 71           	 DB 0xED,0x71
+836F C3 00 95     	 JP complete
+                 	bridge_21:
+8372 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8374 D9           	 EXX
+8375 3E 00        	 LD A,0
+8377 03           	 INC BC
+8378 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+837A 01 FD 7F     	 LD BC,0x7FFD
+837D 3E 10        	 LD A,16
+837F D3 FE        	 OUT (0xFE),A
+                 	descriptor_21:
+8381 11 C0 18     	 LD DE,0x18C0
+8384 3E 00        	 LD A,0
+8386 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8388 ED 51        	 OUT (C),D
+838A D9           	 EXX
+838B ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+838D D9           	 EXX
+838E 53           	 LD D,E
+838F D9           	 EXX
+8390 00           	 NOP
+8391 71           	 DB 0xED,0x71
+8393 D9           	 EXX
+8394 AF           	 XOR A
+8395 5F           	 LD E,A
+8396 D9           	 EXX
+8397 ED 51        	 OUT (C),D
+8399 C3 00 95     	 JP complete
+                 	bridge_22:
+839C 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+839E D9           	 EXX
+839F 3E 00        	 LD A,0
+83A1 03           	 INC BC
+83A2 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+83A4 01 FD 7F     	 LD BC,0x7FFD
+83A7 3E 10        	 LD A,16
+83A9 D3 FE        	 OUT (0xFE),A
+                 	descriptor_22:
+83AB 11 C0 18     	 LD DE,0x18C0
+83AE 3E 00        	 LD A,0
+83B0 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+83B2 ED 51        	 OUT (C),D
+83B4 D9           	 EXX
+83B5 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+83B7 D9           	 EXX
+83B8 53           	 LD D,E
+83B9 D9           	 EXX
+83BA 00           	 NOP
+83BB ED 51        	 OUT (C),D
+83BD D9           	 EXX
+83BE AF           	 XOR A
+83BF 5F           	 LD E,A
+83C0 D9           	 EXX
+83C1 71           	 DB 0xED,0x71
+83C3 C3 00 95     	 JP complete
+                 	bridge_23:
+83C6 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+83C8 D9           	 EXX
+83C9 3E 00        	 LD A,0
+83CB 03           	 INC BC
+83CC D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+83CE 01 FD 7F     	 LD BC,0x7FFD
+83D1 3E 10        	 LD A,16
+83D3 D3 FE        	 OUT (0xFE),A
+                 	descriptor_23:
+83D5 11 C0 18     	 LD DE,0x18C0
+83D8 3E 00        	 LD A,0
+83DA D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+83DC ED 51        	 OUT (C),D
+83DE D9           	 EXX
+83DF ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+83E1 D9           	 EXX
+83E2 53           	 LD D,E
+83E3 D9           	 EXX
+83E4 00           	 NOP
+83E5 ED 51        	 OUT (C),D
+83E7 D9           	 EXX
+83E8 AF           	 XOR A
+83E9 5F           	 LD E,A
+83EA D9           	 EXX
+83EB ED 51        	 OUT (C),D
+83ED C3 00 95     	 JP complete
+                 	bridge_24:
+83F0 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+83F2 D9           	 EXX
+83F3 3E 00        	 LD A,0
+83F5 03           	 INC BC
+83F6 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+83F8 01 FD 7F     	 LD BC,0x7FFD
+83FB 3E 10        	 LD A,16
+83FD D3 FE        	 OUT (0xFE),A
+                 	descriptor_24:
+83FF 11 C0 18     	 LD DE,0x18C0
+8402 3E 10        	 LD A,16
+8404 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8406 ED 51        	 OUT (C),D
+8408 D9           	 EXX
+8409 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+840B D9           	 EXX
+840C 53           	 LD D,E
+840D D9           	 EXX
+840E 00           	 NOP
+840F 71           	 DB 0xED,0x71
+8411 D9           	 EXX
+8412 AF           	 XOR A
+8413 5F           	 LD E,A
+8414 D9           	 EXX
+8415 71           	 DB 0xED,0x71
+8417 C3 00 95     	 JP complete
+                 	bridge_25:
+841A 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+841C D9           	 EXX
+841D 3E 00        	 LD A,0
+841F 03           	 INC BC
+8420 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8422 01 FD 7F     	 LD BC,0x7FFD
+8425 3E 10        	 LD A,16
+8427 D3 FE        	 OUT (0xFE),A
+                 	descriptor_25:
+8429 11 C0 18     	 LD DE,0x18C0
+842C 3E 10        	 LD A,16
+842E D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8430 ED 51        	 OUT (C),D
+8432 D9           	 EXX
+8433 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8435 D9           	 EXX
+8436 53           	 LD D,E
+8437 D9           	 EXX
+8438 00           	 NOP
+8439 71           	 DB 0xED,0x71
+843B D9           	 EXX
+843C AF           	 XOR A
+843D 5F           	 LD E,A
+843E D9           	 EXX
+843F ED 51        	 OUT (C),D
+8441 C3 00 95     	 JP complete
+                 	bridge_26:
+8444 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8446 D9           	 EXX
+8447 3E 00        	 LD A,0
+8449 03           	 INC BC
+844A D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+844C 01 FD 7F     	 LD BC,0x7FFD
+844F 3E 10        	 LD A,16
+8451 D3 FE        	 OUT (0xFE),A
+                 	descriptor_26:
+8453 11 C0 18     	 LD DE,0x18C0
+8456 3E 10        	 LD A,16
+8458 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+845A ED 51        	 OUT (C),D
+845C D9           	 EXX
+845D 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+845F D9           	 EXX
+8460 53           	 LD D,E
+8461 D9           	 EXX
+8462 00           	 NOP
+8463 ED 51        	 OUT (C),D
+8465 D9           	 EXX
+8466 AF           	 XOR A
+8467 5F           	 LD E,A
+8468 D9           	 EXX
+8469 71           	 DB 0xED,0x71
+846B C3 00 95     	 JP complete
+                 	bridge_27:
+846E 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8470 D9           	 EXX
+8471 3E 00        	 LD A,0
+8473 03           	 INC BC
+8474 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8476 01 FD 7F     	 LD BC,0x7FFD
+8479 3E 10        	 LD A,16
+847B D3 FE        	 OUT (0xFE),A
+                 	descriptor_27:
+847D 11 C0 18     	 LD DE,0x18C0
+8480 3E 10        	 LD A,16
+8482 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8484 ED 51        	 OUT (C),D
+8486 D9           	 EXX
+8487 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8489 D9           	 EXX
+848A 53           	 LD D,E
+848B D9           	 EXX
+848C 00           	 NOP
+848D ED 51        	 OUT (C),D
+848F D9           	 EXX
+8490 AF           	 XOR A
+8491 5F           	 LD E,A
+8492 D9           	 EXX
+8493 ED 51        	 OUT (C),D
+8495 C3 00 95     	 JP complete
+                 	bridge_28:
+8498 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+849A D9           	 EXX
+849B 3E 00        	 LD A,0
+849D 03           	 INC BC
+849E D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+84A0 01 FD 7F     	 LD BC,0x7FFD
+84A3 3E 10        	 LD A,16
+84A5 D3 FE        	 OUT (0xFE),A
+                 	descriptor_28:
+84A7 11 C0 18     	 LD DE,0x18C0
+84AA 3E 10        	 LD A,16
+84AC D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+84AE ED 51        	 OUT (C),D
+84B0 D9           	 EXX
+84B1 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+84B3 D9           	 EXX
+84B4 53           	 LD D,E
+84B5 D9           	 EXX
+84B6 00           	 NOP
+84B7 71           	 DB 0xED,0x71
+84B9 D9           	 EXX
+84BA AF           	 XOR A
+84BB 5F           	 LD E,A
+84BC D9           	 EXX
+84BD 71           	 DB 0xED,0x71
+84BF C3 00 95     	 JP complete
+                 	bridge_29:
+84C2 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+84C4 D9           	 EXX
+84C5 3E 00        	 LD A,0
+84C7 03           	 INC BC
+84C8 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+84CA 01 FD 7F     	 LD BC,0x7FFD
+84CD 3E 10        	 LD A,16
+84CF D3 FE        	 OUT (0xFE),A
+                 	descriptor_29:
+84D1 11 C0 18     	 LD DE,0x18C0
+84D4 3E 10        	 LD A,16
+84D6 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+84D8 ED 51        	 OUT (C),D
+84DA D9           	 EXX
+84DB ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+84DD D9           	 EXX
+84DE 53           	 LD D,E
+84DF D9           	 EXX
+84E0 00           	 NOP
+84E1 71           	 DB 0xED,0x71
+84E3 D9           	 EXX
+84E4 AF           	 XOR A
+84E5 5F           	 LD E,A
+84E6 D9           	 EXX
+84E7 ED 51        	 OUT (C),D
+84E9 C3 00 95     	 JP complete
+                 	bridge_30:
+84EC 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+84EE D9           	 EXX
+84EF 3E 00        	 LD A,0
+84F1 03           	 INC BC
+84F2 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+84F4 01 FD 7F     	 LD BC,0x7FFD
+84F7 3E 10        	 LD A,16
+84F9 D3 FE        	 OUT (0xFE),A
+                 	descriptor_30:
+84FB 11 C0 18     	 LD DE,0x18C0
+84FE 3E 10        	 LD A,16
+8500 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8502 ED 51        	 OUT (C),D
+8504 D9           	 EXX
+8505 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8507 D9           	 EXX
+8508 53           	 LD D,E
+8509 D9           	 EXX
+850A 00           	 NOP
+850B ED 51        	 OUT (C),D
+850D D9           	 EXX
+850E AF           	 XOR A
+850F 5F           	 LD E,A
+8510 D9           	 EXX
+8511 71           	 DB 0xED,0x71
+8513 C3 00 95     	 JP complete
+                 	bridge_31:
+8516 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8518 D9           	 EXX
+8519 3E 00        	 LD A,0
+851B 03           	 INC BC
+851C D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+851E 01 FD 7F     	 LD BC,0x7FFD
+8521 3E 10        	 LD A,16
+8523 D3 FE        	 OUT (0xFE),A
+                 	descriptor_31:
+8525 11 C0 18     	 LD DE,0x18C0
+8528 3E 10        	 LD A,16
+852A D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+852C ED 51        	 OUT (C),D
+852E D9           	 EXX
+852F ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8531 D9           	 EXX
+8532 53           	 LD D,E
+8533 D9           	 EXX
+8534 00           	 NOP
+8535 ED 51        	 OUT (C),D
+8537 D9           	 EXX
+8538 AF           	 XOR A
+8539 5F           	 LD E,A
+853A D9           	 EXX
+853B ED 51        	 OUT (C),D
+853D C3 00 95     	 JP complete
+                 	bridge_32:
+8540 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8542 D9           	 EXX
+8543 3E 10        	 LD A,16
+8545 03           	 INC BC
+8546 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8548 01 FD 7F     	 LD BC,0x7FFD
+854B 3E 00        	 LD A,0
+854D D3 FE        	 OUT (0xFE),A
+                 	descriptor_32:
+854F 11 C0 18     	 LD DE,0x18C0
+8552 3E 00        	 LD A,0
+8554 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8556 ED 51        	 OUT (C),D
+8558 D9           	 EXX
+8559 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+855B D9           	 EXX
+855C 53           	 LD D,E
+855D D9           	 EXX
+855E 00           	 NOP
+855F 71           	 DB 0xED,0x71
+8561 D9           	 EXX
+8562 AF           	 XOR A
+8563 5F           	 LD E,A
+8564 D9           	 EXX
+8565 71           	 DB 0xED,0x71
+8567 C3 00 95     	 JP complete
+                 	bridge_33:
+856A 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+856C D9           	 EXX
+856D 3E 10        	 LD A,16
+856F 03           	 INC BC
+8570 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8572 01 FD 7F     	 LD BC,0x7FFD
+8575 3E 00        	 LD A,0
+8577 D3 FE        	 OUT (0xFE),A
+                 	descriptor_33:
+8579 11 C0 18     	 LD DE,0x18C0
+857C 3E 00        	 LD A,0
+857E D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8580 ED 51        	 OUT (C),D
+8582 D9           	 EXX
+8583 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8585 D9           	 EXX
+8586 53           	 LD D,E
+8587 D9           	 EXX
+8588 00           	 NOP
+8589 71           	 DB 0xED,0x71
+858B D9           	 EXX
+858C AF           	 XOR A
+858D 5F           	 LD E,A
+858E D9           	 EXX
+858F ED 51        	 OUT (C),D
+8591 C3 00 95     	 JP complete
+                 	bridge_34:
+8594 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8596 D9           	 EXX
+8597 3E 10        	 LD A,16
+8599 03           	 INC BC
+859A D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+859C 01 FD 7F     	 LD BC,0x7FFD
+859F 3E 00        	 LD A,0
+85A1 D3 FE        	 OUT (0xFE),A
+                 	descriptor_34:
+85A3 11 C0 18     	 LD DE,0x18C0
+85A6 3E 00        	 LD A,0
+85A8 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+85AA ED 51        	 OUT (C),D
+85AC D9           	 EXX
+85AD 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+85AF D9           	 EXX
+85B0 53           	 LD D,E
+85B1 D9           	 EXX
+85B2 00           	 NOP
+85B3 ED 51        	 OUT (C),D
+85B5 D9           	 EXX
+85B6 AF           	 XOR A
+85B7 5F           	 LD E,A
+85B8 D9           	 EXX
+85B9 71           	 DB 0xED,0x71
+85BB C3 00 95     	 JP complete
+                 	bridge_35:
+85BE 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+85C0 D9           	 EXX
+85C1 3E 10        	 LD A,16
+85C3 03           	 INC BC
+85C4 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+85C6 01 FD 7F     	 LD BC,0x7FFD
+85C9 3E 00        	 LD A,0
+85CB D3 FE        	 OUT (0xFE),A
+                 	descriptor_35:
+85CD 11 C0 18     	 LD DE,0x18C0
+85D0 3E 00        	 LD A,0
+85D2 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+85D4 ED 51        	 OUT (C),D
+85D6 D9           	 EXX
+85D7 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+85D9 D9           	 EXX
+85DA 53           	 LD D,E
+85DB D9           	 EXX
+85DC 00           	 NOP
+85DD ED 51        	 OUT (C),D
+85DF D9           	 EXX
+85E0 AF           	 XOR A
+85E1 5F           	 LD E,A
+85E2 D9           	 EXX
+85E3 ED 51        	 OUT (C),D
+85E5 C3 00 95     	 JP complete
+                 	bridge_36:
+85E8 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+85EA D9           	 EXX
+85EB 3E 10        	 LD A,16
+85ED 03           	 INC BC
+85EE D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+85F0 01 FD 7F     	 LD BC,0x7FFD
+85F3 3E 00        	 LD A,0
+85F5 D3 FE        	 OUT (0xFE),A
+                 	descriptor_36:
+85F7 11 C0 18     	 LD DE,0x18C0
+85FA 3E 00        	 LD A,0
+85FC D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+85FE ED 51        	 OUT (C),D
+8600 D9           	 EXX
+8601 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8603 D9           	 EXX
+8604 53           	 LD D,E
+8605 D9           	 EXX
+8606 00           	 NOP
+8607 71           	 DB 0xED,0x71
+8609 D9           	 EXX
+860A AF           	 XOR A
+860B 5F           	 LD E,A
+860C D9           	 EXX
+860D 71           	 DB 0xED,0x71
+860F C3 00 95     	 JP complete
+                 	bridge_37:
+8612 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8614 D9           	 EXX
+8615 3E 10        	 LD A,16
+8617 03           	 INC BC
+8618 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+861A 01 FD 7F     	 LD BC,0x7FFD
+861D 3E 00        	 LD A,0
+861F D3 FE        	 OUT (0xFE),A
+                 	descriptor_37:
+8621 11 C0 18     	 LD DE,0x18C0
+8624 3E 00        	 LD A,0
+8626 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8628 ED 51        	 OUT (C),D
+862A D9           	 EXX
+862B ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+862D D9           	 EXX
+862E 53           	 LD D,E
+862F D9           	 EXX
+8630 00           	 NOP
+8631 71           	 DB 0xED,0x71
+8633 D9           	 EXX
+8634 AF           	 XOR A
+8635 5F           	 LD E,A
+8636 D9           	 EXX
+8637 ED 51        	 OUT (C),D
+8639 C3 00 95     	 JP complete
+                 	bridge_38:
+863C 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+863E D9           	 EXX
+863F 3E 10        	 LD A,16
+8641 03           	 INC BC
+8642 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8644 01 FD 7F     	 LD BC,0x7FFD
+8647 3E 00        	 LD A,0
+8649 D3 FE        	 OUT (0xFE),A
+                 	descriptor_38:
+864B 11 C0 18     	 LD DE,0x18C0
+864E 3E 00        	 LD A,0
+8650 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8652 ED 51        	 OUT (C),D
+8654 D9           	 EXX
+8655 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8657 D9           	 EXX
+8658 53           	 LD D,E
+8659 D9           	 EXX
+865A 00           	 NOP
+865B ED 51        	 OUT (C),D
+865D D9           	 EXX
+865E AF           	 XOR A
+865F 5F           	 LD E,A
+8660 D9           	 EXX
+8661 71           	 DB 0xED,0x71
+8663 C3 00 95     	 JP complete
+                 	bridge_39:
+8666 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8668 D9           	 EXX
+8669 3E 10        	 LD A,16
+866B 03           	 INC BC
+866C D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+866E 01 FD 7F     	 LD BC,0x7FFD
+8671 3E 00        	 LD A,0
+8673 D3 FE        	 OUT (0xFE),A
+                 	descriptor_39:
+8675 11 C0 18     	 LD DE,0x18C0
+8678 3E 00        	 LD A,0
+867A D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+867C ED 51        	 OUT (C),D
+867E D9           	 EXX
+867F ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8681 D9           	 EXX
+8682 53           	 LD D,E
+8683 D9           	 EXX
+8684 00           	 NOP
+8685 ED 51        	 OUT (C),D
+8687 D9           	 EXX
+8688 AF           	 XOR A
+8689 5F           	 LD E,A
+868A D9           	 EXX
+868B ED 51        	 OUT (C),D
+868D C3 00 95     	 JP complete
+                 	bridge_40:
+8690 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8692 D9           	 EXX
+8693 3E 10        	 LD A,16
+8695 03           	 INC BC
+8696 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8698 01 FD 7F     	 LD BC,0x7FFD
+869B 3E 00        	 LD A,0
+869D D3 FE        	 OUT (0xFE),A
+                 	descriptor_40:
+869F 11 C0 18     	 LD DE,0x18C0
+86A2 3E 10        	 LD A,16
+86A4 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+86A6 ED 51        	 OUT (C),D
+86A8 D9           	 EXX
+86A9 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+86AB D9           	 EXX
+86AC 53           	 LD D,E
+86AD D9           	 EXX
+86AE 00           	 NOP
+86AF 71           	 DB 0xED,0x71
+86B1 D9           	 EXX
+86B2 AF           	 XOR A
+86B3 5F           	 LD E,A
+86B4 D9           	 EXX
+86B5 71           	 DB 0xED,0x71
+86B7 C3 00 95     	 JP complete
+                 	bridge_41:
+86BA 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+86BC D9           	 EXX
+86BD 3E 10        	 LD A,16
+86BF 03           	 INC BC
+86C0 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+86C2 01 FD 7F     	 LD BC,0x7FFD
+86C5 3E 00        	 LD A,0
+86C7 D3 FE        	 OUT (0xFE),A
+                 	descriptor_41:
+86C9 11 C0 18     	 LD DE,0x18C0
+86CC 3E 10        	 LD A,16
+86CE D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+86D0 ED 51        	 OUT (C),D
+86D2 D9           	 EXX
+86D3 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+86D5 D9           	 EXX
+86D6 53           	 LD D,E
+86D7 D9           	 EXX
+86D8 00           	 NOP
+86D9 71           	 DB 0xED,0x71
+86DB D9           	 EXX
+86DC AF           	 XOR A
+86DD 5F           	 LD E,A
+86DE D9           	 EXX
+86DF ED 51        	 OUT (C),D
+86E1 C3 00 95     	 JP complete
+                 	bridge_42:
+86E4 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+86E6 D9           	 EXX
+86E7 3E 10        	 LD A,16
+86E9 03           	 INC BC
+86EA D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+86EC 01 FD 7F     	 LD BC,0x7FFD
+86EF 3E 00        	 LD A,0
+86F1 D3 FE        	 OUT (0xFE),A
+                 	descriptor_42:
+86F3 11 C0 18     	 LD DE,0x18C0
+86F6 3E 10        	 LD A,16
+86F8 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+86FA ED 51        	 OUT (C),D
+86FC D9           	 EXX
+86FD 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+86FF D9           	 EXX
+8700 53           	 LD D,E
+8701 D9           	 EXX
+8702 00           	 NOP
+8703 ED 51        	 OUT (C),D
+8705 D9           	 EXX
+8706 AF           	 XOR A
+8707 5F           	 LD E,A
+8708 D9           	 EXX
+8709 71           	 DB 0xED,0x71
+870B C3 00 95     	 JP complete
+                 	bridge_43:
+870E 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8710 D9           	 EXX
+8711 3E 10        	 LD A,16
+8713 03           	 INC BC
+8714 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8716 01 FD 7F     	 LD BC,0x7FFD
+8719 3E 00        	 LD A,0
+871B D3 FE        	 OUT (0xFE),A
+                 	descriptor_43:
+871D 11 C0 18     	 LD DE,0x18C0
+8720 3E 10        	 LD A,16
+8722 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8724 ED 51        	 OUT (C),D
+8726 D9           	 EXX
+8727 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8729 D9           	 EXX
+872A 53           	 LD D,E
+872B D9           	 EXX
+872C 00           	 NOP
+872D ED 51        	 OUT (C),D
+872F D9           	 EXX
+8730 AF           	 XOR A
+8731 5F           	 LD E,A
+8732 D9           	 EXX
+8733 ED 51        	 OUT (C),D
+8735 C3 00 95     	 JP complete
+                 	bridge_44:
+8738 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+873A D9           	 EXX
+873B 3E 10        	 LD A,16
+873D 03           	 INC BC
+873E D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8740 01 FD 7F     	 LD BC,0x7FFD
+8743 3E 00        	 LD A,0
+8745 D3 FE        	 OUT (0xFE),A
+                 	descriptor_44:
+8747 11 C0 18     	 LD DE,0x18C0
+874A 3E 10        	 LD A,16
+874C D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+874E ED 51        	 OUT (C),D
+8750 D9           	 EXX
+8751 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8753 D9           	 EXX
+8754 53           	 LD D,E
+8755 D9           	 EXX
+8756 00           	 NOP
+8757 71           	 DB 0xED,0x71
+8759 D9           	 EXX
+875A AF           	 XOR A
+875B 5F           	 LD E,A
+875C D9           	 EXX
+875D 71           	 DB 0xED,0x71
+875F C3 00 95     	 JP complete
+                 	bridge_45:
+8762 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8764 D9           	 EXX
+8765 3E 10        	 LD A,16
+8767 03           	 INC BC
+8768 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+876A 01 FD 7F     	 LD BC,0x7FFD
+876D 3E 00        	 LD A,0
+876F D3 FE        	 OUT (0xFE),A
+                 	descriptor_45:
+8771 11 C0 18     	 LD DE,0x18C0
+8774 3E 10        	 LD A,16
+8776 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8778 ED 51        	 OUT (C),D
+877A D9           	 EXX
+877B ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+877D D9           	 EXX
+877E 53           	 LD D,E
+877F D9           	 EXX
+8780 00           	 NOP
+8781 71           	 DB 0xED,0x71
+8783 D9           	 EXX
+8784 AF           	 XOR A
+8785 5F           	 LD E,A
+8786 D9           	 EXX
+8787 ED 51        	 OUT (C),D
+8789 C3 00 95     	 JP complete
+                 	bridge_46:
+878C 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+878E D9           	 EXX
+878F 3E 10        	 LD A,16
+8791 03           	 INC BC
+8792 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8794 01 FD 7F     	 LD BC,0x7FFD
+8797 3E 00        	 LD A,0
+8799 D3 FE        	 OUT (0xFE),A
+                 	descriptor_46:
+879B 11 C0 18     	 LD DE,0x18C0
+879E 3E 10        	 LD A,16
+87A0 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+87A2 ED 51        	 OUT (C),D
+87A4 D9           	 EXX
+87A5 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+87A7 D9           	 EXX
+87A8 53           	 LD D,E
+87A9 D9           	 EXX
+87AA 00           	 NOP
+87AB ED 51        	 OUT (C),D
+87AD D9           	 EXX
+87AE AF           	 XOR A
+87AF 5F           	 LD E,A
+87B0 D9           	 EXX
+87B1 71           	 DB 0xED,0x71
+87B3 C3 00 95     	 JP complete
+                 	bridge_47:
+87B6 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+87B8 D9           	 EXX
+87B9 3E 10        	 LD A,16
+87BB 03           	 INC BC
+87BC D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+87BE 01 FD 7F     	 LD BC,0x7FFD
+87C1 3E 00        	 LD A,0
+87C3 D3 FE        	 OUT (0xFE),A
+                 	descriptor_47:
+87C5 11 C0 18     	 LD DE,0x18C0
+87C8 3E 10        	 LD A,16
+87CA D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+87CC ED 51        	 OUT (C),D
+87CE D9           	 EXX
+87CF ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+87D1 D9           	 EXX
+87D2 53           	 LD D,E
+87D3 D9           	 EXX
+87D4 00           	 NOP
+87D5 ED 51        	 OUT (C),D
+87D7 D9           	 EXX
+87D8 AF           	 XOR A
+87D9 5F           	 LD E,A
+87DA D9           	 EXX
+87DB ED 51        	 OUT (C),D
+87DD C3 00 95     	 JP complete
+                 	bridge_48:
+87E0 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+87E2 D9           	 EXX
+87E3 3E 10        	 LD A,16
+87E5 03           	 INC BC
+87E6 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+87E8 01 FD 7F     	 LD BC,0x7FFD
+87EB 3E 10        	 LD A,16
+87ED D3 FE        	 OUT (0xFE),A
+                 	descriptor_48:
+87EF 11 C0 18     	 LD DE,0x18C0
+87F2 3E 00        	 LD A,0
+87F4 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+87F6 ED 51        	 OUT (C),D
+87F8 D9           	 EXX
+87F9 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+87FB D9           	 EXX
+87FC 53           	 LD D,E
+87FD D9           	 EXX
+87FE 00           	 NOP
+87FF 71           	 DB 0xED,0x71
+8801 D9           	 EXX
+8802 AF           	 XOR A
+8803 5F           	 LD E,A
+8804 D9           	 EXX
+8805 71           	 DB 0xED,0x71
+8807 C3 00 95     	 JP complete
+                 	bridge_49:
+880A 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+880C D9           	 EXX
+880D 3E 10        	 LD A,16
+880F 03           	 INC BC
+8810 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8812 01 FD 7F     	 LD BC,0x7FFD
+8815 3E 10        	 LD A,16
+8817 D3 FE        	 OUT (0xFE),A
+                 	descriptor_49:
+8819 11 C0 18     	 LD DE,0x18C0
+881C 3E 00        	 LD A,0
+881E D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8820 ED 51        	 OUT (C),D
+8822 D9           	 EXX
+8823 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8825 D9           	 EXX
+8826 53           	 LD D,E
+8827 D9           	 EXX
+8828 00           	 NOP
+8829 71           	 DB 0xED,0x71
+882B D9           	 EXX
+882C AF           	 XOR A
+882D 5F           	 LD E,A
+882E D9           	 EXX
+882F ED 51        	 OUT (C),D
+8831 C3 00 95     	 JP complete
+                 	bridge_50:
+8834 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8836 D9           	 EXX
+8837 3E 10        	 LD A,16
+8839 03           	 INC BC
+883A D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+883C 01 FD 7F     	 LD BC,0x7FFD
+883F 3E 10        	 LD A,16
+8841 D3 FE        	 OUT (0xFE),A
+                 	descriptor_50:
+8843 11 C0 18     	 LD DE,0x18C0
+8846 3E 00        	 LD A,0
+8848 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+884A ED 51        	 OUT (C),D
+884C D9           	 EXX
+884D 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+884F D9           	 EXX
+8850 53           	 LD D,E
+8851 D9           	 EXX
+8852 00           	 NOP
+8853 ED 51        	 OUT (C),D
+8855 D9           	 EXX
+8856 AF           	 XOR A
+8857 5F           	 LD E,A
+8858 D9           	 EXX
+8859 71           	 DB 0xED,0x71
+885B C3 00 95     	 JP complete
+                 	bridge_51:
+885E 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8860 D9           	 EXX
+8861 3E 10        	 LD A,16
+8863 03           	 INC BC
+8864 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8866 01 FD 7F     	 LD BC,0x7FFD
+8869 3E 10        	 LD A,16
+886B D3 FE        	 OUT (0xFE),A
+                 	descriptor_51:
+886D 11 C0 18     	 LD DE,0x18C0
+8870 3E 00        	 LD A,0
+8872 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8874 ED 51        	 OUT (C),D
+8876 D9           	 EXX
+8877 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8879 D9           	 EXX
+887A 53           	 LD D,E
+887B D9           	 EXX
+887C 00           	 NOP
+887D ED 51        	 OUT (C),D
+887F D9           	 EXX
+8880 AF           	 XOR A
+8881 5F           	 LD E,A
+8882 D9           	 EXX
+8883 ED 51        	 OUT (C),D
+8885 C3 00 95     	 JP complete
+                 	bridge_52:
+8888 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+888A D9           	 EXX
+888B 3E 10        	 LD A,16
+888D 03           	 INC BC
+888E D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8890 01 FD 7F     	 LD BC,0x7FFD
+8893 3E 10        	 LD A,16
+8895 D3 FE        	 OUT (0xFE),A
+                 	descriptor_52:
+8897 11 C0 18     	 LD DE,0x18C0
+889A 3E 00        	 LD A,0
+889C D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+889E ED 51        	 OUT (C),D
+88A0 D9           	 EXX
+88A1 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+88A3 D9           	 EXX
+88A4 53           	 LD D,E
+88A5 D9           	 EXX
+88A6 00           	 NOP
+88A7 71           	 DB 0xED,0x71
+88A9 D9           	 EXX
+88AA AF           	 XOR A
+88AB 5F           	 LD E,A
+88AC D9           	 EXX
+88AD 71           	 DB 0xED,0x71
+88AF C3 00 95     	 JP complete
+                 	bridge_53:
+88B2 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+88B4 D9           	 EXX
+88B5 3E 10        	 LD A,16
+88B7 03           	 INC BC
+88B8 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+88BA 01 FD 7F     	 LD BC,0x7FFD
+88BD 3E 10        	 LD A,16
+88BF D3 FE        	 OUT (0xFE),A
+                 	descriptor_53:
+88C1 11 C0 18     	 LD DE,0x18C0
+88C4 3E 00        	 LD A,0
+88C6 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+88C8 ED 51        	 OUT (C),D
+88CA D9           	 EXX
+88CB ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+88CD D9           	 EXX
+88CE 53           	 LD D,E
+88CF D9           	 EXX
+88D0 00           	 NOP
+88D1 71           	 DB 0xED,0x71
+88D3 D9           	 EXX
+88D4 AF           	 XOR A
+88D5 5F           	 LD E,A
+88D6 D9           	 EXX
+88D7 ED 51        	 OUT (C),D
+88D9 C3 00 95     	 JP complete
+                 	bridge_54:
+88DC 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+88DE D9           	 EXX
+88DF 3E 10        	 LD A,16
+88E1 03           	 INC BC
+88E2 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+88E4 01 FD 7F     	 LD BC,0x7FFD
+88E7 3E 10        	 LD A,16
+88E9 D3 FE        	 OUT (0xFE),A
+                 	descriptor_54:
+88EB 11 C0 18     	 LD DE,0x18C0
+88EE 3E 00        	 LD A,0
+88F0 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+88F2 ED 51        	 OUT (C),D
+88F4 D9           	 EXX
+88F5 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+88F7 D9           	 EXX
+88F8 53           	 LD D,E
+88F9 D9           	 EXX
+88FA 00           	 NOP
+88FB ED 51        	 OUT (C),D
+88FD D9           	 EXX
+88FE AF           	 XOR A
+88FF 5F           	 LD E,A
+8900 D9           	 EXX
+8901 71           	 DB 0xED,0x71
+8903 C3 00 95     	 JP complete
+                 	bridge_55:
+8906 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8908 D9           	 EXX
+8909 3E 10        	 LD A,16
+890B 03           	 INC BC
+890C D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+890E 01 FD 7F     	 LD BC,0x7FFD
+8911 3E 10        	 LD A,16
+8913 D3 FE        	 OUT (0xFE),A
+                 	descriptor_55:
+8915 11 C0 18     	 LD DE,0x18C0
+8918 3E 00        	 LD A,0
+891A D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+891C ED 51        	 OUT (C),D
+891E D9           	 EXX
+891F ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8921 D9           	 EXX
+8922 53           	 LD D,E
+8923 D9           	 EXX
+8924 00           	 NOP
+8925 ED 51        	 OUT (C),D
+8927 D9           	 EXX
+8928 AF           	 XOR A
+8929 5F           	 LD E,A
+892A D9           	 EXX
+892B ED 51        	 OUT (C),D
+892D C3 00 95     	 JP complete
+                 	bridge_56:
+8930 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8932 D9           	 EXX
+8933 3E 10        	 LD A,16
+8935 03           	 INC BC
+8936 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8938 01 FD 7F     	 LD BC,0x7FFD
+893B 3E 10        	 LD A,16
+893D D3 FE        	 OUT (0xFE),A
+                 	descriptor_56:
+893F 11 C0 18     	 LD DE,0x18C0
+8942 3E 10        	 LD A,16
+8944 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8946 ED 51        	 OUT (C),D
+8948 D9           	 EXX
+8949 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+894B D9           	 EXX
+894C 53           	 LD D,E
+894D D9           	 EXX
+894E 00           	 NOP
+894F 71           	 DB 0xED,0x71
+8951 D9           	 EXX
+8952 AF           	 XOR A
+8953 5F           	 LD E,A
+8954 D9           	 EXX
+8955 71           	 DB 0xED,0x71
+8957 C3 00 95     	 JP complete
+                 	bridge_57:
+895A 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+895C D9           	 EXX
+895D 3E 10        	 LD A,16
+895F 03           	 INC BC
+8960 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8962 01 FD 7F     	 LD BC,0x7FFD
+8965 3E 10        	 LD A,16
+8967 D3 FE        	 OUT (0xFE),A
+                 	descriptor_57:
+8969 11 C0 18     	 LD DE,0x18C0
+896C 3E 10        	 LD A,16
+896E D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8970 ED 51        	 OUT (C),D
+8972 D9           	 EXX
+8973 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8975 D9           	 EXX
+8976 53           	 LD D,E
+8977 D9           	 EXX
+8978 00           	 NOP
+8979 71           	 DB 0xED,0x71
+897B D9           	 EXX
+897C AF           	 XOR A
+897D 5F           	 LD E,A
+897E D9           	 EXX
+897F ED 51        	 OUT (C),D
+8981 C3 00 95     	 JP complete
+                 	bridge_58:
+8984 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8986 D9           	 EXX
+8987 3E 10        	 LD A,16
+8989 03           	 INC BC
+898A D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+898C 01 FD 7F     	 LD BC,0x7FFD
+898F 3E 10        	 LD A,16
+8991 D3 FE        	 OUT (0xFE),A
+                 	descriptor_58:
+8993 11 C0 18     	 LD DE,0x18C0
+8996 3E 10        	 LD A,16
+8998 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+899A ED 51        	 OUT (C),D
+899C D9           	 EXX
+899D 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+899F D9           	 EXX
+89A0 53           	 LD D,E
+89A1 D9           	 EXX
+89A2 00           	 NOP
+89A3 ED 51        	 OUT (C),D
+89A5 D9           	 EXX
+89A6 AF           	 XOR A
+89A7 5F           	 LD E,A
+89A8 D9           	 EXX
+89A9 71           	 DB 0xED,0x71
+89AB C3 00 95     	 JP complete
+                 	bridge_59:
+89AE 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+89B0 D9           	 EXX
+89B1 3E 10        	 LD A,16
+89B3 03           	 INC BC
+89B4 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+89B6 01 FD 7F     	 LD BC,0x7FFD
+89B9 3E 10        	 LD A,16
+89BB D3 FE        	 OUT (0xFE),A
+                 	descriptor_59:
+89BD 11 C0 18     	 LD DE,0x18C0
+89C0 3E 10        	 LD A,16
+89C2 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+89C4 ED 51        	 OUT (C),D
+89C6 D9           	 EXX
+89C7 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+89C9 D9           	 EXX
+89CA 53           	 LD D,E
+89CB D9           	 EXX
+89CC 00           	 NOP
+89CD ED 51        	 OUT (C),D
+89CF D9           	 EXX
+89D0 AF           	 XOR A
+89D1 5F           	 LD E,A
+89D2 D9           	 EXX
+89D3 ED 51        	 OUT (C),D
+89D5 C3 00 95     	 JP complete
+                 	bridge_60:
+89D8 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+89DA D9           	 EXX
+89DB 3E 10        	 LD A,16
+89DD 03           	 INC BC
+89DE D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+89E0 01 FD 7F     	 LD BC,0x7FFD
+89E3 3E 10        	 LD A,16
+89E5 D3 FE        	 OUT (0xFE),A
+                 	descriptor_60:
+89E7 11 C0 18     	 LD DE,0x18C0
+89EA 3E 10        	 LD A,16
+89EC D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+89EE ED 51        	 OUT (C),D
+89F0 D9           	 EXX
+89F1 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+89F3 D9           	 EXX
+89F4 53           	 LD D,E
+89F5 D9           	 EXX
+89F6 00           	 NOP
+89F7 71           	 DB 0xED,0x71
+89F9 D9           	 EXX
+89FA AF           	 XOR A
+89FB 5F           	 LD E,A
+89FC D9           	 EXX
+89FD 71           	 DB 0xED,0x71
+89FF C3 00 95     	 JP complete
+                 	bridge_61:
+8A02 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8A04 D9           	 EXX
+8A05 3E 10        	 LD A,16
+8A07 03           	 INC BC
+8A08 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8A0A 01 FD 7F     	 LD BC,0x7FFD
+8A0D 3E 10        	 LD A,16
+8A0F D3 FE        	 OUT (0xFE),A
+                 	descriptor_61:
+8A11 11 C0 18     	 LD DE,0x18C0
+8A14 3E 10        	 LD A,16
+8A16 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8A18 ED 51        	 OUT (C),D
+8A1A D9           	 EXX
+8A1B ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8A1D D9           	 EXX
+8A1E 53           	 LD D,E
+8A1F D9           	 EXX
+8A20 00           	 NOP
+8A21 71           	 DB 0xED,0x71
+8A23 D9           	 EXX
+8A24 AF           	 XOR A
+8A25 5F           	 LD E,A
+8A26 D9           	 EXX
+8A27 ED 51        	 OUT (C),D
+8A29 C3 00 95     	 JP complete
+                 	bridge_62:
+8A2C 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8A2E D9           	 EXX
+8A2F 3E 10        	 LD A,16
+8A31 03           	 INC BC
+8A32 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8A34 01 FD 7F     	 LD BC,0x7FFD
+8A37 3E 10        	 LD A,16
+8A39 D3 FE        	 OUT (0xFE),A
+                 	descriptor_62:
+8A3B 11 C0 18     	 LD DE,0x18C0
+8A3E 3E 10        	 LD A,16
+8A40 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8A42 ED 51        	 OUT (C),D
+8A44 D9           	 EXX
+8A45 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8A47 D9           	 EXX
+8A48 53           	 LD D,E
+8A49 D9           	 EXX
+8A4A 00           	 NOP
+8A4B ED 51        	 OUT (C),D
+8A4D D9           	 EXX
+8A4E AF           	 XOR A
+8A4F 5F           	 LD E,A
+8A50 D9           	 EXX
+8A51 71           	 DB 0xED,0x71
+8A53 C3 00 95     	 JP complete
+                 	bridge_63:
+8A56 71           	 DB 0xED,0x71
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8A58 D9           	 EXX
+8A59 3E 10        	 LD A,16
+8A5B 03           	 INC BC
+8A5C D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8A5E 01 FD 7F     	 LD BC,0x7FFD
+8A61 3E 10        	 LD A,16
+8A63 D3 FE        	 OUT (0xFE),A
+                 	descriptor_63:
+8A65 11 C0 18     	 LD DE,0x18C0
+8A68 3E 10        	 LD A,16
+8A6A D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8A6C ED 51        	 OUT (C),D
+8A6E D9           	 EXX
+8A6F ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8A71 D9           	 EXX
+8A72 53           	 LD D,E
+8A73 D9           	 EXX
+8A74 00           	 NOP
+8A75 ED 51        	 OUT (C),D
+8A77 D9           	 EXX
+8A78 AF           	 XOR A
+8A79 5F           	 LD E,A
+8A7A D9           	 EXX
+8A7B ED 51        	 OUT (C),D
+8A7D C3 00 95     	 JP complete
+                 	bridge_64:
+8A80 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8A82 D9           	 EXX
+8A83 3E 00        	 LD A,0
+8A85 03           	 INC BC
+8A86 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8A88 01 FD 7F     	 LD BC,0x7FFD
+8A8B 3E 00        	 LD A,0
+8A8D D3 FE        	 OUT (0xFE),A
+                 	descriptor_64:
+8A8F 11 C0 18     	 LD DE,0x18C0
+8A92 3E 00        	 LD A,0
+8A94 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8A96 ED 51        	 OUT (C),D
+8A98 D9           	 EXX
+8A99 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8A9B D9           	 EXX
+8A9C 53           	 LD D,E
+8A9D D9           	 EXX
+8A9E 00           	 NOP
+8A9F 71           	 DB 0xED,0x71
+8AA1 D9           	 EXX
+8AA2 AF           	 XOR A
+8AA3 5F           	 LD E,A
+8AA4 D9           	 EXX
+8AA5 71           	 DB 0xED,0x71
+8AA7 C3 00 95     	 JP complete
+                 	bridge_65:
+8AAA ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8AAC D9           	 EXX
+8AAD 3E 00        	 LD A,0
+8AAF 03           	 INC BC
+8AB0 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8AB2 01 FD 7F     	 LD BC,0x7FFD
+8AB5 3E 00        	 LD A,0
+8AB7 D3 FE        	 OUT (0xFE),A
+                 	descriptor_65:
+8AB9 11 C0 18     	 LD DE,0x18C0
+8ABC 3E 00        	 LD A,0
+8ABE D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8AC0 ED 51        	 OUT (C),D
+8AC2 D9           	 EXX
+8AC3 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8AC5 D9           	 EXX
+8AC6 53           	 LD D,E
+8AC7 D9           	 EXX
+8AC8 00           	 NOP
+8AC9 71           	 DB 0xED,0x71
+8ACB D9           	 EXX
+8ACC AF           	 XOR A
+8ACD 5F           	 LD E,A
+8ACE D9           	 EXX
+8ACF ED 51        	 OUT (C),D
+8AD1 C3 00 95     	 JP complete
+                 	bridge_66:
+8AD4 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8AD6 D9           	 EXX
+8AD7 3E 00        	 LD A,0
+8AD9 03           	 INC BC
+8ADA D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8ADC 01 FD 7F     	 LD BC,0x7FFD
+8ADF 3E 00        	 LD A,0
+8AE1 D3 FE        	 OUT (0xFE),A
+                 	descriptor_66:
+8AE3 11 C0 18     	 LD DE,0x18C0
+8AE6 3E 00        	 LD A,0
+8AE8 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8AEA ED 51        	 OUT (C),D
+8AEC D9           	 EXX
+8AED 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8AEF D9           	 EXX
+8AF0 53           	 LD D,E
+8AF1 D9           	 EXX
+8AF2 00           	 NOP
+8AF3 ED 51        	 OUT (C),D
+8AF5 D9           	 EXX
+8AF6 AF           	 XOR A
+8AF7 5F           	 LD E,A
+8AF8 D9           	 EXX
+8AF9 71           	 DB 0xED,0x71
+8AFB C3 00 95     	 JP complete
+                 	bridge_67:
+8AFE ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8B00 D9           	 EXX
+8B01 3E 00        	 LD A,0
+8B03 03           	 INC BC
+8B04 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8B06 01 FD 7F     	 LD BC,0x7FFD
+8B09 3E 00        	 LD A,0
+8B0B D3 FE        	 OUT (0xFE),A
+                 	descriptor_67:
+8B0D 11 C0 18     	 LD DE,0x18C0
+8B10 3E 00        	 LD A,0
+8B12 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8B14 ED 51        	 OUT (C),D
+8B16 D9           	 EXX
+8B17 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8B19 D9           	 EXX
+8B1A 53           	 LD D,E
+8B1B D9           	 EXX
+8B1C 00           	 NOP
+8B1D ED 51        	 OUT (C),D
+8B1F D9           	 EXX
+8B20 AF           	 XOR A
+8B21 5F           	 LD E,A
+8B22 D9           	 EXX
+8B23 ED 51        	 OUT (C),D
+8B25 C3 00 95     	 JP complete
+                 	bridge_68:
+8B28 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8B2A D9           	 EXX
+8B2B 3E 00        	 LD A,0
+8B2D 03           	 INC BC
+8B2E D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8B30 01 FD 7F     	 LD BC,0x7FFD
+8B33 3E 00        	 LD A,0
+8B35 D3 FE        	 OUT (0xFE),A
+                 	descriptor_68:
+8B37 11 C0 18     	 LD DE,0x18C0
+8B3A 3E 00        	 LD A,0
+8B3C D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8B3E ED 51        	 OUT (C),D
+8B40 D9           	 EXX
+8B41 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8B43 D9           	 EXX
+8B44 53           	 LD D,E
+8B45 D9           	 EXX
+8B46 00           	 NOP
+8B47 71           	 DB 0xED,0x71
+8B49 D9           	 EXX
+8B4A AF           	 XOR A
+8B4B 5F           	 LD E,A
+8B4C D9           	 EXX
+8B4D 71           	 DB 0xED,0x71
+8B4F C3 00 95     	 JP complete
+                 	bridge_69:
+8B52 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8B54 D9           	 EXX
+8B55 3E 00        	 LD A,0
+8B57 03           	 INC BC
+8B58 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8B5A 01 FD 7F     	 LD BC,0x7FFD
+8B5D 3E 00        	 LD A,0
+8B5F D3 FE        	 OUT (0xFE),A
+                 	descriptor_69:
+8B61 11 C0 18     	 LD DE,0x18C0
+8B64 3E 00        	 LD A,0
+8B66 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8B68 ED 51        	 OUT (C),D
+8B6A D9           	 EXX
+8B6B ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8B6D D9           	 EXX
+8B6E 53           	 LD D,E
+8B6F D9           	 EXX
+8B70 00           	 NOP
+8B71 71           	 DB 0xED,0x71
+8B73 D9           	 EXX
+8B74 AF           	 XOR A
+8B75 5F           	 LD E,A
+8B76 D9           	 EXX
+8B77 ED 51        	 OUT (C),D
+8B79 C3 00 95     	 JP complete
+                 	bridge_70:
+8B7C ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8B7E D9           	 EXX
+8B7F 3E 00        	 LD A,0
+8B81 03           	 INC BC
+8B82 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8B84 01 FD 7F     	 LD BC,0x7FFD
+8B87 3E 00        	 LD A,0
+8B89 D3 FE        	 OUT (0xFE),A
+                 	descriptor_70:
+8B8B 11 C0 18     	 LD DE,0x18C0
+8B8E 3E 00        	 LD A,0
+8B90 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8B92 ED 51        	 OUT (C),D
+8B94 D9           	 EXX
+8B95 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8B97 D9           	 EXX
+8B98 53           	 LD D,E
+8B99 D9           	 EXX
+8B9A 00           	 NOP
+8B9B ED 51        	 OUT (C),D
+8B9D D9           	 EXX
+8B9E AF           	 XOR A
+8B9F 5F           	 LD E,A
+8BA0 D9           	 EXX
+8BA1 71           	 DB 0xED,0x71
+8BA3 C3 00 95     	 JP complete
+                 	bridge_71:
+8BA6 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8BA8 D9           	 EXX
+8BA9 3E 00        	 LD A,0
+8BAB 03           	 INC BC
+8BAC D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8BAE 01 FD 7F     	 LD BC,0x7FFD
+8BB1 3E 00        	 LD A,0
+8BB3 D3 FE        	 OUT (0xFE),A
+                 	descriptor_71:
+8BB5 11 C0 18     	 LD DE,0x18C0
+8BB8 3E 00        	 LD A,0
+8BBA D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8BBC ED 51        	 OUT (C),D
+8BBE D9           	 EXX
+8BBF ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8BC1 D9           	 EXX
+8BC2 53           	 LD D,E
+8BC3 D9           	 EXX
+8BC4 00           	 NOP
+8BC5 ED 51        	 OUT (C),D
+8BC7 D9           	 EXX
+8BC8 AF           	 XOR A
+8BC9 5F           	 LD E,A
+8BCA D9           	 EXX
+8BCB ED 51        	 OUT (C),D
+8BCD C3 00 95     	 JP complete
+                 	bridge_72:
+8BD0 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8BD2 D9           	 EXX
+8BD3 3E 00        	 LD A,0
+8BD5 03           	 INC BC
+8BD6 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8BD8 01 FD 7F     	 LD BC,0x7FFD
+8BDB 3E 00        	 LD A,0
+8BDD D3 FE        	 OUT (0xFE),A
+                 	descriptor_72:
+8BDF 11 C0 18     	 LD DE,0x18C0
+8BE2 3E 10        	 LD A,16
+8BE4 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8BE6 ED 51        	 OUT (C),D
+8BE8 D9           	 EXX
+8BE9 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8BEB D9           	 EXX
+8BEC 53           	 LD D,E
+8BED D9           	 EXX
+8BEE 00           	 NOP
+8BEF 71           	 DB 0xED,0x71
+8BF1 D9           	 EXX
+8BF2 AF           	 XOR A
+8BF3 5F           	 LD E,A
+8BF4 D9           	 EXX
+8BF5 71           	 DB 0xED,0x71
+8BF7 C3 00 95     	 JP complete
+                 	bridge_73:
+8BFA ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8BFC D9           	 EXX
+8BFD 3E 00        	 LD A,0
+8BFF 03           	 INC BC
+8C00 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8C02 01 FD 7F     	 LD BC,0x7FFD
+8C05 3E 00        	 LD A,0
+8C07 D3 FE        	 OUT (0xFE),A
+                 	descriptor_73:
+8C09 11 C0 18     	 LD DE,0x18C0
+8C0C 3E 10        	 LD A,16
+8C0E D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8C10 ED 51        	 OUT (C),D
+8C12 D9           	 EXX
+8C13 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8C15 D9           	 EXX
+8C16 53           	 LD D,E
+8C17 D9           	 EXX
+8C18 00           	 NOP
+8C19 71           	 DB 0xED,0x71
+8C1B D9           	 EXX
+8C1C AF           	 XOR A
+8C1D 5F           	 LD E,A
+8C1E D9           	 EXX
+8C1F ED 51        	 OUT (C),D
+8C21 C3 00 95     	 JP complete
+                 	bridge_74:
+8C24 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8C26 D9           	 EXX
+8C27 3E 00        	 LD A,0
+8C29 03           	 INC BC
+8C2A D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8C2C 01 FD 7F     	 LD BC,0x7FFD
+8C2F 3E 00        	 LD A,0
+8C31 D3 FE        	 OUT (0xFE),A
+                 	descriptor_74:
+8C33 11 C0 18     	 LD DE,0x18C0
+8C36 3E 10        	 LD A,16
+8C38 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8C3A ED 51        	 OUT (C),D
+8C3C D9           	 EXX
+8C3D 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8C3F D9           	 EXX
+8C40 53           	 LD D,E
+8C41 D9           	 EXX
+8C42 00           	 NOP
+8C43 ED 51        	 OUT (C),D
+8C45 D9           	 EXX
+8C46 AF           	 XOR A
+8C47 5F           	 LD E,A
+8C48 D9           	 EXX
+8C49 71           	 DB 0xED,0x71
+8C4B C3 00 95     	 JP complete
+                 	bridge_75:
+8C4E ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8C50 D9           	 EXX
+8C51 3E 00        	 LD A,0
+8C53 03           	 INC BC
+8C54 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8C56 01 FD 7F     	 LD BC,0x7FFD
+8C59 3E 00        	 LD A,0
+8C5B D3 FE        	 OUT (0xFE),A
+                 	descriptor_75:
+8C5D 11 C0 18     	 LD DE,0x18C0
+8C60 3E 10        	 LD A,16
+8C62 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8C64 ED 51        	 OUT (C),D
+8C66 D9           	 EXX
+8C67 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8C69 D9           	 EXX
+8C6A 53           	 LD D,E
+8C6B D9           	 EXX
+8C6C 00           	 NOP
+8C6D ED 51        	 OUT (C),D
+8C6F D9           	 EXX
+8C70 AF           	 XOR A
+8C71 5F           	 LD E,A
+8C72 D9           	 EXX
+8C73 ED 51        	 OUT (C),D
+8C75 C3 00 95     	 JP complete
+                 	bridge_76:
+8C78 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8C7A D9           	 EXX
+8C7B 3E 00        	 LD A,0
+8C7D 03           	 INC BC
+8C7E D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8C80 01 FD 7F     	 LD BC,0x7FFD
+8C83 3E 00        	 LD A,0
+8C85 D3 FE        	 OUT (0xFE),A
+                 	descriptor_76:
+8C87 11 C0 18     	 LD DE,0x18C0
+8C8A 3E 10        	 LD A,16
+8C8C D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8C8E ED 51        	 OUT (C),D
+8C90 D9           	 EXX
+8C91 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8C93 D9           	 EXX
+8C94 53           	 LD D,E
+8C95 D9           	 EXX
+8C96 00           	 NOP
+8C97 71           	 DB 0xED,0x71
+8C99 D9           	 EXX
+8C9A AF           	 XOR A
+8C9B 5F           	 LD E,A
+8C9C D9           	 EXX
+8C9D 71           	 DB 0xED,0x71
+8C9F C3 00 95     	 JP complete
+                 	bridge_77:
+8CA2 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8CA4 D9           	 EXX
+8CA5 3E 00        	 LD A,0
+8CA7 03           	 INC BC
+8CA8 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8CAA 01 FD 7F     	 LD BC,0x7FFD
+8CAD 3E 00        	 LD A,0
+8CAF D3 FE        	 OUT (0xFE),A
+                 	descriptor_77:
+8CB1 11 C0 18     	 LD DE,0x18C0
+8CB4 3E 10        	 LD A,16
+8CB6 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8CB8 ED 51        	 OUT (C),D
+8CBA D9           	 EXX
+8CBB ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8CBD D9           	 EXX
+8CBE 53           	 LD D,E
+8CBF D9           	 EXX
+8CC0 00           	 NOP
+8CC1 71           	 DB 0xED,0x71
+8CC3 D9           	 EXX
+8CC4 AF           	 XOR A
+8CC5 5F           	 LD E,A
+8CC6 D9           	 EXX
+8CC7 ED 51        	 OUT (C),D
+8CC9 C3 00 95     	 JP complete
+                 	bridge_78:
+8CCC ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8CCE D9           	 EXX
+8CCF 3E 00        	 LD A,0
+8CD1 03           	 INC BC
+8CD2 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8CD4 01 FD 7F     	 LD BC,0x7FFD
+8CD7 3E 00        	 LD A,0
+8CD9 D3 FE        	 OUT (0xFE),A
+                 	descriptor_78:
+8CDB 11 C0 18     	 LD DE,0x18C0
+8CDE 3E 10        	 LD A,16
+8CE0 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8CE2 ED 51        	 OUT (C),D
+8CE4 D9           	 EXX
+8CE5 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8CE7 D9           	 EXX
+8CE8 53           	 LD D,E
+8CE9 D9           	 EXX
+8CEA 00           	 NOP
+8CEB ED 51        	 OUT (C),D
+8CED D9           	 EXX
+8CEE AF           	 XOR A
+8CEF 5F           	 LD E,A
+8CF0 D9           	 EXX
+8CF1 71           	 DB 0xED,0x71
+8CF3 C3 00 95     	 JP complete
+                 	bridge_79:
+8CF6 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8CF8 D9           	 EXX
+8CF9 3E 00        	 LD A,0
+8CFB 03           	 INC BC
+8CFC D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8CFE 01 FD 7F     	 LD BC,0x7FFD
+8D01 3E 00        	 LD A,0
+8D03 D3 FE        	 OUT (0xFE),A
+                 	descriptor_79:
+8D05 11 C0 18     	 LD DE,0x18C0
+8D08 3E 10        	 LD A,16
+8D0A D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8D0C ED 51        	 OUT (C),D
+8D0E D9           	 EXX
+8D0F ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8D11 D9           	 EXX
+8D12 53           	 LD D,E
+8D13 D9           	 EXX
+8D14 00           	 NOP
+8D15 ED 51        	 OUT (C),D
+8D17 D9           	 EXX
+8D18 AF           	 XOR A
+8D19 5F           	 LD E,A
+8D1A D9           	 EXX
+8D1B ED 51        	 OUT (C),D
+8D1D C3 00 95     	 JP complete
+                 	bridge_80:
+8D20 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8D22 D9           	 EXX
+8D23 3E 00        	 LD A,0
+8D25 03           	 INC BC
+8D26 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8D28 01 FD 7F     	 LD BC,0x7FFD
+8D2B 3E 10        	 LD A,16
+8D2D D3 FE        	 OUT (0xFE),A
+                 	descriptor_80:
+8D2F 11 C0 18     	 LD DE,0x18C0
+8D32 3E 00        	 LD A,0
+8D34 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8D36 ED 51        	 OUT (C),D
+8D38 D9           	 EXX
+8D39 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8D3B D9           	 EXX
+8D3C 53           	 LD D,E
+8D3D D9           	 EXX
+8D3E 00           	 NOP
+8D3F 71           	 DB 0xED,0x71
+8D41 D9           	 EXX
+8D42 AF           	 XOR A
+8D43 5F           	 LD E,A
+8D44 D9           	 EXX
+8D45 71           	 DB 0xED,0x71
+8D47 C3 00 95     	 JP complete
+                 	bridge_81:
+8D4A ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8D4C D9           	 EXX
+8D4D 3E 00        	 LD A,0
+8D4F 03           	 INC BC
+8D50 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8D52 01 FD 7F     	 LD BC,0x7FFD
+8D55 3E 10        	 LD A,16
+8D57 D3 FE        	 OUT (0xFE),A
+                 	descriptor_81:
+8D59 11 C0 18     	 LD DE,0x18C0
+8D5C 3E 00        	 LD A,0
+8D5E D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8D60 ED 51        	 OUT (C),D
+8D62 D9           	 EXX
+8D63 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8D65 D9           	 EXX
+8D66 53           	 LD D,E
+8D67 D9           	 EXX
+8D68 00           	 NOP
+8D69 71           	 DB 0xED,0x71
+8D6B D9           	 EXX
+8D6C AF           	 XOR A
+8D6D 5F           	 LD E,A
+8D6E D9           	 EXX
+8D6F ED 51        	 OUT (C),D
+8D71 C3 00 95     	 JP complete
+                 	bridge_82:
+8D74 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8D76 D9           	 EXX
+8D77 3E 00        	 LD A,0
+8D79 03           	 INC BC
+8D7A D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8D7C 01 FD 7F     	 LD BC,0x7FFD
+8D7F 3E 10        	 LD A,16
+8D81 D3 FE        	 OUT (0xFE),A
+                 	descriptor_82:
+8D83 11 C0 18     	 LD DE,0x18C0
+8D86 3E 00        	 LD A,0
+8D88 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8D8A ED 51        	 OUT (C),D
+8D8C D9           	 EXX
+8D8D 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8D8F D9           	 EXX
+8D90 53           	 LD D,E
+8D91 D9           	 EXX
+8D92 00           	 NOP
+8D93 ED 51        	 OUT (C),D
+8D95 D9           	 EXX
+8D96 AF           	 XOR A
+8D97 5F           	 LD E,A
+8D98 D9           	 EXX
+8D99 71           	 DB 0xED,0x71
+8D9B C3 00 95     	 JP complete
+                 	bridge_83:
+8D9E ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8DA0 D9           	 EXX
+8DA1 3E 00        	 LD A,0
+8DA3 03           	 INC BC
+8DA4 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8DA6 01 FD 7F     	 LD BC,0x7FFD
+8DA9 3E 10        	 LD A,16
+8DAB D3 FE        	 OUT (0xFE),A
+                 	descriptor_83:
+8DAD 11 C0 18     	 LD DE,0x18C0
+8DB0 3E 00        	 LD A,0
+8DB2 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8DB4 ED 51        	 OUT (C),D
+8DB6 D9           	 EXX
+8DB7 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8DB9 D9           	 EXX
+8DBA 53           	 LD D,E
+8DBB D9           	 EXX
+8DBC 00           	 NOP
+8DBD ED 51        	 OUT (C),D
+8DBF D9           	 EXX
+8DC0 AF           	 XOR A
+8DC1 5F           	 LD E,A
+8DC2 D9           	 EXX
+8DC3 ED 51        	 OUT (C),D
+8DC5 C3 00 95     	 JP complete
+                 	bridge_84:
+8DC8 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8DCA D9           	 EXX
+8DCB 3E 00        	 LD A,0
+8DCD 03           	 INC BC
+8DCE D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8DD0 01 FD 7F     	 LD BC,0x7FFD
+8DD3 3E 10        	 LD A,16
+8DD5 D3 FE        	 OUT (0xFE),A
+                 	descriptor_84:
+8DD7 11 C0 18     	 LD DE,0x18C0
+8DDA 3E 00        	 LD A,0
+8DDC D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8DDE ED 51        	 OUT (C),D
+8DE0 D9           	 EXX
+8DE1 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8DE3 D9           	 EXX
+8DE4 53           	 LD D,E
+8DE5 D9           	 EXX
+8DE6 00           	 NOP
+8DE7 71           	 DB 0xED,0x71
+8DE9 D9           	 EXX
+8DEA AF           	 XOR A
+8DEB 5F           	 LD E,A
+8DEC D9           	 EXX
+8DED 71           	 DB 0xED,0x71
+8DEF C3 00 95     	 JP complete
+                 	bridge_85:
+8DF2 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8DF4 D9           	 EXX
+8DF5 3E 00        	 LD A,0
+8DF7 03           	 INC BC
+8DF8 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8DFA 01 FD 7F     	 LD BC,0x7FFD
+8DFD 3E 10        	 LD A,16
+8DFF D3 FE        	 OUT (0xFE),A
+                 	descriptor_85:
+8E01 11 C0 18     	 LD DE,0x18C0
+8E04 3E 00        	 LD A,0
+8E06 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8E08 ED 51        	 OUT (C),D
+8E0A D9           	 EXX
+8E0B ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8E0D D9           	 EXX
+8E0E 53           	 LD D,E
+8E0F D9           	 EXX
+8E10 00           	 NOP
+8E11 71           	 DB 0xED,0x71
+8E13 D9           	 EXX
+8E14 AF           	 XOR A
+8E15 5F           	 LD E,A
+8E16 D9           	 EXX
+8E17 ED 51        	 OUT (C),D
+8E19 C3 00 95     	 JP complete
+                 	bridge_86:
+8E1C ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8E1E D9           	 EXX
+8E1F 3E 00        	 LD A,0
+8E21 03           	 INC BC
+8E22 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8E24 01 FD 7F     	 LD BC,0x7FFD
+8E27 3E 10        	 LD A,16
+8E29 D3 FE        	 OUT (0xFE),A
+                 	descriptor_86:
+8E2B 11 C0 18     	 LD DE,0x18C0
+8E2E 3E 00        	 LD A,0
+8E30 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8E32 ED 51        	 OUT (C),D
+8E34 D9           	 EXX
+8E35 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8E37 D9           	 EXX
+8E38 53           	 LD D,E
+8E39 D9           	 EXX
+8E3A 00           	 NOP
+8E3B ED 51        	 OUT (C),D
+8E3D D9           	 EXX
+8E3E AF           	 XOR A
+8E3F 5F           	 LD E,A
+8E40 D9           	 EXX
+8E41 71           	 DB 0xED,0x71
+8E43 C3 00 95     	 JP complete
+                 	bridge_87:
+8E46 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8E48 D9           	 EXX
+8E49 3E 00        	 LD A,0
+8E4B 03           	 INC BC
+8E4C D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8E4E 01 FD 7F     	 LD BC,0x7FFD
+8E51 3E 10        	 LD A,16
+8E53 D3 FE        	 OUT (0xFE),A
+                 	descriptor_87:
+8E55 11 C0 18     	 LD DE,0x18C0
+8E58 3E 00        	 LD A,0
+8E5A D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8E5C ED 51        	 OUT (C),D
+8E5E D9           	 EXX
+8E5F ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8E61 D9           	 EXX
+8E62 53           	 LD D,E
+8E63 D9           	 EXX
+8E64 00           	 NOP
+8E65 ED 51        	 OUT (C),D
+8E67 D9           	 EXX
+8E68 AF           	 XOR A
+8E69 5F           	 LD E,A
+8E6A D9           	 EXX
+8E6B ED 51        	 OUT (C),D
+8E6D C3 00 95     	 JP complete
+                 	bridge_88:
+8E70 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8E72 D9           	 EXX
+8E73 3E 00        	 LD A,0
+8E75 03           	 INC BC
+8E76 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8E78 01 FD 7F     	 LD BC,0x7FFD
+8E7B 3E 10        	 LD A,16
+8E7D D3 FE        	 OUT (0xFE),A
+                 	descriptor_88:
+8E7F 11 C0 18     	 LD DE,0x18C0
+8E82 3E 10        	 LD A,16
+8E84 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8E86 ED 51        	 OUT (C),D
+8E88 D9           	 EXX
+8E89 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8E8B D9           	 EXX
+8E8C 53           	 LD D,E
+8E8D D9           	 EXX
+8E8E 00           	 NOP
+8E8F 71           	 DB 0xED,0x71
+8E91 D9           	 EXX
+8E92 AF           	 XOR A
+8E93 5F           	 LD E,A
+8E94 D9           	 EXX
+8E95 71           	 DB 0xED,0x71
+8E97 C3 00 95     	 JP complete
+                 	bridge_89:
+8E9A ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8E9C D9           	 EXX
+8E9D 3E 00        	 LD A,0
+8E9F 03           	 INC BC
+8EA0 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8EA2 01 FD 7F     	 LD BC,0x7FFD
+8EA5 3E 10        	 LD A,16
+8EA7 D3 FE        	 OUT (0xFE),A
+                 	descriptor_89:
+8EA9 11 C0 18     	 LD DE,0x18C0
+8EAC 3E 10        	 LD A,16
+8EAE D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8EB0 ED 51        	 OUT (C),D
+8EB2 D9           	 EXX
+8EB3 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8EB5 D9           	 EXX
+8EB6 53           	 LD D,E
+8EB7 D9           	 EXX
+8EB8 00           	 NOP
+8EB9 71           	 DB 0xED,0x71
+8EBB D9           	 EXX
+8EBC AF           	 XOR A
+8EBD 5F           	 LD E,A
+8EBE D9           	 EXX
+8EBF ED 51        	 OUT (C),D
+8EC1 C3 00 95     	 JP complete
+                 	bridge_90:
+8EC4 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8EC6 D9           	 EXX
+8EC7 3E 00        	 LD A,0
+8EC9 03           	 INC BC
+8ECA D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8ECC 01 FD 7F     	 LD BC,0x7FFD
+8ECF 3E 10        	 LD A,16
+8ED1 D3 FE        	 OUT (0xFE),A
+                 	descriptor_90:
+8ED3 11 C0 18     	 LD DE,0x18C0
+8ED6 3E 10        	 LD A,16
+8ED8 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8EDA ED 51        	 OUT (C),D
+8EDC D9           	 EXX
+8EDD 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8EDF D9           	 EXX
+8EE0 53           	 LD D,E
+8EE1 D9           	 EXX
+8EE2 00           	 NOP
+8EE3 ED 51        	 OUT (C),D
+8EE5 D9           	 EXX
+8EE6 AF           	 XOR A
+8EE7 5F           	 LD E,A
+8EE8 D9           	 EXX
+8EE9 71           	 DB 0xED,0x71
+8EEB C3 00 95     	 JP complete
+                 	bridge_91:
+8EEE ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8EF0 D9           	 EXX
+8EF1 3E 00        	 LD A,0
+8EF3 03           	 INC BC
+8EF4 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8EF6 01 FD 7F     	 LD BC,0x7FFD
+8EF9 3E 10        	 LD A,16
+8EFB D3 FE        	 OUT (0xFE),A
+                 	descriptor_91:
+8EFD 11 C0 18     	 LD DE,0x18C0
+8F00 3E 10        	 LD A,16
+8F02 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8F04 ED 51        	 OUT (C),D
+8F06 D9           	 EXX
+8F07 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8F09 D9           	 EXX
+8F0A 53           	 LD D,E
+8F0B D9           	 EXX
+8F0C 00           	 NOP
+8F0D ED 51        	 OUT (C),D
+8F0F D9           	 EXX
+8F10 AF           	 XOR A
+8F11 5F           	 LD E,A
+8F12 D9           	 EXX
+8F13 ED 51        	 OUT (C),D
+8F15 C3 00 95     	 JP complete
+                 	bridge_92:
+8F18 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8F1A D9           	 EXX
+8F1B 3E 00        	 LD A,0
+8F1D 03           	 INC BC
+8F1E D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8F20 01 FD 7F     	 LD BC,0x7FFD
+8F23 3E 10        	 LD A,16
+8F25 D3 FE        	 OUT (0xFE),A
+                 	descriptor_92:
+8F27 11 C0 18     	 LD DE,0x18C0
+8F2A 3E 10        	 LD A,16
+8F2C D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8F2E ED 51        	 OUT (C),D
+8F30 D9           	 EXX
+8F31 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8F33 D9           	 EXX
+8F34 53           	 LD D,E
+8F35 D9           	 EXX
+8F36 00           	 NOP
+8F37 71           	 DB 0xED,0x71
+8F39 D9           	 EXX
+8F3A AF           	 XOR A
+8F3B 5F           	 LD E,A
+8F3C D9           	 EXX
+8F3D 71           	 DB 0xED,0x71
+8F3F C3 00 95     	 JP complete
+                 	bridge_93:
+8F42 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8F44 D9           	 EXX
+8F45 3E 00        	 LD A,0
+8F47 03           	 INC BC
+8F48 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8F4A 01 FD 7F     	 LD BC,0x7FFD
+8F4D 3E 10        	 LD A,16
+8F4F D3 FE        	 OUT (0xFE),A
+                 	descriptor_93:
+8F51 11 C0 18     	 LD DE,0x18C0
+8F54 3E 10        	 LD A,16
+8F56 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8F58 ED 51        	 OUT (C),D
+8F5A D9           	 EXX
+8F5B ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8F5D D9           	 EXX
+8F5E 53           	 LD D,E
+8F5F D9           	 EXX
+8F60 00           	 NOP
+8F61 71           	 DB 0xED,0x71
+8F63 D9           	 EXX
+8F64 AF           	 XOR A
+8F65 5F           	 LD E,A
+8F66 D9           	 EXX
+8F67 ED 51        	 OUT (C),D
+8F69 C3 00 95     	 JP complete
+                 	bridge_94:
+8F6C ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8F6E D9           	 EXX
+8F6F 3E 00        	 LD A,0
+8F71 03           	 INC BC
+8F72 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8F74 01 FD 7F     	 LD BC,0x7FFD
+8F77 3E 10        	 LD A,16
+8F79 D3 FE        	 OUT (0xFE),A
+                 	descriptor_94:
+8F7B 11 C0 18     	 LD DE,0x18C0
+8F7E 3E 10        	 LD A,16
+8F80 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8F82 ED 51        	 OUT (C),D
+8F84 D9           	 EXX
+8F85 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8F87 D9           	 EXX
+8F88 53           	 LD D,E
+8F89 D9           	 EXX
+8F8A 00           	 NOP
+8F8B ED 51        	 OUT (C),D
+8F8D D9           	 EXX
+8F8E AF           	 XOR A
+8F8F 5F           	 LD E,A
+8F90 D9           	 EXX
+8F91 71           	 DB 0xED,0x71
+8F93 C3 00 95     	 JP complete
+                 	bridge_95:
+8F96 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8F98 D9           	 EXX
+8F99 3E 00        	 LD A,0
+8F9B 03           	 INC BC
+8F9C D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8F9E 01 FD 7F     	 LD BC,0x7FFD
+8FA1 3E 10        	 LD A,16
+8FA3 D3 FE        	 OUT (0xFE),A
+                 	descriptor_95:
+8FA5 11 C0 18     	 LD DE,0x18C0
+8FA8 3E 10        	 LD A,16
+8FAA D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8FAC ED 51        	 OUT (C),D
+8FAE D9           	 EXX
+8FAF ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8FB1 D9           	 EXX
+8FB2 53           	 LD D,E
+8FB3 D9           	 EXX
+8FB4 00           	 NOP
+8FB5 ED 51        	 OUT (C),D
+8FB7 D9           	 EXX
+8FB8 AF           	 XOR A
+8FB9 5F           	 LD E,A
+8FBA D9           	 EXX
+8FBB ED 51        	 OUT (C),D
+8FBD C3 00 95     	 JP complete
+                 	bridge_96:
+8FC0 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8FC2 D9           	 EXX
+8FC3 3E 10        	 LD A,16
+8FC5 03           	 INC BC
+8FC6 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8FC8 01 FD 7F     	 LD BC,0x7FFD
+8FCB 3E 00        	 LD A,0
+8FCD D3 FE        	 OUT (0xFE),A
+                 	descriptor_96:
+8FCF 11 C0 18     	 LD DE,0x18C0
+8FD2 3E 00        	 LD A,0
+8FD4 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+8FD6 ED 51        	 OUT (C),D
+8FD8 D9           	 EXX
+8FD9 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+8FDB D9           	 EXX
+8FDC 53           	 LD D,E
+8FDD D9           	 EXX
+8FDE 00           	 NOP
+8FDF 71           	 DB 0xED,0x71
+8FE1 D9           	 EXX
+8FE2 AF           	 XOR A
+8FE3 5F           	 LD E,A
+8FE4 D9           	 EXX
+8FE5 71           	 DB 0xED,0x71
+8FE7 C3 00 95     	 JP complete
+                 	bridge_97:
+8FEA ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+8FEC D9           	 EXX
+8FED 3E 10        	 LD A,16
+8FEF 03           	 INC BC
+8FF0 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+8FF2 01 FD 7F     	 LD BC,0x7FFD
+8FF5 3E 00        	 LD A,0
+8FF7 D3 FE        	 OUT (0xFE),A
+                 	descriptor_97:
+8FF9 11 C0 18     	 LD DE,0x18C0
+8FFC 3E 00        	 LD A,0
+8FFE D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+9000 ED 51        	 OUT (C),D
+9002 D9           	 EXX
+9003 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9005 D9           	 EXX
+9006 53           	 LD D,E
+9007 D9           	 EXX
+9008 00           	 NOP
+9009 71           	 DB 0xED,0x71
+900B D9           	 EXX
+900C AF           	 XOR A
+900D 5F           	 LD E,A
+900E D9           	 EXX
+900F ED 51        	 OUT (C),D
+9011 C3 00 95     	 JP complete
+                 	bridge_98:
+9014 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9016 D9           	 EXX
+9017 3E 10        	 LD A,16
+9019 03           	 INC BC
+901A D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+901C 01 FD 7F     	 LD BC,0x7FFD
+901F 3E 00        	 LD A,0
+9021 D3 FE        	 OUT (0xFE),A
+                 	descriptor_98:
+9023 11 C0 18     	 LD DE,0x18C0
+9026 3E 00        	 LD A,0
+9028 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+902A ED 51        	 OUT (C),D
+902C D9           	 EXX
+902D 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+902F D9           	 EXX
+9030 53           	 LD D,E
+9031 D9           	 EXX
+9032 00           	 NOP
+9033 ED 51        	 OUT (C),D
+9035 D9           	 EXX
+9036 AF           	 XOR A
+9037 5F           	 LD E,A
+9038 D9           	 EXX
+9039 71           	 DB 0xED,0x71
+903B C3 00 95     	 JP complete
+                 	bridge_99:
+903E ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9040 D9           	 EXX
+9041 3E 10        	 LD A,16
+9043 03           	 INC BC
+9044 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9046 01 FD 7F     	 LD BC,0x7FFD
+9049 3E 00        	 LD A,0
+904B D3 FE        	 OUT (0xFE),A
+                 	descriptor_99:
+904D 11 C0 18     	 LD DE,0x18C0
+9050 3E 00        	 LD A,0
+9052 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+9054 ED 51        	 OUT (C),D
+9056 D9           	 EXX
+9057 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9059 D9           	 EXX
+905A 53           	 LD D,E
+905B D9           	 EXX
+905C 00           	 NOP
+905D ED 51        	 OUT (C),D
+905F D9           	 EXX
+9060 AF           	 XOR A
+9061 5F           	 LD E,A
+9062 D9           	 EXX
+9063 ED 51        	 OUT (C),D
+9065 C3 00 95     	 JP complete
+                 	bridge_100:
+9068 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+906A D9           	 EXX
+906B 3E 10        	 LD A,16
+906D 03           	 INC BC
+906E D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9070 01 FD 7F     	 LD BC,0x7FFD
+9073 3E 00        	 LD A,0
+9075 D3 FE        	 OUT (0xFE),A
+                 	descriptor_100:
+9077 11 C0 18     	 LD DE,0x18C0
+907A 3E 00        	 LD A,0
+907C D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+907E ED 51        	 OUT (C),D
+9080 D9           	 EXX
+9081 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9083 D9           	 EXX
+9084 53           	 LD D,E
+9085 D9           	 EXX
+9086 00           	 NOP
+9087 71           	 DB 0xED,0x71
+9089 D9           	 EXX
+908A AF           	 XOR A
+908B 5F           	 LD E,A
+908C D9           	 EXX
+908D 71           	 DB 0xED,0x71
+908F C3 00 95     	 JP complete
+                 	bridge_101:
+9092 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9094 D9           	 EXX
+9095 3E 10        	 LD A,16
+9097 03           	 INC BC
+9098 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+909A 01 FD 7F     	 LD BC,0x7FFD
+909D 3E 00        	 LD A,0
+909F D3 FE        	 OUT (0xFE),A
+                 	descriptor_101:
+90A1 11 C0 18     	 LD DE,0x18C0
+90A4 3E 00        	 LD A,0
+90A6 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+90A8 ED 51        	 OUT (C),D
+90AA D9           	 EXX
+90AB ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+90AD D9           	 EXX
+90AE 53           	 LD D,E
+90AF D9           	 EXX
+90B0 00           	 NOP
+90B1 71           	 DB 0xED,0x71
+90B3 D9           	 EXX
+90B4 AF           	 XOR A
+90B5 5F           	 LD E,A
+90B6 D9           	 EXX
+90B7 ED 51        	 OUT (C),D
+90B9 C3 00 95     	 JP complete
+                 	bridge_102:
+90BC ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+90BE D9           	 EXX
+90BF 3E 10        	 LD A,16
+90C1 03           	 INC BC
+90C2 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+90C4 01 FD 7F     	 LD BC,0x7FFD
+90C7 3E 00        	 LD A,0
+90C9 D3 FE        	 OUT (0xFE),A
+                 	descriptor_102:
+90CB 11 C0 18     	 LD DE,0x18C0
+90CE 3E 00        	 LD A,0
+90D0 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+90D2 ED 51        	 OUT (C),D
+90D4 D9           	 EXX
+90D5 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+90D7 D9           	 EXX
+90D8 53           	 LD D,E
+90D9 D9           	 EXX
+90DA 00           	 NOP
+90DB ED 51        	 OUT (C),D
+90DD D9           	 EXX
+90DE AF           	 XOR A
+90DF 5F           	 LD E,A
+90E0 D9           	 EXX
+90E1 71           	 DB 0xED,0x71
+90E3 C3 00 95     	 JP complete
+                 	bridge_103:
+90E6 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+90E8 D9           	 EXX
+90E9 3E 10        	 LD A,16
+90EB 03           	 INC BC
+90EC D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+90EE 01 FD 7F     	 LD BC,0x7FFD
+90F1 3E 00        	 LD A,0
+90F3 D3 FE        	 OUT (0xFE),A
+                 	descriptor_103:
+90F5 11 C0 18     	 LD DE,0x18C0
+90F8 3E 00        	 LD A,0
+90FA D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+90FC ED 51        	 OUT (C),D
+90FE D9           	 EXX
+90FF ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9101 D9           	 EXX
+9102 53           	 LD D,E
+9103 D9           	 EXX
+9104 00           	 NOP
+9105 ED 51        	 OUT (C),D
+9107 D9           	 EXX
+9108 AF           	 XOR A
+9109 5F           	 LD E,A
+910A D9           	 EXX
+910B ED 51        	 OUT (C),D
+910D C3 00 95     	 JP complete
+                 	bridge_104:
+9110 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9112 D9           	 EXX
+9113 3E 10        	 LD A,16
+9115 03           	 INC BC
+9116 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9118 01 FD 7F     	 LD BC,0x7FFD
+911B 3E 00        	 LD A,0
+911D D3 FE        	 OUT (0xFE),A
+                 	descriptor_104:
+911F 11 C0 18     	 LD DE,0x18C0
+9122 3E 10        	 LD A,16
+9124 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+9126 ED 51        	 OUT (C),D
+9128 D9           	 EXX
+9129 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+912B D9           	 EXX
+912C 53           	 LD D,E
+912D D9           	 EXX
+912E 00           	 NOP
+912F 71           	 DB 0xED,0x71
+9131 D9           	 EXX
+9132 AF           	 XOR A
+9133 5F           	 LD E,A
+9134 D9           	 EXX
+9135 71           	 DB 0xED,0x71
+9137 C3 00 95     	 JP complete
+                 	bridge_105:
+913A ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+913C D9           	 EXX
+913D 3E 10        	 LD A,16
+913F 03           	 INC BC
+9140 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9142 01 FD 7F     	 LD BC,0x7FFD
+9145 3E 00        	 LD A,0
+9147 D3 FE        	 OUT (0xFE),A
+                 	descriptor_105:
+9149 11 C0 18     	 LD DE,0x18C0
+914C 3E 10        	 LD A,16
+914E D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+9150 ED 51        	 OUT (C),D
+9152 D9           	 EXX
+9153 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9155 D9           	 EXX
+9156 53           	 LD D,E
+9157 D9           	 EXX
+9158 00           	 NOP
+9159 71           	 DB 0xED,0x71
+915B D9           	 EXX
+915C AF           	 XOR A
+915D 5F           	 LD E,A
+915E D9           	 EXX
+915F ED 51        	 OUT (C),D
+9161 C3 00 95     	 JP complete
+                 	bridge_106:
+9164 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9166 D9           	 EXX
+9167 3E 10        	 LD A,16
+9169 03           	 INC BC
+916A D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+916C 01 FD 7F     	 LD BC,0x7FFD
+916F 3E 00        	 LD A,0
+9171 D3 FE        	 OUT (0xFE),A
+                 	descriptor_106:
+9173 11 C0 18     	 LD DE,0x18C0
+9176 3E 10        	 LD A,16
+9178 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+917A ED 51        	 OUT (C),D
+917C D9           	 EXX
+917D 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+917F D9           	 EXX
+9180 53           	 LD D,E
+9181 D9           	 EXX
+9182 00           	 NOP
+9183 ED 51        	 OUT (C),D
+9185 D9           	 EXX
+9186 AF           	 XOR A
+9187 5F           	 LD E,A
+9188 D9           	 EXX
+9189 71           	 DB 0xED,0x71
+918B C3 00 95     	 JP complete
+                 	bridge_107:
+918E ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9190 D9           	 EXX
+9191 3E 10        	 LD A,16
+9193 03           	 INC BC
+9194 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9196 01 FD 7F     	 LD BC,0x7FFD
+9199 3E 00        	 LD A,0
+919B D3 FE        	 OUT (0xFE),A
+                 	descriptor_107:
+919D 11 C0 18     	 LD DE,0x18C0
+91A0 3E 10        	 LD A,16
+91A2 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+91A4 ED 51        	 OUT (C),D
+91A6 D9           	 EXX
+91A7 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+91A9 D9           	 EXX
+91AA 53           	 LD D,E
+91AB D9           	 EXX
+91AC 00           	 NOP
+91AD ED 51        	 OUT (C),D
+91AF D9           	 EXX
+91B0 AF           	 XOR A
+91B1 5F           	 LD E,A
+91B2 D9           	 EXX
+91B3 ED 51        	 OUT (C),D
+91B5 C3 00 95     	 JP complete
+                 	bridge_108:
+91B8 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+91BA D9           	 EXX
+91BB 3E 10        	 LD A,16
+91BD 03           	 INC BC
+91BE D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+91C0 01 FD 7F     	 LD BC,0x7FFD
+91C3 3E 00        	 LD A,0
+91C5 D3 FE        	 OUT (0xFE),A
+                 	descriptor_108:
+91C7 11 C0 18     	 LD DE,0x18C0
+91CA 3E 10        	 LD A,16
+91CC D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+91CE ED 51        	 OUT (C),D
+91D0 D9           	 EXX
+91D1 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+91D3 D9           	 EXX
+91D4 53           	 LD D,E
+91D5 D9           	 EXX
+91D6 00           	 NOP
+91D7 71           	 DB 0xED,0x71
+91D9 D9           	 EXX
+91DA AF           	 XOR A
+91DB 5F           	 LD E,A
+91DC D9           	 EXX
+91DD 71           	 DB 0xED,0x71
+91DF C3 00 95     	 JP complete
+                 	bridge_109:
+91E2 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+91E4 D9           	 EXX
+91E5 3E 10        	 LD A,16
+91E7 03           	 INC BC
+91E8 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+91EA 01 FD 7F     	 LD BC,0x7FFD
+91ED 3E 00        	 LD A,0
+91EF D3 FE        	 OUT (0xFE),A
+                 	descriptor_109:
+91F1 11 C0 18     	 LD DE,0x18C0
+91F4 3E 10        	 LD A,16
+91F6 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+91F8 ED 51        	 OUT (C),D
+91FA D9           	 EXX
+91FB ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+91FD D9           	 EXX
+91FE 53           	 LD D,E
+91FF D9           	 EXX
+9200 00           	 NOP
+9201 71           	 DB 0xED,0x71
+9203 D9           	 EXX
+9204 AF           	 XOR A
+9205 5F           	 LD E,A
+9206 D9           	 EXX
+9207 ED 51        	 OUT (C),D
+9209 C3 00 95     	 JP complete
+                 	bridge_110:
+920C ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+920E D9           	 EXX
+920F 3E 10        	 LD A,16
+9211 03           	 INC BC
+9212 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9214 01 FD 7F     	 LD BC,0x7FFD
+9217 3E 00        	 LD A,0
+9219 D3 FE        	 OUT (0xFE),A
+                 	descriptor_110:
+921B 11 C0 18     	 LD DE,0x18C0
+921E 3E 10        	 LD A,16
+9220 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+9222 ED 51        	 OUT (C),D
+9224 D9           	 EXX
+9225 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9227 D9           	 EXX
+9228 53           	 LD D,E
+9229 D9           	 EXX
+922A 00           	 NOP
+922B ED 51        	 OUT (C),D
+922D D9           	 EXX
+922E AF           	 XOR A
+922F 5F           	 LD E,A
+9230 D9           	 EXX
+9231 71           	 DB 0xED,0x71
+9233 C3 00 95     	 JP complete
+                 	bridge_111:
+9236 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9238 D9           	 EXX
+9239 3E 10        	 LD A,16
+923B 03           	 INC BC
+923C D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+923E 01 FD 7F     	 LD BC,0x7FFD
+9241 3E 00        	 LD A,0
+9243 D3 FE        	 OUT (0xFE),A
+                 	descriptor_111:
+9245 11 C0 18     	 LD DE,0x18C0
+9248 3E 10        	 LD A,16
+924A D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+924C ED 51        	 OUT (C),D
+924E D9           	 EXX
+924F ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9251 D9           	 EXX
+9252 53           	 LD D,E
+9253 D9           	 EXX
+9254 00           	 NOP
+9255 ED 51        	 OUT (C),D
+9257 D9           	 EXX
+9258 AF           	 XOR A
+9259 5F           	 LD E,A
+925A D9           	 EXX
+925B ED 51        	 OUT (C),D
+925D C3 00 95     	 JP complete
+                 	bridge_112:
+9260 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9262 D9           	 EXX
+9263 3E 10        	 LD A,16
+9265 03           	 INC BC
+9266 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9268 01 FD 7F     	 LD BC,0x7FFD
+926B 3E 10        	 LD A,16
+926D D3 FE        	 OUT (0xFE),A
+                 	descriptor_112:
+926F 11 C0 18     	 LD DE,0x18C0
+9272 3E 00        	 LD A,0
+9274 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+9276 ED 51        	 OUT (C),D
+9278 D9           	 EXX
+9279 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+927B D9           	 EXX
+927C 53           	 LD D,E
+927D D9           	 EXX
+927E 00           	 NOP
+927F 71           	 DB 0xED,0x71
+9281 D9           	 EXX
+9282 AF           	 XOR A
+9283 5F           	 LD E,A
+9284 D9           	 EXX
+9285 71           	 DB 0xED,0x71
+9287 C3 00 95     	 JP complete
+                 	bridge_113:
+928A ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+928C D9           	 EXX
+928D 3E 10        	 LD A,16
+928F 03           	 INC BC
+9290 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9292 01 FD 7F     	 LD BC,0x7FFD
+9295 3E 10        	 LD A,16
+9297 D3 FE        	 OUT (0xFE),A
+                 	descriptor_113:
+9299 11 C0 18     	 LD DE,0x18C0
+929C 3E 00        	 LD A,0
+929E D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+92A0 ED 51        	 OUT (C),D
+92A2 D9           	 EXX
+92A3 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+92A5 D9           	 EXX
+92A6 53           	 LD D,E
+92A7 D9           	 EXX
+92A8 00           	 NOP
+92A9 71           	 DB 0xED,0x71
+92AB D9           	 EXX
+92AC AF           	 XOR A
+92AD 5F           	 LD E,A
+92AE D9           	 EXX
+92AF ED 51        	 OUT (C),D
+92B1 C3 00 95     	 JP complete
+                 	bridge_114:
+92B4 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+92B6 D9           	 EXX
+92B7 3E 10        	 LD A,16
+92B9 03           	 INC BC
+92BA D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+92BC 01 FD 7F     	 LD BC,0x7FFD
+92BF 3E 10        	 LD A,16
+92C1 D3 FE        	 OUT (0xFE),A
+                 	descriptor_114:
+92C3 11 C0 18     	 LD DE,0x18C0
+92C6 3E 00        	 LD A,0
+92C8 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+92CA ED 51        	 OUT (C),D
+92CC D9           	 EXX
+92CD 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+92CF D9           	 EXX
+92D0 53           	 LD D,E
+92D1 D9           	 EXX
+92D2 00           	 NOP
+92D3 ED 51        	 OUT (C),D
+92D5 D9           	 EXX
+92D6 AF           	 XOR A
+92D7 5F           	 LD E,A
+92D8 D9           	 EXX
+92D9 71           	 DB 0xED,0x71
+92DB C3 00 95     	 JP complete
+                 	bridge_115:
+92DE ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+92E0 D9           	 EXX
+92E1 3E 10        	 LD A,16
+92E3 03           	 INC BC
+92E4 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+92E6 01 FD 7F     	 LD BC,0x7FFD
+92E9 3E 10        	 LD A,16
+92EB D3 FE        	 OUT (0xFE),A
+                 	descriptor_115:
+92ED 11 C0 18     	 LD DE,0x18C0
+92F0 3E 00        	 LD A,0
+92F2 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+92F4 ED 51        	 OUT (C),D
+92F6 D9           	 EXX
+92F7 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+92F9 D9           	 EXX
+92FA 53           	 LD D,E
+92FB D9           	 EXX
+92FC 00           	 NOP
+92FD ED 51        	 OUT (C),D
+92FF D9           	 EXX
+9300 AF           	 XOR A
+9301 5F           	 LD E,A
+9302 D9           	 EXX
+9303 ED 51        	 OUT (C),D
+9305 C3 00 95     	 JP complete
+                 	bridge_116:
+9308 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+930A D9           	 EXX
+930B 3E 10        	 LD A,16
+930D 03           	 INC BC
+930E D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9310 01 FD 7F     	 LD BC,0x7FFD
+9313 3E 10        	 LD A,16
+9315 D3 FE        	 OUT (0xFE),A
+                 	descriptor_116:
+9317 11 C0 18     	 LD DE,0x18C0
+931A 3E 00        	 LD A,0
+931C D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+931E ED 51        	 OUT (C),D
+9320 D9           	 EXX
+9321 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9323 D9           	 EXX
+9324 53           	 LD D,E
+9325 D9           	 EXX
+9326 00           	 NOP
+9327 71           	 DB 0xED,0x71
+9329 D9           	 EXX
+932A AF           	 XOR A
+932B 5F           	 LD E,A
+932C D9           	 EXX
+932D 71           	 DB 0xED,0x71
+932F C3 00 95     	 JP complete
+                 	bridge_117:
+9332 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9334 D9           	 EXX
+9335 3E 10        	 LD A,16
+9337 03           	 INC BC
+9338 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+933A 01 FD 7F     	 LD BC,0x7FFD
+933D 3E 10        	 LD A,16
+933F D3 FE        	 OUT (0xFE),A
+                 	descriptor_117:
+9341 11 C0 18     	 LD DE,0x18C0
+9344 3E 00        	 LD A,0
+9346 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+9348 ED 51        	 OUT (C),D
+934A D9           	 EXX
+934B ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+934D D9           	 EXX
+934E 53           	 LD D,E
+934F D9           	 EXX
+9350 00           	 NOP
+9351 71           	 DB 0xED,0x71
+9353 D9           	 EXX
+9354 AF           	 XOR A
+9355 5F           	 LD E,A
+9356 D9           	 EXX
+9357 ED 51        	 OUT (C),D
+9359 C3 00 95     	 JP complete
+                 	bridge_118:
+935C ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+935E D9           	 EXX
+935F 3E 10        	 LD A,16
+9361 03           	 INC BC
+9362 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9364 01 FD 7F     	 LD BC,0x7FFD
+9367 3E 10        	 LD A,16
+9369 D3 FE        	 OUT (0xFE),A
+                 	descriptor_118:
+936B 11 C0 18     	 LD DE,0x18C0
+936E 3E 00        	 LD A,0
+9370 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+9372 ED 51        	 OUT (C),D
+9374 D9           	 EXX
+9375 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9377 D9           	 EXX
+9378 53           	 LD D,E
+9379 D9           	 EXX
+937A 00           	 NOP
+937B ED 51        	 OUT (C),D
+937D D9           	 EXX
+937E AF           	 XOR A
+937F 5F           	 LD E,A
+9380 D9           	 EXX
+9381 71           	 DB 0xED,0x71
+9383 C3 00 95     	 JP complete
+                 	bridge_119:
+9386 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9388 D9           	 EXX
+9389 3E 10        	 LD A,16
+938B 03           	 INC BC
+938C D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+938E 01 FD 7F     	 LD BC,0x7FFD
+9391 3E 10        	 LD A,16
+9393 D3 FE        	 OUT (0xFE),A
+                 	descriptor_119:
+9395 11 C0 18     	 LD DE,0x18C0
+9398 3E 00        	 LD A,0
+939A D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+939C ED 51        	 OUT (C),D
+939E D9           	 EXX
+939F ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+93A1 D9           	 EXX
+93A2 53           	 LD D,E
+93A3 D9           	 EXX
+93A4 00           	 NOP
+93A5 ED 51        	 OUT (C),D
+93A7 D9           	 EXX
+93A8 AF           	 XOR A
+93A9 5F           	 LD E,A
+93AA D9           	 EXX
+93AB ED 51        	 OUT (C),D
+93AD C3 00 95     	 JP complete
+                 	bridge_120:
+93B0 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+93B2 D9           	 EXX
+93B3 3E 10        	 LD A,16
+93B5 03           	 INC BC
+93B6 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+93B8 01 FD 7F     	 LD BC,0x7FFD
+93BB 3E 10        	 LD A,16
+93BD D3 FE        	 OUT (0xFE),A
+                 	descriptor_120:
+93BF 11 C0 18     	 LD DE,0x18C0
+93C2 3E 10        	 LD A,16
+93C4 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+93C6 ED 51        	 OUT (C),D
+93C8 D9           	 EXX
+93C9 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+93CB D9           	 EXX
+93CC 53           	 LD D,E
+93CD D9           	 EXX
+93CE 00           	 NOP
+93CF 71           	 DB 0xED,0x71
+93D1 D9           	 EXX
+93D2 AF           	 XOR A
+93D3 5F           	 LD E,A
+93D4 D9           	 EXX
+93D5 71           	 DB 0xED,0x71
+93D7 C3 00 95     	 JP complete
+                 	bridge_121:
+93DA ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+93DC D9           	 EXX
+93DD 3E 10        	 LD A,16
+93DF 03           	 INC BC
+93E0 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+93E2 01 FD 7F     	 LD BC,0x7FFD
+93E5 3E 10        	 LD A,16
+93E7 D3 FE        	 OUT (0xFE),A
+                 	descriptor_121:
+93E9 11 C0 18     	 LD DE,0x18C0
+93EC 3E 10        	 LD A,16
+93EE D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+93F0 ED 51        	 OUT (C),D
+93F2 D9           	 EXX
+93F3 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+93F5 D9           	 EXX
+93F6 53           	 LD D,E
+93F7 D9           	 EXX
+93F8 00           	 NOP
+93F9 71           	 DB 0xED,0x71
+93FB D9           	 EXX
+93FC AF           	 XOR A
+93FD 5F           	 LD E,A
+93FE D9           	 EXX
+93FF ED 51        	 OUT (C),D
+9401 C3 00 95     	 JP complete
+                 	bridge_122:
+9404 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9406 D9           	 EXX
+9407 3E 10        	 LD A,16
+9409 03           	 INC BC
+940A D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+940C 01 FD 7F     	 LD BC,0x7FFD
+940F 3E 10        	 LD A,16
+9411 D3 FE        	 OUT (0xFE),A
+                 	descriptor_122:
+9413 11 C0 18     	 LD DE,0x18C0
+9416 3E 10        	 LD A,16
+9418 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+941A ED 51        	 OUT (C),D
+941C D9           	 EXX
+941D 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+941F D9           	 EXX
+9420 53           	 LD D,E
+9421 D9           	 EXX
+9422 00           	 NOP
+9423 ED 51        	 OUT (C),D
+9425 D9           	 EXX
+9426 AF           	 XOR A
+9427 5F           	 LD E,A
+9428 D9           	 EXX
+9429 71           	 DB 0xED,0x71
+942B C3 00 95     	 JP complete
+                 	bridge_123:
+942E ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9430 D9           	 EXX
+9431 3E 10        	 LD A,16
+9433 03           	 INC BC
+9434 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9436 01 FD 7F     	 LD BC,0x7FFD
+9439 3E 10        	 LD A,16
+943B D3 FE        	 OUT (0xFE),A
+                 	descriptor_123:
+943D 11 C0 18     	 LD DE,0x18C0
+9440 3E 10        	 LD A,16
+9442 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+9444 ED 51        	 OUT (C),D
+9446 D9           	 EXX
+9447 71           	 DB 0xED,0x71
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9449 D9           	 EXX
+944A 53           	 LD D,E
+944B D9           	 EXX
+944C 00           	 NOP
+944D ED 51        	 OUT (C),D
+944F D9           	 EXX
+9450 AF           	 XOR A
+9451 5F           	 LD E,A
+9452 D9           	 EXX
+9453 ED 51        	 OUT (C),D
+9455 C3 00 95     	 JP complete
+                 	bridge_124:
+9458 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+945A D9           	 EXX
+945B 3E 10        	 LD A,16
+945D 03           	 INC BC
+945E D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+9460 01 FD 7F     	 LD BC,0x7FFD
+9463 3E 10        	 LD A,16
+9465 D3 FE        	 OUT (0xFE),A
+                 	descriptor_124:
+9467 11 C0 18     	 LD DE,0x18C0
+946A 3E 10        	 LD A,16
+946C D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+946E ED 51        	 OUT (C),D
+9470 D9           	 EXX
+9471 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+9473 D9           	 EXX
+9474 53           	 LD D,E
+9475 D9           	 EXX
+9476 00           	 NOP
+9477 71           	 DB 0xED,0x71
+9479 D9           	 EXX
+947A AF           	 XOR A
+947B 5F           	 LD E,A
+947C D9           	 EXX
+947D 71           	 DB 0xED,0x71
+947F C3 00 95     	 JP complete
+                 	bridge_125:
+9482 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+9484 D9           	 EXX
+9485 3E 10        	 LD A,16
+9487 03           	 INC BC
+9488 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+948A 01 FD 7F     	 LD BC,0x7FFD
+948D 3E 10        	 LD A,16
+948F D3 FE        	 OUT (0xFE),A
+                 	descriptor_125:
+9491 11 C0 18     	 LD DE,0x18C0
+9494 3E 10        	 LD A,16
+9496 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+9498 ED 51        	 OUT (C),D
+949A D9           	 EXX
+949B ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+949D D9           	 EXX
+949E 53           	 LD D,E
+949F D9           	 EXX
+94A0 00           	 NOP
+94A1 71           	 DB 0xED,0x71
+94A3 D9           	 EXX
+94A4 AF           	 XOR A
+94A5 5F           	 LD E,A
+94A6 D9           	 EXX
+94A7 ED 51        	 OUT (C),D
+94A9 C3 00 95     	 JP complete
+                 	bridge_126:
+94AC ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+94AE D9           	 EXX
+94AF 3E 10        	 LD A,16
+94B1 03           	 INC BC
+94B2 D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+94B4 01 FD 7F     	 LD BC,0x7FFD
+94B7 3E 10        	 LD A,16
+94B9 D3 FE        	 OUT (0xFE),A
+                 	descriptor_126:
+94BB 11 C0 18     	 LD DE,0x18C0
+94BE 3E 10        	 LD A,16
+94C0 D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+94C2 ED 51        	 OUT (C),D
+94C4 D9           	 EXX
+94C5 ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+94C7 D9           	 EXX
+94C8 53           	 LD D,E
+94C9 D9           	 EXX
+94CA 00           	 NOP
+94CB ED 51        	 OUT (C),D
+94CD D9           	 EXX
+94CE AF           	 XOR A
+94CF 5F           	 LD E,A
+94D0 D9           	 EXX
+94D1 71           	 DB 0xED,0x71
+94D3 C3 00 95     	 JP complete
+                 	bridge_127:
+94D6 ED 51        	 OUT (C),D
+                 	 ; Switch to dead decoder scratches; INC BC is harmless padding.
+94D8 D9           	 EXX
+94D9 3E 10        	 LD A,16
+94DB 03           	 INC BC
+94DC D3 FE        	 OUT (0xFE),A
+                 	 ; The two ten-T loads pair with the next constant-bit seven-T load.
+94DE 01 FD 7F     	 LD BC,0x7FFD
+94E1 3E 10        	 LD A,16
+94E3 D3 FE        	 OUT (0xFE),A
+                 	descriptor_127:
+94E5 11 C0 18     	 LD DE,0x18C0
+94E8 3E 10        	 LD A,16
+94EA D3 FE        	 OUT (0xFE),A
+                 	 ; This page OUT is not a speaker write; resume the main output registers.
+94EC ED 51        	 OUT (C),D
+94EE D9           	 EXX
+94EF ED 51        	 OUT (C),D
+                 	 ; Restore the source cursor while preserving ALT HL and all main pairs.
+94F1 D9           	 EXX
+94F2 53           	 LD D,E
+94F3 D9           	 EXX
+94F4 00           	 NOP
+94F5 ED 51        	 OUT (C),D
+94F7 D9           	 EXX
+94F8 AF           	 XOR A
+94F9 5F           	 LD E,A
+94FA D9           	 EXX
+94FB ED 51        	 OUT (C),D
+94FD C3 00 95     	 JP complete
+                 	complete:
+9500 00           	 NOP
