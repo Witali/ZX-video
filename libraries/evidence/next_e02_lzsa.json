@@ -1,0 +1,207 @@
+{
+  "date": "2026-10-20",
+  "stage": "E02",
+  "complete": true,
+  "accepted": false,
+  "release": false,
+  "baseline_revision": "9fbd9ce7",
+  "observation_head": "9fbd9ce72facfde87f837198609dba58c87f8e8f",
+  "public_changes": 0,
+  "source_sha256_lf": {
+    "libraries/lzsa/src/lzsa/wide.py": "3cf33e89d78586fb6c387a7e909d42bf90d7049cc0ca4922397ec7816d9029e5",
+    "libraries/lzsa/src/lzsa/hybrid.py": "73566fac896c0c67e5d1881c2a9cddc00b512efc75d61258a8f9b44c734634c7",
+    "libraries/lzsa/src/lzsa/_wide_kernels.py": "cdd98fd57309335948d23b64ce88bba80efcc6e33862a3efe3dc60001e46c114",
+    "libraries/lzsa/src/lzsa/_z80.py": "adc4ffed86e4b934ab356bba80349b0db211f3e75629700de51fd5557035217d",
+    "libraries/lzsa/src/lzsa/codec.py": "fd4bbded59d53da295d3f24e00fa853ef9ea240286b816e00a280f53ce49d775",
+    "libraries/tests/next_e02_profiles.py": "07016bcfbd8c891891dc331c41198f830612c49368d6b93cb5a0c07482813c38",
+    "libraries/tests/next_e02_measure.py": "7b78ae7863adfab541c04cfca3bd4c047ea043aac631f1e14d767d6490e5d81f",
+    "libraries/tests/next_e02_tests.py": "e072ceefe333a6820d106ff652b3f35bcfa28e61dab6936ca722119276e951b7",
+    "libraries/tests/profile_next_lzsa.py": "f480b696eb404691152e5a8a1779717b2d4784a9c14c34f5329a86d39a3bd70b",
+    "libraries/tests/native_block.py": "94bb095d918546ee3e54af1088e814f8442ca26ce65efd519574e72f1f104b3e",
+    "libraries/tests/profile_branch_mix.py": "e0721a08dfa090ac160a879bb6e4a63815428d1cda29f6582b8ba6519318c9ac",
+    "emulator/cpu.py": "4a43446648f032ba442025e8804582cef661435e1ef199f0c4715fed78d1128e",
+    "libraries/Z80_TIMINGS.md": "bc99e811aaa00f50754e44c2e5b51eb1cd4a42bbdcae2a4cc01e216c0fdad18d"
+  },
+  "evidence_sha256": {
+    "libraries/evidence/next_e00_lzsa_full.json.gz": "77fc0cb9fb485e1dfb68a676696965857b61422966c7d41fb6770f212e98e2b5",
+    "libraries/evidence/next_e01_lzsa_full.json.gz": "ff348a5337de3cd21890becdc1d2048398b62aabf23a472e8ab2c180cb3a8ebb",
+    "libraries/evidence/next_e01_lzsa.json": "5c2fb65ec4a880b4edfb41c598c2596ccfad32f89cd4942cb1f6be46b7bfd038",
+    "emulator/evidence/verification.json": "c489eb758673166f4389057c11ba237da029c5757e6044669cf5601f31688cf5",
+    "emulator/evidence/native_build.json": "d250038dd178f3b2c4d4fcca5f111be79963acca6516d62faf28cbe5be3cdc14"
+  },
+  "backend": {
+    "name": "qualified z80-tester C flat guarded",
+    "dll_sha256": "21e89129d040c6c29112c8977b5cb28573ae09f75632f5b993308204a76b2db8",
+    "dll_path": ".tmp/codec-cpu-qualified/codec_cpu.dll",
+    "abi": 2,
+    "build_source_sha256_lf": {
+      "emulator/src/codec_cpu.c": "90d505995a3fb8b90de6610da034c3eac8d6b3470764f7400988d7d849503a38",
+      "emulator/src/spectrum128.c": "c64006d598812c7ca602354ec4926a80b2bc504282bbf5fe867c3ce9f7af58b3",
+      "emulator/src/codec_cpu.h": "0d51a919e5a82b9ae093ad850ae8bbc103b4f03c4d14cb309b786f7c603e0bcb",
+      "emulator/build_codec_cpu.ps1": "ebfc8da937450cd3e4b718360bb0f5ecf7e5db4fa0f37d4e10b1f9043e6740dc",
+      "emulator/src/spectrum128.h": "41667e9c381b67d1cc01e30cef3f7efd041e0d832b452355238f2e4ef222dd74",
+      "emulator/vendor/z80_tester/fast_slices.h": "e03403200ef6dd09b3aee1013a52ef0ba240b01ce9c6a3ed5c7f546cbbc9f85f",
+      "emulator/vendor/z80_tester/LICENSE": "3835adbe3dfab643eddebb5c010dd5440d09d709a5dfd718a7212f21798859cc",
+      "emulator/vendor/z80_tester/provenance.json": "1e22746d14a56bcdeb11431a611716b4bcbba201c78fbbb70193ab26ddcc52f4",
+      "emulator/vendor/z80_tester/q_flags.h": "3217faaa0375b8dd5482587082cfed352c67b1395de975c15ef0f72350cd443f",
+      "emulator/vendor/z80_tester/README.md": "ee0530ead46a1fa5356d66fa6430a25aa501907a2784a271b08d0e617eb76eef",
+      "emulator/vendor/z80_tester/z80.h": "6ca70ffd91b1bdbaf00f7a41e7092b326145fd1c95dcdd7bb01183370de734f3",
+      "emulator/tools/generate_fast_decoder.py": "e2b0035bc68dde146d0eee733c8f615fc9cc32621894d0030a5fa506e5d7e49d",
+      "emulator/tools/generate_q_table.ps1": "ffa3e4de8fdb1c22f895b21652839834c5b8b2d01cb2a374ff027ca17a9d590b"
+    },
+    "qualification": "emulator/evidence/verification.json",
+    "contention": false
+  },
+  "helper_exit_model": {
+    "bytes": 45,
+    "call_sites": 64,
+    "returns": 3,
+    "return_offsets": [
+      27,
+      37,
+      44
+    ],
+    "real_calls": 4870,
+    "real_paths": {
+      "nibble": 4701,
+      "byte": 169,
+      "word": 0
+    },
+    "call_tstates": 17,
+    "ret_tstates": 10,
+    "real_call_ret_tstates": 131490,
+    "stack_bytes": 6,
+    "stack_floor": "caller return2 + saved caller HLprime2 + unchanged match PUSHHL2; removing helper return words cannot reduce total peak",
+    "direct_hl": {
+      "call_to_jp_delta_tstates": -7,
+      "return_sequence": "EXX;INC HL;INC HL;INC HL;INC HL;JP(HL)",
+      "return_sequence_bytes": 6,
+      "return_sequence_tstates": 32,
+      "continuation_exx_bytes": 1,
+      "continuation_exx_tstates": 4,
+      "service_delta_bytes": 79,
+      "per_call_delta_tstates": 19
+    },
+    "hot_clone": {
+      "token": 248,
+      "context": "body_224_1",
+      "inline_hot_bytes": 27,
+      "cold_call_jump_bytes": 6,
+      "replaced_call_bytes": 3,
+      "service_delta_bytes": 30,
+      "nibble_delta_tstates": -27,
+      "cold_delta_tstates": 10,
+      "optimistic_growth_floor_bytes": 24
+    },
+    "shared_tail": {
+      "replaced_cold_suffix_bytes": 3,
+      "jr_bytes": 2,
+      "service_delta_bytes": -2,
+      "nibble_delta_tstates": 0,
+      "cold_delta_tstates": 12
+    },
+    "clone_plus_tail_lower_service_delta_bytes": 28
+  },
+  "setup_note": "An initial attempt used the unusable unqualified default DLL alias and stopped before any replay; the explicit qualified DLL is authenticated here.",
+  "preliminary_run_note": "An initial screen was interrupted after baseline675 and two candidate675 sets to correct inherited nominal/variant metadata. Target instruction substitutions were unchanged; the final complete matrix below was rerun with correct test-only metadata.",
+  "unperformed": [
+    "IRQ/in-place/relocated runtime promotion matrix: every candidate fails speed+service acceptance",
+    "coroutine/guarded input wrappers",
+    "physical disk/ROM/ULA/movie timing"
+  ],
+  "decision": "All three bounded constructions rejected; keep E01 public decoder unchanged.",
+  "c_baseline_frozen_cases": 675,
+  "c_candidate_frozen_cases": 2025,
+  "c_supplemental_cases": 16,
+  "kosarev_supplemental_cases": 16,
+  "public_sources_unchanged": true,
+  "baseline": {
+    "regions": [
+      {
+        "address": 32768,
+        "bytes": 9493,
+        "sha256": "899e5725f87a384cc77f5eb36c8888d1873d6d976719434fdcd0c5c7680d1c70"
+      }
+    ],
+    "service_memory_bytes": 9499,
+    "real_tstates": 14926306
+  },
+  "profiles": {
+    "direct-hl": {
+      "service_bytes": 9578,
+      "service_delta_bytes": 79,
+      "accepted": false,
+      "decision": "reject: service grows",
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 14926306,
+        "candidate_real_tstates": 15018836,
+        "real_delta_tstates": 92530,
+        "all_delta_tstates": 117819,
+        "faster_cases": 0,
+        "equal_cases": 16,
+        "slower_count": 659,
+        "slower_real_count": 21,
+        "maximum_regression_tstates": 5833,
+        "maximum_stack_bytes": 6,
+        "per_case_model_exact": true,
+        "guards_output_eof_registers_code_exact": true
+      },
+      "all256_alignments": true,
+      "maximum_irq_inclusive_bytes": 9852
+    },
+    "hot-clone": {
+      "service_bytes": 9529,
+      "service_delta_bytes": 30,
+      "accepted": false,
+      "decision": "reject: service grows",
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 14926306,
+        "candidate_real_tstates": 14913435,
+        "real_delta_tstates": -12871,
+        "all_delta_tstates": -12925,
+        "faster_cases": 23,
+        "equal_cases": 652,
+        "slower_count": 0,
+        "slower_real_count": 0,
+        "maximum_regression_tstates": 0,
+        "maximum_stack_bytes": 6,
+        "per_case_model_exact": true,
+        "guards_output_eof_registers_code_exact": true
+      },
+      "all256_alignments": true,
+      "maximum_irq_inclusive_bytes": 9803
+    },
+    "shared-tail": {
+      "service_bytes": 9497,
+      "service_delta_bytes": -2,
+      "accepted": false,
+      "decision": "reject: real decode CPU grows",
+      "summary": {
+        "cases": 675,
+        "real_cases": 21,
+        "baseline_real_tstates": 14926306,
+        "candidate_real_tstates": 14928334,
+        "real_delta_tstates": 2028,
+        "all_delta_tstates": 14832,
+        "faster_cases": 0,
+        "equal_cases": 18,
+        "slower_count": 657,
+        "slower_real_count": 21,
+        "maximum_regression_tstates": 228,
+        "maximum_stack_bytes": 6,
+        "per_case_model_exact": true,
+        "guards_output_eof_registers_code_exact": true
+      },
+      "all256_alignments": true,
+      "maximum_irq_inclusive_bytes": 9771
+    }
+  },
+  "full_evidence": {
+    "path": "libraries/evidence/next_e02_lzsa_full.json.gz",
+    "sha256": "5d9007d50c9a7ff5268705f3c01d99cf1753700f9fe68d5f40ad7ec8df185dec"
+  }
+}

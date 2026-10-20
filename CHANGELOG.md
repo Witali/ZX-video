@@ -1,5 +1,41 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Reject three measured LL3 continuation alternatives
+
+- **Objective/baseline:** Complete bounded E02 against accepted E01 Hybrid
+  fast with cold_match_extension=True at 9fbd9ce7: 9,499 aligned service B,
+  14,926,306 real T, unchanged 675 inputs. Remove long-literal CALL/RET work
+  only if complete CPU and service memory both fall. Keep public code exact.
+- **Constructions/results:** Actual emitted direct HL' continuation uses
+  9,578 B/15,018,836 T (+79 B/+92,530 T); one token248/body_224_1 hot clone
+  uses 9,529 B/14,913,435 T (+30 B/-12,871 T); shared cold LDIR/RET tails
+  use 9,497 B/14,928,334 T (-2 B/+2,028 T). All retain six caller-stack B:
+  removing helper return words cannot remove unchanged match PUSHHL's peak.
+  Direct return slows 659 cases (all 21 real), max 5,833 T; clone improves
+  23 and slows none; shared tail slows 657 (all 21 real), max 228 T. Save
+  every case/delta; a clone-plus-tail bound still grows by 28 B.
+- **Verification:** The qualified local C flat guarded core reproduces all
+  675 accepted baseline counts from original kosarev E01 evidence, then
+  executes 2,025 candidate cases with exact independent E00 helper-path
+  equations. Four extra word1/2 inputs force the cloned continuation in both
+  nibble phases; baseline/all three run on both cores (16 C+16 kosarev).
+  Data/EOF/cursors, permitted code writes, dirty offset, preserved pairs and
+  actual stack pass. All 768 low-byte alignment inventories include final
+  spans/labels/service. Three focused geometry/format tests pass and join
+  normal test discovery. Source/DLL/build/proof hashes are authenticated.
+- **Interrupted/setup attempts:** An initial unqualified default DLL alias
+  failed to load before any replay. Select the previously qualified artifact
+  explicitly. Interrupt a preliminary screen to correct inherited nominal
+  service metadata on test-only prototypes; instructions remain unchanged.
+  The final complete screen uses actual nominal sizes and frozen sources.
+- **Decision/coverage:** Reject all three; no public profile/default changes.
+  IRQ, minimum-safe compressed overlap and relocated runtime promotion gates
+  are explicitly unperformed because each candidate already fails speed or
+  memory. No wrapper/contention/disk/movie claim. E00/E01/E02 complete;
+  E03..E07 pending. [Decision and reproduction](libraries/NEXT_E02_LONG_LITERALS.md),
+  [summary](libraries/evidence/next_e02_lzsa.json),
+  [full native/alignment evidence](libraries/evidence/next_e02_lzsa_full.json.gz).
+
 ## 2026-10-20 — Publish smaller/faster E01 resident branch layouts
 
 - **Objective/baseline:** Complete E01 from the authenticated E00 profiles

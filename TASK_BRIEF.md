@@ -26,7 +26,8 @@ Faster/larger or smaller/slower experiments remain evidence, not promoted
 modes in this pass. [E00](libraries/NEXT_E00_BASELINE.md) is complete:
 946 ZX0 + 2,025 LZSA2 observer runs and 3,444 actual compressed-overlap
 plain/IRQ/relocation runs reproduce all frozen per-case counts. E01 is now
-complete; E02..E07 remain pending. [ZX0 E01](libraries/NEXT_E01_ZX0_BRANCHES.md)
+complete; E02 is completed as a rejection, E03..E07 remain pending.
+[ZX0 E01](libraries/NEXT_E01_ZX0_BRANCHES.md)
 has17,028 complete native replays plus six FFFFh probes for six branch
 candidates: -61/-13/-3 B and -339,934/-214,864/-970 real T, with no slower
 real block. Public `zx0.maximum_branches.build(prefix_cap=228|127,
@@ -39,8 +40,16 @@ Wide/Hybrid profile. All real blocks improve;586 non-real cases slow by at
 most37 T. Fast is9,499 B/14,926,306 T; compact4,998 B/15,030,346 T. Public
 wheel/API/export integration and74 library/24 selected toolkit tests bind
 current bytes to complete proofs; [68 linked calls](libraries/DECODER_VARIANTS.md)
-retain all50 older choices. Original defaults remain exact. Once the E01
-focused commit is made, proceed to bounded E02; E02..E07 are not completed.
+retain all50 older choices. Original defaults remain exact. E01 is committed
+as9fbd9ce7. [E02](libraries/NEXT_E02_LONG_LITERALS.md) measures three private
+LL3 alternatives: direct HL' return+79 B/+92,530 real T; hot clone+30 B/
+-12,871 T; shared cold tail-2 B/+2,028 T. Reject all three under the strict
+both-metrics rule; the accepted baseline remains E01. The qualified local
+C core reproduces675 frozen original-backend baseline counts, then2,025
+candidate cases with exact independent models and16+16 supplemental cross-
+core word1/2 cases. All768 static alignment builds/three geometry tests pass.
+IRQ/in-place/relocated runtime promotion gates are unperformed for rejected
+candidates. The next bounded experiment is E03; E03..E07 are not completed.
 
 The user additionally requests using/adapting the C CPU from
 `C:/Work/z80-tester` for Spectrum and developing it inside this project.
@@ -63,7 +72,7 @@ divergence. Local generators repair the initially stale fused slice artifact.
 Instruction-level ULA contention and live banked guards remain unqualified;
 `Spectrum128(contention=True).attach(cpu)` is rejected. Preserve original protected
 IRQ/overlap/wrapper gates. No GUI, disk/movie qualification or main merge/push
-is implied. Continue the remaining E02..E07 experiments after the E01 commit.
+is implied. Continue the remaining E03..E07 experiments after the E02 commit.
 
 ## Active codec goal — speed/service-memory frontier (2026-10-19)
 

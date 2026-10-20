@@ -2,7 +2,7 @@
 
 Research and testing plan, 2026-10-20. Baseline: `9c28b01f`, branch
 `codex/codec-speed-pass3`, worktree `.worktree/codec-speed-pass3`.
-Status: **E00/E01 complete; E02..E07 pending**.
+Status: **E00/E01/E02 complete; E03..E07 pending**.
 [ZX0 E01](NEXT_E01_ZX0_BRANCHES.md) completes six optional public branch
 layouts, bound to17,028 complete native replays plus six FFFFh probes.
 [LZSA2 E01](NEXT_E01_LZSA.md) completes12 optional cold-escape layouts with
@@ -11,6 +11,10 @@ layouts, bound to17,028 complete native replays plus six FFFFh probes.
 current APIs/wheels/exports to those proofs. All retain non-real regression
 lists and exact previous defaults. E02 starts from these accepted raw modes;
 baseline observer runs and predicted deltas alone do not qualify another gain.
+[E02](NEXT_E02_LONG_LITERALS.md) measures and rejects all three bounded LL3
+constructions: +79 B/+92,530 real T, +30 B/-12,871 T, -2 B/+2,028 T. All
+675 cases per candidate pass flat guarded screening and the independent timing
+model; none reduces both metrics. The accepted baseline stays E01.
 [E00 evidence and selected hypotheses](NEXT_E00_BASELINE.md) authenticate
 the fixed inputs, all target layouts and a new minimum-safe overlap runner.
 The additionally requested local Spectrum/C-core test platform is a separate
@@ -278,7 +282,8 @@ and full-movie deadlines remain a later application release gate.
    with its actual baseline, max difference and real/directed classification.
    IRQ cost remains separately reported.
 5. **Integration:** exact 31 legacy layouts/six resources, relevant library
-   tests (currently 61) and recorded 24 selected toolkit integration tests.
+   tests (74 at E01, plus three focused E02 geometry/format checks) and
+   recorded 24 selected toolkit integration tests.
    Add meaningful regressions only for changed behavior. Build isolated
    wheels, exercise exposed API/CLI and reconstruct ORG/DB exports. Keep the
    earlier 67-test evidence historical unless that selection is rerun.
