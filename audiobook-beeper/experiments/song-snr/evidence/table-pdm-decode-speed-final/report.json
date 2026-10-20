@@ -1,0 +1,1877 @@
+{
+  "complete": true,
+  "date": "2026-10-20",
+  "baseline_commit": "878c578e",
+  "baseline_source_sha256": "743304464f415024a289514b9cf49987d55af56524453a103509fc683d37a9ef",
+  "accelerated_source_sha256": "fad86342a2d5f53e9c97cd49c8bfc84ddc06d13d8153621c881ce32c91fa75e9",
+  "model_sha256": "a64c4c2b0b54b6a10d2f783867b3de4203fcbaa9a12cbb8ea8526401f7368632",
+  "host": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "processor": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD"
+  },
+  "builds": {
+    "baseline": {
+      "command": "cmd /d /s /c \"call \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x64 >nul && cl /nologo /O2 /std:c11 /fp:strict /MT kernel.c /link /OUT:kernel.exe\"",
+      "seconds": 3.664026499958709,
+      "returncode": 0,
+      "stdout": "kernel.c\r\n",
+      "stderr": "",
+      "binary_sha256": "863beb088bf5bc207787abf1d1d42a8dfd49c0fac9830dadfe4e9ad58d66c165",
+      "source_sha256": "743304464f415024a289514b9cf49987d55af56524453a103509fc683d37a9ef"
+    },
+    "accelerated": {
+      "command": "cmd /d /s /c \"call \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x64 >nul && cl /nologo /O2 /std:c11 /fp:strict /MT kernel.c /link /OUT:kernel.exe\"",
+      "seconds": 2.9473015000112355,
+      "returncode": 0,
+      "stdout": "kernel.c\r\n",
+      "stderr": "",
+      "binary_sha256": "5bd220e05ad56a31681f3791682adaf2730fb791ec51d21d6ebdc3725b7a63e8",
+      "source_sha256": "fad86342a2d5f53e9c97cd49c8bfc84ddc06d13d8153621c881ce32c91fa75e9"
+    }
+  },
+  "transition_probe": {
+    "build": {
+      "command": "cmd /d /s /c \"call \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x64 >nul && cl /nologo /O2 /std:c11 /fp:strict /LD /MT kernel.c /link /OUT:kernel.dll\"",
+      "seconds": 2.5434082000283524,
+      "returncode": 0,
+      "stdout": "kernel.c\r\n   ????????? ?????????? kernel.lib ? ?????? kernel.exp\r\n",
+      "stderr": "",
+      "binary_sha256": "cd1ba7aa1311491db197a775b7696cb630bb293b387cc3db85081993bb45dea3",
+      "source_sha256": "c4ae62a78eef3499bf2e088676e6707927adea6d0da42072f09c466b9844217a"
+    },
+    "transition_cells": 1424,
+    "boundary_cases": 14192,
+    "cases_sha256": "3c2aeef996cf5aeee8901a287a8805702a2073f306243b5c1169f36131b181b9",
+    "exact_shift_add_delta": true,
+    "exact_clamped_next_index": true,
+    "exact_overflow_rejection": true
+  },
+  "whole_streams": 18,
+  "original_samples_per_family": 1195520,
+  "all_whole_stream_files_byte_exact": true,
+  "rows": [
+    {
+      "family": "canonical",
+      "source": "silence",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "0f47ecf52af95b17e5b78e1ac181dc092897de95163da5d708eee4331918cf16",
+      "compressed_artifact_sha256": "653e3b63ea3ccf167043f636989c811c5c9f9742a24d90a481957cceb8e9173b",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "cb59bdbebbd6d5b648bdd9b57ae76f4ef6f787e4d156379bb506350523bd4c64"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "039e359873cbeeb52ea0b28a01dc0781912ce0d30b3d22cd81a0b7246c8f3440"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "904cc818da7f8339cc5ea26ae49ec7f7d33bbca04f63902ea9c2bcd6012532a7"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.06714309996459633,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 43976613,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 202,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 2908
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.060265400097705424,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 39681283,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 200,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 2914
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "canonical",
+      "source": "quiet440",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "8e83a726e0a56907a400971736ee6c2861d704d3b897dcc3893d020f83c54c5d",
+      "compressed_artifact_sha256": "f46335ebb5a334cd0a07c51a589bc011b111647e39d2d02055c4d4e8ce944d5c",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "5394e4247089aeeacb9050aa1538999ec0051dc9d08bf75f6a5b7da6f071d411"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "d94ddbc9b5934a9ab682d9ed9fb8e64e73960ad6315024c66a87f063cc6a4d98"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "9cc3ad7f6bb0ddc6e91cfd37bdf80097e4f954fd37909dc6436d88aa0ae7e853"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.031461099977605045,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 30843194,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":21,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.06725490000098944,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 25346538,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":21,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "canonical",
+      "source": "loud3000",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "5f51fc7397ab27ce9824a7c746fad6eccc3dfbe7fac795dd524876740e639fa8",
+      "compressed_artifact_sha256": "3d917e1b122a1c69970bd8f0ba7dada9c3fc52e6b88f761652a297bbc54369aa",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "1ea4eb10317bd8a62cc4ef9d1c1774cd78dc17f81a1c019c1db38113b67cec74"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "31f003979eafeb043b29ab2d248073ea626beccb876b9dd6b19308ba5eadb8ef"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "3691199ce86bd782a2a67d91e42ecbbc89f012e5cdfff13313aae4638fbfb0db"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.03098329994827509,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 30263396,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.025688500027172267,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 25672254,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "canonical",
+      "source": "steps",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "c1fec907c75545e1ade8565fd81f14bb95ea0b6691b3f206ba677113f1a98e9e",
+      "compressed_artifact_sha256": "64ed3e162f51f620cd7cd453cf235d1800a143c534b12e89dc0ffcb76a455c00",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "b0f76552eaad1199470747dc0916255a453f950e7ce4cf76c06425634d8b58c5"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "143b2950aa88b25d71beceec952fb107e8a470a77017ced5bd739bd0d6a8ad03"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "010046ea1b00a5981caeec34cb8a52a47261a8b773b4ed1cd1c58e7b6cbe8005"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.03582229989115149,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 31757951,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.026571700000204146,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 27699348,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "canonical",
+      "source": "quiet997",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "072c2852dca49641cacfa4c0e31bd8abf6b51280634f273ee8c44213375450d5",
+      "compressed_artifact_sha256": "4210e637fda3b851eb2741f4cb504992f028ae4e4060dd7953278cffe767b5af",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "ca20eaab125fe13765a84d8dacc3549b5a4751dec229b8910d7a27af74c4b773"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "02b9e52529effe72012a485b0708aa00a17fdc3d25c433710729222d05ea0959"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "b987407eb08d3f473e256ed31808bb98b7402dc3c12a74193fd67fd2e3e2bdcb"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.034192999941296875,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 34286920,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":25,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.026928900042548776,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 30479436,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":25,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "canonical",
+      "source": "multitone",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "5d37096901b5a7b766fe9d06b5127037722033c19f4fd4c582e7468732f37558",
+      "compressed_artifact_sha256": "e55edab497326d9b92695df1ec6a3c935d11ff5590524e85770a30cbf1ed0dde",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "075724e852ae55cede110fe5ad744c43985457b332606cc05367704e3194664b"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "c615ed7a21a062ce3b511e6ce73e334a78ce033a343f74bdfd8dfc30f03c3b2e"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "92f09220af5a6c90c974d2834dfa08ee8a75c9f8819f5d62e6ae8778333f3307"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.03232439991552383,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 35407743,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.024835200048983097,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 26043405,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "canonical",
+      "source": "speech",
+      "compressed_bytes": 93440,
+      "samples": 186880,
+      "compressed_sha256": "f20921d4e5f51ad55e10af9c2d20dc1b8ec118b9f9bc2cad54e8bac1b48ec9f9",
+      "compressed_artifact_sha256": "b4e5f9c64ea9958f4edeb1c49e758313fa5fbcb72a8f2f79eb9c25f8ab629dd6",
+      "output_files": {
+        "words.u16": {
+          "bytes": 373760,
+          "sha256": "f03aef1233ef5cb62f3d44c16b3a5ac0585b0a3ab1d0405ed9309314eb76d1b0"
+        },
+        "states.u8": {
+          "bytes": 186880,
+          "sha256": "e5e779ad364abb0a6aa383c50deea197e58c367ea7aca864ac48d2b85bfe986c"
+        },
+        "decoded.pcm16": {
+          "bytes": 373760,
+          "sha256": "ea30644777de47ff04e553dc19e67c2610fa177019b467b9c7d4d6c30c989361"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.04407179995905608,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 76877180,
+            "child_IO": {
+              "read_operations": 27,
+              "write_operations": 231,
+              "other_operations": 89,
+              "read_bytes": 99584,
+              "write_bytes": 934493,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":186880,\"decisions\":2990080,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.028637600014917552,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 32729212,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 13,
+              "other_operations": 89,
+              "read_bytes": 99584,
+              "write_bytes": 934493,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":186880,\"decisions\":2990080,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "canonical",
+      "source": "entertainer",
+      "compressed_bytes": 93440,
+      "samples": 186880,
+      "compressed_sha256": "2cfb8b3c26ab99ab76909ce8fec12a7381c36f914692ead3fc97bb25b466c383",
+      "compressed_artifact_sha256": "17abcf64df0c215e8a02b76574802ede38da255642653447437aabc9e4572bba",
+      "output_files": {
+        "words.u16": {
+          "bytes": 373760,
+          "sha256": "c59e0bb3d5745416647cac14816e8ff3830415d4529542bedfaf576bad234878"
+        },
+        "states.u8": {
+          "bytes": 186880,
+          "sha256": "446e72d029422622c1d0c95a289a768f48680d98690e895ec9a354224dae00e0"
+        },
+        "decoded.pcm16": {
+          "bytes": 373760,
+          "sha256": "df3b31a4416d6273ebeb88d47b7ffdff623a218f5421d98541586029cf66db14"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.053167799953371286,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 92808781,
+            "child_IO": {
+              "read_operations": 27,
+              "write_operations": 231,
+              "other_operations": 89,
+              "read_bytes": 99584,
+              "write_bytes": 934493,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":186880,\"decisions\":2990080,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.030440200003795326,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 34583099,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 13,
+              "other_operations": 89,
+              "read_bytes": 99584,
+              "write_bytes": 934493,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":186880,\"decisions\":2990080,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "canonical",
+      "source": "sea_foam",
+      "compressed_bytes": 360192,
+      "samples": 720384,
+      "compressed_sha256": "be87a1a07c769ddb716a6f69a3e6fdcd9ce6baac0c7bb0f6f2bae5667ce1c9fa",
+      "compressed_artifact_sha256": "7e3e4db8c433d0ef34eb8f4e13bc0aa4fd28d93dccb516eda157170d9539a1d7",
+      "output_files": {
+        "words.u16": {
+          "bytes": 1440768,
+          "sha256": "d71d765c1fdc5cfac0018049f15dcd2249fef3d5353899bf11de97a2d5731c10"
+        },
+        "states.u8": {
+          "bytes": 720384,
+          "sha256": "c2fe6590a3341ae81c395afd5d6c8edec5f9ed571d0cc123d02690fb7a17c54b"
+        },
+        "decoded.pcm16": {
+          "bytes": 1440768,
+          "sha256": "be29db18a35a148f3a496cce1b1285d1f6d6328d982e28bbdb53df11c767a40e"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.0935095000313595,
+            "child_CPU_seconds": 0.0625,
+            "child_CPU_cycles": 257341904,
+            "child_IO": {
+              "read_operations": 92,
+              "write_operations": 881,
+              "other_operations": 89,
+              "read_bytes": 366336,
+              "write_bytes": 3602014,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.02980100002605468,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 37972902,
+            "child_IO": {
+              "read_operations": 15,
+              "write_operations": 37,
+              "other_operations": 89,
+              "read_bytes": 366336,
+              "write_bytes": 3602014,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "matched",
+      "source": "silence",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "0f47ecf52af95b17e5b78e1ac181dc092897de95163da5d708eee4331918cf16",
+      "compressed_artifact_sha256": "653e3b63ea3ccf167043f636989c811c5c9f9742a24d90a481957cceb8e9173b",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "cb59bdbebbd6d5b648bdd9b57ae76f4ef6f787e4d156379bb506350523bd4c64"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "039e359873cbeeb52ea0b28a01dc0781912ce0d30b3d22cd81a0b7246c8f3440"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "904cc818da7f8339cc5ea26ae49ec7f7d33bbca04f63902ea9c2bcd6012532a7"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.08917960000690073,
+            "child_CPU_seconds": 0.046875,
+            "child_CPU_cycles": 205284269,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.025602499954402447,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 26911629,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "matched",
+      "source": "quiet440",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "fcea79cdcd4b8ac2d655532dad77e46108c975fab56347a969d2d65a0640d9ed",
+      "compressed_artifact_sha256": "b704e916a5b43a840f532ac831633cfc1f4c3e46ae10dbe95abd83619e35f67c",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "724843726c2ea593b218dc0125b16e898ce56094c9ab3fd1284fcf069a7b1c60"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "9fe5e73d1f415e0de39f6edd111ca0a0345bb12b7adc606366633ad575bbc956"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "a062a5a5090e6935a29bcc929c6d72baf090b1c65da9f790253c5128e16c55a5"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.034653699956834316,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 33324522,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.02495759993325919,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 25261966,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "matched",
+      "source": "loud3000",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "b0f3a1d24c3575e95c21a8a4432c88f9207f783cb0d87e8ca1f886f305c0b898",
+      "compressed_artifact_sha256": "eeabee23057b76c6a6c044798418f6dbdd50cab01934a4288c282839e96caf2a",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "aaff70ef85c3c8ceb99be95ffae83c7a0dcf858b88d955f04cc1eb15ce3c650b"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "57d7c21849b4b3b44a19bfb0cdde99142c6cb21301e138a262e886618cc40b3b"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "9a8ea8a7c0cdcb7d479c6e4fb08d2428c329a1cdcfc612bb6d46630105972093"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.033040600013919175,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 32732533,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.02544840006157756,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 27089264,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "matched",
+      "source": "steps",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "98d3dd5bdcf5b8a7f4648615389f1d9ce533bf363886b9d3049484ab82cdb765",
+      "compressed_artifact_sha256": "02f98cb24be268f7dc846f363df7c51bbf22930d13512c0753b880f187996b47",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "03ea8c50a2e4fed5f4e9000c1b04a579bec650fa332f7d0438fcbd27915c196e"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "7f95b15a39adf9cf4bb765cd5bf99a069da7008868c642bbd03bcf4eced6807b"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "17a123a452dbacda6a9670f72bdc0aeb5879e272ec94fb341efb6991fa18391c"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.031853700056672096,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 33079678,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":25,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.02805880003143102,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 27558644,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":25,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "matched",
+      "source": "quiet997",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "85303c581fb1ac4b8672300e36e90fd9d0bfa9275601be24985d848272526475",
+      "compressed_artifact_sha256": "c2fe0033a7728ae0bdf798c769f92a9e286a17d02e3e7cb25fb272390d2389c2",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "a56277e42a0aa68ebb3818721775f15600aa451ce1bf9bbd9e4dbdef19f6c985"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "9042bc9f1c169b1ad9a59680256f98b7850cff17612f0e640de981057fb89010"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "e498bb2900cc957bb0cbb3305803f0f3dae27a77e4d831aed7994024fcaea9f9"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.0323440000647679,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 31151194,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":25,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.025336099904961884,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 27837094,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":25,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "matched",
+      "source": "multitone",
+      "compressed_bytes": 8448,
+      "samples": 16896,
+      "compressed_sha256": "cf9755888202e67173775cd1a268e2290b3ae3c7f2bbcf86965a0c16469b213d",
+      "compressed_artifact_sha256": "e547a3ff32e1d02ca58393317ae91a74af6b1d6430dd884891aaa6552d705e22",
+      "output_files": {
+        "words.u16": {
+          "bytes": 33792,
+          "sha256": "012efdb363bf5a3958acf24167b258f3d1f6d044042d53e4ff0d1cbc0a6e33c7"
+        },
+        "states.u8": {
+          "bytes": 16896,
+          "sha256": "f7eee53f004ed2b6790b58095d2033afc445c7ced76d85b29779019f7301fdb7"
+        },
+        "decoded.pcm16": {
+          "bytes": 33792,
+          "sha256": "f2042b24ce55ab76226136d41cece40f25a759993670bf51a05a66eed958b212"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.032258099992759526,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 32023851,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 24,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.026236999896354973,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 27388397,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 14592,
+              "write_bytes": 84571,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":16896,\"decisions\":270336,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "matched",
+      "source": "speech",
+      "compressed_bytes": 93440,
+      "samples": 186880,
+      "compressed_sha256": "c23ecbbcdd35b331858843fedc004742b24381a7eae0189e2bc009a54f572e31",
+      "compressed_artifact_sha256": "41896828408f65e97380466fe7fcd64e231b0d0cd76b1c39e9fdff305b80d70f",
+      "output_files": {
+        "words.u16": {
+          "bytes": 373760,
+          "sha256": "1012a1f191be5fb2bb5a35703f39fa03af4642ec349ed8b150119b5b1bb9d3cf"
+        },
+        "states.u8": {
+          "bytes": 186880,
+          "sha256": "bbad6b1e887c6090fb695d7489f17e8eae8a2c633086ecabf9f659600b6ffab0"
+        },
+        "decoded.pcm16": {
+          "bytes": 373760,
+          "sha256": "3ac6d9e36efd92dbf766654f793a43c03535b17dcc39005833375beec6655eeb"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.04681930004153401,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 75813229,
+            "child_IO": {
+              "read_operations": 27,
+              "write_operations": 231,
+              "other_operations": 89,
+              "read_bytes": 99584,
+              "write_bytes": 934493,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":186880,\"decisions\":2990080,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.026121800066903234,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 28779546,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 13,
+              "other_operations": 89,
+              "read_bytes": 99584,
+              "write_bytes": 934493,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":186880,\"decisions\":2990080,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "matched",
+      "source": "entertainer",
+      "compressed_bytes": 93440,
+      "samples": 186880,
+      "compressed_sha256": "f5aa49e92aef574a1ae298778cff1c962d008c3158b5bc88da1010de762d1b55",
+      "compressed_artifact_sha256": "3061eef0ca2428c46ec258dc77a0d4be98dcf909f1079b195aed07906aa326a8",
+      "output_files": {
+        "words.u16": {
+          "bytes": 373760,
+          "sha256": "888cc1c3cfe8b1fa864f35df2bf9ff10ecfe06faade40797adef01e7cb2bea01"
+        },
+        "states.u8": {
+          "bytes": 186880,
+          "sha256": "cd565e211d76b0f1ece60a4b3a76bf64144dad0802981a1b1483935354405c10"
+        },
+        "decoded.pcm16": {
+          "bytes": 373760,
+          "sha256": "2d0972587e113119d3de21a2f13072154adf712cc42a44dd813f49c285e2d2e5"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.04777289996854961,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 74516985,
+            "child_IO": {
+              "read_operations": 27,
+              "write_operations": 231,
+              "other_operations": 89,
+              "read_bytes": 99584,
+              "write_bytes": 934493,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":186880,\"decisions\":2990080,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.02454419992864132,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 27917232,
+            "child_IO": {
+              "read_operations": 7,
+              "write_operations": 13,
+              "other_operations": 89,
+              "read_bytes": 99584,
+              "write_bytes": 934493,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":186880,\"decisions\":2990080,\"final_state\":12,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "family": "matched",
+      "source": "sea_foam",
+      "compressed_bytes": 360192,
+      "samples": 720384,
+      "compressed_sha256": "44a07e303522dfc4eef31d4654ba35dc6f275d82f6a07d2b3e723155a4d58d06",
+      "compressed_artifact_sha256": "b0f673234a561e260dc605364fb071c36b2a0658226d44c4ccefdca0d78ea587",
+      "output_files": {
+        "words.u16": {
+          "bytes": 1440768,
+          "sha256": "1eefd73a68f749181eaea4476b9dbad5cda6d835c90fa11bbb4bade0c22cc511"
+        },
+        "states.u8": {
+          "bytes": 720384,
+          "sha256": "47e213639ea94f373a801253440c7391eedb5c55e97833d8344c19506b8113ff"
+        },
+        "decoded.pcm16": {
+          "bytes": 1440768,
+          "sha256": "bd8d94d510d52d6ce3c2229c512984e8ac70a7dd7249ba8d4f2c1fcf6a2107ce"
+        }
+      },
+      "old_new_all_files_and_CLI_exact": true,
+      "independent_Python_PCM16_exact": true,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.07925179996527731,
+            "child_CPU_seconds": 0.0625,
+            "child_CPU_cycles": 203588805,
+            "child_IO": {
+              "read_operations": 92,
+              "write_operations": 881,
+              "other_operations": 89,
+              "read_bytes": 366336,
+              "write_bytes": 3602014,
+              "other_bytes": 754
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.027129100053571165,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 34579038,
+            "child_IO": {
+              "read_operations": 15,
+              "write_operations": 37,
+              "other_operations": 89,
+              "read_bytes": 366336,
+              "write_bytes": 3602014,
+              "other_bytes": 760
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "case": "empty",
+      "expected_return": 6,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.02541680005379021,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 23490434,
+            "child_IO": {
+              "read_operations": 4,
+              "write_operations": 0,
+              "other_operations": 89,
+              "read_bytes": 6144,
+              "write_bytes": 0,
+              "other_bytes": 754
+            },
+            "returncode": 6,
+            "stdout": "",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.025365700013935566,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 23717555,
+            "child_IO": {
+              "read_operations": 4,
+              "write_operations": 0,
+              "other_operations": 89,
+              "read_bytes": 6144,
+              "write_bytes": 0,
+              "other_bytes": 760
+            },
+            "returncode": 6,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ],
+      "output_files": {
+        "words.u16": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "states.u8": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "decoded.pcm16": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "case": "positive-overflow",
+      "expected_return": 4,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.027081399923190475,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 27997002,
+            "child_IO": {
+              "read_operations": 4,
+              "write_operations": 4,
+              "other_operations": 89,
+              "read_bytes": 6208,
+              "write_bytes": 78,
+              "other_bytes": 778
+            },
+            "returncode": 4,
+            "stdout": "",
+            "stderr": "Clipped predictor rejected\r\n"
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.026336399954743683,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 26206635,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 4,
+              "other_operations": 89,
+              "read_bytes": 6208,
+              "write_bytes": 78,
+              "other_bytes": 784
+            },
+            "returncode": 4,
+            "stdout": "",
+            "stderr": "Clipped predictor rejected\r\n"
+          }
+        }
+      ],
+      "output_files": {
+        "words.u16": {
+          "bytes": 20,
+          "sha256": "b886e5477a98491cb8070185c73a39166a78f63540ef41598014ea5e92a61ccd"
+        },
+        "states.u8": {
+          "bytes": 10,
+          "sha256": "de714d92f18b82674f30bbae24623b35434dde5881d6ec9a25b019efe632acb2"
+        },
+        "decoded.pcm16": {
+          "bytes": 20,
+          "sha256": "5454472ea13aa35dff75544e04059ff79298a6fd8358df24564b88960f9969ba"
+        }
+      }
+    },
+    {
+      "case": "negative-overflow",
+      "expected_return": 4,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.024717099964618683,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 24795542,
+            "child_IO": {
+              "read_operations": 4,
+              "write_operations": 4,
+              "other_operations": 89,
+              "read_bytes": 6208,
+              "write_bytes": 78,
+              "other_bytes": 778
+            },
+            "returncode": 4,
+            "stdout": "",
+            "stderr": "Clipped predictor rejected\r\n"
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.025801699957810342,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 25137883,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 4,
+              "other_operations": 89,
+              "read_bytes": 6208,
+              "write_bytes": 78,
+              "other_bytes": 784
+            },
+            "returncode": 4,
+            "stdout": "",
+            "stderr": "Clipped predictor rejected\r\n"
+          }
+        }
+      ],
+      "output_files": {
+        "words.u16": {
+          "bytes": 20,
+          "sha256": "40c65c1077bfce0985f960deb590186cc84b3c26378d2eb2b9ad68747fdb5b78"
+        },
+        "states.u8": {
+          "bytes": 10,
+          "sha256": "5f84b9f7a7a823dc51f8f2206b6b508090df8b4fff98856248225b675a5b138b"
+        },
+        "decoded.pcm16": {
+          "bytes": 20,
+          "sha256": "e815e83f3242a8c6136a2e23e68b8a0c68ae2832496023f6bfc9adc161cea1e6"
+        }
+      }
+    },
+    {
+      "case": "chunk-exact",
+      "expected_return": 0,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.04542350000701845,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 62259912,
+            "child_IO": {
+              "read_operations": 12,
+              "write_operations": 81,
+              "other_operations": 89,
+              "read_bytes": 38912,
+              "write_bytes": 327772,
+              "other_bytes": 766
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":65536,\"decisions\":1048576,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.02831209998112172,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 31386808,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 4,
+              "other_operations": 89,
+              "read_bytes": 38912,
+              "write_bytes": 327772,
+              "other_bytes": 772
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":65536,\"decisions\":1048576,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ],
+      "output_files": {
+        "words.u16": {
+          "bytes": 131072,
+          "sha256": "4ab34fbfa61f0306f3a288bd80b186db7ebfd723f24f37fd6398f4fb6246d2bb"
+        },
+        "states.u8": {
+          "bytes": 65536,
+          "sha256": "db12c0f09c0880bf09890ae2931ac9b2ef7c66ff5e325e28e368596b341d8976"
+        },
+        "decoded.pcm16": {
+          "bytes": 131072,
+          "sha256": "fa43239bcee7b97ca62f007cc68487560a39e19f74f3dde7486db3f98df8e471"
+        }
+      }
+    },
+    {
+      "case": "chunk-plus-one",
+      "expected_return": 0,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.0371744999429211,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 46222326,
+            "child_IO": {
+              "read_operations": 13,
+              "write_operations": 84,
+              "other_operations": 89,
+              "read_bytes": 38913,
+              "write_bytes": 327782,
+              "other_bytes": 772
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":65538,\"decisions\":1048608,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.026508399983868003,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 27334108,
+            "child_IO": {
+              "read_operations": 6,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 38913,
+              "write_bytes": 327782,
+              "other_bytes": 778
+            },
+            "returncode": 0,
+            "stdout": "{\"samples\":65538,\"decisions\":1048608,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+            "stderr": ""
+          }
+        }
+      ],
+      "output_files": {
+        "words.u16": {
+          "bytes": 131076,
+          "sha256": "0f863bef54e2e13d8264a22bd1bc5aef97a93059dda76ee7c638cd80af390ca7"
+        },
+        "states.u8": {
+          "bytes": 65538,
+          "sha256": "b83384ec3d59d28465c87d1ff04201d20a573749e666789fbbb57449e436cbf4"
+        },
+        "decoded.pcm16": {
+          "bytes": 131076,
+          "sha256": "1215d346158e9a351457198d6da53678bd6005ef90d1870e7685ae9a27b76acf"
+        }
+      }
+    },
+    {
+      "case": "overflow-after-complete-chunk",
+      "expected_return": 4,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.04152120009530336,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 43836281,
+            "child_IO": {
+              "read_operations": 12,
+              "write_operations": 84,
+              "other_operations": 89,
+              "read_bytes": 38976,
+              "write_bytes": 327758,
+              "other_bytes": 802
+            },
+            "returncode": 4,
+            "stdout": "",
+            "stderr": "Clipped predictor rejected\r\n"
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.025072099990211427,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 26000198,
+            "child_IO": {
+              "read_operations": 6,
+              "write_operations": 7,
+              "other_operations": 89,
+              "read_bytes": 38976,
+              "write_bytes": 327758,
+              "other_bytes": 808
+            },
+            "returncode": 4,
+            "stdout": "",
+            "stderr": "Clipped predictor rejected\r\n"
+          }
+        }
+      ],
+      "output_files": {
+        "words.u16": {
+          "bytes": 131092,
+          "sha256": "38b437afd6e715b8b4460468512fcbaa86f643242372edeb16700db8f87046b7"
+        },
+        "states.u8": {
+          "bytes": 65546,
+          "sha256": "ff8868c52ec9f37baa48c737e90bbfe824e0a40b58dc3cbf877a6a85c29b9988"
+        },
+        "decoded.pcm16": {
+          "bytes": 131092,
+          "sha256": "ddb8defd858ae8f70a85e7a2f02bc3aa9e516a1565a867f9e0a23ebe865d8009"
+        }
+      }
+    },
+    {
+      "case": "invalid-successor",
+      "expected_return": 5,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.029762899968773127,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 24593901,
+            "child_IO": {
+              "read_operations": 4,
+              "write_operations": 1,
+              "other_operations": 89,
+              "read_bytes": 6145,
+              "write_bytes": 2,
+              "other_bytes": 780
+            },
+            "returncode": 5,
+            "stdout": "",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.024378699949011207,
+            "child_CPU_seconds": 0.03125,
+            "child_CPU_cycles": 26283081,
+            "child_IO": {
+              "read_operations": 5,
+              "write_operations": 1,
+              "other_operations": 89,
+              "read_bytes": 6145,
+              "write_bytes": 2,
+              "other_bytes": 786
+            },
+            "returncode": 5,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ],
+      "partial_word_bytes": 2,
+      "state_bytes": 0,
+      "PCM16_bytes": 0
+    },
+    {
+      "case": "short-model",
+      "expected_return": 3,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.0705420000012964,
+            "child_CPU_seconds": 0.0625,
+            "child_CPU_cycles": 189348238,
+            "child_IO": {
+              "read_operations": 3,
+              "write_operations": 0,
+              "other_operations": 46,
+              "read_bytes": 6143,
+              "write_bytes": 0,
+              "other_bytes": 736
+            },
+            "returncode": 3,
+            "stdout": "",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.022924199933186173,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 18980914,
+            "child_IO": {
+              "read_operations": 3,
+              "write_operations": 0,
+              "other_operations": 46,
+              "read_bytes": 6143,
+              "write_bytes": 0,
+              "other_bytes": 742
+            },
+            "returncode": 3,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "case": "long-model",
+      "expected_return": 3,
+      "runs": [
+        {
+          "version": "baseline",
+          "execution": {
+            "seconds": 0.02257060003466904,
+            "child_CPU_seconds": 0.015625,
+            "child_CPU_cycles": 18791829,
+            "child_IO": {
+              "read_operations": 2,
+              "write_operations": 0,
+              "other_operations": 46,
+              "read_bytes": 6145,
+              "write_bytes": 0,
+              "other_bytes": 734
+            },
+            "returncode": 3,
+            "stdout": "",
+            "stderr": ""
+          }
+        },
+        {
+          "version": "accelerated",
+          "execution": {
+            "seconds": 0.022079600021243095,
+            "child_CPU_seconds": 0.0,
+            "child_CPU_cycles": 19956231,
+            "child_IO": {
+              "read_operations": 2,
+              "write_operations": 0,
+              "other_operations": 46,
+              "read_bytes": 6145,
+              "write_bytes": 0,
+              "other_bytes": 740
+            },
+            "returncode": 3,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ]
+    }
+  ],
+  "benchmark": {
+    "scope": "Warm complete CLI invocation, process startup plus identical compressed/model reads and all five output bytes per sample; excludes compilation, hashing and reference verification",
+    "warmups": [
+      {
+        "version": "baseline",
+        "execution": {
+          "seconds": 0.07291599991731346,
+          "child_CPU_seconds": 0.078125,
+          "child_CPU_cycles": 203745393,
+          "child_IO": {
+            "read_operations": 92,
+            "write_operations": 881,
+            "other_operations": 89,
+            "read_bytes": 366336,
+            "write_bytes": 3602014,
+            "other_bytes": 754
+          },
+          "returncode": 0,
+          "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+          "stderr": ""
+        }
+      },
+      {
+        "version": "accelerated",
+        "execution": {
+          "seconds": 0.026946999947540462,
+          "child_CPU_seconds": 0.0,
+          "child_CPU_cycles": 34782153,
+          "child_IO": {
+            "read_operations": 15,
+            "write_operations": 37,
+            "other_operations": 89,
+            "read_bytes": 366336,
+            "write_bytes": 3602014,
+            "other_bytes": 858
+          },
+          "returncode": 0,
+          "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+          "stderr": ""
+        }
+      }
+    ],
+    "alternating_pairs": 3,
+    "rows": [
+      {
+        "pair": 0,
+        "version": "baseline",
+        "execution": {
+          "seconds": 0.07062679994851351,
+          "child_CPU_seconds": 0.046875,
+          "child_CPU_cycles": 202893417,
+          "child_IO": {
+            "read_operations": 92,
+            "write_operations": 881,
+            "other_operations": 89,
+            "read_bytes": 366336,
+            "write_bytes": 3602014,
+            "other_bytes": 852
+          },
+          "returncode": 0,
+          "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+          "stderr": ""
+        }
+      },
+      {
+        "pair": 0,
+        "version": "accelerated",
+        "execution": {
+          "seconds": 0.025174099951982498,
+          "child_CPU_seconds": 0.015625,
+          "child_CPU_cycles": 35316531,
+          "child_IO": {
+            "read_operations": 15,
+            "write_operations": 37,
+            "other_operations": 89,
+            "read_bytes": 366336,
+            "write_bytes": 3602014,
+            "other_bytes": 858
+          },
+          "returncode": 0,
+          "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+          "stderr": ""
+        }
+      },
+      {
+        "pair": 1,
+        "version": "accelerated",
+        "execution": {
+          "seconds": 0.02522010006941855,
+          "child_CPU_seconds": 0.0,
+          "child_CPU_cycles": 35933261,
+          "child_IO": {
+            "read_operations": 15,
+            "write_operations": 37,
+            "other_operations": 89,
+            "read_bytes": 366336,
+            "write_bytes": 3602014,
+            "other_bytes": 858
+          },
+          "returncode": 0,
+          "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+          "stderr": ""
+        }
+      },
+      {
+        "pair": 1,
+        "version": "baseline",
+        "execution": {
+          "seconds": 0.07148919999599457,
+          "child_CPU_seconds": 0.046875,
+          "child_CPU_cycles": 206155808,
+          "child_IO": {
+            "read_operations": 92,
+            "write_operations": 881,
+            "other_operations": 89,
+            "read_bytes": 366336,
+            "write_bytes": 3602014,
+            "other_bytes": 852
+          },
+          "returncode": 0,
+          "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+          "stderr": ""
+        }
+      },
+      {
+        "pair": 2,
+        "version": "baseline",
+        "execution": {
+          "seconds": 0.06980439997278154,
+          "child_CPU_seconds": 0.0625,
+          "child_CPU_cycles": 201298047,
+          "child_IO": {
+            "read_operations": 92,
+            "write_operations": 881,
+            "other_operations": 89,
+            "read_bytes": 366336,
+            "write_bytes": 3602014,
+            "other_bytes": 852
+          },
+          "returncode": 0,
+          "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+          "stderr": ""
+        }
+      },
+      {
+        "pair": 2,
+        "version": "accelerated",
+        "execution": {
+          "seconds": 0.024595099966973066,
+          "child_CPU_seconds": 0.0,
+          "child_CPU_cycles": 33707488,
+          "child_IO": {
+            "read_operations": 15,
+            "write_operations": 37,
+            "other_operations": 89,
+            "read_bytes": 366336,
+            "write_bytes": 3602014,
+            "other_bytes": 858
+          },
+          "returncode": 0,
+          "stdout": "{\"samples\":720384,\"decisions\":11526144,\"final_state\":16,\"final_predictor\":0,\"final_index\":0}\r\n",
+          "stderr": ""
+        }
+      }
+    ],
+    "medians": {
+      "baseline": {
+        "seconds": 0.07062679994851351,
+        "child_CPU_seconds": 0.046875,
+        "child_CPU_cycles": 202893417
+      },
+      "accelerated": {
+        "seconds": 0.025174099951982498,
+        "child_CPU_seconds": 0.0,
+        "child_CPU_cycles": 35316531
+      },
+      "elapsed_speedup": 2.8055342627235236,
+      "CPU_cycle_speedup": 5.74499848243872
+    }
+  },
+  "no_audio_rendering_or_encoding_repeated": true,
+  "compressed_format_changed": false,
+  "decoded_semantics_changed": false,
+  "Z80_hot_path_changed": false,
+  "Z80_Tstate_delta": 0,
+  "player_or_release_claim": false
+}

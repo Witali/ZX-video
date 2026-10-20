@@ -1,0 +1,302 @@
+{
+  "complete": true,
+  "date": "2026-10-20",
+  "source_files": {
+    "stream-player.asm": {
+      "bytes": 17916,
+      "sha256": "23ee3da6415e003e6aaca76ef2c825eb1b8098e3ae967993717f8a96d80d83c5"
+    },
+    "direct_player.py": {
+      "bytes": 23162,
+      "sha256": "31f2e3b21845da243643837dcdb82bf5e7c2edccef82ca1a5c36217ea413ea0c"
+    },
+    "ram_cache.py": {
+      "bytes": 5636,
+      "sha256": "b9708a812f131dbf4efcae092637337830c38b1d636537492cfef975d6df5ecb"
+    },
+    "ima_codec.py": {
+      "bytes": 4629,
+      "sha256": "263d52677e423e9f9f55636b84fe108aa3eed1751bf1c09ce751b65a22f3349b"
+    },
+    "experiments/song-snr/table_pdm_uniform16.py": {
+      "bytes": 10241,
+      "sha256": "874f65cfa8ff18275c6a90c7a66c96841bca00625e3c8e9fe4492e2d7c82d328"
+    },
+    "experiments/song-snr/table_pdm_uniform16_paged.py": {
+      "bytes": 13111,
+      "sha256": "b1b8654f1e4146ddf128002fce4ea2c943ccf01a436a6202e0a053b00711fd19"
+    }
+  },
+  "timing_source": {
+    "title": "Zilog Z80 CPU User Manual UM008011-0816",
+    "url": "https://www.zilog.com/docs/z80/um0080.pdf",
+    "printed_pages": {
+      "LD_register": 71,
+      "LD_SP_HL": 112,
+      "POP": 119,
+      "EXX": 126,
+      "OR_register": 160,
+      "ADD_IX": 194
+    }
+  },
+  "live_decoder_core": {
+    "ledger": [
+      {
+        "instruction": "OR L",
+        "tstates": 4
+      },
+      {
+        "instruction": "LD L,A",
+        "tstates": 4
+      },
+      {
+        "instruction": "LD SP,HL",
+        "tstates": 6
+      },
+      {
+        "instruction": "POP BC",
+        "tstates": 10
+      },
+      {
+        "instruction": "POP HL",
+        "tstates": 10
+      },
+      {
+        "instruction": "ADD IX,BC",
+        "tstates": 15
+      }
+    ],
+    "total_tstates": 49,
+    "surrounding_EXX_count": 2,
+    "with_register_exchange_tstates": 57,
+    "excludes": "Speaker OUT instructions, nibble fetch/extraction, PDM lookup/dispatch, page/bank/EOF handling and clone contention"
+  },
+  "bounded_native_confirmation": {
+    "cases": [
+      {
+        "code": 0,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 1,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 2,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 3,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 4,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 5,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 6,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 7,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 8,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 9,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 10,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 11,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 12,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 13,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 14,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 15,
+        "surrounding_EXX": false,
+        "actual_tstates": 49,
+        "exact_register_result": true
+      },
+      {
+        "code": 0,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 1,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 2,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 3,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 4,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 5,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 6,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 7,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 8,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 9,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 10,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 11,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 12,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 13,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 14,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      },
+      {
+        "code": 15,
+        "surrounding_EXX": true,
+        "actual_tstates": 57,
+        "exact_register_result": true
+      }
+    ],
+    "actual_machine_cases": 32,
+    "physical_scope": "Uncontended native CPU instruction fragment only, no I/O or disk; not a fresh whole-player execution"
+  },
+  "unchanged_player": {
+    "instruction_changes": 0,
+    "core_Tstate_delta": 0,
+    "ordinary_Pentagon_Tstates": 449,
+    "page_extra_Tstates": 14,
+    "bank_extra_Pentagon_Tstates": 243,
+    "compressed_disk_format": "Headerless low-nibble-first IMA4, preserved",
+    "decoded_precision": "Full16-bit predictor before the existing PDM lookup"
+  },
+  "rejected_layout_estimate": {
+    "status": "Counted feasibility observation, not implemented",
+    "current_rows": 89,
+    "codes_per_row": 16,
+    "record_bytes": 4,
+    "used_transition_bytes": 5696,
+    "page_aligned_allocation_bytes": 22784,
+    "extra_bytes": 17088,
+    "hypothetical_core_saving_Tstates": 4,
+    "reason": "Page-aligning every row can remove OR L, but costs17088 additional fixed bytes; this exceeds the current fixed-RAM budget and is not a paging-safe integrated solution"
+  },
+  "existing_uniform_component": {
+    "report_sha256": "3be8fe63e4d251bbd1845f8643b8d8538f51ec9f77c8674d381b7df6468cd64d",
+    "PCM_sample_Tstates": 448,
+    "PDM_hold_Tstates": 28,
+    "fixed_bytes": 31986,
+    "includes_live_IMA_decode": false,
+    "scope": "ResidentPCM8 with one static two-bank handoff, not a complete compressed player"
+  },
+  "decision": "Accept host C decoder speed improvement separately. No live Z80 decoder acceleration is claimed or applied; register reassignment or row expansion requires a new integrated CPU/RAM/bank/EOF and exact-OUT-timing proof.",
+  "no_new_TRD_or_full_player_or_hardware_claim": true
+}

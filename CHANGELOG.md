@@ -1,5 +1,28 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Buffer exact host IMA decoding; retain live Z80 schedule
+
+- **Objective/baseline:** Accelerate decoding without format/semantic changes,
+  using878c578e host uniform16 C decoder, all9 canonical and all9 matched
+  complete inputs. Precompute1424 exact IMA transitions and replace per-byte
+  I/O with32KiB input chunks and buffered explicit little-endian outputs.
+- **Results/verification:** All18 streams/2391040 samples produce identical
+  word/state/PCM files, stdout, clipping and partial-output behavior. All1424
+  transitions and14192 boundary/error cases pass. Final three paired song
+  medians70.6268->25.1741ms including three output files,2.8055x; child CPU
+  cycles202893417->35316531,5.745x. The preceding complete decoder measurement
+  is retained separately; its final comment-only change is followed by a
+  fresh final-source run. This is a PC decoder gain, not live Spectrum speed.
+- **Live feasibility/decision:** Native bounded confirmation agrees with49T
+  decoder core/57T with EXX; existing absolute ordinary449T and14/243T page/
+  Pentagon bank overhead unchanged, hot-path delta0T. Page-aligning89 decoder
+  rows saves4T but adds17088B beyond fixed RAM. A predictor-register rewrite
+  lacks integrated timing proof; keep player unchanged. Initial static review
+  fixture parser failure and correction are retained; no failed result is
+  accepted. Adopt only exact host acceleration. No new quality/release claim.
+  [Decoder evidence](audiobook-beeper/experiments/song-snr/evidence/table-pdm-decode-speed-final/README.md),
+  [Z80 ledger and limits](audiobook-beeper/experiments/song-snr/evidence/codec-speed-z80-review/README.md).
+
 ## 2026-10-20 — Accelerate exact C waveform beam selection
 
 - **Objective/baseline:** User requests faster encoding and decoding without
