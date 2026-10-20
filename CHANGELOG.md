@@ -1,5 +1,36 @@
 # Changelog and optimization experiments
 
+## 2026-10-20 — Share ZX0 LDI chains without an extra runtime jump
+
+- **Objective/baseline:** Follow the completed selective-sharing screen at
+  `bbe9e202` with a resident-only layout that shrinks Maximum without its JP
+  penalty. Compare all five same-cap originals on unchanged 417 main/364 real
+  and 56 high-word cases. Preserve the complete code/state/stack service cap.
+- **Change/results:** Optional `zx0.maximum.build(shared_prefixes=True)` and
+  resident CLI `--shared-prefixes` share descending LDI chains and clone
+  original short continuations through an existing JP. Move the former tail
+  JP to entry; direct literal4 entries and word joins each save 10 T. Service
+  caps31/63/127/227/228 become 2,810/3,578/5,114/7,554/7,578 B. Cap228 falls
+  140,169,968 ->139,892,818 real T (-277,150, 0.197724%) while saving 2,412 B.
+  Shared127 is also faster than the previous maximum at only 5,114 B.
+- **Verification:** All five caps pass protected baseline/candidate, IRQ and
+  relocation replays for 417+56 cases: 2,365 comparisons /9,460 native runs.
+  No complete case slows; every difference equals the independent removed-JP
+  count. Plain/diagnostic-IRQ stack <=4/10 B. Public bytes match both complete
+  [main](libraries/evidence/shared_zero_prefix_native.json.gz) and
+  [high-word](libraries/evidence/shared_zero_prefix_high_word.json.gz) proofs.
+  All 58 library tests and 31 frozen legacy layouts pass; an isolated wheel
+  builds/exports all five profiles with no toolkit/native dependency.
+  [Authentication](libraries/evidence/shared_zero_prefix_verification.json),
+  [reproducer](libraries/tests/measure_shared_zero_prefix.py).
+- **Decision/limits:** Accept optional resident profiles and update the
+  [function-linked variant table](libraries/DECODER_VARIANTS.md) and
+  [frontier/contracts](libraries/ZX0_SHARED_PREFIXES.md). Existing defaults
+  remain exact (0 T delta). Quota hooks/coroutine CLI combinations reject the
+  new option; no guarded-input, physical-disk or player qualification is
+  inferred. Full IRQ code/headroom is still additional service memory;
+  the diagnostic handler makes shared228 total 7,597 B. No main merge/push.
+
 ## 2026-10-20 — Screen selective ZX0 LDI sharing and retain its speed penalty
 
 - **Objective/baseline:** First authorized follow-up from `b99dd123`: shrink

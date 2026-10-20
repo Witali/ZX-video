@@ -27,6 +27,8 @@ def main():
                           help='remove dead offset shifts and tune reuse exits in resident Mega; -4 bytes')
     assembly.add_argument('--prefix-cap',type=int,choices=(31,63,127,227,228),
                           help='maximum profiles only: measured inline-copy frontier (resident default 228, coroutine 127)')
+    assembly.add_argument('--shared-prefixes',action='store_true',
+                          help='resident maximum only: share LDI chains and clone continuations, reducing size and CPU')
     for name in ('irq-code-bytes','irq-stack-bytes','service-limit'):
         assembly.add_argument('--'+name,type=int,
                               help='maximum profile only: complete service-memory accounting')
@@ -46,6 +48,8 @@ def main():
     if args.command == 'build':
         maximum=args.variant in ('maximum','maximum-coroutine')
         maximum_coroutine=args.variant=='maximum-coroutine'
+        if args.shared_prefixes and args.variant!='maximum':
+            parser.error('--shared-prefixes requires the resident maximum profile')
         if maximum:
             if args.fast_jumps or args.branch_tuned or args.inline_tail_refill or args.mega_tuned:
                 parser.error('maximum has its own fixed branch/gamma layout; tuning flags do not apply')
@@ -75,7 +79,7 @@ def main():
                     prefix_cap=(127 if maximum_coroutine else 228) if args.prefix_cap is None else args.prefix_cap,
                     irq_code_bytes=args.irq_code_bytes or 0,irq_stack_bytes=args.irq_stack_bytes or 0,
                     service_limit=10000 if args.service_limit is None else args.service_limit,
-                    **(dict(prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base) if maximum_coroutine else {}))
+                    **(dict(prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,output_base=args.output_base) if maximum_coroutine else dict(shared_prefixes=args.shared_prefixes)))
             except ValueError as error:parser.error(str(error))
         elif args.variant=='fast-block':
             from .block import build as block_build

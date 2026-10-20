@@ -39,11 +39,19 @@ repository migration remain separate tasks.
 
 Current completed 25-profile milestone: [FRONTIER.md](libraries/FRONTIER.md)
 and [full authentication](libraries/evidence/frontier_completed_profiles_verification.json).
-The follow-up [variant table](libraries/DECODER_VARIANTS.md) documents 35 exact
+The follow-up [variant table](libraries/DECODER_VARIANTS.md) documents 40 exact
 builder calls with function/file links, all service memory and CPU deltas
 against both original adapted Fast and the pass baseline. Its
 [reproducer](libraries/tests/document_decoder_variants.py) validates current
 calls/exports against saved evidence; it does not run new native benchmarks.
+Latest resident-only follow-up: [shared Maximum](libraries/ZX0_SHARED_PREFIXES.md)
+adds `shared_prefixes=True`, with 2,810/3,578/5,114/7,554/7,578 service B at
+caps31/63/127/227/228. Fastest real CPU is now 139,892,818 T, 277,150 T faster
+than old Maximum228; no slower complete cases. All five caps pass 417+56
+native cases with IRQ/relocation and exact removed-JP counts. Original
+profiles/defaults and coroutine implementations remain exact and available.
+The table now also includes these five public calls. Preserve the earlier
+selective-sharing attempt and its measured jump penalty as historical evidence.
 ZX0 Maximum resident defaults to prefix 228: 9,990 intrinsic service bytes,
 140,169,968 real T, 10.154667% vs Fast but only 3.796347% beyond tuned Mega.
 Prefix 127 uses 7,526 B/140,193,198 T, almost the same speed. Prefix 228 plus

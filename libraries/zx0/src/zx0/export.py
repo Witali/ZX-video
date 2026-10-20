@@ -85,7 +85,12 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
                    '; Includes code/embedded offset, caller return, live source PUSH and declared IRQ code/extra stack.'),
                   '; Input/output/history are separate. Count the actual caller IRQ implementation explicitly.',
                   '; Frontier is measured on the retained corpus; global optimality is not established.', '']
-        if metadata['prefix_cap']>127:
+        if metadata.get('shared_prefixes'):
+            lines += ['; Optional shared LDI chains end in cloned LDIR/command continuations.',
+                      '; Move each existing 10-T tail JP to its entry; original small-copy tails stay in place.',
+                      '; Direct literal4 entries and word-prefix joins each eliminate one 10-T JP.',
+                      '; Cloned labels are private to their continuation; only the original offset word is mutable.', '']
+        elif metadata['prefix_cap']>127:
             extra=metadata['prefix_cap']-127
             lines += [f'; Word counts >=256 copy {extra} initial bytes, then share the existing 127-LDI suffix.',
                       f'; Match setup runs once. The shared suffix retains BC>={256-extra} and a positive LDIR tail.', '']
@@ -112,12 +117,18 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
                                'Save source HL on '+('private decoder' if metadata.get('coroutine_supported') else 'caller')+' stack; use patched negative offset for forward history.'))
     if metadata.get('measured_frontier'):
         for name in labels:
-            if name.startswith('max_gamma_'):
+            if name.startswith('shared_zero_clone_'):
+                routines[name]='Cloned copy continuation/header: same register/flag and memory-access order as the original; ends at an existing JP.'
+            elif name.startswith('shared_zero_'):
+                routines[name]='Shared descending LDI suffix: BC exceeds the selected prefix; fall through to cloned LDIR/continuation, preserving forward overlap.'
+            elif name.startswith('max_gamma_'):
                 routines[name]='Depth-specific Elias continuation; BC accumulates length, A holds bit reservoir, HL advances only on refill. RL B begins at data bit eight.'
             elif name.startswith('max_word_join_'):
-                routines[name]='Word-count continuation: retain high-byte shifts and join the proven >=128 copy path; extra JP costs 10 T.'
+                routines[name]=('Word-entry setup is complete; jump to the shared long LDI chain, removing the old intermediate suffix JP.' if metadata.get('shared_prefixes') else
+                    'Word-count continuation: retain high-byte shifts and join the proven >=128 copy path; extra JP costs 10 T.')
             elif name.startswith('max_suffix_'):
-                routines[name]=f'Shared 127-LDI suffix; word-entry setup already saved source/loaded offset and copied {metadata["prefix_cap"]-127} bytes. BC>=128 on every entry; restore source only at the original match tail.'
+                routines[name]=('Retained >=128 entry alias: source/offset setup is complete; enter the common shared LDI chain.' if metadata.get('shared_prefixes') else
+                    f'Shared 127-LDI suffix; word-entry setup already saved source/loaded offset and copied {metadata["prefix_cap"]-127} bytes. BC>=128 on every entry; restore source only at the original match tail.')
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')

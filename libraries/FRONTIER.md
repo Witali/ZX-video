@@ -24,11 +24,11 @@ the slower Standard/Small choices with the lowest measured service memory.
 | ZX0 Fast tuned | **197 B** | 153,706,279 | 1.478241% |
 | ZX0 Fast tuned +literal prefix +tail refill | **202 B** | 152,776,831 | 2.073993% |
 | ZX0 Mega tuned +fast jumps | **674 B** | 145,701,295 | 6.609229% |
-| ZX0 Maximum prefix 31 | **4,454 B** | 141,618,798 | 9.226004% |
-| ZX0 Maximum prefix 63 | **5,990 B** | 140,680,558 | 9.827392% |
-| ZX0 Maximum prefix 127 | **7,526 B** | 140,193,198 | 10.139777% |
-| ZX0 Maximum prefix 227 | **9,966 B** | 140,170,198 | 10.154520% |
-| ZX0 Maximum prefix 228 | **9,990 B** | 140,169,968 | 10.154667% |
+| ZX0 Maximum shared prefix 31 | **2,810 B** | 141,342,108 | 9.403356% |
+| ZX0 Maximum shared prefix 63 | **3,578 B** | 140,403,868 | 10.004743% |
+| ZX0 Maximum shared prefix 127 | **5,114 B** | 139,916,508 | 10.317128% |
+| ZX0 Maximum shared prefix 227 | **7,554 B** | 139,893,048 | 10.332166% |
+| ZX0 Maximum shared prefix 228 | **7,578 B** | 139,892,818 | 10.332313% |
 | LZSA2 Fast jumps +compact branches | **222 B** | 17,724,654 | 0.227637% |
 | LZSA2 Fast jumps +tuned branches +nibble prefill | **228 B** | 17,635,500 | 0.729487% |
 | LZSA2 Wide shared | **3,452 B** | 15,869,483 | 10.670425% |
@@ -43,12 +43,18 @@ assume aligned code; arbitrary alignment adds at most 255 B (3,707/7,259 B).
 The 197-byte ZX0 and 222-byte LZSA2 profiles are smaller and faster than their
 211/223-service-byte Fast baselines. The compact combinations spend a few
 more bytes for further gains. Tuned Mega and shared Wide are useful middle
-choices. Prefix 127 keeps almost all tested ZX0 maximum speed with 2,474 B
-left under the cap. Prefix 228 spends 2,464 more bytes to save 23,230 T beyond
-prefix 127, only 0.016570%. Expanded Wide is the fastest measured resident
+choices. Shared prefix 127 keeps almost all tested ZX0 maximum speed with
+4,886 B left under the cap. Shared 228 spends 2,464 more bytes to save
+23,690 T beyond shared 127. Expanded Wide is the fastest measured resident
 LZSA2 profile. A finite measured frontier does not prove global optimality.
 
-Maximum API/CLI defaults to prefix 228. Its 9,986 code/embedded-state bytes
+The optional [shared-prefix layout](ZX0_SHARED_PREFIXES.md) reduces cap228
+from 9,990 to 7,578 service B and saves another 277,150 real T (0.197724%).
+All five caps pass 417+56 cases, IRQ, relocation and exact per-block cycle
+proofs. Select `zx0.maximum.build(shared_prefixes=True)` or resident CLI
+`--shared-prefixes`; ordinary coroutines keep their separate implementation.
+
+Unshared Maximum API/CLI still defaults to prefix 228. Its 9,986 code/embedded-state bytes
 plus four stack bytes fit the service cap. The 13-byte AF/AF' preserving IRQ
 example plus six extra stack bytes raises its total to **10,009 B**;
 prefix 227 fits that example at **9,985 B**. An actually replayed minimal
@@ -58,8 +64,8 @@ prefix 227 fits that example at **9,985 B**. An actually replayed minimal
 
 The historical Mega used 673 code bytes/146,422,274 real T, or 674/146,421,546
 with its old startup jump. Its old advantage over Fast is not a new gain.
-The best Maximum improves the separately tuned Mega 145,701,295 baseline
-by **3.796347%**, so the 10.154667% Fast comparison does not establish another
+The best shared Maximum improves the separately tuned Mega 145,701,295 baseline
+by **3.986565%**, so the 10.332313% Fast comparison does not establish another
 10% over the strongest existing Mega. [Mega audit](MEGA_OFFSET_AUDIT.md),
 [Maximum phases/prefixes](ZX0_MAXIMUM.md), [word suffix and IRQ limits](ZX0_WORD_PREFIX.md).
 

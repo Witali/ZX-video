@@ -67,6 +67,11 @@ GUARDED = dict(core=0xa000, core_limit=0xbc00,
 | ZX0 Maximum 127 | 7,526 | 140,193,198 | -10.1398% | -10.1398% | [zx0.maximum.build(prefix_cap=127)](zx0/src/zx0/maximum.py#L20) |
 | ZX0 Maximum 227 | 9,966 | 140,170,198 | -10.1545% | -10.1545% | [zx0.maximum.build(prefix_cap=227)](zx0/src/zx0/maximum.py#L20) |
 | ZX0 Maximum 228 | 9,990 | 140,169,968 | -10.1547% | -10.1547% | [zx0.maximum.build(prefix_cap=228)](zx0/src/zx0/maximum.py#L20) |
+| ZX0 Maximum shared 31 | 2,810 | 141,342,108 | -9.4034% | -9.4034% | [zx0.maximum.build(prefix_cap=31, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
+| ZX0 Maximum shared 63 | 3,578 | 140,403,868 | -10.0047% | -10.0047% | [zx0.maximum.build(prefix_cap=63, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
+| ZX0 Maximum shared 127 | 5,114 | 139,916,508 | -10.3171% | -10.3171% | [zx0.maximum.build(prefix_cap=127, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
+| ZX0 Maximum shared 227 | 7,554 | 139,893,048 | -10.3322% | -10.3322% | [zx0.maximum.build(prefix_cap=227, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
+| ZX0 Maximum shared 228 | 7,578 | 139,892,818 | -10.3323% | -10.3323% | [zx0.maximum.build(prefix_cap=228, shared_prefixes=True)](zx0/src/zx0/maximum.py#L20) |
 | LZSA2 Fast (original) | 222 | 17,767,606 | +0.0141% | 0.0000% | [lzsa.block.build(**SMALL, fast_jumps=False)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Fast (pass baseline) | 223 | 17,765,094 | 0.0000% | -0.0141% | [lzsa.block.build(**SMALL, fast_jumps=True)](lzsa/src/lzsa/block.py#L5) |
 | LZSA2 Small (minimum) | 145 | 20,423,546 | +14.9645% | +14.9482% | [lzsa.block.build(**SMALL, variant='small')](lzsa/src/lzsa/block.py#L5) |
@@ -114,15 +119,15 @@ harness and its 21 real blocks; producer CPU and sector delivery are separate.
 
 - Smallest resident decoders: **ZX0 Standard 74 B** (68 code +6 stack),
   **LZSA2 Small 145 B** (137 code +8 stack). Both are slower than Fast.
-- Fastest measured resident choices: **ZX0 Maximum 228, 9,990 B** and
-  **LZSA2 Wide expanded, 7,004 B**. Maximum 127 uses 7,526 B; switching
-  from 127 to 228 saves only 23,230 T, or 0.016570% of the 127 total.
+- Fastest measured resident choices: **ZX0 Maximum shared 228, 7,578 B** and
+  **LZSA2 Wide expanded, 7,004 B**. Shared 127 uses 5,114 B and is faster
+  than the original unshared 228. Shared suffixes support resident calls only.
 - Useful intermediate choices include Mega tuned 674 B and Wide shared 3,452 B.
 - Maximum ZX0 coroutine requires Spectrum-style undocumented `CP IXH/IXL`.
   Caller IX is restored on every return; IRQ must preserve live IX and AF/AF'.
 - Wide figures assume an aligned core. Arbitrary alignment adds up to 255 B.
   A full guarded reference can therefore exceed 10,000 B after relocation.
-- Maximum 228 has only 10 intrinsic service bytes left. The 13-byte/six-stack-byte
+- Original unshared Maximum 228 has only 10 service bytes left. The 13-byte/six-stack-byte
   IRQ example makes 10,009 B; use 227 (9,985 B with that IRQ) or reserve the
   actual handler through `irq_code_bytes` / `irq_stack_bytes`. The verified
   minimal `EI; RETI` handler makes 228 total 9,995 B.
@@ -158,6 +163,7 @@ emitters behind a dispatcher, use these implementation functions:
 | ZX0 Standard / Turbo / Mega | [zx0.codec.emit_decoder](zx0/src/zx0/codec.py#L66) |
 | ZX0 Fast | [zx0.resumable.emit_fast](zx0/src/zx0/resumable.py#L138) |
 | ZX0 Maximum resident | [zx0.maximum.build](zx0/src/zx0/maximum.py#L20) |
+| ZX0 shared-prefix layout | [zx0._shared_prefixes.transform](zx0/src/zx0/_shared_prefixes.py#L26) |
 | ZX0 Maximum coroutine | [zx0.maximum_coroutine.build](zx0/src/zx0/maximum_coroutine.py#L6) |
 | LZSA2 Small | [lzsa.compact.build](lzsa/src/lzsa/compact.py#L13) |
 | LZSA2 Fast and its coroutine | [lzsa.resumable.build](lzsa/src/lzsa/resumable.py#L15) |
@@ -166,7 +172,9 @@ emitters behind a dispatcher, use these implementation functions:
 
 ## Evidence and reproduction
 
-[Current full native integration](evidence/frontier_completed_profiles_verification.json),
+[Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),
+[shared-prefix contracts](ZX0_SHARED_PREFIXES.md),
+[previous full native integration](evidence/frontier_completed_profiles_verification.json),
 [original ZX0 counts](evidence/trick_23.json), [original LZSA2 and jump pass](evidence/fast_jumps.json),
 [Small counts](evidence/trick_29.json), [guarded native replay](evidence/wide_guarded_native.json.gz),
 [authenticated original guarded recordings](evidence/fast_jumps_verification.json).

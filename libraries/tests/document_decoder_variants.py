@@ -45,6 +45,7 @@ def main():
     guarded=read('evidence/wide_guarded_native.json.gz')
     jump_auth=read('evidence/fast_jumps_verification.json')
     second=read('second_pass_verification.json')
+    shared_zx0=read('evidence/shared_zero_prefix_native.json.gz')
     originals={
         ('zx0','block'):old_zx['summary']['fast']['real_tstates'],
         ('zx0','coroutine'):compact['profiles']['zx0-coroutine']['summary']['real_baseline_tstates'],
@@ -129,6 +130,11 @@ def main():
         layout='SMALL',catalog='zx0-tuned-mega')
     for cap in (31,63,127,227,228):
         add('ZX0 Maximum '+str(cap),'zx0','block','zx0.maximum',dict(prefix_cap=cap),catalog='zx0-maximum-'+str(cap))
+    for cap in (31,63,127,227,228):
+        saved=shared_zx0['profiles'][str(cap)]
+        add('ZX0 Maximum shared '+str(cap),'zx0','block','zx0.maximum',
+            dict(prefix_cap=cap,shared_prefixes=True),cpu=saved['summary']['real_candidate_tstates'],
+            stack=4,frozen=saved)
     for fast,label,key in ((False,'original','baseline'),(True,'pass baseline','candidate')):
         add('LZSA2 Fast ('+label+')','lzsa2','block','lzsa.block',dict(fast_jumps=fast),layout='SMALL',
             cpu=originals['lzsa2','block'] if not fast else baselines['lzsa2','block'],stack=4,
@@ -257,15 +263,15 @@ def main():
     lines += ['## Selection and runtime contracts','',
         '- Smallest resident decoders: **ZX0 Standard 74 B** (68 code +6 stack),',
         '  **LZSA2 Small 145 B** (137 code +8 stack). Both are slower than Fast.',
-        '- Fastest measured resident choices: **ZX0 Maximum 228, 9,990 B** and',
-        '  **LZSA2 Wide expanded, 7,004 B**. Maximum 127 uses 7,526 B; switching',
-        '  from 127 to 228 saves only 23,230 T, or 0.016570% of the 127 total.',
+        '- Fastest measured resident choices: **ZX0 Maximum shared 228, 7,578 B** and',
+        '  **LZSA2 Wide expanded, 7,004 B**. Shared 127 uses 5,114 B and is faster',
+        '  than the original unshared 228. Shared suffixes support resident calls only.',
         '- Useful intermediate choices include Mega tuned 674 B and Wide shared 3,452 B.',
         '- Maximum ZX0 coroutine requires Spectrum-style undocumented `CP IXH/IXL`.',
         '  Caller IX is restored on every return; IRQ must preserve live IX and AF/AF\'.',
         '- Wide figures assume an aligned core. Arbitrary alignment adds up to 255 B.',
         '  A full guarded reference can therefore exceed 10,000 B after relocation.',
-        '- Maximum 228 has only 10 intrinsic service bytes left. The 13-byte/six-stack-byte',
+        '- Original unshared Maximum 228 has only 10 service bytes left. The 13-byte/six-stack-byte',
         '  IRQ example makes 10,009 B; use 227 (9,985 B with that IRQ) or reserve the',
         '  actual handler through `irq_code_bytes` / `irq_stack_bytes`. The verified',
         '  minimal `EI; RETI` handler makes 228 total 9,995 B.','',
@@ -292,6 +298,7 @@ def main():
         ('ZX0 Standard / Turbo / Mega','zx0.codec','emit_decoder'),
         ('ZX0 Fast','zx0.resumable','emit_fast'),
         ('ZX0 Maximum resident','zx0.maximum','build'),
+        ('ZX0 shared-prefix layout','zx0._shared_prefixes','transform'),
         ('ZX0 Maximum coroutine','zx0.maximum_coroutine','build'),
         ('LZSA2 Small','lzsa.compact','build'),
         ('LZSA2 Fast and its coroutine','lzsa.resumable','build'),
@@ -303,7 +310,9 @@ def main():
         sources[relative]=sha(path.read_bytes().replace(b'\r\n',b'\n'))
         lines.append(f'| {family} | [{module}.{function}]({relative}#L{line}) |')
     lines += ['','## Evidence and reproduction','',
-        '[Current full native integration](evidence/frontier_completed_profiles_verification.json),',
+        '[Shared Maximum native proof](evidence/shared_zero_prefix_native.json.gz),',
+        '[shared-prefix contracts](ZX0_SHARED_PREFIXES.md),',
+        '[previous full native integration](evidence/frontier_completed_profiles_verification.json),',
         '[original ZX0 counts](evidence/trick_23.json), [original LZSA2 and jump pass](evidence/fast_jumps.json),',
         '[Small counts](evidence/trick_29.json), [guarded native replay](evidence/wide_guarded_native.json.gz),',
         '[authenticated original guarded recordings](evidence/fast_jumps_verification.json).','',

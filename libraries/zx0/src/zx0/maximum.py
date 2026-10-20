@@ -17,7 +17,7 @@ def _after(phase):
     return phase-2 if phase > 1 else 7
 
 
-def build(*, core=0x8000, core_limit=None, prefix_cap=228,
+def build(*, core=0x8000, core_limit=None, prefix_cap=228, shared_prefixes=False,
           irq_code_bytes=0, irq_stack_bytes=0, service_limit=10000,
           _quota_hook=None, _external_labels=None):
     """Return absolute regions, labels and complete service-memory metadata.
@@ -37,7 +37,15 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228,
     eighth length data bit; deeper loops retain the required word shifts.
     At cap227/228, word counts >=256 copy 100/101 extra bytes before sharing
     the existing 127-LDI suffix. Source is pushed and offset loaded once.
+    shared_prefixes optionally merges all phase/family LDI suffixes, ending
+    each chain in a cloned original continuation. The existing tail JP moves
+    to the entry; literal4 and large word entries save another 10 T. Original
+    small-copy paths stay in place. This layout supports resident calls only.
     """
+    if type(shared_prefixes) is not bool:
+        raise ValueError('shared-prefixes must be boolean')
+    if shared_prefixes and _quota_hook is not None:
+        raise ValueError('shared prefixes support resident raw code only')
     if type(prefix_cap) is not int or prefix_cap not in (31, 63, 127, 227, 228):
         raise ValueError('prefix-cap must be one of the measured 31, 63, 127, 227, 228 profiles')
     if (type(core) is not int or (core_limit is not None and type(core_limit) is not int)
@@ -160,6 +168,12 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228,
 
     # Assemble locally from the packaged pinned resource. The package never
     # imports the experiment harness or movie/toolkit modules.
+    shared_audit = None
+    if shared_prefixes:
+        from ._shared_prefixes import transform
+        lines, shared_audit = transform(lines, prefix_cap=prefix_cap, prefixes=prefixes,
+            removed_word_shift_stages=dead_stages, word_copy_joins=word_joins,
+            _quota_hook=_quota_hook)
     a = MiniAssembler(core)
     simple = {'push hl': (0xe5,), 'pop hl': (0xe1,), 'inc bc': (0x03,),
               'inc c': (0x0c,), 'inc hl': (0x23,), 'ldir': (0xed, 0xb0),
@@ -204,7 +218,7 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228,
     if service_bytes > service_limit:
         raise ValueError(f'total service memory {service_bytes} exceeds {service_limit} bytes')
     blob = a.resolve(_external_labels)
-    return [(core, blob)], a.labels, dict(
+    metadata = dict(
         entry='dzx0_mega', variant='maximum-block', one_shot=True,
         code_bytes=code_bytes, core_end=a.pc, state_bytes=0, private_stack_bytes=0,
         workspace_bytes=code_bytes+4, service_memory=service,
@@ -218,3 +232,10 @@ def build(*, core=0x8000, core_limit=None, prefix_cap=228,
         word_copy_joins=word_joins, shared_literal_suffixes=shared_literals,
         coroutine_supported=False,
         measured_frontier=True, globally_optimal=False)
+    if shared_prefixes:
+        metadata.update(shared_prefixes=True, shared_prefix_audit=shared_audit,
+            prefixes=dict(prefixes, **shared_audit['clone_prefixes']),
+            removed_word_shift_stages=dead_stages+shared_audit['clone_removed_word_shift_stages'],
+            word_copy_joins=[], shared_literal_suffixes={},
+            shared_timing_formula=shared_audit['expected_delta_tstates'])
+    return [(core, blob)], a.labels, metadata

@@ -15,6 +15,11 @@ choices, exact builder calls and implementation files, with CPU comparisons
 against both the original adapted Fast and the latest optimization baseline.
 It also includes the smallest retained valid Standard/Small implementations.
 
+The optional [shared ZX0 Maximum layout](ZX0_SHARED_PREFIXES.md) shrinks the
+fastest resident choice from 9,990 to 7,578 service bytes and saves another
+277,150 real CPU T. Use `zx0.maximum.build(shared_prefixes=True)`; the smaller
+5,114-byte shared127 also beats the previous maximum. Defaults stay exact.
+
 These are two independently installable libraries extracted from ZX-video.
 Copy either directory to another project or install it from this checkout:
 

@@ -6,9 +6,9 @@
   "metric": "100*(candidate_CPU_T/reference_CPU_T-1); negative is faster",
   "original_reference": "adapted Fast before optional policies, same features/corpus",
   "pass_reference": "f5a0362c Fast; LZSA2 includes fast_jumps",
-  "document_sha256": "f9704390362b1287a2bc3d4527466e8a7425f3e457be3d3f817b9ff7ab4bf6bc",
-  "checked_public_calls_and_exact_exports": 35,
-  "checked_local_links": 53,
+  "document_sha256": "e2b183e489b29349be34935767dd0b72ea8f925298876d8e4503dc4425983c25",
+  "checked_public_calls_and_exact_exports": 40,
+  "checked_local_links": 61,
   "references": [
     {
       "codec": "zx0",
@@ -387,6 +387,146 @@
           "address": 32768,
           "bytes": 9986,
           "sha256": "edfb49cb0f704ecc71c663a61f4fca3a96bc5f773628500d02609bc0dcd486ca"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum shared 31",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum.build",
+      "kwargs": {
+        "prefix_cap": 31,
+        "shared_prefixes": true
+      },
+      "display_call": "zx0.maximum.build(prefix_cap=31, shared_prefixes=True)",
+      "source_file": "zx0/src/zx0/maximum.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 2806,
+      "service_bytes": 2810,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 141342108,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-9.403355576847294050503126290",
+      "delta_time_vs_original_percent": "-9.403355576847294050503126290",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 2806,
+          "sha256": "e814d1a71d2fa9fc322cf7114b8715e50beb7999b59ed6241c3eccdbe988d136"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum shared 63",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum.build",
+      "kwargs": {
+        "prefix_cap": 63,
+        "shared_prefixes": true
+      },
+      "display_call": "zx0.maximum.build(prefix_cap=63, shared_prefixes=True)",
+      "source_file": "zx0/src/zx0/maximum.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 3574,
+      "service_bytes": 3578,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 140403868,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-10.00474320907065663704425773",
+      "delta_time_vs_original_percent": "-10.00474320907065663704425773",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 3574,
+          "sha256": "49c67e15964fe7d3c7ea6db3718eff9325cc14c4d04c981a75060131cdb7be36"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum shared 127",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum.build",
+      "kwargs": {
+        "prefix_cap": 127,
+        "shared_prefixes": true
+      },
+      "display_call": "zx0.maximum.build(prefix_cap=127, shared_prefixes=True)",
+      "source_file": "zx0/src/zx0/maximum.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 5110,
+      "service_bytes": 5114,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 139916508,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-10.31712839456730780324553440",
+      "delta_time_vs_original_percent": "-10.31712839456730780324553440",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 5110,
+          "sha256": "d8c3d850db7d9bbd4aa0967afb068e546f9ffb653ffd501afdeb0e696e0ef0c8"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum shared 227",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum.build",
+      "kwargs": {
+        "prefix_cap": 227,
+        "shared_prefixes": true
+      },
+      "display_call": "zx0.maximum.build(prefix_cap=227, shared_prefixes=True)",
+      "source_file": "zx0/src/zx0/maximum.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 7550,
+      "service_bytes": 7554,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 139893048,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-10.33216564926968681744260012",
+      "delta_time_vs_original_percent": "-10.33216564926968681744260012",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 7550,
+          "sha256": "8060cc05713a461c4412939342247075257c337665e3a662aae8dbb1e1ffc628"
+        }
+      ]
+    },
+    {
+      "name": "ZX0 Maximum shared 228",
+      "codec": "zx0",
+      "kind": "block",
+      "builder": "zx0.maximum.build",
+      "kwargs": {
+        "prefix_cap": 228,
+        "shared_prefixes": true
+      },
+      "display_call": "zx0.maximum.build(prefix_cap=228, shared_prefixes=True)",
+      "source_file": "zx0/src/zx0/maximum.py",
+      "source_line": 20,
+      "code_state_table_padding_bytes": 7574,
+      "service_bytes": 7578,
+      "full_reference_service_bytes": null,
+      "real_cpu_tstates": 139892818,
+      "pass_baseline_cpu_tstates": 156012520,
+      "original_fast_cpu_tstates": 156012520,
+      "delta_time_vs_pass_percent": "-10.33231307333539641562100272",
+      "delta_time_vs_original_percent": "-10.33231307333539641562100272",
+      "regions": [
+        {
+          "address": 32768,
+          "bytes": 7574,
+          "sha256": "f2212d85982ab4186eddf0a0905a76098ec33d4324a53448b902b41953093cf8"
         }
       ]
     },
@@ -1176,6 +1316,7 @@
     "evidence/wide_guarded_native.json.gz": "a685b79d4cc1484035569a21f5b0224f7184bf21cc1a1b9d03a7184b8c6f7bec",
     "evidence/fast_jumps_verification.json": "d886368449e861043677e154ab190130d0aa745c32e069f4968d5d35fa253f1d",
     "second_pass_verification.json": "f159ef38fe0c91f5ee6f96e315d7980d0707999d42029372ffc5241ef96a6db0",
+    "evidence/shared_zero_prefix_native.json.gz": "fcb80906d6ab6b40983add657850c70bf38f3e41de64611b94eb9751dafa91e1",
     "evidence/fast_jumps_streaming/fast-jumps-call-before.json.gz": "14393b61d1de789ef6db4fe80a1b6b46328484e59421758029c8ad57d52156c5",
     "evidence/fast_jumps_streaming/fast-jumps-call-after.json.gz": "7c35c9423070738bfc9915ee44adbe819ba19760745a176399f29b249f82699b",
     "evidence/fast_jumps_streaming/fast-jumps-direct-before.json.gz": "353c665bc6dd5b94586263660b8d362004b39417bdb841f7b2c10f598496ea9f",
@@ -1183,17 +1324,18 @@
   },
   "source_sha256_lf": {
     "zx0/src/zx0/block.py": "cad29f8ffa3b104d012787d87ca78adf2d81b6bc5de2ffece605f51320ed2c46",
-    "zx0/src/zx0/maximum.py": "dde6a340e9aa99b0b44f278b473e7164b2da1d4c917227add91815b184252dbe",
+    "zx0/src/zx0/maximum.py": "20c6227edc32cb6d87e0cd4c1a01007e21985c260f1dda513a0c19813fc03b1d",
     "lzsa/src/lzsa/block.py": "f909370ee4c475ae7115bd47b1011c9482e70aa20811286f74783c9e673dac0a",
     "zx0/src/zx0/resumable.py": "f2a614b3ef6c9b4b9977c0e56fe0ef533ef41019ac1bf5617a521757205d6ddd",
     "zx0/src/zx0/maximum_coroutine.py": "3c14dafba5efac6696e6e96a5947012285cab490d07164ba70de7f5b5d580139",
     "lzsa/src/lzsa/resumable.py": "bd6a4559e30b66d65c483e458348589b99497539001f4f1de1a1f98651bd0f40",
     "lzsa/src/lzsa/wide_coroutine.py": "02bd6b2e041534e658a8ff4c4dbc133c62db83711f5e010fd1dcccda884cfd30",
     "zx0/src/zx0/codec.py": "0bc65a97c92d708f14ddc11c55451b471cdab95ab5f933280073e86f85537f91",
+    "zx0/src/zx0/_shared_prefixes.py": "1718009817e2fe260582f8de6446fc6f3c749ed566a6dd90616dd995a88ec2b3",
     "lzsa/src/lzsa/compact.py": "0d382910264a4341002c751845420e795ed1357c94989db10974514722cd6676",
     "lzsa/src/lzsa/wide.py": "01a6b768af0f3f94d8cc63f01893a2354a53da1cc002ad3a7de9d31162c80234"
   },
-  "reproducer_sha256_lf": "dfedef21d5a0e343ea5ccfffcbf905a225a1a403862b7cbb48b4b587e1882fc1",
+  "reproducer_sha256_lf": "3881297985de89e01dbc5a73ac660ec6d96aa07fd49e4667ed3acf170ee68c74",
   "default_code_delta_bytes": 0,
   "default_instruction_delta_tstates": 0
 }
