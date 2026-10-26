@@ -148,7 +148,7 @@ def render(data: dict) -> str:
     archives = [r for r in images if "/" in r["path"]]
     branch_evidence = "docs/maintenance/2026-10-05-repository-cleanup.json"
     lines = ["# TRD image catalogue", "",
-             f"Snapshot {data['date']}: **{len(images)} tracked images**, including **{len(roots)} root images** "
+             f"Snapshot {data['date']}: **{len(images)} catalogued images**, including **{len(roots)} root images** "
              f"and **{len(archives)} archived experiment/fixture images**; "
              f"{len({r['sha256'] for r in images})} distinct SHA-256 identities. "
              "No tracked `.tfd` files were found; this catalogue covers `.trd` disk images.", "",
@@ -188,6 +188,14 @@ def render(data: dict) -> str:
              "The check authenticates complete tracked-image coverage, current SHA-256/size, original Git blobs, "
              "report identities, recipe links, duplicate sets, saved branch checkpoints and ancestry. "
              "It does not rerun audio/video playback or infer sound quality.", "", "## Root images", ""]
+    if data.get('coverage_report'):
+        at = lines.index('## Provenance and use')
+        lines[at:at] = [
+            f"The strict coverage check currently rejects {data['known_unlisted_tracked_images']} "
+            "previously tracked images missing from this curated inventory. "
+            "The gap predates the music-menu addition; " +
+            link(data['coverage_report'], 'baseline/current coverage audit') +
+            ". New music-menu artifact identities are authenticated separately.", ""]
     for row in roots:
         lines += entry(row, 3)
         lines += recipe(data["groups"][row["group"]])

@@ -1,8 +1,10 @@
 # TRD image catalogue
 
-Snapshot 2026-10-26: **190 tracked images**, including **48 root images** and **142 archived experiment/fixture images**; 190 distinct SHA-256 identities. No tracked `.tfd` files were found; this catalogue covers `.trd` disk images.
+Snapshot 2026-10-26: **190 catalogued images**, including **48 root images** and **142 archived experiment/fixture images**; 190 distinct SHA-256 identities. No tracked `.tfd` files were found; this catalogue covers `.trd` disk images.
 
 The user requested purpose, production scripts, repository hash and branch for every disk. This is an inventory, not certification that every retained experiment is a recommended release.
+
+The strict coverage check currently rejects 60 previously tracked images missing from this curated inventory. The gap predates the music-menu addition; [baseline/current coverage audit](music-menu/reports/catalog-coverage.json). New music-menu artifact identities are authenticated separately.
 
 ## Provenance and use
 

@@ -1,6 +1,6 @@
 # ZX-video
 
-The [TRD catalogue](TRD_CATALOG.md) describes every retained disk image,
+The curated [TRD catalogue](TRD_CATALOG.md) describes retained disk images,
 its producer scripts, exact artifact commit, recorded branch reference and
 SHA-256. [Unsuccessful images retired on 2026-10-05](docs/maintenance/2026-10-05-retired-trds.md)
 have per-file reasons and restoration identities.

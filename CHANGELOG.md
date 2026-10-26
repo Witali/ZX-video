@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-26 — Record the existing catalogue coverage gap
+
+- **Objective/results:** Run the strict catalogue check after integrating
+  the music menu. It rejects 60 previously tracked images absent from the
+  curated inventory. A read-only comparison at the original `1a46d5e1`
+  baseline proves that the same 60 omissions already existed: 249 tracked
+  versus 189 catalogued then, 250 versus 190 after this task.
+- **Decision/verification:** Preserve the strict coverage gate and all old
+  records. Describe the inventory as curated, retain the exact
+  [coverage audit](music-menu/reports/catalog-coverage.json), and avoid
+  claiming a successful whole-catalogue check. The new image's artifact,
+  sources, reports and ancestry pass their targeted checks. All four player
+  tests also pass from the integrated main checkout. No music bytes change.
+
 ## 2026-10-26 — Register the music disk in the TRD catalogue
 
 - **Scope/change:** Extend the existing catalogue from 189 to 190 images,
