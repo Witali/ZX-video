@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-26 — Register the music disk in the TRD catalogue
+
+- **Scope/change:** Extend the existing catalogue from 189 to 190 images,
+  adding the exact Git LFS artifact from `1b5ae95f` with its builder, guide,
+  hash-matched build/playback reports and a frozen `codex/music-menu` branch
+  checkpoint. The generator now explains later per-entry checkpoints as
+  well as the preserved 2026-10-05 cleanup inventory; old records are unchanged.
+- **Verification:** Authenticate the new artifact commit/LFS OID, current
+  655,360-byte payload, report identities, source links and checkpoint
+  ancestry. This is catalogue maintenance, not a new playback experiment;
+  the preceding full native/Fuse music results remain the qualification.
+
 ## 2026-10-26 — Add the Lumière / Alicia TRD music menu
 
 - **Objective/baseline:** At the user's request, adapt the music examples in

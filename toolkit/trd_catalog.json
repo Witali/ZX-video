@@ -1,9 +1,9 @@
 {
   "schema": 1,
-  "date": "2026-10-12",
-  "snapshot_commit": "ead95787f25dfc9a2e18abf46f313f5e73de4143",
+  "date": "2026-10-26",
+  "snapshot_commit": "1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13",
   "publication_branch": "main",
-  "branch_semantics": "Nearest containing branch checkpoint from the cleanup inventory; not a claim about the original build branch.",
+  "branch_semantics": "Frozen containing checkpoint from the historical cleanup inventory or the entry-specific later artifact checkpoint.",
   "build_identity_note": "Original build HEAD/branch are not uniformly recorded. Artifact commits authenticate exact image bytes; saved reports and producer snapshots carry the finer build evidence.",
   "groups": {
     "audiobook-ay/lpc-probe": {
@@ -503,9 +503,39 @@
         "toolkit/install_movie_release.py"
       ],
       "guide": "ZX-video-full-50Hz.md"
+    },
+    "music-menu": {
+      "description": "Standalone Lumiere/Alicia music menu: complete instrumental arrangements, AY or simultaneous AY+beeper PWM, keyboard/Kempston mouse selection, resident loading and EOF return. All four songs/modes pass full Fuse playback; PWM carrier quality remains limited.",
+      "scripts": [
+        "music-menu/build.py",
+        "music-menu/verify.py",
+        "music-menu/record.py"
+      ],
+      "guide": "music-menu/README.md"
     }
   },
   "images": [
+    {
+      "path": "ZX-Music-Menu.trd",
+      "bytes": 655360,
+      "sha256": "1281b78e036268ecc8ca82e4cf307023fe91380835a76307ce7ba3b8e339f885",
+      "commit": "1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13",
+      "subject": "Add bootable AY and PWM music selection disk",
+      "group": "music-menu",
+      "evidence": [
+        "music-menu/reports/build.json",
+        "music-menu/reports/verification.json"
+      ],
+      "branch_reference": {
+        "name": "codex/music-menu",
+        "head": "1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13",
+        "distance": 0,
+        "evidence": "music-menu/reports/catalog-provenance.json"
+      },
+      "build_head": null,
+      "build_branch": null,
+      "duplicates": []
+    },
     {
       "path": "ZX-audiobook-IMA-ADPCM-direct-test.trd",
       "bytes": 655360,

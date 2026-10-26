@@ -137,6 +137,8 @@ def entry(row: dict, level: int) -> list[str]:
              "- Hash-matched evidence / build settings: " + "; ".join(link(p) for p in row["evidence"]) + "."]
     if row["duplicates"]:
         lines.append("- Byte-identical retained copies: " + "; ".join(link(p) for p in row["duplicates"]) + ".")
+    if b['evidence'] != 'docs/maintenance/2026-10-05-repository-cleanup.json':
+        lines.append("- Branch checkpoint evidence: " + link(b['evidence']) + ".")
     return lines + [""]
 
 
@@ -156,9 +158,11 @@ def render(data: dict) -> str:
              "An **artifact commit** is verified to contain these exact disk bytes (Git LFS OID/size or raw blob). "
              "It can be an archive/restoration commit, rather than the original encoder HEAD. The separate SHA-256 "
              "identifies the actual 640-KiB disk, not its small Git LFS pointer.", "",
-             "Git commits do not store their creation branch. The **recorded containing branch** is the nearest "
-             "containing non-main checkpoint in the " + link(branch_evidence, "2026-10-05 cleanup inventory") +
-             ". An ancestry check authenticates this relationship; it is not proof that encoding ran on that branch. "
+             "Git commits do not store their creation branch. The **recorded containing branch** is a frozen "
+             "checkpoint authenticated by each entry's evidence. Historical entries use the " +
+             link(branch_evidence, "2026-10-05 cleanup inventory") +
+             "; later artifacts can supply dedicated checkpoint records. An ancestry check authenticates this "
+             "relationship; it is not proof that encoding ran on that branch. "
              "Many branches have since been merged/deleted. Original build HEAD/branch are not uniformly recorded, "
              "so they are not invented. Study baselines and source/tool hashes in reports have their own scopes.", "",
              "The inventory source revision is " + commit_link(data["snapshot_commit"]) +

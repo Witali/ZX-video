@@ -1,6 +1,6 @@
 # TRD image catalogue
 
-Snapshot 2026-10-12: **189 tracked images**, including **47 root images** and **142 archived experiment/fixture images**; 189 distinct SHA-256 identities. No tracked `.tfd` files were found; this catalogue covers `.trd` disk images.
+Snapshot 2026-10-26: **190 tracked images**, including **48 root images** and **142 archived experiment/fixture images**; 190 distinct SHA-256 identities. No tracked `.tfd` files were found; this catalogue covers `.trd` disk images.
 
 The user requested purpose, production scripts, repository hash and branch for every disk. This is an inventory, not certification that every retained experiment is a recommended release.
 
@@ -8,9 +8,9 @@ The user requested purpose, production scripts, repository hash and branch for e
 
 An **artifact commit** is verified to contain these exact disk bytes (Git LFS OID/size or raw blob). It can be an archive/restoration commit, rather than the original encoder HEAD. The separate SHA-256 identifies the actual 640-KiB disk, not its small Git LFS pointer.
 
-Git commits do not store their creation branch. The **recorded containing branch** is the nearest containing non-main checkpoint in the [2026-10-05 cleanup inventory](docs/maintenance/2026-10-05-repository-cleanup.json). An ancestry check authenticates this relationship; it is not proof that encoding ran on that branch. Many branches have since been merged/deleted. Original build HEAD/branch are not uniformly recorded, so they are not invented. Study baselines and source/tool hashes in reports have their own scopes.
+Git commits do not store their creation branch. The **recorded containing branch** is a frozen checkpoint authenticated by each entry's evidence. Historical entries use the [2026-10-05 cleanup inventory](docs/maintenance/2026-10-05-repository-cleanup.json); later artifacts can supply dedicated checkpoint records. An ancestry check authenticates this relationship; it is not proof that encoding ran on that branch. Many branches have since been merged/deleted. Original build HEAD/branch are not uniformly recorded, so they are not invented. Study baselines and source/tool hashes in reports have their own scopes.
 
-The inventory source revision is [ead95787f25dfc9a2e18abf46f313f5e73de4143](https://github.com/Witali/ZX-video/commit/ead95787f25dfc9a2e18abf46f313f5e73de4143); publication/integration branch: `main`. Each recipe names the responsible builder or orchestrator, with a guide and hash-matched report for parameters and inputs. Links to scripts use current repository paths; for historical reproduction use the recorded revision and its producer snapshots. Do not assume today's defaults recreate an old image. Saved `.gz` producers, `run-producers`, prepared PCM/IMA streams and manifests take precedence. Old absolute worktree/input paths may need restoration or explicit replacements; external source media and tools are not all included in Git.
+The inventory source revision is [1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13](https://github.com/Witali/ZX-video/commit/1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13); publication/integration branch: `main`. Each recipe names the responsible builder or orchestrator, with a guide and hash-matched report for parameters and inputs. Links to scripts use current repository paths; for historical reproduction use the recorded revision and its producer snapshots. Do not assume today's defaults recreate an old image. Saved `.gz` producers, `run-producers`, prepared PCM/IMA streams and manifests take precedence. Old absolute worktree/input paths may need restoration or explicit replacements; external source media and tools are not all included in Git.
 
 Archived `phase-*`, `pilot`, `control`, `history` and `paused` files are different build/calibration stages. Their path and evidence identify the stage. Equal hashes are explicitly linked; equal filenames or codec names do not imply equal sound. Individual resident-part test disks are not the whole sequential disk.
 
@@ -28,6 +28,21 @@ python toolkit/catalog_trd.py --check
 The check authenticates complete tracked-image coverage, current SHA-256/size, original Git blobs, report identities, recipe links, duplicate sets, saved branch checkpoints and ancestry. It does not rerun audio/video playback or infer sound quality.
 
 ## Root images
+
+### [ZX-Music-Menu.trd](ZX-Music-Menu.trd)
+
+Saved change: Add bootable AY and PWM music selection disk.
+
+- Exact artifact commit: [1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13](https://github.com/Witali/ZX-video/commit/1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13).
+- Recorded containing branch: `codex/music-menu` at [1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13](https://github.com/Witali/ZX-video/commit/1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13). Original build branch/HEAD: not established by this record.
+- Image: 655360 bytes; SHA-256 `1281b78e036268ecc8ca82e4cf307023fe91380835a76307ce7ba3b8e339f885`.
+- Hash-matched evidence / build settings: [music-menu/reports/build.json](music-menu/reports/build.json); [music-menu/reports/verification.json](music-menu/reports/verification.json).
+- Branch checkpoint evidence: [music-menu/reports/catalog-provenance.json](music-menu/reports/catalog-provenance.json).
+
+Standalone Lumiere/Alicia music menu: complete instrumental arrangements, AY or simultaneous AY+beeper PWM, keyboard/Kempston mouse selection, resident loading and EOF return. All four songs/modes pass full Fuse playback; PWM carrier quality remains limited.
+
+Producer / orchestration: [music-menu/build.py](music-menu/build.py); [music-menu/verify.py](music-menu/verify.py); [music-menu/record.py](music-menu/record.py).
+Method, inputs and invocation: [music-menu/README.md](music-menu/README.md).
 
 ### [ZX-audiobook-IMA-ADPCM-direct-test.trd](ZX-audiobook-IMA-ADPCM-direct-test.trd)
 
