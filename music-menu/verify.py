@@ -11,7 +11,7 @@ import sys
 import time
 from types import SimpleNamespace
 
-from build import BANKS, FIELD_T, ROOT, sha
+from build import BANKS, FIELD_T, ROOT, REGISTER_ORDER, MUTE_WRITES, sha
 
 
 def decode_records(data):
@@ -34,8 +34,8 @@ def decode_records(data):
         if mask&0xC000:
             raise ValueError('Invalid register mask')
         writes = []
-        for reg in range(14):
-            if mask&(1<<reg):
+        for slot,reg in enumerate(REGISTER_ORDER):
+            if mask&(1<<slot):
                 if position>=len(data):
                     raise ValueError('Truncated register value')
                 value = data[position]
@@ -166,7 +166,7 @@ def native_check(output, metadata):
         machine.byte('selected',index)
         start = len(machine.writes)
         machine.call('choose')
-        assert machine.writes[start:start+14]==[(i,0) for i in range(14)]
+        assert machine.writes[start:start+14]==list(MUTE_WRITES)
         assert machine.writes[start+14:]==records[0]['writes']
         audio_hist,ui_hist,total_hist = Counter(),Counter(),Counter()
         for tick in range(1,ticks):
@@ -181,7 +181,7 @@ def native_check(output, metadata):
             total_hist[audio+ui] += 1
         start = len(machine.writes)
         machine.run_to(labels['field_start'],[labels['menu_frame_done']],30000)
-        assert machine.writes[start:]==[(i,0) for i in range(14)]
+        assert machine.writes[start:]==list(MUTE_WRITES)
         assert machine.cpu.memory[labels['playing']]==255
         assert machine.beeper and set(machine.beeper)=={0},'ULA audio output is forbidden'
         assert max(total_hist)<FIELD_T
@@ -193,6 +193,8 @@ def native_check(output, metadata):
             ui_tstates=dict(sorted(ui_hist.items())),total_foreground_tstates=dict(sorted(total_hist.items()))))
     machine = Machine(blob,labels)
     assert machine.call('irq')==18
+    mute_tstates = machine.call('mute')
+    assert mute_tstates==1164
     # Authenticate every write-count formula using the real decoder, including
     # a byte crossing between values in the middle of a register-mask record.
     timings = {}
@@ -204,7 +206,7 @@ def native_check(output, metadata):
         probe.byte('remaining',0)
         probe.byte('current_bank_index',0)
         elapsed = probe.call('music_tick')
-        assert elapsed==1452+142*count,(count,elapsed)
+        assert elapsed==1452+164*count,(count,elapsed)
         timings[count] = elapsed
     crossing = Machine(blob,labels)
     crossing.cpu.set_memory_block(0xFFFD,b'\x01\x01\x00')
@@ -213,9 +215,10 @@ def native_check(output, metadata):
     crossing.byte('remaining',0)
     crossing.byte('current_bank_index',0)
     crossing_t = crossing.call('music_tick')
-    assert crossing_t==1452+142+185 and crossing.writes==[(0,9)],crossing_t
+    assert crossing_t==1452+164+185 and crossing.writes==[(0,9)],crossing_t
     return dict(player_sha256=sha(blob),songs=results,irq_handler_tstates=18,
-        im2_hardware_entry_tstates=19,read_byte_ordinary_tstates=75,read_byte_boundary_extra_tstates=185,
+        im2_hardware_entry_tstates=19,mute_tstates=mute_tstates,
+        read_byte_ordinary_tstates=75,read_byte_boundary_extra_tstates=185,
         delta_record_tstates=timings,controls=control_check(blob,labels,disk),
         scope='Complete independent Z80 foreground/menu replay; explicit bank swaps and ROM-read stub; Fuse separately cold boots real ROM/floppy.')
 
@@ -237,9 +240,9 @@ def control_check(blob, labels, disk):
     frame({})
     frame({0xBFFE:254})
     assert machine.cpu.memory[labels['playing']]==1
-    pointer = bytes(machine.cpu.memory[labels['record_pointer']:labels['record_pointer']+2])
+    mute_count = len(machine.beeper)
     frame({0xBFFE:254})
-    assert bytes(machine.cpu.memory[labels['record_pointer']:labels['record_pointer']+2])==pointer,'Held Enter restarted'
+    assert len(machine.beeper)==mute_count,'Held Enter restarted'
     frame({})
     # Mouse counters wrap, and clicking the first card switches during Alicia.
     machine.byte('mouse_x',80)
@@ -301,9 +304,9 @@ def fuse_check(fuse, output, metadata, index, *, captured=False):
         f'[{labels["current_bank_index"]}]'])
     # no_write is the instruction immediately after OUT, and skipped mask bits
     # jump there too. Observe actual port transactions, not that shared join.
-    event('port write 49149',105,[stamp,'$segment','$ticks',f'[{labels["register_index"]}]','z80:h'],
+    event('port write 49149',105,[stamp,'$segment','$ticks','z80:a','z80:h'],
         condition=f'z80:pc=={labels["ay_out"]+2}')
-    event(labels['mute_out']+2,108,['z80:d','z80:e'],condition='$live==1')
+    event(labels['mute_out']+2,108,['z80:a','z80:e'],condition='$live==1')
     event(labels['irq'],106,[stamp],condition='$live==1')
     event('port write 254',107,['z80:a'],condition='$live==1')
     event(labels['field_start'],120,[stamp],condition='$live==1')
@@ -342,7 +345,7 @@ def fuse_check(fuse, output, metadata, index, *, captured=False):
                                    1,0,16+section['bank']])
     assert [r[1:] for r in events[101]]==expected_reads
     assert events[107] and all(r==[0] for r in events[107]),'Beeper output detected'
-    assert events[108]==[[i,0] for i in range(14)]*4
+    assert events[108]==[list(pair) for pair in MUTE_WRITES]*4
     segment_reports = []
     for segment,which in enumerate((index,1-index,index),1):
         item = metadata['songs'][which]
@@ -411,7 +414,7 @@ def run_fuse(fuse, output, script, *, extra=(), sound=False, timeout=240):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-ay-only')
+    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-click-fix')
     parser.add_argument('--fuse',type=Path)
     parser.add_argument('--song',choices=('lumiere','alicia'),default='lumiere')
     parser.add_argument('--captured',action='store_true',help='Recheck matching saved full traces without rerunning Fuse')

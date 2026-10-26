@@ -198,8 +198,12 @@ mask_loop:
         RR E
         JR NC,no_write
         CALL read_byte
-        LD H,A
+        LD B,A
         LD A,(register_index)
+        LD L,A
+        LD H,0x8C
+        LD A,(HL)
+        LD H,B
         LD B,0xFF
         OUT (C),A
         LD B,0xBF
@@ -286,18 +290,20 @@ install_irq:
         RET
 mute:   XOR A
         OUT (0xFE),A
-        LD D,0
-        LD E,0
+        LD D,14
         LD C,0xFD
+        LD HL,mute_values
 mute_loop:
+        LD A,(HL)
+        INC HL
         LD B,0xFF
-        OUT (C),D
+        OUT (C),A
+        LD E,(HL)
+        INC HL
         LD B,0xBF
 mute_out:
         OUT (C),E
-        INC D
-        LD A,D
-        CP 14
+        DEC D
         JR NZ,mute_loop
         RET
 
@@ -574,7 +580,11 @@ disk_position: DEFW 0
 bank_order: DEFB 0,4,6,1,3,7
         INCLUDE "variants.inc"
 code_end:
-        ASSERT $ <= 0x9000
+        ASSERT $ <= 0x8C00
+        DS 0x8C00-$
+; Mask slots prepare all generators first, then apply volumes/ENV enables.
+; The aligned lookup keeps the streaming hot path independent of code layout.
+register_order: DEFB 0,1,2,3,4,5,6,7,11,12,13,8,9,10
         DS 0x9000-$
 screen_data:
         MDAT "screen.bin"

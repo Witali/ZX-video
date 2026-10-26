@@ -76,7 +76,7 @@ def record(fuse,output,song,seconds,*,captured=False):
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-ay-only')
+    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-click-fix')
     parser.add_argument('--fuse',type=Path,required=True)
     parser.add_argument('--song',choices=('lumiere','alicia'),required=True)
     parser.add_argument('--seconds',type=float,default=12)

@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from arrangement import notes_for_pattern, timeline
-from build import HERE, ROOT, build, control_frames, pack_frames, sha, triangle_period
+from build import HERE, ROOT, REGISTER_ORDER, MUTE_WRITES, build, control_frames, pack_frames, sha, triangle_period
 from verify import native_check, unpack
 
 
@@ -67,6 +67,27 @@ class MusicMenuTests(unittest.TestCase):
             self.assertTrue(all(row[10]<16 for row in unpack(classic)))
         self.assertLess(abs(triangle_period(35)[1]),4)
         self.assertGreater(abs(triangle_period(42)[1]),18)
+
+    def test_click_repair_preserves_source_grid_and_removes_zero_periods(self):
+        old = json.loads((HERE/'reports/ay-only/build.json').read_text())
+        for name in ('lumiere','alicia'):
+            score = json.loads((HERE/'scores'/f'{name}.json').read_text())
+            baseline,before = control_frames(score,click_safe=False)
+            fixed,after = control_frames(score)
+            self.assertEqual(before['frames_sha256'],next(s for s in old['songs'] if s['song']==name)['frames_sha256'])
+            self.assertEqual(before['ticks'],after['ticks'])
+            self.assertLess(after['envelope_restarts'],before['envelope_restarts']//2)
+            self.assertLessEqual(after['max_release_extension_seconds'],.065)
+            rows = unpack(fixed)
+            self.assertTrue(all(row[11]+256*row[12]>0 and row[6]==31 for row in rows))
+            self.assertGreater(after['phase_preserved_bass_note_changes'],0)
+
+    def test_generators_are_programmed_before_channel_enable(self):
+        for volume in (8,9,10):
+            self.assertGreater(REGISTER_ORDER.index(volume),REGISTER_ORDER.index(13))
+        self.assertEqual([r for r,v in MUTE_WRITES[:3]],[8,9,10])
+        self.assertTrue(all(v==0 for r,v in MUTE_WRITES if r in (8,9,10)))
+        self.assertLess([r for r,v in MUTE_WRITES].index(13),[r for r,v in MUTE_WRITES].index(11))
 
     def test_reject_invalid_bars_and_ties(self):
         score = dict(patterns=dict(A=['C4:3']),beats_per_bar=4,chord_pairs=[['Bm','Em']])

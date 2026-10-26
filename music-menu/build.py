@@ -26,6 +26,14 @@ AY_LEVELS = (0., .009994659, .014450294, .02105745, .03070115, .04554818,
              .06449989, .1073625, .1265888, .2049897, .2922103, .3728389,
              .4925307, .6353246, .8055848, 1.)
 TRIANGLE_MAX_CENTS = 18
+# The mask describes these slots, not numerical register order. Prepare the
+# oscillators/envelope before enabling a channel's new volume or ENV bit.
+REGISTER_ORDER = (0,1,2,3,4,5,6,7,11,12,13,8,9,10)
+# Silence first, clear the envelope counter before restoring a nonzero period,
+# and park unused generators cheaply. Zero envelope periods accumulate a
+# counter backlog in Fuse's AY renderer before a later nonzero period write.
+MUTE_WRITES = ((8,0),(9,0),(10,0),(13,0),(7,63),(6,31),(11,255),(12,255),
+               (0,0),(1,0),(2,0),(3,0),(4,0),(5,0))
 
 
 def sha(data):
@@ -43,7 +51,7 @@ def triangle_period(pitch):
 def pack_frames(frames):
     """Duration U8 + changed-register mask LE16 + ascending changed values.
 
-    Mask bits 0..12 update register state; bit 13 is an explicit envelope restart.
+    Mask slots follow REGISTER_ORDER; R13 is an explicit envelope restart.
     FF for R13 is a host sentinel only. It is never written to the chip.
     Long holds split at 255 fields. A zero duration is the single-byte EOF.
     """
@@ -57,10 +65,9 @@ def pack_frames(frames):
     previous = None
     writes = 0
     for duration,row in runs:
-        mask = sum(1<<i for i in range(13) if previous is None or row[i]!=previous[i])
-        if row[13]!=255:
-            mask |= 1<<13
-        values = bytes(row[i] for i in range(14) if mask&(1<<i))
+        mask = sum(1<<slot for slot,reg in enumerate(REGISTER_ORDER)
+                   if (row[reg]!=255 if reg==13 else previous is None or row[reg]!=previous[reg]))
+        values = bytes(row[reg] for slot,reg in enumerate(REGISTER_ORDER) if mask&(1<<slot))
         data.extend(bytes([duration])+struct.pack('<H',mask)+values)
         writes += len(values)
         previous = row
@@ -68,38 +75,70 @@ def pack_frames(frames):
     return bytes(data), len(runs), writes
 
 
-def control_frames(score, *, triangle=True):
+def control_frames(score, *, triangle=True, click_safe=True):
     voices, duration = timeline(score)
     ticks = math.ceil(duration*CONTROL_HZ)
     gains = json.loads((HERE/'balance.json').read_text())['balance']['role_gain']
     states = [[(0,0.,0,-1) for _ in range(4)] for _ in range(ticks)]
     errors = []
+    legato_links = 0
+    maximum_extension = 0.
     for role,notes in enumerate(voices):
         for note_id,(start,length,pitch,instrument,gain) in enumerate(notes):
             if not 1<=pitch<=127 or length<=0:
                 raise ValueError('Invalid note')
+            previous = notes[note_id-1] if note_id else None
+            following = notes[note_id+1] if note_id+1<len(notes) else None
+            gap_limit = .065 if role==2 else .012
+            link_before = bool(click_safe and instrument and previous and previous[3]
+                               and -.000001<=start-previous[0]-previous[1]<=gap_limit)
+            link_after = bool(click_safe and instrument and following and following[3]
+                              and -.000001<=following[0]-start-length<=gap_limit)
+            # Preserve note-on positions. Short string/cello articulation gaps
+            # receive a release bridge instead of a repeated hard gate/retrigger.
+            sound_end = following[0] if link_after else start+length
+            if link_after:
+                legato_links += 1
+                maximum_extension = max(maximum_extension,sound_end-start-length)
             first = round(start*CONTROL_HZ)
-            stop = min(ticks,round((start+length)*CONTROL_HZ))
-            errors.extend((first/CONTROL_HZ-start,stop/CONTROL_HZ-start-length))
+            stop = min(ticks,round(sound_end*CONTROL_HZ))
+            score_stop = min(ticks,round((start+length)*CONTROL_HZ))
+            errors.extend((first/CONTROL_HZ-start,score_stop/CONTROL_HZ-start-length))
             for tick in range(first,stop):
                 age = max(0.,tick/CONTROL_HZ-start)
                 tail = max(0.,start+length-tick/CONTROL_HZ)
                 if instrument==0:
-                    amplitude = next(level for when,level in
-                        ((1.2,.1),(.7,.18),(.4,.28),(.2,.4),(.1,.55),(.04,.74),(0.,1.)) if age>=when)
+                    if click_safe:
+                        points = ((0.,1.),(.04,.74),(.1,.55),(.2,.4),(.4,.28),(.7,.18),(1.2,.1))
+                        amplitude = points[-1][1]
+                        for (left,a),(right,b) in zip(points,points[1:]):
+                            if age<right:
+                                amplitude = a+(b-a)*(age-left)/(right-left)
+                                break
+                        amplitude *= min(1.,(age+.004)/.035)
+                    else:
+                        amplitude = next(level for when,level in
+                            ((1.2,.1),(.7,.18),(.4,.28),(.2,.4),(.1,.55),(.04,.74),(0.,1.)) if age>=when)
                 else:
-                    amplitude = min(1., max(.08,age/.08))
-                amplitude *= min(1.,tail/.06)*gain*gains[ROLE_NAMES[role]]
+                    amplitude = 1. if link_before else min(1.,max(.08,age/.08))
+                release = 1. if link_after else min(1.,tail/(.08 if click_safe else .06))
+                amplitude *= release*gain*gains[ROLE_NAMES[role]]
                 states[tick][role] = (pitch,amplitude,instrument,note_id)
     frames = []
     previous_bass = -1
     triangle_fields = 0
     pitch_errors = []
     envelope_starts = 0
+    last_envelope_period = 65535
+    triangle_was_active = False
+    phase_preserved_note_changes = 0
     for state in states:
         row = bytearray(14)
         row[7] = 0x38
         row[13] = 255
+        if click_safe:
+            row[6] = 31  # Noise is disabled; do not run an unused zero-period RNG.
+            row[11:13] = struct.pack('<H',last_envelope_period)
         for channel,role in enumerate((0,1,2)):
             pitch,amp,instrument,note_id = state[role]
             period = max(1,min(4095,round((CPU_HZ/2)/(16*440*2**((pitch-69)/12))))) if pitch else 1
@@ -115,9 +154,13 @@ def control_frames(score, *, triangle=True):
                 row[4:6] = b'\x01\x00'
                 row[10] = 16
                 row[11:13] = struct.pack('<H',env)
-                if note_id!=previous_bass:
+                restart = not triangle_was_active if click_safe else note_id!=previous_bass
+                if restart:
                     row[13] = 14  # Rising/falling repeat, initial level zero.
                     envelope_starts += 1
+                elif click_safe and note_id!=previous_bass:
+                    phase_preserved_note_changes += 1
+                last_envelope_period = env
                 triangle_fields += 1
                 pitch_errors.append(cents)
                 previous_bass = note_id
@@ -125,12 +168,15 @@ def control_frames(score, *, triangle=True):
                 previous_bass = -1
         else:
             previous_bass = -1
+        triangle_was_active = bool(row[10]&16)
         frames.append(bytes(row))
     data, records, writes = pack_frames(frames)
     return data, dict(ticks=ticks,score_seconds=duration,playback_seconds=ticks/CONTROL_HZ,
         records=records,register_writes=writes,packed_bytes=len(data),source_notes=[len(v) for v in voices],
         max_note_boundary_error_seconds=max(map(abs,errors)),packed_sha256=sha(data),
         frames_sha256=sha(b''.join(frames)),triangle_fields=triangle_fields,envelope_restarts=envelope_starts,
+        click_safe=click_safe,legato_links=legato_links,max_release_extension_seconds=maximum_extension,
+        phase_preserved_bass_note_changes=phase_preserved_note_changes,
         max_triangle_pitch_error_cents=max(map(abs,pitch_errors),default=0),
         retained_roles=['lead','piano_accompaniment','bass'],omitted_role='inner_voice')
 
@@ -192,6 +238,7 @@ def build(output):
         sections.append(dict(bank=bank,sector=track*16+sector,sectors=count,bytes=len(payload)))
         files.append(TrdFile(f'CACHE{index}','C',payload,start=0xC000))
     config.append('        DEFB 255')
+    config += ['mute_values:','        DEFB '+','.join(str(value) for pair in MUTE_WRITES for value in pair)]
     (work/'variants.inc').write_text('\n'.join(config)+'\n',encoding='ascii',newline='\n')
     (work/'screen.bin').write_bytes(screen())
     source = (HERE/'player.asm').read_bytes().replace(b'\r\n',b'\n')
@@ -207,14 +254,15 @@ def build(output):
     files[1] = TrdFile('PLAYER','C',blob,start=0x8000)
     disk,directory,capacity = place_files(files,'AYMUSIC')
     (output/'ZX-Music-Menu.trd').write_bytes(disk)
-    meta = dict(schema=2,independently_bootable=True,target='Spectrum128 + Beta Disk; AY only',
+    meta = dict(schema=3,independently_bootable=True,target='Spectrum128 + Beta Disk; AY only',
         songs=songs,cache_sections=sections,cache_bytes=len(cache),player_labels=labels,
         directory=directory,capacity=capacity,trd_sha256=sha(disk),player_sha256=sha(blob),
         assembly_sha256=sha(source),control_hz=CONTROL_HZ,cpu_hz=CPU_HZ,frame_tstates=FIELD_T,
         tools=dict(pyz80=importlib.metadata.version('pyz80'),pillow=importlib.metadata.version('Pillow')),
         producer_sha256={name:sha((HERE/name).read_bytes()) for name in ('build.py','arrangement.py','balance.json')},
         beeper_audio=False,simultaneously_cached_songs=True,
-        record_format='duration U8; changed-register mask LE16; ascending values; zero-duration EOF',
+        record_format='duration U8; changed-register slot mask LE16; register_order values; zero-duration EOF',
+        register_order=list(REGISTER_ORDER),mute_writes=[list(pair) for pair in MUTE_WRITES],
         memory=dict(fixed_player_bank=2,display_basic_trdos_bank=5,available_song_banks=list(BANKS),
                     max_cache_bytes=98304,stack_top=0xBD00),
         timing_scope='CPU components exclude ULA, HALT, IRQ entry and TR-DOS; see verified timing report.')
@@ -226,5 +274,5 @@ def build(output):
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-ay-only')
+    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-click-fix')
     build(parser.parse_args().output)

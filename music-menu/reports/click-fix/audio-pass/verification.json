@@ -1,0 +1,109 @@
+{
+  "date": "2026-10-26",
+  "trd_sha256": "587a34b14ff22c58e439de646812c254e96a15351877de525b7bdc2202727759",
+  "tests_passed": 7,
+  "full_songs": 2,
+  "runs": [
+    {
+      "song": "lumiere",
+      "trd_sha256": "587a34b14ff22c58e439de646812c254e96a15351877de525b7bdc2202727759",
+      "complete": true,
+      "cold_boot": true,
+      "full_song_ticks": 11105,
+      "live_menu_switches": 2,
+      "segments": [
+        {
+          "song": "lumiere",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 137,
+          "records": 67,
+          "registers_exact": true
+        },
+        {
+          "song": "alicia",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 103,
+          "records": 56,
+          "registers_exact": true
+        },
+        {
+          "song": "lumiere",
+          "ticks": 11105,
+          "complete": true,
+          "register_writes": 9013,
+          "records": 5267,
+          "registers_exact": true
+        }
+      ],
+      "startup_reads": 154,
+      "disk_reads_after_ready": 0,
+      "no_beeper_audio": true,
+      "no_ula_fields_skipped": true,
+      "accumulated_song_drift_fields": 0,
+      "eof_mutes_and_menu_remains_active": true,
+      "irq_count": 11304,
+      "foreground_min_tstates": 3999,
+      "foreground_max_tstates": 22489,
+      "max_command_to_song_start_tstates": 1584,
+      "max_command_to_first_ay_write_tstates": 2155,
+      "max_command_to_complete_initial_state_tstates": 5288,
+      "cache_loading_tstates": 21458089,
+      "trace_sha256": "c477d65c628e704336657f38e2546d3ca2090ede34d548cf6ec230989b757690",
+      "scope": "Complete real128 Fuse playback with ULA/TR-DOS and live command dispatch; native tests cover hardware input decoding.",
+      "trace_file": "traces/lumiere.txt.gz"
+    },
+    {
+      "song": "alicia",
+      "trd_sha256": "587a34b14ff22c58e439de646812c254e96a15351877de525b7bdc2202727759",
+      "complete": true,
+      "cold_boot": true,
+      "full_song_ticks": 7886,
+      "live_menu_switches": 2,
+      "segments": [
+        {
+          "song": "alicia",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 103,
+          "records": 56,
+          "registers_exact": true
+        },
+        {
+          "song": "lumiere",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 137,
+          "records": 67,
+          "registers_exact": true
+        },
+        {
+          "song": "alicia",
+          "ticks": 7886,
+          "complete": true,
+          "register_writes": 5164,
+          "records": 3108,
+          "registers_exact": true
+        }
+      ],
+      "startup_reads": 154,
+      "disk_reads_after_ready": 0,
+      "no_beeper_audio": true,
+      "no_ula_fields_skipped": true,
+      "accumulated_song_drift_fields": 0,
+      "eof_mutes_and_menu_remains_active": true,
+      "irq_count": 8085,
+      "foreground_min_tstates": 3999,
+      "foreground_max_tstates": 22489,
+      "max_command_to_song_start_tstates": 1584,
+      "max_command_to_first_ay_write_tstates": 2155,
+      "max_command_to_complete_initial_state_tstates": 5288,
+      "cache_loading_tstates": 21460894,
+      "trace_sha256": "666f8db3992149935ad879e03d13316de2d0d3562188714b0d058997060dcbee",
+      "scope": "Complete real128 Fuse playback with ULA/TR-DOS and live command dispatch; native tests cover hardware input decoding.",
+      "trace_file": "traces/alicia.txt.gz"
+    }
+  ],
+  "scope": "Audio-only repair checkpoint before the separately requested ROM-text menu change."
+}

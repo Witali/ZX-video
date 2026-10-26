@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-26",
+  "baseline_commit": "c7b3c794",
+  "fuse_source": "https://raw.githubusercontent.com/speccytools/fuse/master/sound.c",
+  "hypothesis": "Zero unused envelope periods accumulate counter work in Fuse; repeated gates/restarts and early ENV enables cause control discontinuities.",
+  "limitations": "Counter-work prediction and16-second DAC-step probes do not establish physical audibility or sound-card underruns. Full native/Fuse delivery checks are separate.",
+  "songs": [
+    {
+      "song": "lumiere",
+      "comparisons": {
+        "baseline": {
+          "full_fields": 11105,
+          "zero_envelope_period_fields": 3028,
+          "envelope_restarts": 111,
+          "bass_mode_edges": 221,
+          "packed_bytes": 25597,
+          "logical_frames_sha256": "df83eb223cf564648da9cde6e1e8676a0778a861490a9fb33af849048ee0ed7c",
+          "bounded_probe_fields": 800,
+          "probe_sha256": "1dde8b1bf3abd1aa9d8966192af206c02f3afe522eeda645e1931222685b8310",
+          "dac_steps": {
+            "writes": 733,
+            "instant_dac_step_squared_sum": 0.9975223781421118,
+            "instant_dac_step_max": 0.33333333333333337,
+            "limitations": "Same-phase DAC changes exclude ordinary oscillator edges. Serial events use measured219/241-T write paths, rounded to44.1kHz samples. Not perceptual click audibility or full Z80/Fuse qualification."
+          },
+          "fuse_counter": {
+            "predicted_max_envelope_iterations_in_one_renderer_step": 3047,
+            "restores_with_accumulated_counter": 8,
+            "scope": "Published Fuse AY-loop counter model;32-T step approximation; not measured host stalls."
+          }
+        },
+        "fixed": {
+          "full_fields": 11105,
+          "zero_envelope_period_fields": 0,
+          "envelope_restarts": 37,
+          "bass_mode_edges": 73,
+          "packed_bytes": 24815,
+          "logical_frames_sha256": "4df6e0ff34fb6b5abce4df9c333042097f944ad16aa93db8b206b0698c0f11a3",
+          "bounded_probe_fields": 800,
+          "probe_sha256": "e3255257f7b80dbd69c45386c51cf0f4f152ed6859829ec23e55653985c6e192",
+          "dac_steps": {
+            "writes": 723,
+            "instant_dac_step_squared_sum": 0.2553821090376739,
+            "instant_dac_step_max": 0.10277968515556667,
+            "limitations": "Same-phase DAC changes exclude ordinary oscillator edges. Serial events use measured219/241-T write paths, rounded to44.1kHz samples. Not perceptual click audibility or full Z80/Fuse qualification."
+          },
+          "fuse_counter": {
+            "predicted_max_envelope_iterations_in_one_renderer_step": 1,
+            "restores_with_accumulated_counter": 0,
+            "scope": "Published Fuse AY-loop counter model;32-T step approximation; not measured host stalls."
+          }
+        }
+      }
+    },
+    {
+      "song": "alicia",
+      "comparisons": {
+        "baseline": {
+          "full_fields": 7886,
+          "zero_envelope_period_fields": 2592,
+          "envelope_restarts": 53,
+          "bass_mode_edges": 105,
+          "packed_bytes": 14484,
+          "logical_frames_sha256": "bce8775ea81205f15a7abad55153e7d08d6c2079d41009f857ee96e296342ebe",
+          "bounded_probe_fields": 800,
+          "probe_sha256": "1dbbb0a46a28c372c25c829a5ec1998766f951e60127c18e3ee7f5134c357d1f",
+          "dac_steps": {
+            "writes": 640,
+            "instant_dac_step_squared_sum": 0.9113431404746276,
+            "instant_dac_step_max": 0.21177487856366664,
+            "limitations": "Same-phase DAC changes exclude ordinary oscillator edges. Serial events use measured219/241-T write paths, rounded to44.1kHz samples. Not perceptual click audibility or full Z80/Fuse qualification."
+          },
+          "fuse_counter": {
+            "predicted_max_envelope_iterations_in_one_renderer_step": 167,
+            "restores_with_accumulated_counter": 5,
+            "scope": "Published Fuse AY-loop counter model;32-T step approximation; not measured host stalls."
+          }
+        },
+        "fixed": {
+          "full_fields": 7886,
+          "zero_envelope_period_fields": 0,
+          "envelope_restarts": 15,
+          "bass_mode_edges": 29,
+          "packed_bytes": 14489,
+          "logical_frames_sha256": "af85d2ee95968f8153a15fddb71c6e6d654ad2ec8359c16ae7352c7a07808a8f",
+          "bounded_probe_fields": 800,
+          "probe_sha256": "33282ed465766dd01eba6e3999827d9f131b2df409820c61f0954f9047b8d800",
+          "dac_steps": {
+            "writes": 679,
+            "instant_dac_step_squared_sum": 0.20164715356012447,
+            "instant_dac_step_max": 0.10277968515556668,
+            "limitations": "Same-phase DAC changes exclude ordinary oscillator edges. Serial events use measured219/241-T write paths, rounded to44.1kHz samples. Not perceptual click audibility or full Z80/Fuse qualification."
+          },
+          "fuse_counter": {
+            "predicted_max_envelope_iterations_in_one_renderer_step": 1,
+            "restores_with_accumulated_counter": 0,
+            "scope": "Published Fuse AY-loop counter model;32-T step approximation; not measured host stalls."
+          }
+        }
+      }
+    }
+  ]
+}

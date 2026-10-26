@@ -1,5 +1,36 @@
 # Changelog and optimization experiments
 
+## 2026-10-26 — Repair AY write ordering and control discontinuities
+
+- **Objective/baseline:** Diagnose the user's clicks and small stutters in
+  Fuse from `c7b3c794`; preserve both complete note timelines and live menus.
+  Existing traces show no skipped target fields or playback disk access.
+- **Findings/change:** The old stream uses zero envelope periods in 3028/2592
+  fields. The published Fuse counter algorithm can accumulate work until a
+  nonzero period returns before R13 resets it. Keep unused periods positive
+  and park unused noise. Write generator/envelope state before volumes/ENV
+  enables; mute channels before reset/parking. Preserve phase across connected
+  bass notes, bridge short string/cello release gaps (≤65 ms), and soften piano
+  attack/decay. Envelope restarts fall 111→37 / 53→15; no source note-on is moved.
+- **Measurements:** A 16-second same-phase DAC proxy falls about 74%/78% in
+  squared command-step sum; maximum steps 0.333333/ 0.211775→0.102780. The
+  counter-work model changes 3047/167→1 iterations per renderer step. These
+  are bounded signal/source-algorithm results, not measured host underruns
+  or perceptual click counts. [Reproduction and saved analysis](music-menu/CLICK_REPAIR.md).
+- **CPU/storage:** Delta records cost 1452+164*w T versus 1452+142*w (+22 per
+  written register); mute 1164 T versus 951 (+213). Sustained audio 92 T, reader
+  75 T, boundary +185 T and IRQ 18+19 T remain unchanged. Cache 39304 B versus
+  40081 B; 219 data sectors versus 222. Full details distinguish CPU from ULA,
+  ROM and disk. Intermediate audio artifact SHA-256:
+  `587a34b14ff22c58e439de646812c254e96a15351877de525b7bdc2202727759`.
+- **Verification/decision:** Seven tests and complete native UI/audio runs
+  pass. Both real128 Fuse runs finish their whole song after two live switches,
+  with exact AY port writes, no missed ULA field and no post-ready disk read.
+  Maximum actual foreground 22489/70908 T; command-to-first/all-initial AY
+  writes 2155/5288 T. Retain the fix and historical baseline. The requested
+  standard ROM font/menu change follows as its own focused change; final
+  sound excerpts and release identities will bind that resulting artifact.
+
 ## 2026-10-26 — Update the catalogue to the AY-only music artifact
 
 - **Scope/change:** Replace the current music-menu row with the exact AY-only
