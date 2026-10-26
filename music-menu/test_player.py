@@ -1,56 +1,81 @@
-"""Music import identity, real instruction replay and menu regression checks."""
+"""AY delta-stream, complete foreground execution and live menu regressions."""
 import json
 import tempfile
 import unittest
 from pathlib import Path
 
 from arrangement import notes_for_pattern, timeline
-from build import HERE, ROOT, build, control_frames, sha
+from build import HERE, ROOT, build, control_frames, pack_frames, sha, triangle_period
 from verify import native_check, unpack
 
 
 class MusicMenuTests(unittest.TestCase):
-    def test_import_preserves_original_four_role_arrangements(self):
+    def test_original_arrangements_unchanged(self):
         reference = json.loads((HERE/'reports/import-reference.json').read_text())
-        for song in ('lumiere', 'alicia'):
+        for song in ('lumiere','alicia'):
             source = (HERE/'scores'/f'{song}.json').read_bytes()
-            result = timeline(json.loads(source))
-            canonical = json.dumps(result, separators=(',', ':')).encode()
-            self.assertEqual(sha(source), reference[song]['score_sha256'])
-            self.assertEqual(sha(canonical), reference[song]['timeline_sha256'])
+            canonical = json.dumps(timeline(json.loads(source)),separators=(',',':')).encode()
+            self.assertEqual(sha(source),reference[song]['score_sha256'])
+            self.assertEqual(sha(canonical),reference[song]['timeline_sha256'])
 
-    def test_complete_cpu_playback_and_controls(self):
+    def test_complete_player_ui_and_cached_switching(self):
         (ROOT/'build').mkdir(exist_ok=True)
-        with tempfile.TemporaryDirectory(prefix='zx-music-', dir=ROOT/'build') as temp:
-            disk, meta = build(temp)
-            report = native_check(Path(temp), meta)
-            self.assertEqual(len(disk), 655360)
-            self.assertEqual(len(report['variants']), 4)
-            self.assertTrue(all(v['complete'] and v['ay_and_dds_exact'] for v in report['variants']))
-            self.assertEqual(report['irq_handler_tstates'], 46)
+        with tempfile.TemporaryDirectory(prefix='ay-menu-',dir=ROOT/'build') as temp:
+            disk,meta = build(temp)
+            report = native_check(Path(temp),meta)
+            self.assertEqual(len(disk),655360)
+            self.assertEqual(len(report['songs']),2)
+            self.assertLess(meta['cache_bytes'],3*16384)
+            self.assertTrue(all(s['complete'] and s['no_beeper_audio'] for s in report['songs']))
+            self.assertTrue(report['controls']['mouse_switch_during_playback'])
+            self.assertTrue(report['controls']['keyboard_switch_during_playback'])
+            self.assertEqual(report['irq_handler_tstates'],18)
 
-    def test_alignment_eof_and_mode_validation(self):
-        score = json.loads((HERE/'scores/alicia.json').read_text())
-        for mode in ('hybrid', 'ay'):
-            data, meta = control_frames(score, mode)
-            self.assertEqual(len(unpack(data)), meta['ticks'])
-            self.assertEqual(len(data) % 16, 0)
-            self.assertLessEqual(meta['max_note_boundary_error_seconds'], .01)
-            with self.assertRaises(ValueError):
-                unpack(data[:-1])
-            with self.assertRaises(ValueError):
-                unpack(bytes(16)+data)
+    def test_delta_roundtrip_preserves_envelope_restart_events(self):
+        start = bytearray(14)
+        start[7] = 0x38
+        start[10] = 16
+        start[11] = 32
+        start[13] = 14
+        hold = start.copy()
+        hold[13] = 255
+        frames = [bytes(start)]+[bytes(hold)]*600+[bytes(start)]+[bytes(hold)]*9
+        data,records,writes = pack_frames(frames)
+        self.assertEqual(unpack(data),frames)
+        self.assertLess(len(data),60)
+        self.assertGreater(records,3)
         with self.assertRaises(ValueError):
-            control_frames(score, 'invalid')
+            unpack(data[:-1])
+        with self.assertRaises(ValueError):
+            unpack(data+b'\0')
+        with self.assertRaises(ValueError):
+            unpack(b'\x01\x00\xC0\0')
 
-    def test_reject_malformed_bars_and_ties(self):
-        score = dict(patterns=dict(A=['C4:3']), beats_per_bar=4, chord_pairs=[['Bm','Em']])
+    def test_actual_song_tuning_and_timing_bounds(self):
+        for name in ('lumiere','alicia'):
+            score = json.loads((HERE/'scores'/f'{name}.json').read_text())
+            data,meta = control_frames(score)
+            frames = unpack(data)
+            self.assertEqual(len(frames),meta['ticks'])
+            self.assertLessEqual(meta['max_note_boundary_error_seconds'],.01)
+            self.assertLessEqual(meta['max_triangle_pitch_error_cents'],18)
+            self.assertGreater(meta['triangle_fields'],0)
+            self.assertLess(meta['envelope_restarts'],meta['triangle_fields']//5)
+            self.assertTrue(all(sum(bool(row[i]&16) for i in (8,9,10))<=1 for row in frames))
+            classic,classic_meta = control_frames(score,triangle=False)
+            self.assertEqual(classic_meta['triangle_fields'],0)
+            self.assertTrue(all(row[10]<16 for row in unpack(classic)))
+        self.assertLess(abs(triangle_period(35)[1]),4)
+        self.assertGreater(abs(triangle_period(42)[1]),18)
+
+    def test_reject_invalid_bars_and_ties(self):
+        score = dict(patterns=dict(A=['C4:3']),beats_per_bar=4,chord_pairs=[['Bm','Em']])
         with self.assertRaises(ValueError):
-            notes_for_pattern(score, 'A')
+            notes_for_pattern(score,'A')
         score['patterns']['A'] = ['C4:4~']
         with self.assertRaises(ValueError):
-            notes_for_pattern(score, 'A')
+            notes_for_pattern(score,'A')
 
 
-if __name__ == '__main__':
+if __name__=='__main__':
     unittest.main()

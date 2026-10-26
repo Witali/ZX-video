@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-26",
+  "baseline_commit": "62dd7f88",
+  "trd_sha256": "179f40b9d67e7b54347a088431f966156e4e10b91bbb398ddded345ce442d486",
+  "player_sha256": "b683de3996a59ca4e63ff262a676ee783ac2eca571906b0558ca676889cb2e1a",
+  "unit_tests": {
+    "passed": 5,
+    "failed": 0
+  },
+  "full_songs": 2,
+  "full_song_fields": 18991,
+  "preliminary_fields": 400,
+  "live_switches": 4,
+  "total_verified_music_register_writes": 16407,
+  "beeper_audio": false,
+  "disk_reads_after_ready": 0,
+  "no_ula_fields_skipped": true,
+  "max_triangle_pitch_error_cents": 16.981393862293327,
+  "verification_script_sha256": "e157d073146a585eb1c0976f04eec0c7c6c7004f63a3a74002646997d48bd400",
+  "timbre_probe_script_sha256": "784b5edfc35fff083c157ccdb92615c885be2c2ca519142a80e181005e878dca",
+  "native_cpu": "z80==1.2.0",
+  "fuse_version": "1.9.0",
+  "runs": [
+    {
+      "song": "lumiere",
+      "trd_sha256": "179f40b9d67e7b54347a088431f966156e4e10b91bbb398ddded345ce442d486",
+      "complete": true,
+      "cold_boot": true,
+      "full_song_ticks": 11105,
+      "live_menu_switches": 2,
+      "segments": [
+        {
+          "song": "lumiere",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 119,
+          "records": 47,
+          "registers_exact": true
+        },
+        {
+          "song": "alicia",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 84,
+          "records": 36,
+          "registers_exact": true
+        },
+        {
+          "song": "lumiere",
+          "ticks": 11105,
+          "complete": true,
+          "register_writes": 10314,
+          "records": 5094,
+          "registers_exact": true
+        }
+      ],
+      "startup_reads": 157,
+      "disk_reads_after_ready": 0,
+      "no_beeper_audio": true,
+      "no_ula_fields_skipped": true,
+      "accumulated_song_drift_fields": 0,
+      "eof_mutes_and_menu_remains_active": true,
+      "irq_count": 11304,
+      "foreground_min_tstates": 3999,
+      "foreground_max_tstates": 23741,
+      "max_command_to_song_start_tstates": 1371,
+      "max_command_to_first_ay_write_tstates": 1920,
+      "max_command_to_complete_initial_state_tstates": 4767,
+      "cache_loading_tstates": 21649531,
+      "trace_sha256": "ab3f3ff20749215e7dc245e27c4f92fb8c3f55de6e83d8b63e66f003d5bd4de7",
+      "scope": "Complete real128 Fuse playback with ULA/TR-DOS and live command dispatch; native tests cover hardware input decoding.",
+      "trace_file": "traces/lumiere.txt.gz"
+    },
+    {
+      "song": "alicia",
+      "trd_sha256": "179f40b9d67e7b54347a088431f966156e4e10b91bbb398ddded345ce442d486",
+      "complete": true,
+      "cold_boot": true,
+      "full_song_ticks": 7886,
+      "live_menu_switches": 2,
+      "segments": [
+        {
+          "song": "alicia",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 84,
+          "records": 36,
+          "registers_exact": true
+        },
+        {
+          "song": "lumiere",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 119,
+          "records": 47,
+          "registers_exact": true
+        },
+        {
+          "song": "alicia",
+          "ticks": 7886,
+          "complete": true,
+          "register_writes": 5687,
+          "records": 2932,
+          "registers_exact": true
+        }
+      ],
+      "startup_reads": 157,
+      "disk_reads_after_ready": 0,
+      "no_beeper_audio": true,
+      "no_ula_fields_skipped": true,
+      "accumulated_song_drift_fields": 0,
+      "eof_mutes_and_menu_remains_active": true,
+      "irq_count": 8085,
+      "foreground_min_tstates": 3999,
+      "foreground_max_tstates": 23741,
+      "max_command_to_song_start_tstates": 1371,
+      "max_command_to_first_ay_write_tstates": 1920,
+      "max_command_to_complete_initial_state_tstates": 4767,
+      "cache_loading_tstates": 21665119,
+      "trace_sha256": "c693e298b60c14b30619fff7f78d62d9434349f511610435bc94e0870f16f26a",
+      "scope": "Complete real128 Fuse playback with ULA/TR-DOS and live command dispatch; native tests cover hardware input decoding.",
+      "trace_file": "traces/alicia.txt.gz"
+    }
+  ]
+}

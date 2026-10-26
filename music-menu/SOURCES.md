@@ -1,5 +1,29 @@
 # Score and implementation provenance
 
+The current AY-only build (2026-10-26 follow-up) replaces the original
+PWM output and keeps the menu active during playback. The source score
+identities below remain exact. Historical PWM evidence is retained for
+comparison; it is not a selectable mode in the current disk.
+
+The bass timbre screen reads the existing VSCO 2 Community Edition CC0 cello
+sample and manifest from z80-tester's `audio/assets/samples/legacy-sampler/`.
+The retained [measurement](reports/ay-only/timbres.json) records the sample
+SHA-256, pinned source revision, root frequency, harmonic profiles and pitch
+errors. No sample audio is copied into the new disk or required to rebuild.
+It compares the nonlinear AY DAC square, triangle and saw profiles against
+a stable source window, not an original recording or a perceptual quality
+reference. Shape 14 is the phase-rotated rising/falling version of the
+measured shape 10; their stationary harmonic magnitudes are identical.
+
+The AY envelope behavior was checked against the original
+[General Instrument data sheet](https://map.grauw.nl/resources/sound/generalinstrument_ay-3-8910.pdf)
+and the project's unmodified Ayumi model. The repeating up/down period is
+twice the saw period; only one shared hardware envelope exists. A channel C
+ultrasonic tone gate reduces the baseband envelope level while keeping all
+audio inside AY. The dedicated probe script and full real-port Fuse checks
+are local to this project. The implementation does not claim a linear
+triangle DAC or independent envelopes for every channel.
+
 Imported on 2026-10-26 at the user's request from their local projects.
 No network retrieval, source recording, MIDI binary, sample bank or old ROM
 is required to rebuild this disk.
@@ -22,6 +46,9 @@ These are the existing simplified instrumental adaptations, with newly
 written accompaniment, fixed-tempo fermatas/ritardando and octave changes
 already described in the imported scores. They are not original orchestral
 recordings. The compositions and transcriptions are not CC0.
+
+The original PWM version below is retained as historical implementation
+provenance. It is not part of the current sound path.
 
 `z80-tester`'s PWM8080 engine and MicroMusic's i8080 PWM / UM88 examples
 informed the software pulse-width, wavetable and compact-event approach.

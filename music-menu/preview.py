@@ -5,14 +5,14 @@ from pathlib import Path
 from PIL import Image
 
 from build import ROOT, spectrum_bitmap_offset
-from verify import Machine
+from verify import Machine, boot
 
 
 def render(output):
     output = Path(output)
     meta = json.loads((output/'build.json').read_text())
     machine = Machine((output/'assembly/player.bin').read_bytes(), meta['player_labels'])
-    machine.run_to(meta['player_labels']['start'], [meta['player_labels']['menu_ready']], 500000)
+    boot(machine,(output/'ZX-Music-Menu.trd').read_bytes())
     memory = machine.cpu.memory
     im = Image.new('RGB', (256, 192))
     for y in range(192):
@@ -27,4 +27,4 @@ def render(output):
 
 
 if __name__ == '__main__':
-    render(ROOT/'build/music-menu')
+    render(ROOT/'build/music-menu-ay-only')

@@ -1,131 +1,158 @@
-# TRD music menu for Spectrum 128
+# AY-only TRD music menu
 
-[ZX-Music-Menu.trd](../ZX-Music-Menu.trd) is an independently bootable
-Spectrum 128 + Beta Disk jukebox with the complete existing instrumental
-arrangements of **Lumière (3:42)** and **Alicia (2:38)**. Insert the disk
-and boot TR-DOS / `boot`. It needs 128 KiB RAM and AY.
+[ZX-Music-Menu.trd](../ZX-Music-Menu.trd) boots on **Spectrum128 + Beta Disk**
+and plays the complete existing instrumental arrangements of **LumiÃ¨re
+(3:42)** and **Alicia (2:38)** using the AY chip. The ULA beeper stays silent.
 
-Click a song with a Kempston mouse, or press **1 / 2** to load and play it.
-**7 / 6** select the previous/next song; **Enter** starts the selection.
-**M** changes the sound mode in the menu. **Space** stops and returns to
-the menu. EOF mutes both outputs and returns automatically. A held mouse
-button or mode key does not repeatedly activate its command.
+Both songs load into RAM once at startup. **Click either card with a Kempston
+mouse, or press 1/2**, to start or switch songs immediately. **7/6** move the
+selection while the current song continues; **Enter** starts the selection.
+**Space** stops. Re-selecting a song restarts it. The menu and cursor remain
+active throughout playback, and EOF leaves the menu ready for another choice.
+The current song is green when a different card is selected in blue.
+There is no mode key or beeper output path.
 
-The default **AY + PWM** mode gives the beeper a sine-wave lead and AY
-three accompaniment voices. **AY** uses lead, piano accompaniment and bass
-on its three hardware channels. The imported inner accompaniment voice is
-omitted in AY mode. These are new Spectrum arrangements of the existing
-notes, with new timbres and quantized envelopes; they are not copies of
-the source projects' sampled sound. [Sources and limitations](SOURCES.md).
+The cache is **40,081 bytes**, in three uncontended data banks `(0,4,6)`.
+No disk access is needed for a switch or restart. Fuse measures about 6.1
+seconds from the first cache read to ready; this is startup loading, not a
+pause each time a melody is selected. The disk uses 222 data sectors and has
+2322 free. Its 640-KiB image remains independently bootable.
 
-The loading indicator remains visible while the selected version loads.
-The measured selection-to-ready time is about 10.8 seconds for Lumière and
-6.6 seconds for Alicia in Fuse's emulated disk model. All data stays in RAM
-afterward: no disk reads interrupt a song. The disk contains four sound
-versions in 944 data sectors; 1600 sectors remain free.
+## Sound and waveform selection
 
-## Build and verify
+AY supplies three musical roles: lead, piano accompaniment and bass. The
+original inner accompaniment voice is omitted, as in the previous AY mode.
+All source JSON/playlist/note identities are preserved. Lead and piano use
+tone generators with separate software attack/decay/release levels. Bass
+uses the shared repeating **triangle envelope (shape 14)** on notes whose
+integer envelope period stays within **18 cents** of the target; the other
+notes use the more finely tuned tone generator. R13 restarts only on a
+new selected bass note, never on every field. Only one channel owns the
+shared envelope.
 
-From the repository root, with Python 3.12+, NumPy, Pillow and pyz80:
+This triangle is the AY's stepped, nonlinear DAC envelope, not a programmable
+linear waveform oscillator. A full up/down cycle has 64 internal steps:
+`f = 1,773,450 / (512 * envelope_period)`. AY channel C's period 1 ultrasonic
+tone gate halves the envelope's baseband amplitude after low-pass filtering;
+all sound is generated inside AY, with register updates at the ULA field
+rate. There are no CPU pulse-width or PCM-volume loops.
+
+The [bounded timbre screen](reports/ay-only/timbres.json) compared normalized
+12-harmonic spectra with the existing CC0 cello sample: square distance
+0.266106, triangle 0.249832, saw 0.408128. Triangle is closer in this stable
+spectral comparison, approximately 6.1% below square; this is not a whole-song
+perceptual quality score. Integer-period tuning is checked separately.
+The selected triangle notes have a maximum 16.982-cent error. Triangle is
+used for 8077 LumiÃ¨re fields and 5294 Alicia fields. These arrangements have
+new AY timbres and are not audio-equivalent to the source sampled players.
+[Music and sample provenance](SOURCES.md).
+
+Actual Fuse listening excerpts: [LumiÃ¨re](previews/lumiere-ay.wav) and
+[Alicia](previews/alicia-ay.wav). Physical analogue filtering and chip
+variants can affect the ultrasonic-gated envelope level. No physical-board
+sound or subjective listening approval is claimed.
+
+## Build and reproduce
+
+Python 3.12+, NumPy, Pillow and pyz80; the native checks additionally use the
+independent `z80` package. Run from the repository root:
 
 ```powershell
 python -m pip install numpy Pillow pyz80==1.3.0 z80==1.2.0
 python music-menu/build.py
 python -m unittest discover -s music-menu -p test_player.py -v
 python music-menu/verify.py
-python music-menu/verify.py --fuse C:/Tools/Fuse/fuse.exe --variant 0 --pulse-fields 50
-python music-menu/verify.py --fuse C:/Tools/Fuse/fuse.exe --variant 1
-python music-menu/verify.py --fuse C:/Tools/Fuse/fuse.exe --variant 2 --pulse-fields 50
-python music-menu/verify.py --fuse C:/Tools/Fuse/fuse.exe --variant 3
+python music-menu/verify.py --fuse C:/Tools/Fuse/fuse.exe --song lumiere
+python music-menu/verify.py --fuse C:/Tools/Fuse/fuse.exe --song alicia
 python music-menu/record.py --fuse C:/Tools/Fuse/fuse.exe --song lumiere --seconds 12
 python music-menu/record.py --fuse C:/Tools/Fuse/fuse.exe --song alicia --seconds 12
 python music-menu/preview.py
 ```
 
-Generated output goes to ignored `build/music-menu/`, including a disk,
-assembler source/listing/binary, RLE data, build metadata, native report,
-complete Fuse traces, listening WAVs and an actual Z80 menu framebuffer PNG.
-The root disk and [saved reports](reports/verification.json) identify the
-retained build. No sibling project, MIDI file, online service or instrument
-download is needed. Pillow's font version affects screen pixels; the saved
-build records the actual tool versions and source hashes.
+Output goes to ignored `build/music-menu-ay-only/`: disk, assembler input,
+listing and binary, delta streams, complete native/Fuse reports and traces,
+recordings and an actual Z80 framebuffer PNG. Rebuilding needs no sibling
+repository, sample download, MIDI, Node.js or external instrument bank.
+Only re-running `probe_timbres.py --sample-folder <original-sample-folder>`
+needs the existing cello WAV and its pinned manifest; it saves measurements,
+not the sample audio. The retained report records the exact sample identity.
 
-## Verification coverage and audio limits
+## Complete playback and live-menu verification
 
-The complete four-version independent Z80 replay checks 37,982 fields,
-154,341 AY writes, every DDS parameter, bank boundary, duration, phase and
-stack balance, all 16 pulse widths, EOF muting, keyboard commands, mouse
-counter wrap, clicks, debouncing and the integrated menu loop.
+[Current build](reports/ay-only/build.json),
+[native CPU](reports/ay-only/native.json) and
+[complete Fuse evidence](reports/ay-only/verification.json) bind the exact
+retained disk and player. Five tests cover original score identities,
+delta/R13 restart contracts, complete foreground/menu replay, cached switching,
+held-key debouncing, mouse wrap and clicks during playback, stop, EOF, all
+register states, stack balance and a record crossing a physical bank boundary.
 
-All four versions also cold boot and finish in Fuse 1.9.0, with real TR-DOS
-ROM, floppy latency, ULA I/O contention and interrupts. Every AY write and
-DDS change matches the generated stream. No ULA field is skipped, no song
-schedule drifts, and no disk read occurs during playback. The final AY mute
-and return to the menu are observed. Fuse selects through a debugger jump
-to the normal `choose` entry after cold boot; native port-input tests cover
-the actual keyboard/mouse selection path. This is not a physical-machine
-test or a qualification for other clones or 48K machines.
+Each of two Fuse 1.9.0 runs cold boots the real TR-DOS loader, plays 100 ticks
+of one song, switches to the other for 100 ticks, switches back and finishes
+the entire selected song through EOF. Both complete songs pass: **18,991
+full-song fields**, plus 400 preliminary fields, four switches and exact
+verification of every actual AY data-port write. ULA interrupts never skip
+a field, no song schedule drifts, and there is no disk read after ready.
+The visible menu/cursor foreground runs on every field. Maximum measured
+foreground work, including ULA contention and switching, is 23,741 T versus
+a 70,908-T field. The menu command reaches song start within 1371 T after
+dispatch (about 0.387 ms); input polling itself is once per field.
+The actual first AY data write occurs within 1920 T (0.541 ms) of dispatch;
+all registers of the new initial state are published within 4767 T (1.344 ms).
 
-PWM is a working first version with audible-quality limitations. Its
-ordinary period is 242 CPU T (nominal 14.6566 kHz before overhead), with
-16 high widths of 25..85 T. Real ULA contention and field work disturb the
-carrier. The first 50 fields of each hybrid song measure rising intervals
-up to 1521 T (about 0.429 ms); those pulse traces are bounded excerpts,
-while song/IRQ/register checks cover the complete songs. The effective
-sample clock is slightly lower than the nominal DDS clock, so exact beeper
-tuning is not claimed. Periodic service noise can be heard; use AY mode
-for a comparison without this software carrier. The two retained
-[Lumière](previews/lumiere-hybrid.wav) / [Alicia](previews/alicia-hybrid.wav)
-excerpts are actual Fuse sound output, with no clipped PCM samples; no
-SNR target, listening approval or physical-board audio quality is claimed.
+Fuse injects commands at the real menu dispatch point; no loader, audio
+instruction or cached byte is patched. Native tests independently exercise
+the keyboard and mouse port decoding. This is emulator verification, not a
+physical-machine or other-clone qualification. The project's unrelated
+[pre-existing catalogue coverage gap](reports/catalog-coverage.json) remains
+recorded separately.
 
-## Memory and CPU accounting
+## Stream, memory and CPU accounting
 
-RAM5 holds the 6912-byte display plus BASIC/TR-DOS workspace. RAM2 holds
-the fixed 16 KiB player image: code/config below 8C00h, two aligned NOP
-ladders at 8C00h/8D00h, screen template 9000h..AAFFh, 16 waveform/volume
-pages AB00h..BAFFh, stack below BD00h, IM2 jump BDBDh and vector table
-BE00h..BF00h. The six other banks `(0,4,6,1,3,7)` provide 98,304 resident
-song bytes. Lumière uses five; Alicia uses three. There is no streaming read
-buffer. The allocation accounts for all eight physical banks independently
-of host emulator storage.
+RAM5 contains the 6912-byte display plus BASIC/TR-DOS workspace. RAM2 holds
+the 16-KiB player image, screen template at 9000h..AAFFh, stack below BD00h,
+IM2 jump at BDBDh and vector table at BE00h..BF00h. Old waveform tables and
+PWM code are removed. Up to 98,304 cache bytes are available in the six
+other banks; the two actual streams need only banks 0/4/6. All eight physical
+banks are accounted for independently of host emulator memory.
 
-A record is `duration LE16, DDS step LE16, wave page U8, AY R0..R10 U8[11]`.
-Zero duration marks EOF. RLE only merges identical control states; records
-are 16 bytes, so a bank boundary cannot split one. Absolute source times
-are rounded to the actual 128K field clock (3,546,900 / 70,908 Hz); note
-boundary error stays below 10 ms, without per-pattern rounding drift.
+A record is `duration U8, changed-register mask LE16, values in register
+order`. Duration 0 is EOF; long holds split at 255 fields. Mask bits 0..12
+update ordinary state; bit 13 explicitly restarts the envelope. The host
+R13 sentinel 255 is never sent to the chip. The byte reader pages across
+FFFFh even in the middle of a mask/value list. Each song table entry stores
+its cache bank index and start address. Switching resets the chip and its
+stream cursor without loading anything. Absolute note boundaries are rounded
+once to `3,546,900 / 70,908` fields/second, with less than 10 ms error and no
+per-pattern drift.
 
-Instruction counts use the [project timing table](../libraries/Z80_TIMINGS.md):
+The [instruction table](../libraries/Z80_TIMINGS.md) supplies deterministic
+CPU counts, independently cross-checked against actual assembled execution:
 
-| Path | CPU T | Previous standalone AY50 path | Difference |
+| Component | New CPU T | Previous player | Difference |
 | --- | ---: | ---: | ---: |
-| Sustained field, no new record | 176 | 974 | -798 |
-| New row, same bank | 1214 | 974 | +240 |
-| New row after bank 0/4/6/1 | 1304/1329/1354/1379 | 1091 bank change | +213/+238/+263/+288 |
-| Ordinary PWM sample | 242 | No equivalent PWM path | New functionality |
-| IM2 handler, entry excluded | 46 | EI+RETI = 18 | +28 |
-| IM2 hardware entry + handler | 65 | 19+18 = 37 | +28 |
+| Sustained audio service with caller, UI excluded |92|176|-84|
+| New row with 1 changed register, UI excluded |1635|1214|+421|
+| New row with 3 changed registers, UI excluded |1919|1214|+705|
+| IRQ body |18|46|-28|
+| IM2 entry plus body |37|65|-28|
+| Byte reader |75|No equivalent|New format|
+| Boundary extra per crossing byte |185|Different record format|New format|
+| Ordinary unchanged UI work |3907|Not active during playback|New feature|
 
-These are CPU entry-through-exit components, with equal explicit exclusions;
-the old AY50 player has different stream/loop behavior. They do not imply a
-whole-player speedup. A sustained field is 135 T before `tick_done`, plus
-41 T after it. A new row is 300 T to `ay_loop`, 10*78+73 = 853 T for eleven
-writes, then 16 T pointer store, 4 T record event and 41 T tail = 1214 T.
-Finding the next bank adds 90+25*i T for zero-based outgoing bank index i.
-IRQ uses EX AF 4 + LD A,n 7 + store 13 + EX AF 4 + EI 4 + RETI 14 = 46 T;
-AF' is scratch, main AF and other register pairs are preserved.
+These are component comparisons with explicitly different stream/features,
+not a claim that the whole new foreground is faster. A held `music_tick`
+is 13+4+7+4+13+10=51 T; its main caller costs 41 T, giving 92 T.
+A new delta record costs **1452+142*w T** for `w` changed registers, plus 185 T
+per bank crossing and 41 T for its main caller. Header 365 + mask loop
+(13*77+72)=1073 + NOP 4 + RET 10 =1452 T; a written bit adds 147 T of
+fetch/select/output and replaces a 12-T branch by 7 T, net 142 T.
+The normal reader is 16+4+4+12+7+6+16+10=75 T. Boundary work adds 185 T.
+Native fixtures check write counts 0/1/3/13/14 and an actual boundary inside
+a value list. IRQ is EI 4 + RETI 14, plus 19 T hardware entry.
 
-PWM setup through the rising OUT costs 106 T, JP/high/low ladders together
-use a fixed 60 T of NOPs, and the remaining instructions total 76 T:
-106+60+76 = 242 T. The rising-to-falling interval is 10+4*q+4+11 = 25+4*q T.
-These calculations exclude ULA WAITs, IRQ service, field service, HALT and
-TR-DOS/physical disk time. [Native](reports/native.json) and complete
-[Fuse](reports/verification.json) measurements retain those distinctions.
-
-The first prototype masked IRQ during high pulses. Its complete Lumière
-run missed 3861 ULA fields (maximum 20-field IRQ gap), so it was rejected.
-Replacing that DI with an equal-cost NOP keeps the 242-T ordinary period
-(delta 0 T) and lets the short ULA INT window be serviced at either level.
-[Rejected-attempt report](reports/rejected-masked-irq.json) retains its
-identities and measurements; the intermediate binary was not retained.
+ULA WAITs, HALT, physical disk and ROM time are excluded from those CPU
+components. The separate complete Fuse results include actual ULA/ROM/disk
+behavior. Old PWM build reports and hybrid excerpts remain as historical
+comparison evidence under `reports/` and `previews/*-hybrid.wav`; Git commit
+`1b5ae95f` retains their exact original TRD. They are not modes on this disk.

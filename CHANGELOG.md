@@ -1,5 +1,56 @@
 # Changelog and optimization experiments
 
+## 2026-10-26 — Replace PWM with AY-only sound and keep the menu live
+
+- **Objective/baseline:** Follow the user's new request from `62dd7f88`:
+  remove beeper output, investigate a closer AY waveform and allow switching
+  songs while music plays. Preserve both full existing score timelines.
+  The preceding PWM/AY experiments and their reports remain historical.
+- **Implementation:** Remove the CPU carrier and mode selector. Cache both
+  three-role AY arrangements together using byte-duration/register-mask
+  delta records, including explicit R13 restart events. The 40,081-byte cache
+  occupies uncontended banks 0/4/6; all reads finish at startup. Keyboard and
+  Kempston mouse remain active on every field; selecting/restarting a song
+  changes the RAM cursor immediately. The same independently bootable TRD
+  now uses 222 data sectors (previously 944), with 2322 free. Its SHA-256 is
+  `179f40b9d67e7b54347a088431f966156e4e10b91bbb398ddded345ce442d486`.
+- **Timbre screen:** Against the pinned CC0 cello's stable normalized
+  12-harmonic profile, square/triangle/saw distances are
+  0.266106/0.249832/0.408128. Retain the closer triangle-envelope bass where
+  integer-period tuning is within 18 cents; reject saw and use ordinary tone
+  for notes outside that pitch bound. Selected maximum error is 16.982 cents.
+  Shape 14 starts from zero and continues between note events; AY's internal
+  ultrasonic tone gate reduces its baseband level. This is the nonlinear
+  AY DAC envelope, not a linear oscillator or a perceptual quality score.
+  [Probe and source identities](music-menu/reports/ay-only/timbres.json),
+  [reproduction](music-menu/probe_timbres.py).
+- **CPU/memory:** Sustained audio service with its caller is 92 T versus
+  176 T (-84); one-/three-register delta rows are 1635/1919 T versus the old
+  1214-T full row (+421/+705). Byte fetch is 75 T, boundary extra 185 T;
+  the complete decoder is 1452+142*w T per new record. IRQ body falls from
+  46 to 18 T (-28), with the separate 19-T IM2 hardware entry unchanged.
+  New active UI work is measured separately; no whole-foreground speedup is
+  claimed. [Instruction sums, baseline distinctions and RAM allocation](music-menu/README.md#stream-memory-and-cpu-accounting).
+- **Verification:** Five tests pass. Complete independent Z80 foreground/UI
+  replays and real128 Fuse cold boots finish both songs: 18,991 full-song
+  fields plus 400 intentionally short switch-test fields, four live switches,
+  16,407 exact music register writes, no skipped IRQ field or accumulated
+  schedule drift, no disk read after ready, and only zero-valued ULA writes.
+  Full port traces observe actual AY transactions rather than the shared
+  skipped-register branch join. Native tests also cover real keyboard/mouse
+  decoding, held keys, stop, EOF, stack balance and cross-bank value lists.
+  Maximum actual foreground work is 23,741/70,908 T per field. From command
+  dispatch, the first new AY write occurs within 1920 T and the complete
+  initial state within 4767 T; counters alone are not used as publication
+  evidence. Both songs load once in about 6.1 seconds. Complete reports and
+  [traces](music-menu/reports/ay-only/verification.json) are retained.
+- **Sound/decision:** Retain the AY-only disk and
+  [new Fuse excerpts](music-menu/previews/lumiere-ay.wav). Both excerpts have
+  no PCM clipping. Their initial bass peaks, 61.908/65.357 Hz, agree with
+  the expected triangle periods (61.853/65.354 Hz). This is bounded sound
+  evidence, not physical-board, all-chip or subjective listening approval.
+  No source note, movie player or unrelated catalogue coverage gate changes.
+
 ## 2026-10-26 — Record the existing catalogue coverage gap
 
 - **Objective/results:** Run the strict catalogue check after integrating
