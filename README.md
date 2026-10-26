@@ -23,6 +23,12 @@ and complete verification evidence.
 
 ## Usage
 
+The [standalone music menu](music-menu/README.md) boots
+[Lumière / Alicia](ZX-Music-Menu.trd) from one TRD. Select by keyboard or
+Kempston mouse, choose AY or AY + beeper PWM, and stop with Space.
+Both complete arrangements and both sound modes pass full Fuse playback;
+the PWM carrier's measured timing/quality limits are documented separately.
+
 For audio-only playback, the [audio converter](audiobook-beeper/CONVERTER.md)
 defaults to packed IMA3 and direct beeper PDM, accepted by the user in Fuse.
 Use `--codec ima4` for four-bit audio; both modes default to one disk with

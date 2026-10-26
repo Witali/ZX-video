@@ -1,5 +1,53 @@
 # Changelog and optimization experiments
 
+## 2026-10-26 — Add the Lumière / Alicia TRD music menu
+
+- **Objective/baseline:** At the user's request, adapt the music examples in
+  z80-tester and MicroMusic into a standalone Spectrum128/Beta Disk player,
+  starting from `1a46d5e1`. The user selected Lumière and Alicia. Preserve the
+  existing complete four-role instrumental arrangements, not the original
+  recordings; add track selection, loading and AY/beeper sound modes. Movie
+  playback and the separate codec optimization milestones are unchanged.
+- **Implementation:** New [builder/arranger/player](music-menu/README.md)
+  packages exact score JSON imports, role balance, 16-byte RLE control rows,
+  resident bank loading, keyboard/Kempston mouse menu, stop/EOF muting and
+  return. Hybrid assigns the lead to a 16-level sine/PWM DDS and three backing
+  voices to AY. AY mode retains lead/piano/bass. One independently bootable
+  [TRD](ZX-Music-Menu.trd), SHA-256
+  `1281b78e036268ecc8ca82e4cf307023fe91380835a76307ce7ba3b8e339f885`,
+  uses 944 data sectors with 1600 free. Lumière is 222.0061 seconds, with
+  70,368 or 70,480 RLE bytes; Alicia is 157.6533 seconds, with 41,968 or
+  41,744 bytes.
+- **Failed intermediate attempt:** Masking IRQ during the PWM high pulse
+  missed 3861 ULA fields in a complete 11,105-tick Lumière run, with a maximum
+  20-field IRQ gap. Reject that version. Replacing DI with equal-cost NOP
+  keeps the ordinary 242-T period (delta 0 T) and services short ULA interrupts
+  at either level. [Saved failure identities/results](music-menu/reports/rejected-masked-irq.json).
+- **CPU/timing:** New sustained/new-row work is 176/1214 T versus 974 T for
+  the previous AY50 field (-798/+240 T). Bank transitions are 1304..1379 T
+  versus 1091 T (+213..288 T); IRQ body 46 T versus 18 T (+28 T), with 19 T
+  hardware entry counted separately. The new PWM sample has no equivalent
+  predecessor: 242 T, 25..85-T high widths. Counts and instruction sums are
+  [documented](music-menu/README.md#memory-and-cpu-accounting), excluding ULA,
+  ROM and disk time. All 128 KiB are accounted for; up to 98,304 bytes are
+  available for a resident song, without a streaming read buffer.
+- **Verification/results:** Four focused tests pass. Complete independent
+  Z80 replays and all four cold-boot Fuse 1.9.0 runs authenticate 37,982 fields,
+  154,341 AY writes, DDS parameters, RLE durations, physical bank changes,
+  phase/stack, EOF mute/menu, keyboard/mouse logic and all 16 PWM widths.
+  No skipped ULA field, accumulated schedule drift or playback disk read.
+  Real disk selection-to-ready is about 10.8/6.6 seconds. Actual PWM pulse
+  capture covers the first 50 fields of each hybrid tune: maximum rising
+  interval 1521 T, including ULA/IRQ/service overhead. It is explicitly a
+  bounded carrier trace, not an all-pulse full-song proof. Complete reports
+  and compressed traces are [retained](music-menu/reports/verification.json).
+  Two 12-second [Fuse sound excerpts](music-menu/previews/) have no PCM clipping.
+- **Decision/limits:** Retain the functional disk and selectable AY comparison.
+  PWM has periodic service noise and a slightly lower effective sample clock;
+  exact beeper tuning, a quality/SNR target, physical-board qualification and
+  clone compatibility remain unclaimed. This completes the requested first
+  music-menu deliverable without promoting it to a movie/audio quality release.
+
 ## 2026-10-20 — Mark the measured research leaders
 
 - **Objective/scope:** Identify minimum-service, maximum-speed and recommended

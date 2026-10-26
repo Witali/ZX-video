@@ -1,0 +1,13 @@
+{
+  "status": "rejected",
+  "reason": "DI around PWM high masks short ULA INT",
+  "song": "lumiere",
+  "mode": "hybrid",
+  "complete_song": true,
+  "ticks": 11105,
+  "missed_ula_fields": 3861,
+  "max_irq_gap_fields": 20,
+  "trd_sha256": "631a1d53a0b3a5a9645859490b8ffb55b31c4b90fecd62370da3816cf1435dc1",
+  "trace_sha256": "2a3e032b4b862807147e93c9fddf7625c30fadba815aaa89e9fb2a89c02178f0",
+  "correction": "Replace DI before rising edge with equal-cost NOP; permit IRQ during either pulse level. Ordinary period remains242T."
+}
