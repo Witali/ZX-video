@@ -1,5 +1,20 @@
 # Changelog and optimization experiments
 
+## 2026-10-26 — Bind the catalogue to the repaired ROM-menu artifact
+
+- **Objective/change:** Update the music-menu entry to the final artifact
+  commit `29415f99`, its build/Fuse/glyph/sound evidence and frozen containing
+  branch checkpoint. Include the click diagnostic and actual-screen producer
+  in its recipe. Preserve all 189 other image rows and historical evidence.
+- **Verification/decision:** The materialized 655360-byte image, historical
+  LFS OID/size, report hashes and branch checkpoint agree on SHA-256
+  `80da9ca73e81cd38c65842d066fed930850d449e6b3a31fc0a494ab41b9ef607`.
+  Targeted entry authentication and exact catalogue rendering pass. The
+  previously recorded 60-image coverage gap is unchanged; the strict global
+  check remains intentionally unsatisfied rather than being weakened.
+  [Checkpoint](music-menu/reports/click-fix/final/catalog-provenance.json),
+  [catalogue](TRD_CATALOG.md), [coverage audit](music-menu/reports/catalog-coverage.json).
+
 ## 2026-10-26 — Use standard ROM menu text and qualify the repaired disk
 
 - **Objective/baseline:** Apply the user's standard Spectrum text preference
