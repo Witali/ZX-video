@@ -42,8 +42,12 @@ Seven tests, complete independent Z80 foreground replays and both full
 Fuse cold-boot/switch/EOF runs pass for the audio repair. Every actual AY
 transaction matches the new stream, including register order and mute
 ordering. No ULA field is skipped and there are no disk reads after ready.
-The three-bank cache is 39304 bytes (40081 before),219 data sectors.
-The later ROM-menu change is separately qualified with the final artifact.
+The three-bank cache is 39304 bytes (40081 before), 219 data sectors.
+The later ROM-menu change is separately qualified with the
+[final artifact](reports/click-fix/final/verification.json), including both
+full Fuse runs and new actual sound captures. All 125 menu characters match
+the stock ROM font; ROM printing runs only at startup. Playback CPU costs
+are unchanged by that text change. No ROM image is distributed.
 
 Deterministic CPU counts use the project instruction table. The byte reader
 and sustained field remain 75 T and 92 T with caller. New records cost

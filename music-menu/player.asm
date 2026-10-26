@@ -1,4 +1,4 @@
-; AY-only Spectrum128 jukebox. RAM2 contains code, template, stack and IM2.
+; AY-only Spectrum128 jukebox. RAM2 contains code, text, stack and IM2.
 ; Both complete delta streams are loaded once into RAM banks 0/4/6/1/3/7.
 ; The visible menu stays active during playback; switching never calls TR-DOS.
         ORG 0x8000
@@ -12,10 +12,7 @@ start:  DI
         LD A,255
         LD (playing),A
         CALL mute
-        LD HL,screen_data
-        LD DE,0x4000
-        LD BC,6912
-        LDIR
+        CALL print_menu
         CALL highlight
         LD A,1
         LD (status),A
@@ -135,6 +132,36 @@ menu_frame_done:
 ; The foreground is HALTed between fields; no continuous CPU audio carrier.
 irq:    EI
         RETI
+
+; Standard ROM output, used once before disk loading and never in live audio.
+; BASIC/TR-DOS supplied valid system variables. Restore the stock CHARS base,
+; permanent/temporary attributes and stream2, then print AT controls via RST10.
+; All main registers are scratch; the text cursor HL is saved across each RST.
+print_menu:
+        LD HL,0x3C00
+        LD (23606),HL
+        XOR A
+        LD (23624),A
+        LD (23694),A
+        LD (23696),A
+        LD (23697),A
+        LD A,0x47
+        LD (23693),A
+        LD (23695),A
+        CALL 0x0DAF
+        LD A,2
+        CALL 0x1601
+        LD HL,menu_text
+print_next:
+        LD A,(HL)
+        INC HL
+        CP 255
+        RET Z
+        PUSH HL
+rom_character:
+        RST 0x10
+        POP HL
+        JR print_next
 
 ; Start/restart the selected cached song. Called with a normal RAM2 stack.
 ; Reset the complete AY chip before applying tick zero in this same field.
@@ -586,8 +613,5 @@ code_end:
 ; The aligned lookup keeps the streaming hot path independent of code layout.
 register_order: DEFB 0,1,2,3,4,5,6,7,11,12,13,8,9,10
         DS 0x9000-$
-screen_data:
-        MDAT "screen.bin"
-        ASSERT $ == 0xAB00
         DS 0xBFFF-$
         DEFB 0

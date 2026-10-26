@@ -1,0 +1,160 @@
+{
+  "date": "2026-10-26",
+  "trd_sha256": "80da9ca73e81cd38c65842d066fed930850d449e6b3a31fc0a494ab41b9ef607",
+  "tests_passed": 7,
+  "full_songs": 2,
+  "full_song_fields": 18991,
+  "preliminary_fields": 400,
+  "live_switches": 4,
+  "runs": [
+    {
+      "song": "lumiere",
+      "trd_sha256": "80da9ca73e81cd38c65842d066fed930850d449e6b3a31fc0a494ab41b9ef607",
+      "complete": true,
+      "cold_boot": true,
+      "full_song_ticks": 11105,
+      "live_menu_switches": 2,
+      "segments": [
+        {
+          "song": "lumiere",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 137,
+          "records": 67,
+          "registers_exact": true
+        },
+        {
+          "song": "alicia",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 103,
+          "records": 56,
+          "registers_exact": true
+        },
+        {
+          "song": "lumiere",
+          "ticks": 11105,
+          "complete": true,
+          "register_writes": 9013,
+          "records": 5267,
+          "registers_exact": true
+        }
+      ],
+      "startup_reads": 154,
+      "disk_reads_after_ready": 0,
+      "no_beeper_audio": true,
+      "no_ula_fields_skipped": true,
+      "accumulated_song_drift_fields": 0,
+      "eof_mutes_and_menu_remains_active": true,
+      "irq_count": 11304,
+      "foreground_min_tstates": 3999,
+      "foreground_max_tstates": 22489,
+      "max_command_to_song_start_tstates": 1584,
+      "max_command_to_first_ay_write_tstates": 2155,
+      "max_command_to_complete_initial_state_tstates": 5288,
+      "cache_loading_tstates": 21459052,
+      "trace_sha256": "c139b2814d959400efe6fc9a02c62d1ce6a53dc1bc47518fbdd1dac52fddd7f6",
+      "scope": "Complete real128 Fuse playback with ULA/TR-DOS and live command dispatch; native tests cover hardware input decoding.",
+      "trace_file": "traces/lumiere.txt.gz"
+    },
+    {
+      "song": "alicia",
+      "trd_sha256": "80da9ca73e81cd38c65842d066fed930850d449e6b3a31fc0a494ab41b9ef607",
+      "complete": true,
+      "cold_boot": true,
+      "full_song_ticks": 7886,
+      "live_menu_switches": 2,
+      "segments": [
+        {
+          "song": "alicia",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 103,
+          "records": 56,
+          "registers_exact": true
+        },
+        {
+          "song": "lumiere",
+          "ticks": 100,
+          "complete": false,
+          "register_writes": 137,
+          "records": 67,
+          "registers_exact": true
+        },
+        {
+          "song": "alicia",
+          "ticks": 7886,
+          "complete": true,
+          "register_writes": 5164,
+          "records": 3108,
+          "registers_exact": true
+        }
+      ],
+      "startup_reads": 154,
+      "disk_reads_after_ready": 0,
+      "no_beeper_audio": true,
+      "no_ula_fields_skipped": true,
+      "accumulated_song_drift_fields": 0,
+      "eof_mutes_and_menu_remains_active": true,
+      "irq_count": 8085,
+      "foreground_min_tstates": 3999,
+      "foreground_max_tstates": 22489,
+      "max_command_to_song_start_tstates": 1584,
+      "max_command_to_first_ay_write_tstates": 2155,
+      "max_command_to_complete_initial_state_tstates": 5288,
+      "cache_loading_tstates": 21453995,
+      "trace_sha256": "b925eb558d1cde46dce34acb5764d26c2eb49a411807dd826e4a1eb56a3f4c6c",
+      "scope": "Complete real128 Fuse playback with ULA/TR-DOS and live command dispatch; native tests cover hardware input decoding.",
+      "trace_file": "traces/alicia.txt.gz"
+    }
+  ],
+  "recordings": [
+    {
+      "song": "lumiere",
+      "mode": "AY only",
+      "trd_sha256": "80da9ca73e81cd38c65842d066fed930850d449e6b3a31fc0a494ab41b9ef607",
+      "wav_sha256": "339d372e624bef52b05c0a208d948bb5359773c27fa7a68c88c90dcbd868faed",
+      "seconds": 11.976235827664398,
+      "rms_pcm16": 1526.5671980265029,
+      "clipped_samples": 0,
+      "first_bass_peak_hz": 61.82384490966797,
+      "first_bass_expected_hz": 61.85302734375,
+      "source": "Actual Fuse 1.9.0 real128 AY sound at 100% speed; 44100 Hz mono; live menu retained.",
+      "scope": "Short actual sound-generator excerpt; not physical-board audio or perceptual quality qualification.",
+      "wav_file": "../../../previews/lumiere-ay.wav"
+    },
+    {
+      "song": "alicia",
+      "mode": "AY only",
+      "trd_sha256": "80da9ca73e81cd38c65842d066fed930850d449e6b3a31fc0a494ab41b9ef607",
+      "wav_sha256": "afc6aef0edf22d919c5d7f0babce820b1f2791cf233684790c2c2cba8e93ab56",
+      "seconds": 11.976235827664398,
+      "rms_pcm16": 1119.5256136536843,
+      "clipped_samples": 0,
+      "first_bass_peak_hz": 65.35663604736328,
+      "first_bass_expected_hz": 65.3541420990566,
+      "source": "Actual Fuse 1.9.0 real128 AY sound at 100% speed; 44100 Hz mono; live menu retained.",
+      "scope": "Short actual sound-generator excerpt; not physical-board audio or perceptual quality qualification.",
+      "wav_file": "../../../previews/alicia-ay.wav"
+    }
+  ],
+  "menu": {
+    "trd_sha256": "80da9ca73e81cd38c65842d066fed930850d449e6b3a31fc0a494ab41b9ef607",
+    "screen_sha256": "977179d84daa104bad46ec5cc10268b0ec4f2a1c1e00ecd979aee7968ce9daf4",
+    "stock_rom_glyphs_checked": 125,
+    "reference_rom_sha256": "8d93c3342321e9d1e51d60afcd7d15f6a7afd978c231b43435a7c0757c60b9a3",
+    "rom_bundled": false,
+    "scope": "Actual Fuse cold-boot display at ready, assembled from four bounded screen-memory reads."
+  },
+  "recipe_sha256": {
+    "build.py": "d1cd960e7e293371083894ee14801d591d9ad18c125928065bce816ee551551b",
+    "zx_text.py": "afda24e569de0a61e747abd15187146b6bbf2f8f0cce4b990e1c4ac7877db09b",
+    "verify.py": "5634f6a2333c9f0106b1a8f8410e1ce4ebcb626c041e0371be4f9ff5a85a6621",
+    "record.py": "fe91dc1fc60956e54b774b62072f95cb5f53fde56b2fecdc7a6186a233419263",
+    "preview.py": "eeee17c636faffc1ef5f3cd6ce80bf3c262b8678ebebf13345c129e4e8a7bed6",
+    "analyze_clicks.py": "3e4a8033abda363e871232b673d8fc74d10717d1be6b749fb4ebc624e1002ff7",
+    "test_player.py": "92b4b42b7be81a672b9d0f4267c001993836fd72e04a5890f3e5d8a4ecbb7b8f"
+  },
+  "control_audit": "../audio-pass/analysis.json",
+  "scope": "Final AY repair plus standard ROM text. Full target timing/port traces, bounded actual Fuse sound excerpts and actual cold-boot glyph checks; no physical-board or host sound-card underrun qualification."
+}

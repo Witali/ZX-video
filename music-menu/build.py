@@ -11,6 +11,7 @@ import subprocess
 import sys
 
 from arrangement import timeline
+from zx_text import menu_stream
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -181,30 +182,6 @@ def control_frames(score, *, triangle=True, click_safe=True):
         retained_roles=['lead','piano_accompaniment','bass'],omitted_role='inner_voice')
 
 
-def screen():
-    from PIL import Image,ImageDraw,ImageFont
-    im = Image.new('1',(256,192))
-    draw = ImageDraw.Draw(im)
-    def label(x,y,text,size=12):
-        draw.text((x,y),text,font=ImageFont.load_default(size=size),fill=1)
-    label(22,10,'SPECTRUM MUSIC',18)
-    label(25,35,'CLAIR OBSCUR: EXPEDITION 33')
-    draw.rectangle((16,62,239,90),outline=1)
-    draw.rectangle((16,94,239,122),outline=1)
-    label(30,70,'1   LUMIERE',16)
-    label(30,102,'2   ALICIA',16)
-    label(28,135,'AY ONLY / SOFT BASS')
-    label(16,153,'READY')
-    label(80,153,'LOADING')
-    label(160,153,'PLAYING')
-    label(15,172,'1/2  6/7+ENTER  SPACE: STOP')
-    bitmap = bytearray(6144)
-    for y in range(192):
-        for x in range(256):
-            if im.getpixel((x,y)):
-                bitmap[spectrum_bitmap_offset(x//8,y)] |= 128>>(x&7)
-    return bytes(bitmap)+bytes([0x47])*768
-
 
 def build(output):
     output = Path(output).resolve()
@@ -238,9 +215,9 @@ def build(output):
         sections.append(dict(bank=bank,sector=track*16+sector,sectors=count,bytes=len(payload)))
         files.append(TrdFile(f'CACHE{index}','C',payload,start=0xC000))
     config.append('        DEFB 255')
+    config += ['menu_text:','        DEFB '+','.join(str(value) for value in menu_stream())]
     config += ['mute_values:','        DEFB '+','.join(str(value) for pair in MUTE_WRITES for value in pair)]
     (work/'variants.inc').write_text('\n'.join(config)+'\n',encoding='ascii',newline='\n')
-    (work/'screen.bin').write_bytes(screen())
     source = (HERE/'player.asm').read_bytes().replace(b'\r\n',b'\n')
     (work/'player.asm').write_bytes(source)
     run = subprocess.run([sys.executable,'-m','pyz80.pyz80','--obj=player.bin',
@@ -259,8 +236,8 @@ def build(output):
         directory=directory,capacity=capacity,trd_sha256=sha(disk),player_sha256=sha(blob),
         assembly_sha256=sha(source),control_hz=CONTROL_HZ,cpu_hz=CPU_HZ,frame_tstates=FIELD_T,
         tools=dict(pyz80=importlib.metadata.version('pyz80'),pillow=importlib.metadata.version('Pillow')),
-        producer_sha256={name:sha((HERE/name).read_bytes()) for name in ('build.py','arrangement.py','balance.json')},
-        beeper_audio=False,simultaneously_cached_songs=True,
+        producer_sha256={name:sha((HERE/name).read_bytes()) for name in ('build.py','arrangement.py','balance.json','zx_text.py')},
+        beeper_audio=False,simultaneously_cached_songs=True,font='Stock Spectrum48 ROM via RST10; CHARS=3C00; stream2',
         record_format='duration U8; changed-register slot mask LE16; register_order values; zero-duration EOF',
         register_order=list(REGISTER_ORDER),mute_writes=[list(pair) for pair in MUTE_WRITES],
         memory=dict(fixed_player_bank=2,display_basic_trdos_bank=5,available_song_banks=list(BANKS),

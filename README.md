@@ -26,8 +26,10 @@ and complete verification evidence.
 The [standalone music menu](music-menu/README.md) boots
 [Lumière / Alicia](ZX-Music-Menu.trd) from one TRD. Select by keyboard or
 Kempston mouse, switch songs during playback, and stop with Space. This
-version uses AY only, with a pitch-screened triangle-envelope bass. Both
-complete arrangements and live cached switching pass full Fuse playback.
+version uses AY only, with a pitch-screened triangle-envelope bass, repaired
+register ordering and smoother control envelopes. Text uses standard Spectrum
+ROM output. Both complete arrangements and live cached switching pass full
+Fuse playback.
 
 For audio-only playback, the [audio converter](audiobook-beeper/CONVERTER.md)
 defaults to packed IMA3 and direct beeper PDM, accepted by the user in Fuse.

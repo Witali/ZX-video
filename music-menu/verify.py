@@ -11,7 +11,8 @@ import sys
 import time
 from types import SimpleNamespace
 
-from build import BANKS, FIELD_T, ROOT, REGISTER_ORDER, MUTE_WRITES, sha
+from build import BANKS, FIELD_T, ROOT, REGISTER_ORDER, MUTE_WRITES, spectrum_bitmap_offset, sha
+from zx_text import MENU_LINES
 
 
 def decode_records(data):
@@ -68,7 +69,7 @@ def unpack(data):
 
 class Machine:
     """Independent CPU with physical bank swaps and explicit input ports."""
-    def __init__(self, blob, labels):
+    def __init__(self, blob, labels, *, rom_font=None):
         from z80 import Z80Machine
         self.cpu = Z80Machine()
         self.cpu.memory[:] = bytes([0xA5])*65536
@@ -81,6 +82,11 @@ class Machine:
         self.pages = []
         self.beeper = []
         self.ay_register = 0
+        self.rom_font = rom_font
+        self.rom_output = []
+        self.rom_calls = []
+        self.print_row = self.print_column = 0
+        self.at_pending = []
         self.cpu.set_output_callback(self.output)
         self.cpu.set_input_callback(lambda port: self.ports.get(port, 255))
         self.cpu.sp = 0xBD00
@@ -125,13 +131,46 @@ class Machine:
         self.cpu.memory[0xBCFE:0xBD00] = b'\xFF\x7F'
         return self.run_to(self.labels[name], [0x7FFF])
 
+    def rom_stub(self, address):
+        """Native input/UI shim only; actual ROM output is qualified in Fuse."""
+        m = self.cpu
+        self.rom_calls.append(address)
+        if address==0x0DAF:
+            m.memory[0x4000:0x5800] = bytes(6144)
+            m.memory[0x5800:0x5B00] = bytes([m.memory[23693]])*768
+        elif address==0x10:
+            value = m.a
+            if self.at_pending:
+                self.at_pending.append(value)
+                if len(self.at_pending)==3:
+                    self.print_row,self.print_column = self.at_pending[1:]
+                    self.at_pending = []
+            elif value==22:
+                self.at_pending = [22]
+            else:
+                if not 32<=value<128:
+                    raise AssertionError('Unexpected ROM character control')
+                row,column = self.print_row,self.print_column
+                self.rom_output.append((row,column,value))
+                if self.rom_font is not None:
+                    for line in range(8):
+                        offset = spectrum_bitmap_offset(column,row*8+line)
+                        m.memory[0x4000+offset] = self.rom_font[0x3C00+value*8+line]
+                self.print_column += 1
+        elif address!=0x1601:
+            raise AssertionError('Unexpected ROM stub')
+        m.pc = int.from_bytes(m.memory[m.sp:m.sp+2],'little')
+        m.sp += 2
+
 
 def boot(machine, disk):
-    """Use a documented ROM-read stub for native UI tests; Fuse uses real ROM."""
+    """Explicit ROM read/text stubs for native tests; Fuse uses real ROM."""
     m = machine.cpu
     labels = machine.labels
     m.pc = labels['start']
     m.set_breakpoint(0x3D13)
+    for entry in (0x10,0x0DAF,0x1601):
+        m.set_breakpoint(entry)
     m.set_breakpoint(labels['menu_ready'])
     reads = []
     while m.pc!=labels['menu_ready']:
@@ -144,11 +183,17 @@ def boot(machine, disk):
             reads.append((machine.bank,sector,m.hl))
             m.pc = int.from_bytes(m.memory[m.sp:m.sp+2],'little')
             m.sp += 2
+        elif m.pc in (0x10,0x0DAF,0x1601):
+            machine.rom_stub(m.pc)
         elif flags&m._TICKS_LIMIT_HIT:
             raise AssertionError('Native startup stalled')
     m.clear_breakpoint(0x3D13)
+    for entry in (0x10,0x0DAF,0x1601):
+        m.clear_breakpoint(entry)
     m.clear_breakpoint(labels['menu_ready'])
     assert m.sp==0xBD00
+    expected = [(row,column+i,ord(character)) for row,column,text in MENU_LINES for i,character in enumerate(text)]
+    assert machine.rom_output==expected,'ROM text/AT sequence mismatch'
     return reads
 
 
@@ -220,7 +265,7 @@ def native_check(output, metadata):
         im2_hardware_entry_tstates=19,mute_tstates=mute_tstates,
         read_byte_ordinary_tstates=75,read_byte_boundary_extra_tstates=185,
         delta_record_tstates=timings,controls=control_check(blob,labels,disk),
-        scope='Complete independent Z80 foreground/menu replay; explicit bank swaps and ROM-read stub; Fuse separately cold boots real ROM/floppy.')
+        scope='Complete independent Z80 foreground/menu replay; explicit bank swaps and ROM-read/text stubs; Fuse separately cold boots real ROM/floppy/text output.')
 
 
 def control_check(blob, labels, disk):

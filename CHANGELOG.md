@@ -1,5 +1,31 @@
 # Changelog and optimization experiments
 
+## 2026-10-26 — Use standard ROM menu text and qualify the repaired disk
+
+- **Objective/baseline:** Apply the user's standard Spectrum text preference
+  after audio repair `23f37a7f`. Preserve both songs and live input behavior.
+- **Change:** Replace the host-rendered screen/font bitmap with ASCII and
+  `PRINT AT` controls, ROM `CLS`, stream 2 and `RST 10h`; explicitly restore
+  stock `CHARS=3C00h` and text attributes. ROM printing runs only at startup.
+  The final TRD contains no font bitmap or ROM image. Native UI checks use
+  explicit text/read stubs; actual ROM behavior is qualified separately.
+- **Measurements:** A cold-boot Fuse framebuffer matches all 125 displayed
+  characters to the local stock ROM. Audio hot paths change by **0 T** from
+  the audio-repair checkpoint: sustained 92 T with caller, records
+  `1452+164*w` T plus caller 41 T, mute 1164 T. Actual maximum foreground
+  remains 22489/70908 T; first/all initial AY writes 2155/5288 T after dispatch.
+  Cache remains 39304 B and disk usage 219 sectors. Final TRD SHA-256:
+  `80da9ca73e81cd38c65842d066fed930850d449e6b3a31fc0a494ab41b9ef607`.
+- **Verification/decision:** Seven tests and both complete native foreground
+  runs pass. Both final cold-boot Fuse runs finish the selected song through
+  EOF after two live switches: 18991 full-song plus 400 preliminary fields,
+  exact AY port writes, no missed IRQ field, drift, beeper or post-ready disk
+  read. New actual Fuse sound captures retain 11.976 s per song at 44.1 kHz,
+  zero clipped samples and expected bass pitches. Keep the ROM menu and
+  final repaired release; sound-card underruns and physical-board audio are
+  not qualified. [Build, traces, glyph and sound identities](music-menu/reports/click-fix/final/verification.json),
+  [reproduction](music-menu/README.md), [bounded control audit](music-menu/CLICK_REPAIR.md).
+
 ## 2026-10-26 — Repair AY write ordering and control discontinuities
 
 - **Objective/baseline:** Diagnose the user's clicks and small stutters in
