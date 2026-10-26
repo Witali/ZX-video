@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-26",
-  "snapshot_commit": "1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13",
+  "snapshot_commit": "dc038a13831422dd837927d9f57b94be4b9ff346",
   "publication_branch": "main",
   "branch_semantics": "Frozen containing checkpoint from the historical cleanup inventory or the entry-specific later artifact checkpoint.",
   "build_identity_note": "Original build HEAD/branch are not uniformly recorded. Artifact commits authenticate exact image bytes; saved reports and producer snapshots carry the finer build evidence.",
@@ -505,11 +505,12 @@
       "guide": "ZX-video-full-50Hz.md"
     },
     "music-menu": {
-      "description": "Standalone Lumiere/Alicia music menu: complete instrumental arrangements, AY or simultaneous AY+beeper PWM, keyboard/Kempston mouse selection, resident loading and EOF return. All four songs/modes pass full Fuse playback; PWM carrier quality remains limited.",
+      "description": "AY-only Lumiere/Alicia music menu with a pitch-screened triangle-envelope bass. Both complete arrangements are cached together; keyboard and Kempston mouse switch songs during playback without disk reads. Both songs and four live switches pass complete real128 Fuse verification.",
       "scripts": [
         "music-menu/build.py",
         "music-menu/verify.py",
-        "music-menu/record.py"
+        "music-menu/record.py",
+        "music-menu/probe_timbres.py"
       ],
       "guide": "music-menu/README.md"
     }
@@ -518,19 +519,19 @@
     {
       "path": "ZX-Music-Menu.trd",
       "bytes": 655360,
-      "sha256": "1281b78e036268ecc8ca82e4cf307023fe91380835a76307ce7ba3b8e339f885",
-      "commit": "1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13",
-      "subject": "Add bootable AY and PWM music selection disk",
+      "sha256": "179f40b9d67e7b54347a088431f966156e4e10b91bbb398ddded345ce442d486",
+      "commit": "dc038a13831422dd837927d9f57b94be4b9ff346",
+      "subject": "Use AY-only timbres and allow live cached song switching",
       "group": "music-menu",
       "evidence": [
-        "music-menu/reports/build.json",
-        "music-menu/reports/verification.json"
+        "music-menu/reports/ay-only/build.json",
+        "music-menu/reports/ay-only/verification.json"
       ],
       "branch_reference": {
         "name": "codex/music-menu",
-        "head": "1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13",
+        "head": "dc038a13831422dd837927d9f57b94be4b9ff346",
         "distance": 0,
-        "evidence": "music-menu/reports/catalog-provenance.json"
+        "evidence": "music-menu/reports/ay-only/catalog-provenance.json"
       },
       "build_head": null,
       "build_branch": null,

@@ -12,7 +12,7 @@ An **artifact commit** is verified to contain these exact disk bytes (Git LFS OI
 
 Git commits do not store their creation branch. The **recorded containing branch** is a frozen checkpoint authenticated by each entry's evidence. Historical entries use the [2026-10-05 cleanup inventory](docs/maintenance/2026-10-05-repository-cleanup.json); later artifacts can supply dedicated checkpoint records. An ancestry check authenticates this relationship; it is not proof that encoding ran on that branch. Many branches have since been merged/deleted. Original build HEAD/branch are not uniformly recorded, so they are not invented. Study baselines and source/tool hashes in reports have their own scopes.
 
-The inventory source revision is [1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13](https://github.com/Witali/ZX-video/commit/1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13); publication/integration branch: `main`. Each recipe names the responsible builder or orchestrator, with a guide and hash-matched report for parameters and inputs. Links to scripts use current repository paths; for historical reproduction use the recorded revision and its producer snapshots. Do not assume today's defaults recreate an old image. Saved `.gz` producers, `run-producers`, prepared PCM/IMA streams and manifests take precedence. Old absolute worktree/input paths may need restoration or explicit replacements; external source media and tools are not all included in Git.
+The inventory source revision is [dc038a13831422dd837927d9f57b94be4b9ff346](https://github.com/Witali/ZX-video/commit/dc038a13831422dd837927d9f57b94be4b9ff346); publication/integration branch: `main`. Each recipe names the responsible builder or orchestrator, with a guide and hash-matched report for parameters and inputs. Links to scripts use current repository paths; for historical reproduction use the recorded revision and its producer snapshots. Do not assume today's defaults recreate an old image. Saved `.gz` producers, `run-producers`, prepared PCM/IMA streams and manifests take precedence. Old absolute worktree/input paths may need restoration or explicit replacements; external source media and tools are not all included in Git.
 
 Archived `phase-*`, `pilot`, `control`, `history` and `paused` files are different build/calibration stages. Their path and evidence identify the stage. Equal hashes are explicitly linked; equal filenames or codec names do not imply equal sound. Individual resident-part test disks are not the whole sequential disk.
 
@@ -33,17 +33,17 @@ The check authenticates complete tracked-image coverage, current SHA-256/size, o
 
 ### [ZX-Music-Menu.trd](ZX-Music-Menu.trd)
 
-Saved change: Add bootable AY and PWM music selection disk.
+Saved change: Use AY-only timbres and allow live cached song switching.
 
-- Exact artifact commit: [1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13](https://github.com/Witali/ZX-video/commit/1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13).
-- Recorded containing branch: `codex/music-menu` at [1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13](https://github.com/Witali/ZX-video/commit/1b5ae95f1c5ab76f0fd644d89d2e0664c2662e13). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `1281b78e036268ecc8ca82e4cf307023fe91380835a76307ce7ba3b8e339f885`.
-- Hash-matched evidence / build settings: [music-menu/reports/build.json](music-menu/reports/build.json); [music-menu/reports/verification.json](music-menu/reports/verification.json).
-- Branch checkpoint evidence: [music-menu/reports/catalog-provenance.json](music-menu/reports/catalog-provenance.json).
+- Exact artifact commit: [dc038a13831422dd837927d9f57b94be4b9ff346](https://github.com/Witali/ZX-video/commit/dc038a13831422dd837927d9f57b94be4b9ff346).
+- Recorded containing branch: `codex/music-menu` at [dc038a13831422dd837927d9f57b94be4b9ff346](https://github.com/Witali/ZX-video/commit/dc038a13831422dd837927d9f57b94be4b9ff346). Original build branch/HEAD: not established by this record.
+- Image: 655360 bytes; SHA-256 `179f40b9d67e7b54347a088431f966156e4e10b91bbb398ddded345ce442d486`.
+- Hash-matched evidence / build settings: [music-menu/reports/ay-only/build.json](music-menu/reports/ay-only/build.json); [music-menu/reports/ay-only/verification.json](music-menu/reports/ay-only/verification.json).
+- Branch checkpoint evidence: [music-menu/reports/ay-only/catalog-provenance.json](music-menu/reports/ay-only/catalog-provenance.json).
 
-Standalone Lumiere/Alicia music menu: complete instrumental arrangements, AY or simultaneous AY+beeper PWM, keyboard/Kempston mouse selection, resident loading and EOF return. All four songs/modes pass full Fuse playback; PWM carrier quality remains limited.
+AY-only Lumiere/Alicia music menu with a pitch-screened triangle-envelope bass. Both complete arrangements are cached together; keyboard and Kempston mouse switch songs during playback without disk reads. Both songs and four live switches pass complete real128 Fuse verification.
 
-Producer / orchestration: [music-menu/build.py](music-menu/build.py); [music-menu/verify.py](music-menu/verify.py); [music-menu/record.py](music-menu/record.py).
+Producer / orchestration: [music-menu/build.py](music-menu/build.py); [music-menu/verify.py](music-menu/verify.py); [music-menu/record.py](music-menu/record.py); [music-menu/probe_timbres.py](music-menu/probe_timbres.py).
 Method, inputs and invocation: [music-menu/README.md](music-menu/README.md).
 
 ### [ZX-audiobook-IMA-ADPCM-direct-test.trd](ZX-audiobook-IMA-ADPCM-direct-test.trd)

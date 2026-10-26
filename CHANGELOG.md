@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-26 — Update the catalogue to the AY-only music artifact
+
+- **Scope/change:** Replace the current music-menu row with the exact AY-only
+  disk in `dc038a13`, its full native/Fuse and timbre evidence, producer list
+  and frozen containing-branch checkpoint. Preserve the earlier PWM artifact
+  in Git history and all 189 other catalogue records unchanged.
+- **Verification/decision:** Authenticate the current payload against the
+  artifact commit's LFS OID and both current hash-matched reports; regenerate
+  the catalogue exactly. This is provenance maintenance, not another music
+  experiment. The known 60-image coverage gap is preserved, so no successful
+  whole-catalogue validation is claimed.
+
 ## 2026-10-26 — Replace PWM with AY-only sound and keep the menu live
 
 - **Objective/baseline:** Follow the user's new request from `62dd7f88`:
