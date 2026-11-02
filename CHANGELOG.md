@@ -1,5 +1,46 @@
 # Changelog and optimization experiments
 
+## 2026-11-03 — Prepare a review-only Expedition 33 video and match website audio
+
+- **Objective/input:** Record the published independently bootable demo from
+  `ee560978` (TRD SHA256 `fd8868220ad6e9f429fc367a9887a446adfccc9c230caa94f37b8805a5046db4`),
+  add an Expedition 33 / ZX Spectrum title, and prepare a YouTube package.
+  The user explicitly requires reviewing the finished film before upload.
+- **Visual capture:** Cold Fuse 1.9.0, 20,210 native fields, no injected keys,
+  first-to-third track starts separated by `[0,11254,19140]` fields. Decode
+  native bitmap/attribute slices and match every one of 18 completed images
+  exactly against checked-in RGB renders. Keep both complete arrangements and
+  the native transition/pause sequence. Add four-second opening/ending cards,
+  use integer 4x enlargement, square pixels and hardware-colored outer borders.
+- **Initial attempts and revision:** A trailing newline in the initial debugger
+  command left Fuse waiting; trim it for the successful full capture. The
+  original PCM clock differed slightly from the FMF B tag, so sample-count
+  timing replaced nominal-duration trimming rather than discarding audio.
+  First review: 396.72 seconds, 19,836 frames, 28,307,607 bytes. The user heard
+  left-channel clicks at note changes, while the website sounded normal.
+  Preserve that baseline locally. Revision 2 replays the authenticated native
+  AY transactions through the website's pinned Ayumi, ABC panning, DC removal,
+  0.7 gain and 20 kHz RC filter. Musical registers and target bytes are unchanged;
+  no de-click edits, note removal or extra fades mask the source arrangement.
+- **Measured result:** Revision 2 is 396.64 seconds / 19,832 frames, 1920x1080
+  at 50 fps, 28,957,166 bytes, stereo AAC. SHA256
+  `6dec647a7dca169e7a484e95123b16e3c76658ad2b70fda1b8ffab257c2a30e6`.
+  Both full decoded channels correlate above 0.9998 with their WAV references
+  per song; chapters, duration, packet DTS, no clipping and full decode pass.
+  Inspect final encoded cards/scenes via contact sheets. The user reports the
+  revision-2 comparison plays normally without the reported clicks. This is
+  listening feedback on the preview, not physical-hardware qualification.
+- **Package/decision:** Retain the MP4, thumbnail, original capture, both sound
+  revisions, source manifest and reproducing scripts locally. English/Russian
+  description includes the direct emulator/download links and the owner's
+  tribute to the original game's creators; omit recording-method information
+  at the user's request. The user explicitly authorized uploading revision 2
+  to YouTube on 2026-11-03 after its listening review. Actual publication status
+  belongs in the retained publication record. Target Z80/player/disk data
+  unchanged, delta **0 T**.
+  [Production sources](video/expedition33/README.md),
+  [final verification](video/expedition33/review.json).
+
 ## 2026-11-02 — Hide historical beeper PDM auditions from the web library
 
 - **Objective/baseline:** The user reports strong hiss/noise in the old
