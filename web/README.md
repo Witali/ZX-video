@@ -303,3 +303,18 @@ Serve [renderer-check.html](tools/renderer-check.html) at the built site's
 root for a local check; this developer fixture is not part of the Pages
 artifact. The first fixture readback incorrectly requested WebGL1 after the
 upstream renderer selected WebGL2; the final fixture handles both contexts.
+# Expedition 33 Demo preview
+
+The default disk is now `Expedition-33-Demo.trd`. It contains the complete
+looping Lumiere/Alicia AY playlist and eighteen native illustrations. The
+first loading screen remains visible until playback; any Spectrum key opens
+the hidden menu, I toggles pictures, and M returns to the slideshow.
+`Download TRD` is a prominent button beside Play and downloads the selected
+disk. The local-file path remains browser-only and hides that download link.
+
+Existing `?disk=ZX-Music-Menu.trd` links select the renamed demo. The static
+build retains `disks/ZX-Music-Menu.trd` as a byte-identical download alias,
+without a second library card. This preview is saved locally for user review;
+it has not been pushed or deployed. Native qualification is documented in
+`music-menu/README.md`; `check-emulator.mjs` checks the new cold boot, autoplay,
+menu-on-Space title, stereo excerpts and preserved disk-swap state.

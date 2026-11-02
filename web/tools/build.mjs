@@ -46,11 +46,15 @@ for (const path of tracked) {
   await copyFile(join(diskRoot, path), join(output, diskPath));
   const group = catalogue.groups[entry?.group];
   if (showInLibrary(path, entry, group)) images.push({ path, url: diskPath, name: path.split('/').pop(),
-    category: path.startsWith('toolkit/') || /video/i.test(path) ? 'Video' : /music|entertainer|sea.foam/i.test(path) ? 'Music' : 'Audio',
+    category: path.startsWith('toolkit/') || /video/i.test(path) ? 'Video' : /expedition|music|entertainer|sea.foam/i.test(path) ? 'Music' : 'Audio',
     root: !path.includes('/'), catalogued: !!entry, bytes: bytes.length, sha256,
     description: group?.description || entry?.subject || 'Retained project experiment; no curated catalogue description.',
     guide: group?.guide || 'TRD_CATALOG.md' });
 }
+// Keep already shared music-menu download links usable after the disk rename.
+// This alias is deliberately absent from the selectable library catalogue.
+const demo = images.find(image => image.path === 'Expedition-33-Demo.trd');
+if (demo) await copyFile(join(output, demo.url), join(output, 'disks/ZX-Music-Menu.trd'));
 // Publish only this explicit static allowlist and tracked TRDs, never the checkout.
 async function copyTree(from, to) {
   await mkdir(to, { recursive: true });

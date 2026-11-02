@@ -18208,3 +18208,19 @@ and compressed trace are under `music-menu/reports/demo/`; packing, verification
 and timing scripts reproduce the results. User requested review of the whole
 demo before publication: all changes remain local, with no push/deployment.
 
+# 2026-11-02 — Add a prominent demo download and preserve renamed links
+
+Moved the selected-image download beside Play as a visible `Download TRD`
+button, including responsive styling and the existing local-file exclusion.
+The default library selection is `Expedition-33-Demo.trd`; existing music-menu
+query links select the new name, and the static build retains the old direct
+download as an identical alias without a duplicate library card. Classification
+keeps the renamed demo in Music. The built-in browser downloaded the exact
+640KiB Fuse-qualified image, with SHA matching the local native build, and
+visually checked the button, slideshow and Space/I/M controls. Build guards
+retain LFS/geometry/HEAD identity checks and hidden-PDM archive policy; the web
+smoke verifies the new real-ROM cold boot, all18 title glyphs after menu input,
+both stereo excerpts without clipping, and preserved RAM/PC on disk swap.
+Target Z80 CPU paths are unchanged by this website change (0T delta). This is
+an unpublished local preview: the user requested a complete review first.
+

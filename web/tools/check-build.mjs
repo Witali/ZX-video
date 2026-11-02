@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { showInLibrary } from './catalog-policy.mjs';
 const fixture = resolve('.tmp/web-check-input');
 await mkdir(fixture, { recursive: true });
-const file = resolve(fixture, 'ZX-Music-Menu.trd');
+const file = resolve(fixture, 'Expedition-33-Demo.trd');
 function rejected(message) {
   const result = spawnSync(process.execPath, ['web/tools/build.mjs', '.tmp/web-check-output', fixture], { encoding: 'utf8' });
   assert.notEqual(result.status, 0);
@@ -33,10 +33,12 @@ for (const path of ['ZX-audiobook-IMA-ADPCM-direct-test.trd', 'ZX-audiobook-IMA3
   assert(!catalogue.images.some(image => image.path === path), `${path} is a legacy PDM audition`);
   assert.equal((await readFile(resolve('.tmp/web-site/disks', path))).length, 655360, 'Historical direct downloads remain intact');
 }
-for (const path of ['ZX-Music-Menu.trd', 'ZX-music-Entertainer-AY.trd', 'ZX-audiobook-OHenry-AY50-test.trd',
+for (const path of ['Expedition-33-Demo.trd', 'ZX-music-Entertainer-AY.trd', 'ZX-audiobook-OHenry-AY50-test.trd',
   'ZX-audiobook-YM2149-voice-test.trd', 'ZX-video-refined_part02.trd']) {
   assert(catalogue.images.some(image => image.path === path), `${path} must remain available`);
 }
 assert(!catalogue.images.some(image => image.path.startsWith('audiobook-beeper/')));
 for (const image of catalogue.images) assert.match(image.sha256, /^[a-f0-9]{64}$/);
+assert(!catalogue.images.some(image => image.path === 'ZX-Music-Menu.trd'));
+assert.deepEqual(await readFile('.tmp/web-site/disks/ZX-Music-Menu.trd'),await readFile('.tmp/web-site/disks/Expedition-33-Demo.trd'));
 console.log(`Build guards pass: LFS pointer, invalid TRD, uncommitted content; ${expected.length} visible images, ${tracked.length - expected.length} archived PDM images.`);

@@ -39,18 +39,26 @@ songAudio.leftPeak=Math.max(songAudio.leftPeak,Math.abs(left));songAudio.rightPe
 `, context);
 await vm.runInContext('h.rom.get_ready$()', context);
 function advance(ms) { const until = now + ms; while (now < until) { now += 4; for (const fn of [...timers.values()]) fn(); } }
-const music = new Uint8Array(await readFile(resolve(root, 'disks/ZX-Music-Menu.trd')));
+const music = new Uint8Array(await readFile(resolve(root, 'disks/Expedition-33-Demo.trd')));
 context.image = music;
 vm.runInContext('h.drives[0].insertTRD(image); h.bus.reset(2); h.clock.run()', context);
 advance(60000);
+const autoplay = vm.runInContext('({ ayDataWrites, nonzeroSamples: audio.nonzero })', context);
+assert(autoplay.ayDataWrites > 100, 'Cold boot must play AY music before any keyboard input');
+assert(autoplay.nonzeroSamples > 100, 'Autoplay must produce actual sound');
+// First Space reveals the native menu and is swallowed through key release.
+const beforeMenuAudio = vm.runInContext('audio.nonzero', context);
+vm.runInContext('h.keyboard.switchKeys([{index:7,bit:0}],true)',context);advance(400);
+vm.runInContext('h.keyboard.switchKeys([{index:7,bit:0}],false)',context);advance(100);
+assert(vm.runInContext('audio.nonzero',context)>beforeMenuAudio+100,'Opening the menu must preserve active sound');
 const screen = vm.runInContext('Array.from({length:6912},(_,i)=>h.bus.mem_read(0x4000+i))', context);
 assert(screen.slice(0, 6144).some(v => v !== 0), 'Boot must write screen pixels');
 assert(screen.slice(6144).some(v => v !== 0), 'Boot must set screen attributes');
 // The menu renders ROM glyphs: identify its title pixels, not a generic ROM prompt.
 const rom = await readFile(resolve(root, 'vendor/roms/48.rom'));
 let matching = 0;
-for (const [column, character] of [...'SPECTRUM MUSIC'].entries()) {
-  const x = 6 + column;
+for (const [column, character] of [...'EXPEDITION 33 DEMO'].entries()) {
+  const x = 7 + column;
   let equal = true;
   for (let row = 0; row < 8; row++) {
     const y = 8 + row;
@@ -59,12 +67,14 @@ for (const [column, character] of [...'SPECTRUM MUSIC'].entries()) {
   }
   if (equal) matching++;
 }
-assert.equal(matching, 'SPECTRUM MUSIC'.length, 'Music-menu title must reach the screen');
-const autoplay = vm.runInContext('({ ayDataWrites, nonzeroSamples: audio.nonzero })', context);
-assert(autoplay.ayDataWrites > 100, 'Cold boot must play AY music before any keyboard input');
-assert(autoplay.nonzeroSamples > 100, 'Autoplay must produce actual sound');
+assert.equal(matching, 'EXPEDITION 33 DEMO'.length, 'Demo menu title must reach the screen only after input');
 const excerpts=[];
 for(const [name,bit] of [['Lumiere',0],['Alicia',1]]) {
+  // Each Play starts pictures; reveal and release the menu before song keys.
+  if (bit !== 0) {
+    vm.runInContext('h.keyboard.switchKeys([{index:7,bit:0}],true)',context);advance(400);
+    vm.runInContext('h.keyboard.switchKeys([{index:7,bit:0}],false)',context);advance(100);
+  }
   vm.runInContext('songAudio={samples:0,leftEnergy:0,rightEnergy:0,leftPeak:0,rightPeak:0}',context);
   vm.runInContext(`h.keyboard.switchKeys([{index:3,bit:${bit}}],true)`,context);advance(100);
   vm.runInContext(`h.keyboard.switchKeys([{index:3,bit:${bit}}],false)`,context);advance(3000);

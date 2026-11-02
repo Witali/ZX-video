@@ -130,7 +130,8 @@ try {
   const response = await fetch('catalog.json'); if (!response.ok) throw new Error(`HTTP ${response.status}`);
   ({ images } = await response.json()); $('total').textContent = String(images.length);
   const requested = new URL(location.href).searchParams.get('disk');
-  const first = images.find(image => image.path === requested) || images.find(image => image.path === 'ZX-Music-Menu.trd') || images[0];
+  const diskPath = requested === 'ZX-Music-Menu.trd' ? 'Expedition-33-Demo.trd' : requested;
+  const first = images.find(image => image.path === diskPath) || images.find(image => image.path === 'Expedition-33-Demo.trd') || images[0];
   if (!first) throw new Error('The disk library is empty.');
   if (!first.root) $('scope').value = 'all';
   select(first);
