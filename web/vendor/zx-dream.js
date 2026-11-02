@@ -9914,6 +9914,9 @@ function ZX_Clock() {
 	/* public interface */
 	/********************/
 	this.run = run;
+    // An AudioWorklet heartbeat may wake the SAME paced queue in hidden tabs.
+    // The host-time budget prevents duplicate advancement with interval ticks.
+    this.pulse = function () { if (_running && !_debug) process(); };
 	this.runDebug = runDebug;
 	this.stop = stop;
 	this.get_running = function () { return _running; }

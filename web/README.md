@@ -54,7 +54,11 @@ and Symbol Shift. Arrows map to Caps Shift + 5/6/7/8 (left/down/up/right),
 including shared modifier holds. Keyboard focus and window blur release held
 keys. Enter, Space, 1/2 and arrows are also available as touch controls.
 The arrow keys retain normal browser behavior outside the emulator display.
-Playback pauses when the tab becomes hidden; use Resume on return. The
+**Play in background** is enabled by default in Settings and remembered in
+this browser. The Spectrum and sound continue when switching tabs or
+minimizing the browser; the audio worklet wakes the shared paced clock even
+when ordinary timers are throttled. Disable the checkbox to pause automatically
+while hidden and resume on return. A manual Pause remains paused. The
 browser requires a user click before audio starts. Use Copy link to share
 the selection; shared links do not autoplay. A local TRD is read in the
 browser and never uploaded.

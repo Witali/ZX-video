@@ -7,7 +7,8 @@ Documented local corrections are reproducible through
 [`patch-emulator.mjs`](../tools/patch-emulator.mjs): indexed instruction
 timings/fetches, block I/O port addresses, RETI aliases, state restoration,
 the original 128's 36-T interrupt pulse, standard TR-DOS track construction,
-monotonic host pacing that retains pending shared-machine time, and a native
+monotonic host pacing that retains pending shared-machine time, a guarded
+audio-worklet wake of that same queue for background playback, and a native
 Canvas framebuffer with a completed-frame nearest-neighbor presentation blit.
 Canvas bank buffers are hidden and copied together with the border to one
 visible surface, preserving one pixel grid across the screen boundaries.

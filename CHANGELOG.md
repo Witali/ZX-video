@@ -67,6 +67,33 @@
   [Production sources](video/expedition33/README.md),
   [final verification](video/expedition33/review.json).
 
+## 2026-11-03 — Default-on background playback setting
+
+- **Objective/baseline:** On `ee560978`, hiding a tab unconditionally paused
+  playback and required Resume. The user requests a remembered checkbox in
+  the emulator settings, enabled by default.
+- **Change:** Add **Play in background**, default on, with local persistence.
+  Opt-out pauses while hidden and resumes on return; an explicit manual pause
+  survives visibility changes. Apply the policy after asynchronous disk loads
+  as well. A 100 Hz audio-worklet heartbeat wakes the existing monotonic shared
+  clock when background playback is enabled, so ordinary timer throttling does
+  not turn silent loading or muted playback into slow catch-up. The guarded
+  pulse never advances a stopped/debug clock or creates another device clock.
+- **Verification:** Nine application/worklet cases pass, including blocked
+  storage, hidden asynchronous boot and silent-queue heartbeat; seven clock
+  schedules produce identical 3,545,400-T timelines with 50 ULA, 31,249 disk and
+  44,099 audio events. Keyboard-port tests and all eight RC cases pass. The
+  authenticated build retains 250 TRDs / 132 library entries; real ROM/TRD/AY
+  smoke covers 67.2 emulated seconds, cold autoplay, both song excerpts and RAM-
+  preserving disk swap. The built-in browser shows the checkbox initially on.
+  An initial keyboard harness lacked a document event target; it was updated
+  for the new listener and rerun successfully.
+- **Decision/scope:** Accept locally. Native player bytes and the TRD hash are
+  unchanged: target Z80 delta **0 T**. Browser scheduling is not physical-board
+  timing qualification. [Policy/worklet checks](web/tools/check-background.mjs),
+  [clock report](web/reports/background-clock.json),
+  [policy report](web/reports/background-playback.json).
+
 ## 2026-11-02 — Hide historical beeper PDM auditions from the web library
 
 - **Objective/baseline:** The user reports strong hiss/noise in the old

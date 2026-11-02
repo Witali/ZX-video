@@ -53,6 +53,12 @@ export function patchEmulator(source) {
     // Host callback cadence only controls the amount of pending work, not event phases.
     // Pause/resume explicitly starts a new host-time origin without advancing the machine.
 ` + clockCode.slice(processBegin);
+  const pulseAnchor = '\tthis.run = run;';
+  if (!clockCode.includes(pulseAnchor)) throw new Error('Clock pulse anchor changed');
+  clockCode = clockCode.replace(pulseAnchor, `${pulseAnchor}
+    // An AudioWorklet heartbeat may wake the SAME paced queue in hidden tabs.
+    // The host-time budget prevents duplicate advancement with interval ticks.
+    this.pulse = function () { if (_running && !_debug) process(); };`);
   source = source.slice(0, clockBegin) + clockCode + source.slice(clockEnd);
   const trdBegin = source.indexOf('    this.insertTRD = function');
   const trdEnd = source.indexOf('    this.insertSCL = function', trdBegin);

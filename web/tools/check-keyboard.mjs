@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 globalThis.window=new EventTarget();
+globalThis.document=new EventTarget();document.hidden=false;
 const {SpectrumPlayer}=await import('../emulator.js');
 const c=vm.createContext({console});
 vm.runInContext(fs.readFileSync('web/vendor/zx-dream.js','utf8'),c);

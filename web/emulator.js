@@ -16,6 +16,7 @@ export class SpectrumPlayer {
     this.audio = null;
     this.muted = false;
     this.lowpassCutoff = 20000;
+    this.playInBackground = true;
     this.rendererPreference = 'webgl';
     this.activeRenderer = 'webgl';
     this.onRendererChanged = () => {};
@@ -44,6 +45,7 @@ export class SpectrumPlayer {
     container.addEventListener('keyup', event => this.keyboard(event, false));
     container.addEventListener('blur', () => this.releaseKeys());
     window.addEventListener('blur', () => this.releaseKeys());
+    document.addEventListener('visibilitychange', () => this.updateBackgroundClock());
   }
   async initialize() {
     if (this.hw) return;
@@ -140,10 +142,16 @@ export class SpectrumPlayer {
       try {
         await audio.audioWorklet.addModule(new URL('audio-worklet.js', import.meta.url));
         const output = new AudioWorkletNode(audio, 'spectrum-audio', { outputChannelCount: [2] });
+        // Audio rendering keeps a steady cadence when browser timers are
+        // throttled in a hidden tab, including while the output is muted.
+        output.port.onmessage = ({ data }) => {
+          if (data.wake && this.playInBackground && document.hidden) this.hw?.clock.pulse();
+        };
         const gain = audio.createGain();
         const lowpass = new RcLowpassBank(audio, output, gain, this.lowpassCutoff);
         gain.connect(audio.destination);
         Object.assign(this, { audio, output, gain, lowpass });
+        this.updateBackgroundClock();
       } catch (error) { await audio.close(); throw error; }
     }
     await this.audio.resume();
@@ -164,6 +172,13 @@ export class SpectrumPlayer {
     this.output?.port.postMessage({ clear: true });
   }
   setMuted(muted) { this.muted = muted; if (this.gain) this.gain.gain.value = muted ? 0 : 1; }
+  setPlayInBackground(enabled) {
+    this.playInBackground = !!enabled;
+    this.updateBackgroundClock();
+  }
+  updateBackgroundClock() {
+    this.output?.port.postMessage({ background: this.playInBackground && document.hidden });
+  }
   setLowpassCutoff(cutoff) {
     if (!LOWPASS_CUTOFFS.includes(cutoff)) throw new RangeError('Unknown low-pass preset');
     this.lowpassCutoff = cutoff;
