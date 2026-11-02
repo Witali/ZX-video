@@ -60,7 +60,7 @@ async function copyTree(from, to) {
   }
 }
 await mkdir(output, { recursive: true });
-for (const name of ['index.html', 'styles.css', 'app.js', 'emulator.js', 'audio-worklet.js', 'display-scale.js']) {
+for (const name of ['index.html', 'styles.css', 'app.js', 'emulator.js', 'audio-worklet.js', 'audio-filter.js', 'display-scale.js']) {
   await copyFile(join(source, name), join(output, name));
 }
 await copyTree(join(source, 'vendor'), join(output, 'vendor'));

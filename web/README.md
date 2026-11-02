@@ -76,9 +76,8 @@ catalogue or disks, and can also be run manually on main. A pull request
 only builds and validates; it does not deploy. See
 [GitHub's custom Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
-For this repository the expected project URL is
-`https://witali.github.io/ZX-video/` once Pages is enabled and the workflow
-succeeds. Relative asset and disk paths also support a custom domain.
+The published player is at [witali.github.io/ZX-video](https://witali.github.io/ZX-video/).
+Relative asset and disk paths also support a custom domain.
 The workflow materializes LFS before building: Pages must serve actual TRDs,
 not Git LFS pointer text.
 Its partial, sparse checkout includes the web sources, catalogue and all
@@ -223,6 +222,31 @@ site root and open it over the same HTTP server. It is a development fixture
 and is excluded from the Pages artifact. On Windows, start
 `web/tools/measure-windows-audio.ps1 -Seconds 25` and run the browser probe
 during that interval to read the default multimedia endpoint's peak meters.
+
+### Audio filter settings
+
+**Settings → Audio low-pass filter** selects 5, 10, 15 or 20 kHz; the
+default is 20 kHz. The preference is retained locally and in the URL's
+`lpf` parameter (Hz). An explicit URL value takes priority. Switching during
+playback crossfades over 20 ms and preserves emulator state and stereo.
+
+This is a digital single-pole RC-style output filter after the AudioWorklet,
+before mute/volume. For `p = 1 - alpha`, its transfer is
+`H(z) = alpha / (1 - p z^-1)`. With `d = 1 - cos(2π fc/fs)`, use
+`alpha = sqrt(d(d+2)) - d` to put the digital response at exactly -3 dB at
+the selected cutoff, including the near-Nyquist 20-kHz preset at 44.1 kHz.
+The positive exponential impulse response has unity DC gain and cannot
+overshoot a bounded input. Four parallel preset filters retain warm states;
+only their output gains crossfade. AY synthesis and CPU/disk timing are
+unchanged. This models a first-order response, not a measured analog board.
+
+[Coefficient checks](tools/check-audio-filter.mjs) run in CI. The local
+[native Web Audio fixture](tools/filter-check.html) verifies all four presets
+at 44.1/48 kHz, independent stereo impulse responses, rapid switching and
+preserved CPU/mapped RAM/disk state. Serve it at the built site's root like
+the other development fixtures. [Browser report](reports/audio-filter.json).
+The production Worklet-to-output stereo probe also passes with the default
+20-kHz filter: [stereo report](reports/audio-filter-stereo.json).
 
 ### Display settings
 

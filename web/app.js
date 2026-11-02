@@ -1,5 +1,6 @@
 import { SpectrumPlayer } from './emulator.js';
 import { keepPhysicalPixelScale } from './display-scale.js';
+import { LOWPASS_CUTOFFS } from './audio-filter.js';
 const $ = id => document.getElementById(id);
 const player = new SpectrumPlayer($('display'));
 keepPhysicalPixelScale($('display'));
@@ -22,6 +23,19 @@ $('renderer').addEventListener('change', () => {
   try { localStorage.setItem('zx-video.renderer', mode); } catch { /* Optional preference storage. */ }
   const url = new URL(location.href);
   url.searchParams.set('renderer', mode);
+  history.replaceState(null, '', url);
+});
+try {
+  const saved = Number(new URL(location.href).searchParams.get('lpf') || localStorage.getItem('zx-video.lowpass'));
+  if (LOWPASS_CUTOFFS.includes(saved)) $('lowpass').value = String(saved);
+} catch { /* The default filter remains available without browser storage. */ }
+player.setLowpassCutoff(Number($('lowpass').value));
+$('lowpass').addEventListener('change', () => {
+  const cutoff = Number($('lowpass').value);
+  player.setLowpassCutoff(cutoff);
+  try { localStorage.setItem('zx-video.lowpass', String(cutoff)); } catch { /* Optional preference storage. */ }
+  const url = new URL(location.href);
+  url.searchParams.set('lpf', String(cutoff));
   history.replaceState(null, '', url);
 });
 function controls() {

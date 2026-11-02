@@ -1,5 +1,6 @@
 /* global ZX_Bus, ZX_Clock, ZX_Z80, ZX_ROM, ZX_RAM, ZX_Display, ZX_Keyboard,
   ZX_Floppy, ZX_BetaDisk, ZX_PortFE, ZX_Port7FFD, ZX_PSG */
+import { LOWPASS_CUTOFFS, RcLowpassBank } from './audio-filter.js';
 // Small adapter around pinned ZX-Dream. No upstream UI, PHP server or CDN.
 window.ZXContext = { debugMode: false };
 window.loadServerFile = async name => {
@@ -14,6 +15,7 @@ export class SpectrumPlayer {
     this.hw = null;
     this.audio = null;
     this.muted = false;
+    this.lowpassCutoff = 20000;
     this.rendererPreference = 'canvas';
     this.activeRenderer = 'canvas';
     this.onRendererChanged = () => {};
@@ -116,11 +118,15 @@ export class SpectrumPlayer {
     if (!this.audio) {
       const Audio = window.AudioContext || window.webkitAudioContext;
       if (!Audio) throw new Error('This browser does not support Web Audio.');
-      this.audio = new Audio({ sampleRate: 44100 });
-      await this.audio.audioWorklet.addModule(new URL('audio-worklet.js', import.meta.url));
-      this.output = new AudioWorkletNode(this.audio, 'spectrum-audio', { outputChannelCount: [2] });
-      this.gain = this.audio.createGain();
-      this.output.connect(this.gain).connect(this.audio.destination);
+      const audio = new Audio({ sampleRate: 44100 });
+      try {
+        await audio.audioWorklet.addModule(new URL('audio-worklet.js', import.meta.url));
+        const output = new AudioWorkletNode(audio, 'spectrum-audio', { outputChannelCount: [2] });
+        const gain = audio.createGain();
+        const lowpass = new RcLowpassBank(audio, output, gain, this.lowpassCutoff);
+        gain.connect(audio.destination);
+        Object.assign(this, { audio, output, gain, lowpass });
+      } catch (error) { await audio.close(); throw error; }
     }
     await this.audio.resume();
     this.setMuted(this.muted);
@@ -140,6 +146,11 @@ export class SpectrumPlayer {
     this.output?.port.postMessage({ clear: true });
   }
   setMuted(muted) { this.muted = muted; if (this.gain) this.gain.gain.value = muted ? 0 : 1; }
+  setLowpassCutoff(cutoff) {
+    if (!LOWPASS_CUTOFFS.includes(cutoff)) throw new RangeError('Unknown low-pass preset');
+    this.lowpassCutoff = cutoff;
+    this.lowpass?.setCutoff(cutoff);
+  }
   keyboard(event, pressed) {
     const keys = this.keys.get(event.code);
     if (!keys || !this.hw) return;

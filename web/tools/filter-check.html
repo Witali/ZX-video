@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>RC low-pass verification</title>
+<script src="vendor/ayumi.js"></script><script src="vendor/zx-dream.js"></script>
+<button id="run">Verify RC filter presets and live switching</button><pre id="result">Ready</pre><div id="fixture" hidden></div>
+<script type="module">
+import {LOWPASS_CUTOFFS,RcLowpassBank} from './audio-filter.js';
+import {SpectrumPlayer} from './emulator.js';
+document.getElementById('run').onclick=async()=>{
+  const button=document.getElementById('run'),result=document.getElementById('result');button.disabled=true;
+  let player;
+  try {
+    const cases=[];
+    for(const rate of [44100,48000])for(const cutoff of LOWPASS_CUTOFFS){
+      const context=new OfflineAudioContext(2,2048,rate),input=context.createBufferSource();
+      input.buffer=context.createBuffer(2,2048,rate);
+      input.buffer.getChannelData(0)[0]=0.25;input.buffer.getChannelData(1)[17]=0.125;
+      const bank=new RcLowpassBank(context,input,context.destination,cutoff);
+      const magnitude=new Float32Array(2),phase=new Float32Array(2);
+      bank.branches.get(cutoff).filter.getFrequencyResponse(new Float32Array([0,cutoff]),magnitude,phase);
+      input.start();const output=await context.startRendering();
+      // Independently recover the positive pole from the measured first sample.
+      const alpha=output.getChannelData(0)[0]/0.25,pole=1-alpha;let maximumError=0;
+      for(let n=0;n<2048;n++){
+        maximumError=Math.max(maximumError,Math.abs(output.getChannelData(0)[n]-0.25*alpha*pole**n),
+          Math.abs(output.getChannelData(1)[n]-(n<17?0:0.125*alpha*pole**(n-17))));
+      }
+      const cutoffDb=20*Math.log10(magnitude[1]);
+      if(Math.abs(magnitude[0]-1)>1e-6||Math.abs(cutoffDb+3.0102999566)>1e-4||maximumError>1e-6)throw Error('Native IIR response mismatch');
+      cases.push({sampleRate:rate,cutoff,cutoffDb,maximumImpulseError:maximumError});
+    }
+    const context=new OfflineAudioContext(2,22050,44100),input=context.createBufferSource();
+    input.buffer=context.createBuffer(2,22050,44100);
+    for(let i=0;i<22050;i++){
+      input.buffer.getChannelData(0)[i]=0.2*Math.sin(2*Math.PI*1000*i/44100);
+      input.buffer.getChannelData(1)[i]=0.15*Math.sin(2*Math.PI*1700*i/44100);
+    }
+    const bank=new RcLowpassBank(context,input,context.destination);input.start();
+    const times=[0.1,0.11,0.13,0.18],cutoffs=[5000,10000,15000,20000];
+    let pause=context.suspend(times[0]);const rendering=context.startRendering();
+    for(let i=0;i<times.length;i++){
+      await pause;bank.setCutoff(cutoffs[i]);
+      if(i+1<times.length)pause=context.suspend(times[i+1]);await context.resume();
+    }
+    const switched=await rendering;
+    for(const channel of [0,1])for(const value of switched.getChannelData(channel)){
+      if(!Number.isFinite(value)||Math.abs(value)>0.200001)throw Error('Invalid or amplified switch output');
+    }
+    player=new SpectrumPlayer(document.getElementById('fixture'));await player.enableAudio();await player.initialize();
+    const snapshot=()=>JSON.stringify({cpu:player.hw.cpu.get_state(),disk:player.hw.disk.get_state(),
+      paging:player.hw.bus.var_read('port_7ffd_value'),memory:Array.from({length:65536},(_,i)=>player.hw.bus.mem_read(i))});
+    const before=snapshot();for(const hz of LOWPASS_CUTOFFS)player.setLowpassCutoff(hz);
+    if(snapshot()!==before)throw Error('Filter changed machine state');
+    result.textContent=JSON.stringify({scope:'Native Web Audio filter and adapter checks; not analog-board qualification',cases,
+      rapidSwitchesFiniteAndPassive:true,filterPreservesMachineState:true,defaultCutoff:20000,crossfadeMs:20,passed:true},null,2);
+  }catch(error){result.textContent='FAILED: '+error.message;}
+  finally{clearInterval(player?.activityTimer);await player?.audio?.close();button.disabled=false;}
+};
+</script></html>

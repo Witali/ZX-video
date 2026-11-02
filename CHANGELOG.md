@@ -1,5 +1,28 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Add a configurable single-pole RC-style audio output filter
+
+- **Objective/baseline:** Add user-selected 5/10/15/20-kHz low-pass presets
+  to the published web baseline `c0da6ca2`, defaulting to 20 kHz.
+- **Change:** Apply a passive one-pole IIR independently to both output
+  channels, after the AudioWorklet and before mute/volume. Calibrate its
+  digital cutoff to -3 dB instead of using an inaccurate near-Nyquist
+  analog-time-constant approximation. Crossfade warm preset branches over
+  20 ms; retain the choice locally and in the selection URL. Failed audio
+  initialization closes the partial context so a retry can start cleanly.
+- **Verification/decision:** All eight 44.1/48-kHz and preset cases pass
+  DC gain, monotonic magnitude, stable/passive impulse and cutoff checks.
+  Native browser IIR measurements give -3.0103001 dB at every cutoff and
+  maximum impulse error below 4.12e-9, with independent stereo histories.
+  Rapid switching stays finite/passive and preserves machine state.
+  The production stereo output probe passes with the default filter, and
+  the UI retains 5 kHz after reload before restoring the 20-kHz default.
+  Keep this output option; no physical analog-board or subjective sound-quality
+  qualification is claimed. Existing TRDs, AY streams and Z80 hot paths are
+  unchanged (0 T delta). [Implementation](web/audio-filter.js),
+  [CI checks](web/tools/check-audio-filter.mjs),
+  [browser fixture](web/tools/filter-check.html), [report](web/reports/audio-filter.json).
+
 ## 2026-11-02 — Limit the Pages checkout to website sources and TRD images
 
 - **Objective/baseline:** Publish the prepared web player from `d1f1db5a`.
