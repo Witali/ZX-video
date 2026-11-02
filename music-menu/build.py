@@ -16,7 +16,9 @@ from zx_text import menu_stream
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(ROOT/'audiobook-ay'))
-from player import TrdFile, boot_basic, calculate_file_start, place_files, spectrum_bitmap_offset
+from player import TrdFile, basic_line, calculate_file_start, place_files, spectrum_bitmap_offset
+from demo_assets import assets, footer, DISK_NAME
+from zx0.small import build as zx0_small
 
 BANKS = (0, 4, 6, 1, 3, 7)
 CPU_HZ = 3546900
@@ -254,43 +256,109 @@ def control_frames(score, *, triangle=True, click_safe=True, articulation=True, 
 
 
 
+def soft_edges(data):
+    """Gentle fixed-volume edges without changing AY's shared bass oscillator.
+
+    Every original active field remains active (minimum nonzero level one).
+    Periods, mixer, noise, R13 restarts and all hardware-ENV values are exact.
+    In particular, ENV is the bass waveform and cannot be gain-scaled by R10.
+    Retain the full source timeline, including its original trailing silence.
+    """
+    from verify import unpack
+    original = unpack(data)
+    last = max(i for i,row in enumerate(original) if any(row[8:11]))
+    result, changed, envelope_preserved = [], 0, 0
+    for tick,source in enumerate(original):
+        row = bytearray(source)
+        gain = min(1., .08+.92*tick/8, .08+.92*max(0,last-tick)/40)
+        for reg in (8,9,10):
+            value = row[reg]
+            if value&16:
+                envelope_preserved += 1
+            elif value and gain<1:
+                row[reg] = min(range(1,value+1),key=lambda n:abs(AY_LEVELS[n]-AY_LEVELS[value]*gain))
+                changed += row[reg]!=value
+        assert bool(any(row[8:11]))==bool(any(source[8:11]))
+        assert row[:8]==source[:8] and row[11:]==source[11:]
+        result.append(bytes(row))
+    packed,records,writes=pack_frames(result)
+    return packed,dict(attack_fields=8,release_fields=40,changed_fixed_volume_fields=changed,
+        hardware_envelope_fields_preserved=envelope_preserved,all_active_fields_preserved=True,
+        all_oscillator_and_restart_values_preserved=True,source_packed_bytes=len(data),
+        packed_bytes=len(packed),packed_records=records,ay_register_writes=writes,
+        frames_sha256=sha(b''.join(result)))
+
+
 def build(output):
     output = Path(output).resolve()
     work = output/'assembly'
     work.mkdir(parents=True,exist_ok=True)
-    songs = []
-    cache = bytearray()
+    songs, raw = [], []
     for name in ('lumiere','alicia'):
         source = (HERE/'scores'/f'{name}.json').read_bytes()
         data,meta = control_frames(json.loads(source))
-        offset = len(cache)
-        songs.append(dict(meta,song=name,score_sha256=sha(source),offset=offset,
-            start_bank_index=offset//16384,start_address=0xC000+offset%16384))
-        cache.extend(data)
+        (output/f'{name}.original.rows').write_bytes(data)
+        data,fades=soft_edges(data)
+        meta.update(source_frames_sha256=meta['frames_sha256'],source_packed_sha256=meta['packed_sha256'],
+                    source_records=meta['records'],source_register_writes=meta['register_writes'],
+                    frames_sha256=fades['frames_sha256'],packed_sha256=sha(data),packed_bytes=len(data),
+                    records=fades['packed_records'],register_writes=fades['ay_register_writes'],soft_edges=fades)
+        raw.append(data)
+        songs.append(dict(meta,song=name,score_sha256=sha(source)))
         (output/f'{name}.rows').write_bytes(data)
-    if len(cache)>len(BANKS)*16384:
-        raise ValueError('Both cached songs exceed available RAM')
-    files = [TrdFile('boot','B',boot_basic(),autostart_line=10),
+    packed_songs,dictionary,depth,pictures,banks = assets(raw)
+    from verify import unpack
+    pauses = []
+    for song,packed,data in zip(songs,packed_songs,raw):
+        song.update(packed)
+        frames = unpack(data)
+        last = max(i for i,row in enumerate(frames) if any(row[8:11]))
+        trailing = len(frames)-last-1
+        pauses.append(max(0,150-trailing))
+        song.update(trailing_silent_fields=trailing,additional_pause_fields=pauses[-1])
+    # The sector-API first stage preserves the splash while loading PLAYER.
+    # A second BASIC LOAD would clear SCREEN$ inside the TR-DOS interpreter.
+    boot = b''.join((basic_line(10,b'\xfd \xb0 "24575"'),
+        basic_line(20,b'\xf9 \xc0 \xb0 "15619":\xea:\xef "LOADER" \xaf'),
+        basic_line(30,b'\xf9 \xc0 \xb0 "24576"')))
+    files = [TrdFile('boot','B',boot,autostart_line=10),
+             TrdFile('LOADER','C',bytes(7168),start=0x6000),
              TrdFile('PLAYER','C',bytes(16384),start=0x8000)]
-    config = ['song_table:']
+    track,sector=calculate_file_start(files[:2])
+    (work/'loader-position.inc').write_text(f'        LD DE,{track*256+sector}\n',encoding='ascii')
+    (work/'loader.asm').write_bytes((HERE/'loader.asm').read_bytes())
+    loader_run=subprocess.run([sys.executable,'-m','pyz80.pyz80','--obj=loader.bin','loader.asm'],
+                              cwd=work,capture_output=True,text=True)
+    if loader_run.returncode:
+        raise RuntimeError(loader_run.stdout+loader_run.stderr)
+    loader_blob=(work/'loader.bin').read_bytes()
+    assert len(loader_blob)==256
+    files[1]=TrdFile('LOADER','C',loader_blob+(HERE/'artwork/city.scr').read_bytes(),start=0x6000)
+    config = [f'PICTURE_COUNT: EQU {len(pictures)}','song_table:']
     for song in songs:
-        config.extend((f'        DEFB {song["start_bank_index"]}',f'        DEFW {song["start_address"]}'))
-    config.append('cache_extents:')
+        config += [f'        DEFB {song["start_bank_index"]}',f'        DEFW {song["start_address"]}']
+    config += ['song_pauses:','        DEFB '+','.join(map(str,pauses)),'cache_extents:']
     sections = []
-    for index,offset in enumerate(range(0,len(cache),16384)):
-        payload = bytes(cache[offset:offset+16384])
+    for bank,payload in zip(BANKS,banks):
         track,sector = calculate_file_start(files)
         count = (len(payload)+255)//256
-        bank = BANKS[index]
         config.append(f'        DEFB {bank},{sector},{track},{count}')
         sections.append(dict(bank=bank,sector=track*16+sector,sectors=count,bytes=len(payload)))
-        files.append(TrdFile(f'CACHE{index}','C',payload,start=0xC000))
-    config.append('        DEFB 255')
-    config += ['menu_text:','        DEFB '+','.join(str(value) for value in menu_stream())]
-    config += ['mute_values:','        DEFB '+','.join(str(value) for pair in MUTE_WRITES for value in pair)]
+        files.append(TrdFile(f'CACHE{bank}','C',bytes(payload),start=0xC000))
+    config += ['        DEFB 255','menu_text:',
+        '        DEFB '+','.join(str(value) for value in menu_stream()),'mute_values:',
+        '        DEFB '+','.join(str(value) for pair in MUTE_WRITES for value in pair),
+        'grammar_dictionary:','        DEFB '+','.join(map(str,dictionary)),'picture_table:']
+    for picture in pictures:
+        config += [f'        DEFB {picture["bank"]}',f'        DEFW {picture["address"]}',
+                   f'        DEFB {picture["border"]},{picture["accent"]}']
+    config += ['column_table:','        DEFW '+','.join(str(0xA000+x*180) for x in range(32))]
     (work/'variants.inc').write_text('\n'.join(config)+'\n',encoding='ascii',newline='\n')
-    source = (HERE/'player.asm').read_bytes().replace(b'\r\n',b'\n')
-    (work/'player.asm').write_bytes(source)
+    regions,decoder_labels,decoder = zx0_small('smc',core=0x8D00,core_limit=0x8E00)
+    (work/'zx0.inc').write_text('        DEFB '+','.join(map(str,regions[0][1]))+'\n',encoding='ascii')
+    (work/'footer.inc').write_text('        DEFB '+','.join(map(str,footer()))+'\n',encoding='ascii')
+    for name in ('player.asm','demo-core.asm','demo-graphics.asm'):
+        (work/name).write_bytes((HERE/name).read_bytes().replace(b'\r\n',b'\n'))
     run = subprocess.run([sys.executable,'-m','pyz80.pyz80','--obj=player.bin',
         '--lstfile=player.lst','-s','.*','player.asm'],cwd=work,capture_output=True,text=True)
     (work/'assembler.log').write_text(run.stdout+run.stderr,encoding='utf-8')
@@ -299,30 +367,36 @@ def build(output):
     labels = next(ast.literal_eval(line) for line in run.stdout.splitlines() if line.startswith('{'))
     blob = (work/'player.bin').read_bytes()
     assert len(blob)==16384
-    files[1] = TrdFile('PLAYER','C',blob,start=0x8000)
-    disk,directory,capacity = place_files(files,'AYMUSIC')
-    (output/'ZX-Music-Menu.trd').write_bytes(disk)
-    meta = dict(schema=3,independently_bootable=True,target='Spectrum128 + Beta Disk; AY only',
-        songs=songs,cache_sections=sections,cache_bytes=len(cache),player_labels=labels,
-        directory=directory,capacity=capacity,trd_sha256=sha(disk),player_sha256=sha(blob),
-        assembly_sha256=sha(source),control_hz=CONTROL_HZ,cpu_hz=CPU_HZ,frame_tstates=FIELD_T,
-        tools=dict(pyz80=importlib.metadata.version('pyz80'),pillow=importlib.metadata.version('Pillow')),
-        producer_sha256={name:sha((HERE/name).read_bytes()) for name in ('build.py','arrangement.py','balance.json','zx_text.py')},
-        beeper_audio=False,simultaneously_cached_songs=True,autoplay_song='lumiere',autoplay_on_first_ula_field=True,
-        autoplay_control_cpu_tstates=27,autoplay_control_previous_cpu_tstates=0,
-        font='Stock Spectrum48 ROM via RST10; CHARS=3C00; stream2',
-        record_format='duration U8; changed-register slot mask LE16; register_order values; zero-duration EOF',
+    files[2] = TrdFile('PLAYER','C',blob,start=0x8000)
+    disk,directory,capacity = place_files(files,'EXP33DEMO')
+    (output/DISK_NAME).write_bytes(disk)
+    meta = dict(schema=4,disk_name=DISK_NAME,title='Expedition 33 Demo',independently_bootable=True,
+        target='Spectrum128 + Beta Disk; AY only',songs=songs,cache_sections=sections,
+        cache_bytes=sum(map(len,banks)),player_labels=labels,directory=directory,capacity=capacity,
+        trd_sha256=sha(disk),player_sha256=sha(blob),control_hz=CONTROL_HZ,cpu_hz=CPU_HZ,frame_tstates=FIELD_T,
+        tools=dict(pyz80=importlib.metadata.version('pyz80')),
+        producer_sha256={name:sha((HERE/name).read_bytes()) for name in
+            ('build.py','arrangement.py','balance.json','zx_text.py','music_codec.py','demo_assets.py',
+             'player.asm','demo-core.asm','demo-graphics.asm','loader.asm')},
+        beeper_audio=False,simultaneously_cached_songs=True,autoplay_song='lumiere',
+        autoplay_on_first_ula_field=True,menu_hidden_until_keypress=True,slideshow_default=True,
+        pictures=pictures,graphics_decoder=decoder,music_codec=dict(format='bounded-byte-pair-grammar-v1',
+            raw_bytes=sum(map(len,raw)),compressed_bytes=sum(s['compressed_bytes'] for s in songs),
+            dictionary_bytes=len(dictionary),max_depth=depth,dictionary_sha256=sha(dictionary),
+            byte_exact_roundtrip=True),playlist=dict(loop=True,nominal_silence_fields=150,
+            source_silence_retained=True,additional_pause_fields=pauses),
+        font='Stock Spectrum48 ROM menu; shared Cinzel image footer',
         register_order=list(REGISTER_ORDER),mute_writes=[list(pair) for pair in MUTE_WRITES],
-        memory=dict(fixed_player_bank=2,display_basic_trdos_bank=5,available_song_banks=list(BANKS),
-                    max_cache_bytes=98304,stack_top=0xBD00),
-        timing_scope='CPU components exclude ULA, HALT, IRQ entry and TR-DOS; see verified timing report.')
+        memory=dict(fixed_player_bank=2,display_basic_trdos_bank=5,menu_bank=7,menu_bytes=6912,
+            available_cache_banks=[0,4,6,1,3],max_cache_bytes=81920,incoming_picture=[0xA000,0xB680],
+            grammar_stack=[0xB700,0xB718],stack_top=0xBD00),
+        timing_scope='Plain CPU excludes ULA contention, HALT, IRQ entry and TR-DOS; full Fuse proof is separate.')
     (output/'build.json').write_text(json.dumps(meta,indent=2)+'\n',encoding='utf-8',newline='\n')
-    print(json.dumps(dict(trd_sha256=meta['trd_sha256'],cache_bytes=len(cache),
-        capacity=capacity,songs=[{k:s[k] for k in ('song','packed_bytes','records','register_writes','triangle_fields')} for s in songs]),indent=2))
-    return disk,meta
+    print(json.dumps(dict(trd_sha256=meta['trd_sha256'],cache_bytes=meta['cache_bytes'],pictures=len(pictures))))
+    return meta
 
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-autoplay')
+    parser.add_argument('--output',type=Path,default=ROOT/'build/expedition-33-demo')
     build(parser.parse_args().output)

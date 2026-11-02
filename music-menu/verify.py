@@ -472,9 +472,10 @@ def fuse_check(fuse, output, metadata, index, *, captured=False):
 
 
 def run_fuse(fuse, output, script, *, extra=(), sound=False, timeout=240):
+    disk_name = json.loads((output/'build.json').read_text()).get('disk_name','ZX-Music-Menu.trd')
     command = [str(fuse.resolve()),'--sound' if sound else '--no-sound','--no-autosave-settings',
         '--no-confirm-actions','--speed','100' if sound else '10000','--machine','128','--beta128',
-        *extra,'--debugger-command',script,str((output/'ZX-Music-Menu.trd').resolve())]
+        *extra,'--debugger-command',script,str((output/disk_name).resolve())]
     startup = None
     if sys.platform=='win32':
         startup = subprocess.STARTUPINFO()

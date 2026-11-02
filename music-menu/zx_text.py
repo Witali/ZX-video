@@ -3,11 +3,12 @@
 Glyphs are provided by the user's ROM. No font bitmap is packaged on disk.
 """
 MENU_LINES = (
-    (1,6,'SPECTRUM MUSIC'),
+    (1,7,'EXPEDITION 33 DEMO'),
     (4,2,'CLAIR OBSCUR: EXPEDITION 33'),
     (9,4,'1  LUMIERE'),
     (13,4,'2  ALICIA'),
-    (17,5,'AY ONLY / SOFT BASS'),
+    (16,5,'AY ONLY / SOFT BASS'),
+    (17,4,'[X] I: PICTURES   M: SHOW'),
     (19,2,'READY'),
     (19,10,'LOADING'),
     (19,20,'PLAYING'),

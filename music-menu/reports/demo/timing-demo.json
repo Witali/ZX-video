@@ -1,0 +1,464 @@
+{
+  "trd_sha256": "fd8868220ad6e9f429fc367a9887a446adfccc9c230caa94f37b8805a5046db4",
+  "timing_reference": "libraries/Z80_TIMINGS.md",
+  "byte_provider": {
+    "old_uncompressed": 75,
+    "root_literal": 252,
+    "root_literal_delta": 177,
+    "pending_literal": 199,
+    "pending_literal_delta": 124,
+    "escaped_root": 362,
+    "escaped_root_delta": 287,
+    "root_pair_leaf": 489,
+    "root_pair_leaf_delta": 414,
+    "additional_pair_expansion": 193,
+    "max_dictionary_depth": 8,
+    "formula": "Root pair path 296+193*d; pending path 199+193*d; d is number of expanded pairs."
+  },
+  "unchanged_mask_loop_old_record_cost": {
+    "zero_writes": 1452,
+    "one_write": 1616,
+    "fourteen_writes": 3748,
+    "formula": "New record cost adds sum(provider_cost-75) for its 3+w decoded bytes; parser unchanged."
+  },
+  "mute": {
+    "before": 1164,
+    "after": 1153,
+    "delta": -11,
+    "reason": "Remove border-reset XOR/OUT15, replace with NOP4; preserve picture BORDER."
+  },
+  "paging": {
+    "before_stream_tail": 39,
+    "after_stream_tail": 62,
+    "delta": 23,
+    "reason": "JP10 to shared page helper; latch store13."
+  },
+  "full_irq_body": {
+    "previous": 18,
+    "new_min": 398,
+    "new_max": 12021,
+    "max_delta": 12003,
+    "hardware_im2_entry": 19,
+    "field_budget": 70908,
+    "scope": "New body includes bank save/restore, register preservation, playlist clock and complete music service."
+  },
+  "foreground_paths": {
+    "previous": 0,
+    "paths": {
+      "single_tile_reveal": 834,
+      "sixteen_tile_reveal": 15597,
+      "single_tile_petal": 724,
+      "sixteen_tile_petal": 13837,
+      "footer_bitmap_copy": 21904,
+      "menu_snapshot_restore_with_ui": 157318
+    },
+    "scope": "Entry through RET, required state writes included; sample tile0/16-cell batch. New graphics paths have no old implementation."
+  },
+  "baseline_audio": [
+    {
+      "song": "lumiere",
+      "subsequent_fields_audio_cpu_tstates": 10496495,
+      "scope": "Old foreground audio caller, excludes choose tick0, EOF, menu and IRQ37 per field."
+    },
+    {
+      "song": "alicia",
+      "subsequent_fields_audio_cpu_tstates": 6134033,
+      "scope": "Old foreground audio caller, excludes choose tick0, EOF, menu and IRQ37 per field."
+    }
+  ],
+  "decoder_comparison": [
+    {
+      "profile": "zx0-smc",
+      "code_bytes": 74,
+      "caller_stack_bytes": 4,
+      "service_bytes": 78,
+      "images": [
+        {
+          "name": "city",
+          "tstates": 490202,
+          "compressed_bytes": 3314
+        },
+        {
+          "name": "expedition",
+          "tstates": 520905,
+          "compressed_bytes": 3405
+        },
+        {
+          "name": "duel",
+          "tstates": 455135,
+          "compressed_bytes": 3250
+        },
+        {
+          "name": "portrait",
+          "tstates": 429333,
+          "compressed_bytes": 3172
+        },
+        {
+          "name": "guardian",
+          "tstates": 492734,
+          "compressed_bytes": 3225
+        },
+        {
+          "name": "underwater",
+          "tstates": 495278,
+          "compressed_bytes": 3273
+        },
+        {
+          "name": "gustave",
+          "tstates": 425346,
+          "compressed_bytes": 2305
+        },
+        {
+          "name": "titan",
+          "tstates": 440865,
+          "compressed_bytes": 2979
+        },
+        {
+          "name": "monoco",
+          "tstates": 515643,
+          "compressed_bytes": 4255
+        },
+        {
+          "name": "esquie",
+          "tstates": 481781,
+          "compressed_bytes": 3561
+        },
+        {
+          "name": "renoir",
+          "tstates": 416121,
+          "compressed_bytes": 3370
+        },
+        {
+          "name": "lampmaster",
+          "tstates": 361138,
+          "compressed_bytes": 2512
+        },
+        {
+          "name": "visages",
+          "tstates": 482234,
+          "compressed_bytes": 3080
+        },
+        {
+          "name": "maelle",
+          "tstates": 371560,
+          "compressed_bytes": 3006
+        },
+        {
+          "name": "paintress",
+          "tstates": 421095,
+          "compressed_bytes": 2190
+        },
+        {
+          "name": "sirene",
+          "tstates": 478742,
+          "compressed_bytes": 3236
+        },
+        {
+          "name": "gestral-village",
+          "tstates": 492629,
+          "compressed_bytes": 4068
+        },
+        {
+          "name": "gustave-sophie",
+          "tstates": 483536,
+          "compressed_bytes": 3561
+        }
+      ]
+    },
+    {
+      "profile": "zx0-gamma-jp",
+      "code_bytes": 69,
+      "caller_stack_bytes": 6,
+      "service_bytes": 75,
+      "images": [
+        {
+          "name": "city",
+          "tstates": 516994,
+          "compressed_bytes": 3314
+        },
+        {
+          "name": "expedition",
+          "tstates": 549194,
+          "compressed_bytes": 3405
+        },
+        {
+          "name": "duel",
+          "tstates": 477008,
+          "compressed_bytes": 3250
+        },
+        {
+          "name": "portrait",
+          "tstates": 450702,
+          "compressed_bytes": 3172
+        },
+        {
+          "name": "guardian",
+          "tstates": 519291,
+          "compressed_bytes": 3225
+        },
+        {
+          "name": "underwater",
+          "tstates": 522277,
+          "compressed_bytes": 3273
+        },
+        {
+          "name": "gustave",
+          "tstates": 447515,
+          "compressed_bytes": 2305
+        },
+        {
+          "name": "titan",
+          "tstates": 463213,
+          "compressed_bytes": 2979
+        },
+        {
+          "name": "monoco",
+          "tstates": 545265,
+          "compressed_bytes": 4255
+        },
+        {
+          "name": "esquie",
+          "tstates": 507407,
+          "compressed_bytes": 3561
+        },
+        {
+          "name": "renoir",
+          "tstates": 436599,
+          "compressed_bytes": 3370
+        },
+        {
+          "name": "lampmaster",
+          "tstates": 376623,
+          "compressed_bytes": 2512
+        },
+        {
+          "name": "visages",
+          "tstates": 506771,
+          "compressed_bytes": 3080
+        },
+        {
+          "name": "maelle",
+          "tstates": 388425,
+          "compressed_bytes": 3006
+        },
+        {
+          "name": "paintress",
+          "tstates": 440874,
+          "compressed_bytes": 2190
+        },
+        {
+          "name": "sirene",
+          "tstates": 504199,
+          "compressed_bytes": 3236
+        },
+        {
+          "name": "gestral-village",
+          "tstates": 521416,
+          "compressed_bytes": 4068
+        },
+        {
+          "name": "gustave-sophie",
+          "tstates": 509454,
+          "compressed_bytes": 3561
+        }
+      ]
+    },
+    {
+      "profile": "zx0-standard",
+      "code_bytes": 68,
+      "caller_stack_bytes": 6,
+      "service_bytes": 74,
+      "images": [
+        {
+          "name": "city",
+          "tstates": 521738,
+          "compressed_bytes": 3314
+        },
+        {
+          "name": "expedition",
+          "tstates": 554530,
+          "compressed_bytes": 3405
+        },
+        {
+          "name": "duel",
+          "tstates": 481720,
+          "compressed_bytes": 3250
+        },
+        {
+          "name": "portrait",
+          "tstates": 454944,
+          "compressed_bytes": 3172
+        },
+        {
+          "name": "guardian",
+          "tstates": 524101,
+          "compressed_bytes": 3225
+        },
+        {
+          "name": "underwater",
+          "tstates": 527197,
+          "compressed_bytes": 3273
+        },
+        {
+          "name": "gustave",
+          "tstates": 451563,
+          "compressed_bytes": 2305
+        },
+        {
+          "name": "titan",
+          "tstates": 467471,
+          "compressed_bytes": 2979
+        },
+        {
+          "name": "monoco",
+          "tstates": 550179,
+          "compressed_bytes": 4255
+        },
+        {
+          "name": "esquie",
+          "tstates": 512247,
+          "compressed_bytes": 3561
+        },
+        {
+          "name": "renoir",
+          "tstates": 440601,
+          "compressed_bytes": 3370
+        },
+        {
+          "name": "lampmaster",
+          "tstates": 380185,
+          "compressed_bytes": 2512
+        },
+        {
+          "name": "visages",
+          "tstates": 511733,
+          "compressed_bytes": 3080
+        },
+        {
+          "name": "maelle",
+          "tstates": 392033,
+          "compressed_bytes": 3006
+        },
+        {
+          "name": "paintress",
+          "tstates": 445230,
+          "compressed_bytes": 2190
+        },
+        {
+          "name": "sirene",
+          "tstates": 508951,
+          "compressed_bytes": 3236
+        },
+        {
+          "name": "gestral-village",
+          "tstates": 526010,
+          "compressed_bytes": 4068
+        },
+        {
+          "name": "gustave-sophie",
+          "tstates": 514206,
+          "compressed_bytes": 3561
+        }
+      ]
+    },
+    {
+      "profile": "lzsa-compact-eof",
+      "code_bytes": 136,
+      "caller_stack_bytes": 8,
+      "service_bytes": 144,
+      "images": [
+        {
+          "name": "city",
+          "tstates": 350893,
+          "compressed_bytes": 3458
+        },
+        {
+          "name": "expedition",
+          "tstates": 358970,
+          "compressed_bytes": 3557
+        },
+        {
+          "name": "duel",
+          "tstates": 320063,
+          "compressed_bytes": 3374
+        },
+        {
+          "name": "portrait",
+          "tstates": 323634,
+          "compressed_bytes": 3288
+        },
+        {
+          "name": "guardian",
+          "tstates": 345913,
+          "compressed_bytes": 3380
+        },
+        {
+          "name": "underwater",
+          "tstates": 351603,
+          "compressed_bytes": 3419
+        },
+        {
+          "name": "gustave",
+          "tstates": 310057,
+          "compressed_bytes": 2450
+        },
+        {
+          "name": "titan",
+          "tstates": 311392,
+          "compressed_bytes": 3117
+        },
+        {
+          "name": "monoco",
+          "tstates": 351926,
+          "compressed_bytes": 4419
+        },
+        {
+          "name": "esquie",
+          "tstates": 341748,
+          "compressed_bytes": 3688
+        },
+        {
+          "name": "renoir",
+          "tstates": 297200,
+          "compressed_bytes": 3485
+        },
+        {
+          "name": "lampmaster",
+          "tstates": 270895,
+          "compressed_bytes": 2613
+        },
+        {
+          "name": "visages",
+          "tstates": 349017,
+          "compressed_bytes": 3185
+        },
+        {
+          "name": "maelle",
+          "tstates": 269273,
+          "compressed_bytes": 3117
+        },
+        {
+          "name": "paintress",
+          "tstates": 311041,
+          "compressed_bytes": 2303
+        },
+        {
+          "name": "sirene",
+          "tstates": 345723,
+          "compressed_bytes": 3371
+        },
+        {
+          "name": "gestral-village",
+          "tstates": 337776,
+          "compressed_bytes": 4254
+        },
+        {
+          "name": "gustave-sophie",
+          "tstates": 334030,
+          "compressed_bytes": 3717
+        }
+      ]
+    }
+  ],
+  "qualifiers": "Plain native CPU counts; actual ULA/contention/disk execution is in fuse-demo.json. Graphics one-shot decode may span fields while music remains in IRQ."
+}

@@ -5,8 +5,10 @@ import unittest
 from pathlib import Path
 
 from arrangement import notes_for_pattern, timeline
-from build import HERE, ROOT, REGISTER_ORDER, MUTE_WRITES, CONTROL_HZ, REPEAT_GAP_FIELDS, build, control_frames, pack_frames, sha, triangle_period
-from verify import native_check, unpack
+from build import HERE, ROOT, REGISTER_ORDER, MUTE_WRITES, CONTROL_HZ, REPEAT_GAP_FIELDS, build, control_frames, pack_frames, sha, triangle_period, soft_edges
+from verify import unpack
+from verify_demo import native
+from music_codec import compress, decompress
 
 
 class MusicMenuTests(unittest.TestCase):
@@ -21,17 +23,34 @@ class MusicMenuTests(unittest.TestCase):
     def test_complete_player_ui_and_cached_switching(self):
         (ROOT/'build').mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(prefix='ay-menu-',dir=ROOT/'build') as temp:
-            disk,meta = build(temp)
-            report = native_check(Path(temp),meta)
-            self.assertEqual(len(disk),655360)
-            self.assertEqual(len(report['songs']),2)
-            self.assertLess(meta['cache_bytes'],3*16384)
-            self.assertTrue(all(s['complete'] and s['no_beeper_audio'] for s in report['songs']))
-            self.assertTrue(report['controls']['mouse_switch_during_playback'])
-            self.assertTrue(report['controls']['keyboard_switch_during_playback'])
-            self.assertEqual(report['irq_handler_tstates'],18)
-            self.assertTrue(all(s['automatic_lumiere_start'] for s in report['songs']))
-            self.assertLess(report['songs'][0]['autoplay_first_field_tstates'],meta['frame_tstates'])
+            meta = build(temp)
+            report = native(Path(temp))
+            self.assertEqual((Path(temp)/meta['disk_name']).stat().st_size,655360)
+            self.assertLess(meta['cache_bytes'],5*16384)
+            self.assertTrue(report['complete_playlist'] and report['no_beeper_audio'])
+            self.assertEqual(len(set(p['name'] for p in report['pictures_completed'])),18)
+            self.assertTrue(report['controls']['manual_song_switch'])
+            self.assertTrue(report['controls']['held_space_swallowed'])
+            self.assertLess(max(map(int,report['irq_body_tstates'])),meta['frame_tstates'])
+
+    def test_lossless_grammar_and_soft_edges_preserve_complete_parts(self):
+        streams=[]
+        for name in ('lumiere','alicia'):
+            data,_=control_frames(json.loads((HERE/'scores'/f'{name}.json').read_text()))
+            faded,report=soft_edges(data)
+            a,b=unpack(data),unpack(faded)
+            self.assertEqual(len(a),len(b))
+            for before,after in zip(a,b):
+                self.assertEqual(before[:8]+before[11:],after[:8]+after[11:])
+                for reg in (8,9,10):
+                    self.assertEqual(bool(before[reg]),bool(after[reg]))
+                    if before[reg]&16:
+                        self.assertEqual(before[reg],after[reg])
+            streams.append(faded)
+        packed,dictionary,depth=compress(streams)
+        self.assertLessEqual(depth,12)
+        self.assertLess(sum(map(len,packed))+len(dictionary),sum(map(len,streams)))
+        self.assertEqual([decompress(p,dictionary) for p in packed],streams)
 
     def test_delta_roundtrip_preserves_envelope_restart_events(self):
         start = bytearray(14)

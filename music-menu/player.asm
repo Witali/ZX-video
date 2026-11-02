@@ -1,149 +1,7 @@
-; AY-only Spectrum128 jukebox. RAM2 contains code, text, stack and IM2.
-; Both complete delta streams are loaded once into RAM banks 0/4/6/1/3/7.
-; The visible menu stays active during playback; switching never calls TR-DOS.
+; Expedition 33 Demo. Music is serviced on every real ULA IRQ; graphics and
+; immutable compressed sources are fully resident before playback begins.
         ORG 0x8000
-start:  DI
-        LD SP,0xBD00
-        LD IY,0x5C3A
-        XOR A
-        OUT (0xFE),A
-        LD (selected),A
-        LD (last_command),A
-        LD A,255
-        LD (playing),A
-        CALL mute
-        CALL print_menu
-        CALL highlight
-        LD A,1
-        LD (status),A
-        CALL show_status
-        LD BC,0xFBDF
-        IN A,(C)
-        LD (mouse_raw_x),A
-        LD BC,0xFFDF
-        IN A,(C)
-        LD (mouse_raw_y),A
-        LD IX,cache_extents
-        IM 1
-load_extent:
-        LD A,(IX+0)
-        CP 255
-        JR Z,loaded
-        OR 16
-        LD BC,0x7FFD
-        OUT (C),A
-        LD E,(IX+1)
-        LD D,(IX+2)
-        LD (disk_position),DE
-        LD B,(IX+3)
-        LD HL,0xC000
-        EI
-        CALL read_n
-        DI
-        LD DE,4
-        ADD IX,DE
-        JR load_extent
-loaded: CALL install_irq
-        XOR A
-        LD (status),A
-        CALL show_status
-        CALL cursor
-ready:  NOP
-; Start the first cached song once, on a real ULA field after all disk reads.
-; choose applies tick zero and marks the menu dirty. Reuse its ordinary UI
-; completion path; later fields enter menu_ready and pay no autoplay test.
-; The extra CALL/JP cost 17+10 = 27 CPU T, once; HALT/IRQ waiting is separate.
-; Keep EI adjacent to HALT: accepting an IRQ before HALT would delay the
-; initial note until another field. The ready marker runs while DI is held.
-        EI
-autoplay_wait:
-        HALT
-autoplay_start:
-        CALL choose
-        JP finish_ui
-menu_ready:
-        HALT
-; Audio is serviced first, before any cursor/attribute work. The remaining
-; UI work must finish inside this same ULA field; complete Fuse runs check it.
-field_start:
-        DI
-        LD A,(playing)
-        CP 255
-        CALL NZ,music_tick
-audio_done:
-        EI
-        CALL cursor
-        CALL mouse
-        LD (click_pending),A
-        CALL keys
-        LD B,A
-        LD A,(last_command)
-        CP B
-        LD A,B
-        LD (last_command),A
-        JR NZ,key_changed
-        XOR A
-key_changed:
-        OR A
-        JR NZ,dispatch
-        LD A,(click_pending)
-        OR A
-        JR Z,finish_ui
-        LD A,6
-dispatch:
-        CP 1
-        JR Z,choose_first
-        CP 2
-        JR Z,choose_second
-        CP 3
-        JR Z,stop_from_menu
-        CP 4
-        JR Z,select_first
-        CP 5
-        JR Z,select_second
-start_from_menu:
-        CALL choose
-        JR finish_ui
-choose_first:
-        XOR A
-        LD (selected),A
-        JR start_from_menu
-choose_second:
-        LD A,1
-        LD (selected),A
-        JR start_from_menu
-select_first:
-        XOR A
-        LD (selected),A
-        JR selection_changed
-select_second:
-        LD A,1
-        LD (selected),A
-selection_changed:
-        LD A,1
-        LD (dirty),A
-        JR finish_ui
-stop_from_menu:
-        CALL stop_song
-        EI
-finish_ui:
-        LD A,(dirty)
-        OR A
-        JR Z,draw_cursor
-        XOR A
-        LD (dirty),A
-        CALL highlight
-        CALL show_status
-draw_cursor:
-        CALL cursor
-menu_frame_done:
-        JP menu_ready
-
-; Main AF/registers are untouched. ULA entry 19 T, body EI 4 + RETI 14 = 18 T.
-; The foreground is HALTed between fields; no continuous CPU audio carrier.
-irq:    EI
-        RETI
-
+        INCLUDE "demo-core.asm"
 ; Standard ROM output, used once before disk loading and never in live audio.
 ; BASIC/TR-DOS supplied valid system variables. Restore the stock CHARS base,
 ; permanent/temporary attributes and stream2, then print AT controls via RST10.
@@ -174,10 +32,10 @@ rom_character:
         POP HL
         JR print_next
 
-; Start/restart the selected cached song. Called with a normal RAM2 stack.
+; Start/restart the selected cached song, called only by the IM2 audio owner.
 ; Reset the complete AY chip before applying tick zero in this same field.
 ; Clobbers AF/BC/DE/HL. Every selection has its own absolute field origin.
-choose: DI
+choose: NOP
         CALL mute
         LD A,(selected)
         LD (playing),A
@@ -198,13 +56,16 @@ choose: DI
         CALL page_stream
         XOR A
         LD (remaining),A
+        LD (raw_position),A
+        LD (raw_position+1),A
+        LD HL,0xB700
+        LD (grammar_sp),HL
         LD A,2
         LD (status),A
         LD A,1
         LD (dirty),A
 song_started:
         CALL music_tick
-        EI
         RET
 
 ; One field of a delta-register stream. No implicit R13 write: bit 13 must
@@ -258,13 +119,25 @@ record_event:
 music_tick_done:
         RET
 finished:
+        LD A,(playing)
+        LD E,A
+        LD D,0
+        XOR 1
+        LD (selected),A
+        LD HL,song_pauses
+        ADD HL,DE
+        LD A,(HL)
+        LD (pause_remaining),A
         CALL stop_song
+        LD A,(pause_remaining)
+        OR A
+        JP Z,choose
         RET
 
-; Silence and stop the active stream. DI is retained for the caller to
-; restore: audio_done or stop_from_menu enables IRQ before the next HALT.
+; Silence the active stream. The ISR owns interrupt enable/restore; foreground
+; controls only queue commands. EOF selects the next track after its pause.
 stop_song:
-        DI
+        NOP
         CALL mute
         LD A,255
         LD (playing),A
@@ -278,8 +151,9 @@ stopped:
 ; Return the next cached byte in A, preserving BC/DE. HL is scratch.
 ; Cursor0000 means the previous read consumed FFFF: page the next physical
 ; bank before reading C000. Even masks/value lists may cross the boundary.
-; Ordinary path 75 T; boundary work is measured separately.
-read_byte:
+; Ordinary packed-byte path 75 T. Music fits entirely in cache bank0; the
+; retained general bank-cross path includes the shared paging helper.
+read_packed_byte:
         LD HL,(record_pointer)
         LD A,H
         OR L
@@ -305,11 +179,7 @@ page_stream:
         LD HL,bank_order
         ADD HL,DE
         LD A,(HL)
-        OR 16
-        LD BC,0x7FFD
-stream_page:
-        OUT (C),A
-        RET
+        JP page_bank
 
 ; Install the fixed RAM2 IM2 vector table and jump. AF/BC/DE/HL are scratch.
 install_irq:
@@ -326,8 +196,7 @@ install_irq:
         LD I,A
         IM 2
         RET
-mute:   XOR A
-        OUT (0xFE),A
+mute:   NOP
         LD D,14
         LD C,0xFD
         LD HL,mute_values
@@ -401,6 +270,16 @@ keys:   LD BC,0xF7FE
         BIT 0,A
         LD A,6
         RET Z
+        LD B,0xDF
+        IN A,(C)
+        BIT 2,A
+        LD A,7
+        RET Z
+        LD B,0x7F
+        IN A,(C)
+        BIT 2,A
+        LD A,8
+        RET Z
         XOR A
         RET
 
@@ -456,7 +335,14 @@ mouse:  LD BC,0xFBDF
         CP 94
         JR C,no_click
         CP 123
+        JR C,mouse_second
+        CP 136
+        JR C,no_click
+        CP 152
         JR NC,no_click
+        LD A,2
+        RET
+mouse_second:
         LD A,1
         LD (selected),A
         RET
@@ -616,13 +502,26 @@ record_pointer: DEFW 0
 current_bank_index: DEFB 0
 disk_position: DEFW 0
 bank_order: DEFB 0,4,6,1,3,7
-        INCLUDE "variants.inc"
+
 code_end:
         ASSERT $ <= 0x8C00
         DS 0x8C00-$
 ; Mask slots prepare all generators first, then apply volumes/ENV enables.
 ; The aligned lookup keeps the streaming hot path independent of code layout.
 register_order: DEFB 0,1,2,3,4,5,6,7,11,12,13,8,9,10
-        DS 0x9000-$
+        DS 0x8D00-$
+; The project's 74-byte ZX0 SMC decoder. Complete forward v2 block ABI:
+; HL=input, DE=output; main AF/BC/DE/HL scratch, alternate registers preserved.
+        INCLUDE "zx0.inc"
+        DS 0x8E00-$
+        INCLUDE "variants.inc"
+        ASSERT $ <= 0x9400
+        DS 0x9400-$
+        INCLUDE "demo-graphics.asm"
+        ASSERT $ <= 0x9C00
+        DS 0x9C00-$
+shared_footer:
+        INCLUDE "footer.inc"
+        ASSERT $ == 0xA000
         DS 0xBFFF-$
         DEFB 0

@@ -1,187 +1,150 @@
-# AY-only TRD music menu
+# Expedition 33 Demo
 
-[ZX-Music-Menu.trd](../ZX-Music-Menu.trd) boots on **Spectrum128 + Beta Disk**
-and plays the complete existing instrumental arrangements of **Lumière
-(3:42)** and **Alicia (2:38)** using AY. The ULA beeper stays silent.
+[Expedition-33-Demo.trd](../Expedition-33-Demo.trd) is an independently
+bootable **Spectrum128 + Beta Disk** demo with eighteen native illustrations,
+the complete existing AY arrangements of **Lumiere** and **Alicia**, and an
+automatic looping playlist. This build is a local preview awaiting the user's
+review; it has not been published. The ULA beeper remains silent.
 
-**Lumiere starts automatically** on the first ULA field after both songs load.
-Click either title with a Kempston mouse, or press **1/2**, to start or switch
-songs. **7/6** move the selection while the current song continues; **Enter**
-starts the selection. **Space** stops. Re-selecting a song restarts it. The
-menu and cursor remain active through playback and EOF. The playing song is
-green when a different title is selected in blue.
+The first Lumiere city picture appears before PLAYER and its caches load.
+That picture stays visible throughout loading. Music then starts on the first
+ULA interrupt, with pictures enabled. Every illustration, including the first,
+cycles with a six-second hold and a roughly one-second petal/mosaic dissolve.
+The common title bitmap stays still; the native BORDER follows each scene.
+The menu is prepared behind the shadow screen and never appears unless a key
+is pressed. Pictures and controls execute on the actual Spectrum, not a browser
+overlay. [Artwork, references and native previews](artwork/README.md).
 
-Text uses the standard Spectrum ROM font, `PRINT AT` control bytes and
-`RST 10h` on stream 2. Startup restores `CHARS=3C00h` and clears the screen
-with ROM `CLS`. No font bitmap is included. Live selection/status changes
-use attributes and the cursor; ROM printing finishes before loading the
-songs and does not run during audio playback.
+- Any key while pictures are visible opens the menu without stopping music.
+  That complete press/release is swallowed, including Space.
+- In the menu, **1/2** or a title click starts/restarts a song. **7/6** navigate;
+  **Enter** plays the selection. **Space** stops and cancels the automatic next song.
+- **I** or the checkbox toggles pictures. **M** returns to pictures when enabled.
+  Starting a song also returns to pictures when enabled.
 
-Both songs load into RAM once at startup. The cache is **42,865 bytes** in
-three uncontended data banks `(0,4,6)`. Switching or restarting needs no disk
-access. Fuse measures about 6.54 seconds for the initial cache load. The disk
-uses **233 data sectors**, has **2311 free**, and is independently bootable.
+Both full songs loop in order. The silence between Lumiere and Alicia is
+150 fields, about 3.00 seconds. Alicia already contains 208 trailing silent
+fields, about 4.16 seconds, which are retained; no additional pause is added.
+The entire original timeline and every active field are preserved. Fixed-volume
+voices receive a gentle 8-field entry and 40-field ending. AY's hardware-ENV
+bass is retained exactly because that envelope is its oscillator waveform,
+not an independent amplitude control. This is not an overlapping crossfade.
 
-## Sound and click repair
+AY retains the previous three parts: lead, piano accompaniment and bass.
+The original inner accompaniment was already omitted in the established AY
+arrangement; this change does not claim a fourth simultaneous AY channel.
+The existing two-field repeated-note articulation, true ties, noise accents
+in piano rests and shape-14 bass phase handling remain. [Sound provenance](SOURCES.md)
+and [earlier articulation audit](AUTOPLAY_ARTICULATION.md) record that baseline.
 
-AY supplies lead, piano accompaniment and bass. The original inner
-accompaniment voice is omitted, as in the previous AY mode. All source
-JSON/playlist/note identities are preserved. Lead and piano use tone
-generators with software attack/decay/release levels. Bass uses the shared
-repeating **triangle envelope (shape 14)** when its integer period stays
-within **18 cents** of the target; other notes use the finer tone generator.
-Only one channel owns the shared envelope. Separate repeated lead notes now
-receive two silent fields (about **40 ms**), a release and a fresh soft attack;
-explicit ties remain continuous. This fixes **61 boundaries in Lumiere** and
-**4 in Alicia**. Quiet one-field noise accents use only otherwise silent
-piano rests on channel B. [Articulation, envelope audit and release evidence](AUTOPLAY_ARTICULATION.md).
+## Resident memory and compression
 
-The repair prepares period/shape registers **before channel volumes and
-envelope enables**, retains a positive unused envelope period, and silences
-channels before chip reset. Connected triangle notes preserve phase. Short
-string/cello articulation gaps receive release bridges of at most 65 ms;
-piano levels have a softer trajectory. Note-on positions and total duration
-remain unchanged. Envelope restarts fall from 111 to 37 for Lumière and from
-53 to 15 for Alicia. See the [diagnosis and bounded measurements](CLICK_REPAIR.md).
+All disk reads finish before music begins. The demo uses 362 data sectors
+with 2182 free. Immutable song and picture inputs total **68,348 bytes**.
+Switching songs, opening the menu and changing images require no disk access.
 
-This triangle is AY's stepped, nonlinear DAC envelope. A complete up/down
-cycle has 64 internal steps: `f = 1,773,450 / (512 * envelope_period)`.
-Channel C's period-1 ultrasonic tone gate halves the baseband amplitude
-after filtering. Register updates follow the 50.021-Hz ULA field rate.
-The selected triangle notes have a maximum 16.982-cent tuning error; the
-triangle is active for 8328 Lumière fields and 5429 Alicia fields.
+| Physical RAM | Allocation |
+| --- | --- |
+| 5, fixed 4000..7FFF | Display, BASIC/TR-DOS workspace; first-stage loader/stack at startup |
+| 2, fixed 8000..BFFF | Code, tables, footer, incoming image, grammar/CPU stacks, IM2 |
+| 7 | Complete 6912-byte stock-ROM menu snapshot; remaining bank space reserved |
+| 0/4/6/1/3 | Five 16KiB cache banks, 81,920-byte capacity; 68,348 bytes used |
 
-The earlier [bounded timbre screen](reports/ay-only/timbres.json) compared
-normalized 12-harmonic spectra with the existing CC0 cello sample: square
-distance 0.266106, triangle 0.249832, saw 0.408128. Triangle was approximately
-6.1% closer than square in that spectral comparison. This is not a whole-song
-perceptual score. The AY timbres differ from the sampled source players;
-physical filtering and chip variants can affect their sound.
-[Music and sample provenance](SOURCES.md).
+All eight 16KiB banks are accounted for. The incoming column-major illustration
+is A000..B67F (5760 bytes), pending grammar children B700..B717, CPU stack below
+BD00, IM2 jump BDBD and vectors BE00..BF00. The shared 1024-byte title bitmap is
+9C00..9FFF. The stack and artwork buffers do not overlap. Cache packing keeps
+each complete picture input within one bank. The menu bank is never overwritten.
 
-Actual current Fuse sound excerpts: [Lumière, 36 seconds](previews/lumiere-ay.wav) and
-[Alicia, 12 seconds](previews/alicia-ay.wav). Their [capture reports](reports/autoplay/lumiere-recording.json)
-and [Alicia report](reports/autoplay/alicia-recording.json)
-bind the final disk and WAV hashes. Physical-board audio and subjective
-listening approval are not claimed.
+Both original AY delta streams remain the canonical record format:
+`duration U8, mask LE16, changed register values`; duration zero is EOF. Register
+order is `0,1,2,3,4,5,6,7,11,12,13,8,9,10`, preserving generator-before-volume
+writes. A shared byte-pair grammar stores the complete final 42,933-byte stream
+in **10,586 bytes plus a 508-byte dictionary**. Maximum expansion depth is eight.
+Every byte round-trips exactly; no note, part or duration is removed by compression.
 
-[Alicia repeated-note excerpt](previews/alicia-repeat-ay.wav) is an actual
-8-second Fuse capture of source seconds 50..58. The rearticulated C5 occurs
-about 4.19 seconds into this clip. [Capture provenance](reports/autoplay/alicia-repeat-excerpt.json).
+Eighteen illustrations omit their common footer before compression. Actual
+complete-block comparisons include initialization and exact EOF:
 
-## Build and reproduce
+| Decoder | Code + caller stack | Packed art | Total plain CPU T for all 18 |
+| --- | ---: | ---: | ---: |
+| ZX0 Standard | 68 + 6 = 74 B | 57,762 B | 8,764,639 |
+| ZX0 Gamma-JP | 69 + 6 = 75 B | 57,762 B | 8,683,227 |
+| **ZX0 SMC, selected** | **74 + 4 = 78 B** | **57,762 B** | **8,254,277** |
+| LZSA2 compact EOF | 136 + 8 = 144 B | 60,195 B | 5,881,154 |
 
-Python 3.12+, NumPy, Pillow and pyz80; native checks additionally use the
-independent `z80` package. Run from the repository root:
+LZSA2 is faster on these inputs; ZX0 retains 2433 bytes more cache capacity.
+The selected small SMC decoder prepares the next image in the background.
+Its slowest complete image costs 520,905 plain CPU T, about 147 ms, safely
+inside the six-second preparation window. AY continues in the ISR throughout.
+These counts exclude ULA waits/IRQ overhead; neither decoder is claimed to
+finish a full illustration inside one field.
 
-```powershell
-python -m pip install numpy Pillow pyz80==1.3.0 z80==1.2.0
+## Timing and verification
+
+The ISR preserves main registers, both AF sets and the paged input bank.
+Music owns the real ULA clock; foreground decompression/copies may span fields.
+The native ISR body ranges from **398 to 12,021 T**, plus 19 T for IM2 entry,
+against a 70,908-T field. The previous IRQ body was 18 T because music used to
+run in the foreground. These are different responsibilities, not a speedup.
+
+The old byte reader cost 75 T. The new provider costs 252 T for a root literal
+(+177), 199 T for a pending literal (+124), 362 T for an escaped root (+287),
+or `296 + 193*d` T for a root symbol expanding through `d` pairs. The record
+parser's old `1452 + 164*w` T formula gains the sum of provider deltas over
+its `3+w` bytes. Mute is 1153 T (-11); paging adds 23 T to retain the latch.
+Reveal/petal tiles cost 834/724 T; sixteen-cell batches cost 15,597/13,837 T
+for the measured tile-zero fixture. See [timing counts](reports/demo/timing-demo.json)
+and [instruction table](../libraries/Z80_TIMINGS.md) for exact scope and deltas.
+
+[Native replay](reports/demo/native-demo.json) checks 19,241 fields, both full
+tracks, both gaps and a 101-field return to Lumiere, with exact AY transactions.
+It checks every byte of 54 completed screens, covering all eighteen pictures,
+plus menu input, swallowed held Space, checkbox, manual switching and stopping.
+ROM/disk/IRQ are explicit stubs in this functional test.
+
+[Cold Fuse qualification](reports/demo/fuse-demo.json) independently executes
+the actual loader, ROM, Beta Disk and ULA. Both complete tracks, pauses and the
+100-field loop restart match every expected AY write. All 19,240 real ULA
+interrupts are consecutive, with no skipped musical field or accumulated drift.
+Maximum IRQ-entry-to-audio-complete interval is 11,866 T. It checks 532 loading
+screen samples and 28,728 completed-picture samples across 54 transitions;
+native replay separately checks complete screens. The menu stays hidden and
+no disk read occurs after ready. Raw evidence is retained in
+`reports/demo/fuse-trace.txt.gz` with its exact debugger script.
+
+The web smoke boots the same image through the browser core, checks all eighteen
+menu-title ROM glyphs after Space, stereo output for both tracks without clipping,
+and preserved RAM/PC across a disk swap. Built-in-browser review also covers
+loading, changing pictures, Space/I/M and the download button. The downloaded
+640KiB image hashes to the exact Fuse-qualified disk. Physical hardware and
+subjective listening approval remain outside these automated checks.
+
+## Reproduction and history
+
+Python 3.12, NumPy, Pillow, pyz80 1.3.0 and z80 1.2.0 are required. The project
+ZX0/LZSA library sources are used directly; no compressor is required to rebuild
+from the retained, round-trip-checked art inputs.
+
+```text
 python music-menu/build.py
 python -m unittest discover -s music-menu -p test_player.py -v
-python music-menu/verify.py
-python music-menu/verify.py --fuse C:/Tools/Fuse/fuse.exe --song lumiere
-python music-menu/verify.py --fuse C:/Tools/Fuse/fuse.exe --song alicia
-python music-menu/audit_notes.py
-python music-menu/record.py --fuse C:/Tools/Fuse/fuse.exe --song lumiere --seconds 36
-python music-menu/record.py --fuse C:/Tools/Fuse/fuse.exe --song alicia --seconds 12
-python music-menu/preview.py --fuse C:/Tools/Fuse/fuse.exe --rom C:/Tools/Fuse/roms/128-1.rom
+python music-menu/verify_demo.py
+python music-menu/verify_demo.py --fuse C:/Tools/Fuse/fuse.exe
+python music-menu/audit_demo_timing.py
 ```
 
-Output goes to ignored `build/music-menu-autoplay/`: disk, assembler input,
-listing and binary, streams, complete native/Fuse reports and traces,
-recordings and a framebuffer PNG. `--rom` is optional for a Fuse screenshot;
-it additionally authenticates glyphs against the user's local 16-KiB ROM.
-The ROM is never copied into the project or disk. Native preview instead
-requires `--rom` and explicitly uses a ROM-output stub.
+Output defaults to ignored `build/expedition-33-demo/`. To reproduce compression
+with the pinned upstream CLIs, use `music-menu/measure_packing.py --zx0 <exe>
+--lzsa <exe>`; the comparison LZSA fixtures are not placed on the TRD.
+An initial bounded-column codec needed 54,066 bytes for fourteen pictures and
+did not fit beside uncompressed songs and the menu. It was rejected; the
+reproducer remains in `experiments/column_codec.py`. A BASIC SCREEN$ loading
+attempt was also rejected because a subsequent TR-DOS LOAD cleared the screen.
+The first-stage sector loader fixes that, with explicitly emitted padding.
 
-Rebuilding needs no sibling repository, sample download, MIDI, Node.js or
-external instrument bank. Re-running `probe_timbres.py --sample-folder
-<original-sample-folder>` needs the existing cello WAV and pinned manifest;
-it saves measurements, not sample audio. The click diagnostic uses Node.js
-and the existing vendored Ayumi renderer; see [its invocation](CLICK_REPAIR.md).
-
-## Complete playback and menu verification
-
-[Current build](reports/autoplay/build.json),
-[native CPU](reports/autoplay/native.json) and
-[complete Fuse evidence](reports/autoplay/fuse-lumiere.json) bind the
-retained disk and player. Ten tests cover score identities, register order,
-restart/delta contracts, complete foreground/menu replay, cached switching,
-held-key debouncing, mouse wrap/clicks, stop, EOF, register states, stack
-balance and records crossing physical bank boundaries. Native tests use
-explicit ROM read/text stubs; real ROM behavior is checked separately in Fuse.
-
-Each of two Fuse 1.9.0 runs cold boots the real TR-DOS loader. Lumiere runs
-automatically through EOF with no input. The Alicia run tests three live
-switches, with 100 preliminary fields per segment, then finishes Alicia.
-Both complete songs pass: **18,991 full-song fields**, plus 300 preliminary
-fields and three switches. Every actual AY
-data-port write matches the stream. No ULA field is skipped, there is no
-accumulated song drift, and no disk is read after ready.
-
-The visible menu/cursor foreground runs every field. Maximum measured work,
-including ULA contention and switching, is **22,489 T of 70,908 T**. Dispatch
-reaches song start within 1584 T, the first AY write within 2155 T (0.608 ms),
-and the complete initial state within 5288 T (1.491 ms). Input is polled once
-per field. Fuse commands are injected at menu dispatch; loader/audio code
-and cached bytes are not patched.
-
-The [actual cold-boot screen check](reports/autoplay/menu-verification.json)
-authenticates all **125 displayed characters** against stock ROM glyphs.
-The [pre-existing catalogue coverage gap](reports/catalog-coverage.json)
-remains recorded separately. Target timing and control-step diagnostics do
-not establish the absence of host sound-card underruns on every computer.
-
-## Stream, memory and CPU accounting
-
-RAM5 holds the 6912-byte display plus BASIC/TR-DOS workspace. RAM2 holds
-the fixed 16-KiB player image, ASCII/control text, stack below BD00h, IM2
-jump at BDBDh and vector table at BE00h..BF00h. There is no screen template.
-Up to 98,304 cache bytes are available in the other six banks; actual streams
-use only banks 0/4/6. All eight physical banks are accounted for.
-
-A schema-3 record is `duration U8, changed-slot mask LE16, slot values`.
-Duration 0 is EOF; long holds split at 255 fields. Slot-to-register order is
-`0,1,2,3,4,5,6,7,11,12,13,8,9,10`. Slot 10 explicitly restarts R13; the host
-R13 sentinel 255 is never sent to AY. Earlier numerical-order streams are
-incompatible. The reader pages across FFFFh inside mask/value lists. Each
-song entry stores a cache-bank index and address. Absolute note boundaries
-are rounded once to `3,546,900 / 70,908` fields/second, with less than 10 ms
-error and no per-pattern drift.
-
-The [instruction table](../libraries/Z80_TIMINGS.md) supplies deterministic
-CPU counts, cross-checked against assembled execution:
-
-| Component | Repaired CPU T | Previous AY-only CPU T | Difference |
-| --- | ---: | ---: | ---: |
-| Sustained audio service with caller, UI excluded |92|92|0|
-| New row, one changed register, with caller |1657|1635|+22|
-| New row, three changed registers, with caller |1985|1919|+66|
-| Mute routine |1164|951|+213|
-| IRQ body |18|18|0|
-| IM2 entry plus body |37|37|0|
-| Byte reader |75|75|0|
-| Extra per bank-crossing byte |185|185|0|
-| Ordinary unchanged UI work |3907|3907|0|
-
-A held `music_tick` costs 51 T plus its 41-T caller, giving 92 T. A new
-record costs **1452+164*w T**, plus 185 T per bank crossing and 41 T for the
-main caller. Header 365 + mask loop `(13*77+72)=1073` + NOP 4 + RET 10
-gives 1452 T. Each write adds 164 T; the new aligned register lookup adds
-22 T versus the previous 142-T write path. Reader and IRQ costs are unchanged.
-Native fixtures check write counts 0/1/3/13/14 and a boundary inside a value
-list. The ROM-text change adds **0 T to playback hot paths**; ROM output is
-startup-only. ULA waits, HALT, disk and ROM execution remain separate from
-these deterministic components and are included where applicable in Fuse.
-
-The autoplay/articulation release retains these per-call costs. Its one-shot
-startup CALL/JP adds **27 T**, with **no new per-field branch**. Extra volume
-and noise records increase complete native audio service CPU from
-9,880,537 to **10,501,777 T** for Lumiere (+621,240) and from 5,928,394 to
-**6,139,315 T** for Alicia (+210,921), including choose/its external CALL.
-[Measured accounting and exact scope](reports/autoplay/timing-comparison.json).
-
-Historical hybrid/PWM evidence remains under `reports/` and
-`previews/*-hybrid.wav`; `1b5ae95f` retains its original TRD. The previous
-AY-only disk is at `c7b3c794`, with evidence under `reports/ay-only/`. The
-intermediate audio-repair checkpoint is under `reports/click-fix/audio-pass/`.
+Historical sound releases/evidence remain under `reports/autoplay/`,
+`reports/click-fix/`, `reports/ay-only/` and their linked documents. Their older
+recorders/verifiers describe those historical formats. The current demo uses
+`verify_demo.py` and `audit_demo_timing.py`. Previous listening excerpts retain
+their own older disk hashes; they are not represented as captures of this build.

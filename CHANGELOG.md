@@ -18153,3 +18153,58 @@ machine-readable verification/sanitization reports. Assets are accepted for
 native player integration; this is not a qualified TRD or playback release.
 Target CPU paths are unchanged (0 T delta).
 
+# 2026-11-02 — Prepare the complete local Expedition 33 Demo preview
+
+Built an independently bootable native Spectrum128/Beta Disk demo from the
+`b120b135` AY arrangements and eighteen approved/proposed native illustrations.
+The renamed `Expedition-33-Demo.trd` loads the first city picture before PLAYER,
+retains it through cache loading, starts Lumiere automatically, cycles every
+picture with a 52-field petal/mosaic transition, and opens its hidden stock-ROM
+menu only on a keypress. Space is swallowed through release when revealing the
+menu; I/checkbox toggles pictures and M returns. Borders follow the pictures;
+the shared Cinzel title bitmap remains fixed. Both complete existing AY tracks
+loop with source silence retained: 150 fields before Alicia, 208 before Lumiere.
+Fixed-volume 8/40-field entry/ending ramps preserve all active fields and every
+generator/mixer/noise/ENV/restart value; hardware-ENV bass is not gain-scaled.
+
+The lossless bounded byte-pair grammar stores the final 42,933 AY bytes in
+10,586 bytes plus 508 dictionary bytes (maximum depth8). All original note/part
+timelines remain; this preserves the established three-part AY arrangement,
+not a newly added fourth voice. Eighteen footer-free illustrations use57,762
+ZX0 bytes versus60,195 LZSA2 bytes. Complete native decoder comparisons include
+setup/EOF: selected ZX0 SMC78 service bytes/8,254,277T; Gamma-JP75/8,683,227T;
+Standard74/8,764,639T; LZSA compact EOF144/5,881,154T. LZSA is faster; ZX0 saves
+2433 payload bytes. Music and art now fit in68,348 cache bytes in five banks;
+RAM7 retains the6912-byte menu, RAM2 one5760-byte incoming image plus code,
+footer/stacks/IM2, and RAM5 display/ROM workspace. All128KiB are accounted for.
+The disk uses362 data sectors and is cold bootable without previous-disk RAM.
+
+Rejected experiments are retained: `music-menu/experiments/column_codec.py`
+needed54,066 graphics bytes for fourteen images; adding42,865 raw music bytes
+and the provisional4096-byte menu reservation required101,027>98,304 bytes.
+The BASIC SCREEN$ approach cleared the picture at the next TR-DOS LOAD.
+An initial first-stage object also omitted trailing DS padding and shifted its
+embedded SCR; the cold Fuse sample check caught it. Explicit final-byte output
+and a256-byte loader assertion correct the layout. No partial run was accepted.
+
+`music-menu/verify_demo.py` checks19,241 native fields, exact AY writes, all
+bytes of54 completed screens covering all18 images, and input semantics. Eleven
+score/audio/native tests pass. The complete cold Fuse run checks both full
+tracks (11,105/7,886 fields), both gaps and100 fields after looping to Lumiere:
+19,240 consecutive ULA IRQs, zero missed audio fields, zero disk reads after
+ready, menu hidden without input,532 startup screen samples and28,728 completed
+picture samples. Native ISR body398..12,021T versus old18T (new responsibilities
+include audio); maximum measured Fuse IRQ-to-audio-complete11,866T within70,908T.
+The old75T byte reader becomes252/199/362T for root/pending/escaped literals;
+pair expansion adds193T. Mute1153T(-11), shared paging tail62T(+23), and tile/
+menu costs are recorded in `reports/demo/timing-demo.json`. Separate native
+CPU, contention/IRQ and actual disk/ROM scopes are documented in the README.
+
+The web-core smoke boots this exact image, verifies18 ROM menu-title glyphs,
+nonclipping stereo excerpts of both tracks, and state-preserving disk swap.
+The built-in browser confirms the real splash, slideshow, Space/I/M and a
+downloaded640KiB disk with the exact SHA of the Fuse-qualified image. Reports
+and compressed trace are under `music-menu/reports/demo/`; packing, verification
+and timing scripts reproduce the results. User requested review of the whole
+demo before publication: all changes remain local, with no push/deployment.
+

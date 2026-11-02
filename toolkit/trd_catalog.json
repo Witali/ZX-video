@@ -505,38 +505,34 @@
       "guide": "ZX-video-full-50Hz.md"
     },
     "music-menu": {
-      "description": "AY-only Lumiere/Alicia music menu with automatic Lumiere playback, distinct repeated lead notes, soft software envelopes and sparse noise percussion in piano rests. Both complete arrangements are cached together; keyboard and Kempston mouse switch songs without disk reads. Both full songs, three live switches and all 125 ROM glyphs pass real128 Fuse verification.",
+      "description": "Expedition 33 Demo: complete Lumiere/Alicia AY arrangements loop automatically with eighteen native Spectrum illustrations, a loading splash, petal transitions, scene borders and a hidden keyboard/mouse menu. All music/art stays resident; both full tracks and slideshow pass cold Fuse verification.",
       "scripts": [
         "music-menu/build.py",
-        "music-menu/verify.py",
-        "music-menu/record.py",
-        "music-menu/preview.py",
-        "music-menu/audit_notes.py",
-        "music-menu/audit_timing.py",
-        "music-menu/analyze_clicks.py",
-        "music-menu/probe_timbres.py"
+        "music-menu/verify_demo.py",
+        "music-menu/audit_demo_timing.py",
+        "music-menu/measure_packing.py"
       ],
       "guide": "music-menu/README.md"
     }
   },
   "images": [
     {
-      "path": "ZX-Music-Menu.trd",
+      "path": "Expedition-33-Demo.trd",
       "bytes": 655360,
-      "sha256": "3ae7d156f12baba8f551f893dc50d4fcd1d5331495ae0167ab59c95ba3209e71",
+      "sha256": "fd8868220ad6e9f429fc367a9887a446adfccc9c230caa94f37b8805a5046db4",
       "commit": null,
-      "subject": "Autoplay Lumiere with distinct repeated notes and quiet AY noise percussion",
+      "subject": "Expedition 33 Demo: complete looping AY playlist and eighteen native illustrations",
       "group": "music-menu",
       "evidence": [
-        "music-menu/reports/autoplay/build.json",
-        "music-menu/reports/autoplay/fuse-lumiere.json",
-        "music-menu/reports/autoplay/fuse-alicia.json"
+        "music-menu/reports/demo/build.json",
+        "music-menu/reports/demo/fuse-demo.json",
+        "music-menu/reports/demo/native-demo.json"
       ],
       "branch_reference": {
-        "name": "codex/music-menu-autoplay",
+        "name": "codex/music-splash",
         "head": null,
         "distance": 0,
-        "evidence": "music-menu/reports/autoplay/build.json"
+        "evidence": "music-menu/reports/demo/build.json"
       },
       "build_head": null,
       "build_branch": null,
