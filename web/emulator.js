@@ -20,14 +20,23 @@ export class SpectrumPlayer {
     this.onDiskActivity = () => {};
     this.diskActive = false;
     this.diskBusyUntil = 0;
-    this.held = new Set();
+    this.held = new Map();
+    this.keyCounts = new Map();
     const rows = ['ShiftLeft,Z,X,C,V', 'A,S,D,F,G', 'Q,W,E,R,T', '1,2,3,4,5',
       '0,9,8,7,6', 'P,O,I,U,Y', 'Enter,L,K,J,H', 'Space,AltLeft,M,N,B'];
     this.keys = new Map(rows.flatMap((row, index) => row.split(',').map((key, bit) =>
-      [key.length === 1 ? (/\d/.test(key) ? `Digit${key}` : `Key${key}`) : key, { index, bit }])));
+      [key.length === 1 ? (/\d/.test(key) ? `Digit${key}` : `Key${key}`) : key, [{ index, bit }]])));
+    this.keys.set('ShiftRight', this.keys.get('ShiftLeft'));
+    this.keys.set('AltRight', this.keys.get('AltLeft'));
+    // Spectrum cursor keys are Caps Shift with 5/6/7/8, not joystick ports.
+    for (const [code, digit] of Object.entries({ ArrowLeft: 5, ArrowDown: 6, ArrowUp: 7, ArrowRight: 8 })) {
+      this.keys.set(code, [...this.keys.get('ShiftLeft'), ...this.keys.get(`Digit${digit}`)]);
+    }
+    container.addEventListener('pointerdown', () => container.focus({ preventScroll: true }));
     container.addEventListener('keydown', event => this.keyboard(event, true));
     container.addEventListener('keyup', event => this.keyboard(event, false));
     container.addEventListener('blur', () => this.releaseKeys());
+    window.addEventListener('blur', () => this.releaseKeys());
   }
   async initialize() {
     if (this.hw) return;
@@ -132,22 +141,35 @@ export class SpectrumPlayer {
   }
   setMuted(muted) { this.muted = muted; if (this.gain) this.gain.gain.value = muted ? 0 : 1; }
   keyboard(event, pressed) {
-    const code = { ShiftRight: 'ShiftLeft', AltRight: 'AltLeft' }[event.code] || event.code;
-    const key = this.keys.get(code);
-    if (!key || !this.hw) return;
+    const keys = this.keys.get(event.code);
+    if (!keys || !this.hw) return;
     event.preventDefault();
-    if (pressed) this.held.add(code); else this.held.delete(code);
-    this.hw.keyboard.switchKeys([key], pressed);
+    this.holdKeys(event.code, keys, pressed);
+  }
+  holdKeys(source, keys, pressed) {
+    if (this.held.has(source) === pressed) return;
+    if (pressed) this.held.set(source, keys);
+    else { keys = this.held.get(source); this.held.delete(source); }
+    // Several arrows and physical Shift can share one matrix key. Release it
+    // only after the last source lets go; browser key-repeat adds no extra hold.
+    for (const key of keys) {
+      const id = key.index * 5 + key.bit;
+      const before = this.keyCounts.get(id) || 0;
+      const after = before + (pressed ? 1 : -1);
+      if (after) this.keyCounts.set(id, after); else this.keyCounts.delete(id);
+      if (!before || !after) this.hw.keyboard.switchKeys([key], pressed);
+    }
   }
   releaseKeys() {
-    if (this.hw) for (const code of this.held) this.hw.keyboard.switchKeys([this.keys.get(code)], false);
-    this.held.clear();
+    for (const [source, keys] of this.held) this.holdKeys(source, keys, false);
   }
   async tap(key) {
-    const mapping = { Enter: { index: 6, bit: 0 }, Space: { index: 7, bit: 0 },
-      '1': { index: 3, bit: 0 }, '2': { index: 3, bit: 1 } }[key];
-    this.hw.keyboard.switchKeys([mapping], true);
+    const keys = this.keys.get(/^\d$/.test(key) ? `Digit${key}` : key);
+    if (!keys || !this.hw) return;
+    this.container.focus({ preventScroll: true });
+    const source = Symbol('touch key');
+    this.holdKeys(source, keys, true);
     await new Promise(resolve => setTimeout(resolve, 100));
-    this.hw.keyboard.switchKeys([mapping], false);
+    this.holdKeys(source, keys, false);
   }
 }

@@ -44,7 +44,10 @@ the original timeline; **Restart** always restarts the currently mounted
 disk, even if a different library entry is selected. Swap is manual.
 
 Click the screen for the emulated keyboard; Shift and Alt map to Caps Shift
-and Symbol Shift. Enter, Space, 1 and 2 are also available as touch controls.
+and Symbol Shift. Arrows map to Caps Shift + 5/6/7/8 (left/down/up/right),
+including shared modifier holds. Keyboard focus and window blur release held
+keys. Enter, Space, 1/2 and arrows are also available as touch controls.
+The arrow keys retain normal browser behavior outside the emulator display.
 Playback pauses when the tab becomes hidden; use Resume on return. The
 browser requires a user click before audio starts. Use Copy link to share
 the selection; shared links do not autoplay. A local TRD is read in the

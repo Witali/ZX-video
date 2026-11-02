@@ -1,5 +1,23 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Support Spectrum cursor keys while the display has focus
+
+- **Objective/baseline:** Make host arrow keys work as the Spectrum cursor
+  keys in web baseline `7d37ccf4`, preserving browser input elsewhere.
+- **Change:** Map left/down/up/right to Caps Shift + 5/6/7/8. Clicking the
+  display explicitly focuses it; add matching touch buttons. Track matrix
+  key holds by source so overlapping arrows, both physical Shift/Alt keys,
+  repeated keydown events and touch input release correctly. Release all
+  held keys when the display or browser window loses focus.
+- **Verification/decision:** Actual keyboard-port reads verify all four
+  chords, overlapping modifier/digit sources, key repeat, focus loss and
+  touch release. An early Node harness attempted to load the ES module as
+  a classic script; the final harness imports the production module directly.
+  The in-app browser music menu changes selection with Up/Down; an already
+  focused display retains the same page scroll position. Keep the focused
+  keyboard behavior; ROM/TRD bytes and target hot paths are unchanged (0 T).
+  [Reproducer](web/tools/check-keyboard.mjs).
+
 ## 2026-11-02 — Retain shared machine time and trace IRQ-associated disk retries
 
 - **Objective/baseline:** Investigate uneven playback at `8707b3fc` and keep
