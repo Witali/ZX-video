@@ -9,6 +9,8 @@ timings/fetches, block I/O port addresses, RETI aliases, state restoration,
 the original 128's 36-T interrupt pulse, standard TR-DOS track construction,
 monotonic host pacing that retains pending shared-machine time, and a native
 Canvas framebuffer with a completed-frame nearest-neighbor presentation blit.
+Canvas bank buffers are hidden and copied together with the border to one
+visible surface, preserving one pixel grid across the screen boundaries.
 The upstream UI, debugger, PHP services, example
 disks, jQuery and Knockout are not included. Upstream comments are retained.
 See [MIT license](LICENSE.zx-dream) and the per-module hashes in

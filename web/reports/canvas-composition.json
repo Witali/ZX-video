@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-02",
+  "baseline": "eafcce98c6d49c7c306fe7a6296dda24f4b02a6f",
+  "scope": "Visible Canvas composition and in-app browser inspection at DPR 1.25; not a physical-pixel qualification for every host compositor",
+  "baselineEvidence": {
+    "userConfirmsFaultAfterReload": true,
+    "screenshotHorizontalPairMismatches": 0,
+    "screenshotVerticalPairMismatches": 2284,
+    "thinBlackLineHeightPixels": 1,
+    "actualUserTabBankReadback": {
+      "resolution": [512, 384],
+      "rowComponentMismatches": 0,
+      "columnComponentMismatches": 0
+    }
+  },
+  "rejectedLocalExperiments": [
+    {"change": "Integer CSS canvas dimensions, inverse-DPR transform layer, auto image rendering", "result": "User reports another distortion; reverted without publication"},
+    {"change": "Inverse-DPR CSS zoom on native-sized canvas elements", "result": "User still sees distorted rows and a thin line; reverted without publication"}
+  ],
+  "presentation": {
+    "visibleCanvases": 1,
+    "fullFrame": [576, 448],
+    "activeScreenOffset": [32, 32],
+    "hiddenBankSurfaces": [512, 384],
+    "nativeBankFramebuffers": [256, 192],
+    "copyOnlyOnChangedFrameOrBank": true
+  },
+  "visibleSurfaceTests": {
+    "scanlinePixelsCompared": 1179648,
+    "scanlineMismatches": 0,
+    "continuousBorderScreenPixelsCompared": 645120,
+    "continuousBorderScreenMismatches": 0,
+    "colorAndFlashPatterns": 16,
+    "rgbaBytesComparedWithWebGL": 12582912,
+    "rgbaByteMismatches": 0,
+    "switchPreservesMachineState": true,
+    "contextLossFallsBackToCanvas": true,
+    "recoveryPreservesMachineState": true
+  },
+  "targetPlayerTstateDelta": 0,
+  "physicalDisplayConfirmation": "Pending user inspection of the current in-app browser tab",
+  "publication": "Local candidate only; earlier CSS experiments remain reverted",
+  "passed": true
+}

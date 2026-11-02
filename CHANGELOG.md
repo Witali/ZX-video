@@ -1,5 +1,41 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Compose Canvas border and screen on one visible pixel grid
+
+- **Objective/evidence:** Follow up `eafcce98` after the user confirms the
+  displayed fault persists after reload. Their screenshot has exact horizontal
+  pairs but 2,284 mismatched vertical pairs and a one-pixel black seam below
+  the active screen. A readback in the actual user-owned in-app browser tab
+  has zero row/column component mismatches in the 512×384 bank canvas.
+  Earlier bank-only comparisons therefore did not cover final composition.
+- **Rejected local experiments:** Integer CSS dimensions with an inverse-DPR
+  transform and `image-rendering:auto` cause another user-observed distortion.
+  An inverse-DPR CSS `zoom` variant still has distorted rows and a thin line.
+  Both are fully reverted without publication. A temporary raw-PNG comparison
+  and readback control stay only in ignored local build output and are removed
+  by the final production build. Do not treat these experiments as fixes.
+- **Change:** Keep native RGBA frame storage and hidden 512×384 bank surfaces.
+  Copy the selected bank at (32,32) into the existing 576×448 border canvas;
+  expose only that full-frame canvas. The border and active screen now share
+  one native pixel grid and one CSS presentation rectangle. Copy only when
+  pixels or the selected bank change. Retain established DPR/origin handling
+  and the WebGL path. Keep the renderer change in the patch generator.
+- **Verification/decision:** Update tests to read the actual visible full-frame
+  surface. Both banks, all 192 scanlines and incremental writes pass 1,179,648
+  pixel comparisons; continuous white border/screen fields pass 645,120 pixels,
+  including all four edges. Sixteen colour/attribute/FLASH patterns match
+  native WebGL over 12,582,912 RGBA bytes. Live renderer switching/context-loss
+  recovery preserve machine state and Canvas has one visible surface. Inspect
+  the paused TR-DOS screen in the user's in-app browser at DPR 1.25. Retain
+  the unified composition locally for user inspection before publication;
+  final physical-display confirmation remains pending. Browser screenshot
+  capture is in CSS pixels, so it does not certify all OS compositor scales
+  or benchmark host speed. Z80/player bytes and absolute target T-state costs
+  are unchanged (delta 0 T).
+  [Fixture](web/tools/renderer-check.html),
+  [patch](web/tools/patch-emulator.mjs),
+  [report](web/reports/canvas-composition.json).
+
 ## 2026-11-02 — Present Canvas frames at an explicit integer pixel size
 
 - **Objective/baseline:** Investigate reported shifted/reordered raster rows

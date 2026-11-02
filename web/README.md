@@ -58,7 +58,10 @@ The display compensates for Windows DPI and browser zoom using
 pixels**, with a 32-device-pixel border (576×448 overall). Each source pixel
 is a square of 2×2 device pixels. The origin is snapped to the device grid.
 Canvas keeps a native 256×192 framebuffer and copies completed frames into
-a 512×384 presentation surface using nearest-neighbor sampling. Its backing
+a 512×384 bank surface using nearest-neighbor sampling. Copy the selected
+bank at (32, 32) into the **single visible 576×448 canvas**, including the
+border. The two bank surfaces stay hidden; independently positioned screen
+and border canvases are not composed by CSS in Canvas mode. Its backing
 pixels therefore match device pixels after DPI compensation; CSS does not
 enlarge the native Canvas raster. WebGL retains its native texture/surface.
 The scale updates after zoom, resizing, full screen and moving between
@@ -259,21 +262,29 @@ WebGL. The browser saves the choice, and the URL retains it even when local
 storage is unavailable; an explicit URL choice takes priority. Switching during playback rebuilds only
 the display surfaces, preserving CPU, RAM, disk state and sound. Both retain
 native 256×192 frame data and share the physical-pixel scaling. Canvas uses
-a separate 512×384 output surface. Unavailable or
+512×384 bank surfaces and one visible 576×448 full-frame surface. Unavailable or
 lost WebGL contexts fall back to Canvas with a status message.
 
 The browser comparison fixture renders sixteen bitmap/attribute/FLASH
 patterns through both backends and compares every Canvas 2×2 output pixel
-with the corresponding native WebGL pixel. The observed result is
+from the actual visible full-frame canvas with the corresponding native
+WebGL pixel. The observed result is
 12,582,912 RGBA bytes compared with zero differences. An independent inverse
 Spectrum-address oracle also checks all 192 rows, banks 5/7 and incremental
 writes at native and doubled Canvas output sizes: 1,179,648 pixels, zero
 differences. Baseline native output already passed that address oracle;
 the reported visual scaling fault was not reproduced in native readback.
-The revised Canvas presentation was inspected at Windows/browser DPR 1.25.
-These checks cover framebuffer conversion and the integer output blit;
+The later user screenshot confirms uneven displayed rows and a thin seam
+despite correct bank-buffer pixels. A continuous white border/screen probe
+now checks 645,120 pixels across both banks and output scales, without seams.
+The revised single-surface presentation was inspected in the user's in-app
+browser tab at Windows/browser DPR 1.25. Transform-layer and CSS-zoom
+experiments were rejected after user-reported distortions and fully reverted.
+These checks cover framebuffer conversion, integer blits and composition;
 they do not qualify every OS compositor, a speed advantage or machine timing.
 See the [Canvas scaling report](reports/canvas-scaling.json).
+The follow-up [single-surface report](reports/canvas-composition.json)
+retains the failed experiments and the corrected visible-surface test scope.
 Serve [renderer-check.html](tools/renderer-check.html) at the built site's
 root for a local check; this developer fixture is not part of the Pages
 artifact. The first fixture readback incorrectly requested WebGL1 after the

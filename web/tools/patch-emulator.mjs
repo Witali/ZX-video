@@ -84,7 +84,9 @@ export function patchEmulator(source) {
   canvasCode = canvasCode.replace('this._samples = [];', `this._samples = [];
     this._nativeLayers = [];
     this._nativeContexts = [];
-    this._frames = [];`);
+    this._frames = [];
+    this._displayedLayer = -1;
+    this._presentationChanged = true;`);
   canvasCode = canvasCode.replace('scale = ( this._scaleType == VAL_SCALE_METHOD_PRE ) ? this._scale : 1,',
     'scale = 1, // Samples and frame storage always use the native 256 x 192 raster.');
   canvasCode = canvasCode.replace("this._layer1Ctx = this._layer1.getContext('2d', { alpha: false });", `this._layer1Ctx = this._layer1.getContext('2d', { alpha: false });
@@ -96,7 +98,22 @@ export function patchEmulator(source) {
             this._frames[layer] = context.createImageData(256, 192);
         }
         this._layer0Ctx.imageSmoothingEnabled = false;
-        this._layer1Ctx.imageSmoothingEnabled = false;`);
+        this._layer1Ctx.imageSmoothingEnabled = false;
+        // Present border and active pixels on one device-sized surface. Separate
+        // CSS-scaled canvases can acquire different sampling grids at fractional DPI.
+        if (this._layer0.style) this._layer0.style.display = 'none';
+        if (this._layer1.style) this._layer1.style.display = 'none';
+        this._displayedLayer = -1;
+        this._presentationChanged = true;`);
+  canvasCode = canvasCode.replace('\tdrawData: function', `    displayLayer: function (layer) {
+        if (this._displayedLayer !== layer || this._presentationChanged) {
+            var border = this._borderWidth * this._scale;
+            this._borderCtx.drawImage(layer ? this._layer1 : this._layer0, border, border);
+            this._displayedLayer = layer;
+            this._presentationChanged = false;
+        }
+    },
+\tdrawData: function`);
   canvasCode = canvasCode.replace('sampleScale = ( this._scaleType == VAL_SCALE_METHOD_PRE ) ? this._scale : 1,',
     'sampleScale = 1,');
   canvasCode = canvasCode.replace('if (ctx) {', `if (ctx) {
@@ -107,6 +124,7 @@ export function patchEmulator(source) {
                     changed = true;`);
   canvasCode = canvasCode.replace(/\t\t\t}\r?\n\t\t}\r?\n\t}\r?\n}\);/, `            }
             if (changed) {
+                this._presentationChanged = true;
                 this._nativeContexts[layer].putImageData(frame, 0, 0);
                 ctx.drawImage(this._nativeLayers[layer], 0, 0, 256, 192,
                     0, 0, ctx.canvas.width, ctx.canvas.height);

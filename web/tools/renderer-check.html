@@ -15,8 +15,9 @@ function create(rendererType,presentationScale=1) {
   const canvases=[document.createElement('canvas'),document.createElement('canvas'),document.createElement('canvas')];
   canvases.forEach((canvas,index)=>{canvas.width=(index?256:288)*presentationScale;canvas.height=(index?192:224)*presentationScale;});
   display.bind(canvases);
-  const wrapper=document.createElement('div');wrapper.append(canvases[1]);document.getElementById('screens').append(wrapper);
-  return {bus,display,canvas:canvases[1],layers:canvases,flash};
+  const visible=rendererType===1?canvases[0]:canvases[1];
+  const wrapper=document.createElement('div');wrapper.append(visible);document.getElementById('screens').append(wrapper);
+  return {bus,display,canvas:canvases[1],visible,layers:canvases,flash};
 }
 document.getElementById('run').onclick=()=>{
   try {
@@ -29,7 +30,7 @@ document.getElementById('run').onclick=()=>{
       }
       if(seed===8){cpu.flash();gpu.flash();}
       cpu.display.force_redraw();gpu.display.force_redraw();
-      const expected=cpu.canvas.getContext('2d').getImageData(0,0,512,384).data;
+      const expected=cpu.visible.getContext('2d').getImageData(32,32,512,384).data;
       const gl=gpu.canvas.getContext('webgl2')||gpu.canvas.getContext('webgl'),actual=new Uint8Array(256*192*4);
       gl.readPixels(0,0,256,192,gl.RGBA,gl.UNSIGNED_BYTE,actual);
       for(let y=0;y<384;y++)for(let x=0;x<512;x++)for(let c=0;c<4;c++) {
@@ -46,7 +47,7 @@ document.getElementById('rows').onclick=()=>{
   try {
     document.getElementById('screens').replaceChildren();
     document.getElementById('row-screens').replaceChildren();
-    let comparedPixels=0,mismatchedPixels=0;
+    let comparedPixels=0,mismatchedPixels=0,seamPixels=0,seamMismatches=0;
     const rowAddress=(y,column)=>Math.floor(y/64)*2048+(y%8)*256+Math.floor((y%64)/8)*32+column;
     for(const [type,scale] of [[1,1],[1,2],[3,1]]) {
       const fixture=create(type,scale),width=256*scale,height=192*scale;
@@ -54,6 +55,18 @@ document.getElementById('rows').onclick=()=>{
         fixture.bus.var_write('port_7ffd_value',bank===7?15:0);
         const base=bank===7?0xc000:0x4000;
         const bytes=new Uint8Array(6144);
+        if(type===1) {
+          // White paper and border must be continuous across every pixel of
+          // the actual visible surface, including the four screen boundaries.
+          fixture.bus.var_write('port_fe_value',7);
+          for(let a=0;a<768;a++)fixture.bus.mem_write(base+6144+a,0x38);
+          fixture.display.force_redraw();
+          const frame=fixture.visible.getContext('2d').getImageData(0,0,288*scale,224*scale).data;
+          for(let p=0;p<frame.length;p+=4){
+            if(frame[p]!==191||frame[p+1]!==191||frame[p+2]!==191||frame[p+3]!==255)seamMismatches++;
+            seamPixels++;
+          }
+        }
         for(let y=0;y<192;y++)for(let column=0;column<32;column++) {
           // Each row has its own code; the right half is a one-line comb.
           const bits=column<16?((y+column*29)^(y>>3))&255:(y%2?255:0);
@@ -68,9 +81,9 @@ document.getElementById('rows').onclick=()=>{
           }
           fixture.display.force_redraw();
           // Bank 7 occupies the second visible layer.
-          const actualCanvas=bank===7?fixture.layers[2]:fixture.canvas;
+          const actualCanvas=type===1?fixture.visible:(bank===7?fixture.layers[2]:fixture.canvas);
           let actual;
-          if(type===1)actual=actualCanvas.getContext('2d').getImageData(0,0,width,height).data;
+          if(type===1)actual=actualCanvas.getContext('2d').getImageData(16*scale,16*scale,width,height).data;
           else {
             const gl=actualCanvas.getContext('webgl2')||actualCanvas.getContext('webgl');
             const flipped=new Uint8Array(256*192*4);actual=new Uint8Array(flipped.length);
@@ -87,13 +100,13 @@ document.getElementById('rows').onclick=()=>{
         }
       }
       if(scale===2||type===3) {
-        const wrapper=document.createElement('div'),label=document.createElement('p'),canvas=fixture.layers[2];
+        const wrapper=document.createElement('div'),label=document.createElement('p'),canvas=type===1?fixture.visible:fixture.layers[2];
         label.textContent=type===1?'Canvas: native buffer → exact 2× presentation':'WebGL: native texture → 2× display';
-        canvas.style.cssText=`width:${512/devicePixelRatio}px;height:${384/devicePixelRatio}px;image-rendering:pixelated`;
+        canvas.style.cssText=`width:${(type===1?576:512)/devicePixelRatio}px;height:${(type===1?448:384)/devicePixelRatio}px;image-rendering:pixelated`;
         wrapper.append(label,canvas);document.getElementById('row-screens').append(wrapper);
       }
     }
-    document.getElementById('rows-result').textContent=JSON.stringify({banks:[5,7],rows:192,incrementalWrites:true,canvasPresentationSizes:[[256,192],[512,384]],comparedPixels,mismatchedPixels,devicePixelRatio,passed:mismatchedPixels===0},null,2);
+    document.getElementById('rows-result').textContent=JSON.stringify({banks:[5,7],rows:192,incrementalWrites:true,canvasPresentationSizes:[[256,192],[512,384]],comparedPixels,mismatchedPixels,seamPixels,seamMismatches,devicePixelRatio,passed:mismatchedPixels===0&&seamMismatches===0},null,2);
   }catch(error){document.getElementById('rows-result').textContent='FAILED: '+error.stack;}
 };
 </script>
@@ -110,6 +123,7 @@ document.getElementById('switch').onclick=async()=>{
     const before=snapshot();player.setRenderer('canvas');
     const canvasScreen=document.querySelector('#fixture .screen-layer');
     if(canvasScreen.width!==512||canvasScreen.height!==384)throw new Error('Canvas presentation must be 512 x 384');
+    if([...document.querySelectorAll('#fixture canvas')].filter(c=>c.style.display!=='none').length!==1)throw new Error('Canvas must have a single visible presentation surface');
     player.setRenderer('webgl');
     if(snapshot()!==before)throw new Error('Renderer switch changed machine state');
     const canvas=document.querySelector('#fixture .screen-layer');
