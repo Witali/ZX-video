@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 
 const source = fs.readFileSync('web/vendor/zx-dream.js', 'utf8');
-function run(cadence, jumpWallClock = false, pause = false) {
+function run(cadence, jumpWallClock = false, pause = false, audioWake = false) {
   let hostMs = 0, wallMs = 0, callback;
   const context = vm.createContext({ console, performance: { now: () => hostMs },
     Date: class extends Date { static now() { return wallMs; } },
@@ -23,6 +23,7 @@ function run(cadence, jumpWallClock = false, pause = false) {
     clock.setInterval(()=>record('audio'),1000/44100,0);
     clock.run();
   `, context);
+  if (audioWake) callback = () => vm.runInContext('clock.pulse()', context);
   const total = 1000, hz = 3545400;
   let step = 0, pausedAt = 0;
   while (hostMs - pausedAt < total) {
@@ -33,6 +34,7 @@ function run(cadence, jumpWallClock = false, pause = false) {
       vm.runInContext('clock.stop()', context);
       const before = vm.runInContext('clock.get_tstates()', context);
       hostMs += 2000; wallMs += 2000; pausedAt = 2000;
+      if (audioWake) callback();
       assert.equal(vm.runInContext('clock.get_tstates()', context), before);
       vm.runInContext('clock.run()', context);
     }
@@ -51,6 +53,8 @@ const cases = [
   ['long host stall', run([4, 4, 4, 700])],
   ['wall-clock jumps', run([4], true)],
   ['pause and resume', run([4], false, true)],
+  ['audio worklet wake', run([10], false, false, true)],
+  ['paused audio wake ignored', run([10], false, true, true)],
 ];
 for (const [name, result] of cases) assert.deepEqual(result, baseline, name);
 const report = { scope: 'Shared clock scheduling with a four-T NOP CPU; not full-machine timing qualification',

@@ -5,6 +5,26 @@ const $ = id => document.getElementById(id);
 const player = new SpectrumPlayer($('display'));
 keepPhysicalPixelScale($('display'));
 let images = [], selected, mounted, localBytes, busy = false, paused = false, readingDisk = false;
+let visibilityPaused = false;
+try {
+  $('play-in-background').checked = localStorage.getItem('zx-video.play-in-background') !== 'false';
+} catch { /* Background playback defaults on when storage is unavailable. */ }
+player.setPlayInBackground($('play-in-background').checked);
+function updateVisibilityPause() {
+  const wasPaused = paused || visibilityPaused;
+  visibilityPaused = !!mounted && document.hidden && !$('play-in-background').checked;
+  const isPaused = paused || visibilityPaused;
+  if (mounted && wasPaused !== isPaused) player.pause(isPaused);
+  controls();
+  if (visibilityPaused) status('Paused while the tab is hidden. Playback resumes when you return.');
+  else if (wasPaused && !isPaused) status('Playback resumed.');
+}
+$('play-in-background').addEventListener('change', () => {
+  player.setPlayInBackground($('play-in-background').checked);
+  try { localStorage.setItem('zx-video.play-in-background', String($('play-in-background').checked)); }
+  catch { /* The current choice still works without browser storage. */ }
+  updateVisibilityPause();
+});
 player.onDiskActivity = active => { readingDisk = active; controls(); };
 function status(message, error = false) { $('status').textContent = message; $('status').classList.toggle('error', error); }
 player.onRendererChanged = (actual, fallback) => {
@@ -44,9 +64,10 @@ function controls() {
   for (const id of ['pause', 'restart']) $(id).disabled = busy || !mounted;
   document.querySelectorAll('[data-key]').forEach(button => { button.disabled = busy || !mounted; });
   $('pause').textContent = paused ? 'Resume' : 'Pause';
-  const loading = busy || (readingDisk && !paused);
+  const effectivePaused = paused || visibilityPaused;
+  const loading = busy || (readingDisk && !effectivePaused);
   $('machine-status').dataset.loading = String(loading);
-  $('machine-state').textContent = busy ? 'Loading disk…' : paused ? 'Paused' : readingDisk ? 'Reading floppy…' : mounted ? 'Running · drive A' : 'Ready when you are';
+  $('machine-state').textContent = busy ? 'Loading disk…' : effectivePaused ? 'Paused' : readingDisk ? 'Reading floppy…' : mounted ? 'Running · drive A' : 'Ready when you are';
 }
 function select(image, bytes) {
   selected = image; localBytes = bytes;
@@ -102,7 +123,8 @@ async function load(boot, disk = selected, bytes = localBytes) {
     }
     if (![163840, 327680, 655360].includes(bytes.length) || bytes[0x8e7] !== 0x10) throw new Error('This is not a supported TRD disk image.');
     player.mount(bytes, boot);
-    mounted = { ...disk, data: bytes }; paused = false; $('welcome').hidden = true;
+    mounted = { ...disk, data: bytes }; paused = false; visibilityPaused = false; $('welcome').hidden = true;
+    updateVisibilityPause();
     $('mounted').textContent = `Drive A: ${disk.name}`;
     status(boot ? 'Started in TR-DOS. Disk loading can take up to a minute. If a command prompt appears, press Enter to run the boot file.' : 'Disk inserted. RAM is preserved. Press the key requested by the program to continue.');
   } catch (error) { status(`Could not load disk: ${error.message}`, true); }
@@ -111,7 +133,7 @@ async function load(boot, disk = selected, bytes = localBytes) {
 $('play').addEventListener('click', () => load(true));
 $('swap').addEventListener('click', () => load(false));
 $('restart').addEventListener('click', () => load(true, mounted, mounted.data));
-$('pause').addEventListener('click', () => { paused = !paused; player.pause(paused); controls(); status(paused ? 'Playback paused.' : 'Playback resumed.'); });
+$('pause').addEventListener('click', () => { paused = !paused; player.pause(paused || visibilityPaused); controls(); status(paused ? 'Playback paused.' : 'Playback resumed.'); });
 $('mute').addEventListener('click', () => { player.setMuted(!player.muted); $('mute').setAttribute('aria-pressed', String(player.muted)); $('mute').textContent = player.muted ? 'Unmute' : 'Mute'; });
 $('fullscreen').addEventListener('click', async () => {
   try {
@@ -133,7 +155,7 @@ $('local').addEventListener('change', async event => {
 });
 document.querySelectorAll('[data-key]').forEach(button => button.addEventListener('click', () => player.tap(button.dataset.key)));
 $('share').addEventListener('click', async () => { try { await navigator.clipboard.writeText(location.href); status('Link copied. It opens this disk selected, ready to play.'); } catch { status('Copy the page address to share the selected disk.'); } });
-document.addEventListener('visibilitychange', () => { if (document.hidden && mounted && !paused) { paused = true; player.pause(true); controls(); status('Paused while the tab is hidden. Press Resume to continue.'); } });
+document.addEventListener('visibilitychange', updateVisibilityPause);
 try {
   const response = await fetch('catalog.json'); if (!response.ok) throw new Error(`HTTP ${response.status}`);
   ({ images } = await response.json()); $('total').textContent = String(images.length);
