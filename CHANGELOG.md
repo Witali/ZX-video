@@ -1,5 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Qualify the rebuilt music disk in the web player
+
+- **Scope/input:** Final autoplay TRD `3ae7d156…3209e71`, committed at
+  `91a2f5d3`, using the unchanged pinned ZX-Dream/Ayumi core and real ROMs.
+- **Measured result:** Browser-core smoke observes 2189 AY data writes and
+  1,995,380 nonzero samples before any input. Both songs' 3.1-second excerpts
+  produce left/right signal with peaks below 0.346; RAM/PC survive a disk
+  swap. [Exact report](music-menu/reports/autoplay/web-smoke.json).
+  Built-in browser at normal speed separately reaches visible PLAYING
+  after Play disk, without Spectrum keys or console warnings/errors.
+- **Setup/decision:** Initial sandbox-bound preview port was unreachable;
+  relaunching the same task-owned server with host network access fixed it.
+  Accept browser integration. This does not replace the complete Fuse
+  timing proof or claim physical sound-card/perceptual qualification.
+  Target instructions unchanged, CPU delta 0 T from the preceding release.
+
 ## 2026-11-02 — Autoplay music disk, articulate repeated notes and add sparse noise percussion
 
 - **Objective/baseline:** Update the actual independently bootable

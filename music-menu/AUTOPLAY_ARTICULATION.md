@@ -112,3 +112,13 @@ Actual Fuse captures are 36 seconds for Lumiere (including repeated F#4
 notes around 30 seconds) and 12 seconds for Alicia. Capture reports record
 WAV hashes, bass frequency and clipping counts. These are real software
 sound-generator recordings, not physical-chip or subjective listening proof.
+
+The [browser-core integration smoke](reports/autoplay/web-smoke.json) binds
+the same TRD and pinned core. Before any key input it observes 2189 AY data
+writes and 1,995,380 nonzero samples. Separate 3.1-second excerpts have
+nonzero left/right energy for both songs and peaks below 0.346; swapping a
+disk preserves mapped memory and PC. A separate normal-speed built-in
+browser check reaches the visible PLAYING state from Play disk without
+Spectrum keypresses, with no captured console warnings/errors. This is
+browser integration coverage; complete ULA timing qualification is the
+independent Fuse result above.
