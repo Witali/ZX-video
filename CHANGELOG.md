@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Compensate for Windows DPI in the 2× display scale
+
+- **Objective/baseline:** The user's Windows/browser device-pixel ratio is
+  1.25; the previous 512×384 CSS-pixel screen therefore occupied 640×480
+  device pixels, giving a fractional 2.5× source-pixel scale.
+- **Change:** Use `2 / devicePixelRatio` CSS pixels per source pixel and snap
+  the display origin to the device grid. Recompute on resizing, scrolling,
+  full screen and resolution changes; retain native emulator buffers.
+- **Verification/decision:** Browser measurements at DPR 1.25 confirm a
+  512×384-device-pixel active screen and 576×448-device-pixel bordered surface.
+  This display change does not modify emulator execution or target code.
+
 ## 2026-11-02 — Use an exact 2× browser screen scale
 
 - **Objective/change:** Apply the user's square-pixel preference to web

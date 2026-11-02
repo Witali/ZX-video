@@ -1,6 +1,8 @@
 import { SpectrumPlayer } from './emulator.js';
+import { keepPhysicalPixelScale } from './display-scale.js';
 const $ = id => document.getElementById(id);
 const player = new SpectrumPlayer($('display'));
+keepPhysicalPixelScale($('display'));
 let images = [], selected, mounted, localBytes, busy = false, paused = false, readingDisk = false;
 player.onDiskActivity = active => { readingDisk = active; controls(); };
 function status(message, error = false) { $('status').textContent = message; $('status').classList.toggle('error', error); }
