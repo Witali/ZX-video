@@ -1,0 +1,36 @@
+{
+  "scope": "Bit-exact Ayumi differential: AY/YM, 44.1/48 kHz, all 16 shapes, tone/noise/mixer/volume changes and live reconfiguration; not physical-chip accuracy.",
+  "baselineSha256": "bd189a818201aa57e9185d3c5bd809ead8cd6ac6a0a9b9ee8df17d0ef483326d",
+  "candidateSha256": "8a42f52606509f0fc96cb0ecc2647a494935122ee68de0384cb17c0d2aca710c",
+  "cases": [
+    {
+      "chip": "AY",
+      "initialSampleRate": 44100,
+      "stereoFrames": 262144,
+      "pcmFloat64Sha256": "f6304834a305626443e3ae9e662ecd6715e2291152242f7366227a97d332b7cf"
+    },
+    {
+      "chip": "AY",
+      "initialSampleRate": 48000,
+      "stereoFrames": 262144,
+      "pcmFloat64Sha256": "adf7f5548888cf9492b119ef3bf71ce7ff03d79ecf448d89bbc7afbc3a27714c"
+    },
+    {
+      "chip": "YM",
+      "initialSampleRate": 44100,
+      "stereoFrames": 262144,
+      "pcmFloat64Sha256": "1910472e1c0f6f1be5781250d415cf2c68c6f524e423501234f3c76674dc4d79"
+    },
+    {
+      "chip": "YM",
+      "initialSampleRate": 48000,
+      "stereoFrames": 262144,
+      "pcmFloat64Sha256": "96290c3b4e4a27a969c8502b11a410d8bdc368e9d3c375aad81e06c0f6841110"
+    }
+  ],
+  "internalStateExact": true,
+  "per1000SamplesSubarrayCalls": {
+    "before": 2000,
+    "after": 0
+  }
+}

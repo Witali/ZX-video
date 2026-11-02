@@ -1,0 +1,92 @@
+{
+  "scope": "Initial Node CPU self-sample profile of check-emulator.mjs before the patch, not a browser GPU profile. Local paths are excluded.",
+  "durationMs": 8755.358,
+  "totalSamples": 5589,
+  "top": [
+    {
+      "function": "(anonymous)",
+      "line": 15,
+      "samples": 2297,
+      "percent": 41.09858650921453
+    },
+    {
+      "function": "process",
+      "line": 9763,
+      "samples": 667,
+      "percent": 11.934156378600823
+    },
+    {
+      "function": "Ayumi.process",
+      "line": 359,
+      "samples": 540,
+      "percent": 9.66183574879227
+    },
+    {
+      "function": "process",
+      "line": 10307,
+      "samples": 439,
+      "percent": 7.854714617999642
+    },
+    {
+      "function": "Ayumi.decimate",
+      "line": 267,
+      "samples": 411,
+      "percent": 7.353730542136339
+    },
+    {
+      "function": "do_operation",
+      "line": 2195,
+      "samples": 204,
+      "percent": 3.6500268384326353
+    },
+    {
+      "function": "advance",
+      "line": 41,
+      "samples": 107,
+      "percent": 1.9144748613347646
+    },
+    {
+      "function": "readByte",
+      "line": 5104,
+      "samples": 76,
+      "percent": 1.3598139202003936
+    },
+    {
+      "function": "CRC16.add",
+      "line": 1078,
+      "samples": 56,
+      "percent": 1.001968151726606
+    },
+    {
+      "function": "(anonymous)",
+      "line": 1,
+      "samples": 55,
+      "percent": 0.9840758633029164
+    },
+    {
+      "function": "process",
+      "line": 2010,
+      "samples": 49,
+      "percent": 0.8767221327607801
+    },
+    {
+      "function": "TaskQueue.reenqueue",
+      "line": 9974,
+      "samples": 49,
+      "percent": 0.8767221327607801
+    },
+    {
+      "function": "readInstruction",
+      "line": 5011,
+      "samples": 49,
+      "percent": 0.8767221327607801
+    },
+    {
+      "function": "CRC16.add",
+      "line": 1078,
+      "samples": 49,
+      "percent": 0.8767221327607801
+    }
+  ],
+  "interpretation": "The anonymous line-15 VM sample-statistics callback dominates diagnostics. Benchmarks therefore retain PCM packets and hash after the timed workload. AY process/decimate remain substantial production synthesis costs."
+}

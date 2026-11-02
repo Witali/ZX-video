@@ -1,0 +1,44 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Ayumi FIR allocation benchmark</title>
+<style>body{font:16px system-ui;background:#111820;color:#e5ecf4;max-width:1000px;margin:3rem auto;padding:1rem}button{padding:.8rem}pre{white-space:pre-wrap}</style>
+<h1>Ayumi FIR allocation benchmark</h1>
+<p>Development fixture. Five alternating pairs, three million identical stereo frames per trial. This measures synthesis CPU, not playback timing or GPU rendering.</p>
+<button id="run">Run benchmark</button>
+<p id="status">Ready</p>
+<pre id="result"></pre>
+<script type="module">
+const status = document.querySelector('#status'), output = document.querySelector('#result');
+const hash = async text => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))].map(n=>n.toString(16).padStart(2,'0')).join('');
+const median = values => [...values].sort((a,b)=>a-b)[Math.floor(values.length/2)];
+const pause = () => new Promise(resolve=>setTimeout(resolve,0));
+document.querySelector('#run').onclick = async () => {
+  document.querySelector('#run').disabled = true;
+  try {
+    const original = await (await fetch('./ayumi-baseline.js')).text();
+    const candidate = await (await fetch('./ayumi-candidate.js')).text();
+    const baselineSha256 = await hash(original), candidateSha256 = await hash(candidate);
+    if(baselineSha256!=='bd189a818201aa57e9185d3c5bd809ead8cd6ac6a0a9b9ee8df17d0ef483326d')throw Error('Unrecognized upstream baseline');
+    const constructors = {before:new Function(original+';return Ayumi;')(),after:new Function(candidate+';return Ayumi;')()};
+    const trials = [];let expected;
+    for(let pair=0;pair<5;pair++)for(const variant of pair&1?['after','before']:['before','after']) {
+      status.textContent=`Pair ${pair+1}/5: ${variant}`;await pause();
+      const chip = new constructors[variant]();chip.configure(false,1773400,44100);
+      for(let c=0;c<3;c++){chip.setPan(c,[.1,.5,.9][c],true);chip.setTone(c,65+c*120);chip.setVolume(c,12-c);chip.setMixer(c,0,0,c===2);}
+      chip.setNoise(11);chip.setEnvelope(54);chip.setEnvelopeShape(14);
+      const play=count=>{for(let n=0;n<count;n++){chip.process();chip.removeDC();}};
+      play(100000);const start=performance.now();play(3000000);const elapsedMs=performance.now()-start;
+      const finalState={left:chip.left,right:chip.right,x:chip.x,noise:chip.noise,firIndex:chip.firIndex};
+      expected??=JSON.stringify(finalState);
+      if(JSON.stringify(finalState)!==expected)throw Error('Different work/output');
+      trials.push({pair,variant,elapsedMs});output.textContent=JSON.stringify({complete:false,trials},null,2);await pause();
+    }
+    const beforeMs=median(trials.filter(t=>t.variant==='before').map(t=>t.elapsedMs));
+    const afterMs=median(trials.filter(t=>t.variant==='after').map(t=>t.elapsedMs));
+    output.textContent=JSON.stringify({complete:true,scope:'Built-in Chromium synthesis CPU only; no GPU or physical timing claim',
+      baselineSha256,candidateSha256,stereoFramesPerTrial:3000000,warmupFrames:100000,
+      pairs:5,finalStateExact:true,beforeMs,afterMs,reductionPercent:100*(1-afterMs/beforeMs),trials},null,2);
+    status.textContent='Complete';
+  } catch(error) { status.textContent='Failed';output.textContent=String(error); }
+};
+</script>

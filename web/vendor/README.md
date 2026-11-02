@@ -22,7 +22,13 @@ See [MIT license](LICENSE.zx-dream) and the per-module hashes in
 [provenance.json](provenance.json).
 
 `ayumi.js` is the upstream bundled Ayumi by Peter Sovietov, JavaScript
-version by Alexander Kovalenko. Its MIT license is included in the file.
+version by Alexander Kovalenko, with one allocation-only local patch.
+Each chip caches the 23 pairs of aliasing FIR ring-window views rather than
+creating two new TypedArray views for every stereo sample. All oscillator,
+interpolation, 192-tap FIR, DC-filter arithmetic and sample clocks retain
+their original order. [Patch generator](../tools/patch-ayumi.mjs) and
+[exact differential/benchmark evidence](../reports/performance/README.md).
+Its MIT license is included in the file.
 
 The three Spectrum ROM slots use the stock Spectrum 128 ROM pair from the
 local Fuse installation, rather than the modified ZX-Dream ROMs. The two

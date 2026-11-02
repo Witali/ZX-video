@@ -44,6 +44,38 @@
   RAM/decompression/timing comparison. No player, audio stream, TRD or web
   release changes. Target instructions unchanged, delta 0 T; emulator,
   transition-effect and physical-screen qualification remain pending.
+## 2026-11-02 — Reuse Ayumi FIR views with bit-exact synthesis
+
+- **Objective/baseline:** The user requests a separate browser-emulator
+  optimization. Profile and benchmark `b120b135` with pinned real ROMs,
+  core `75fe5555…7b874`, Ayumi `bd189a81…483326d` and independently bootable
+  music TRD `3ae7d156…3209e71`; no music/player data changes. The first
+  smoke profile spends 41.10% of self samples in sample statistics, so
+  timed machine runs retain PCM packets and hash after timing.
+- **Change:** Cache the 23 left/right aliasing FIR windows once per chip.
+  Retain 46 views and two arrays without extra sample storage; remove
+  two `subarray()` calls per stereo sample (2000 → 0 in the 1000-frame
+  probe). Preserve all 192 taps, arithmetic order and oscillator/sample
+  clocks. Regeneration and upstream/patched hashes are recorded.
+- **Measured result:** Five alternating pairs improve in every pair.
+  Median built-in Chromium synthesis 1532.4 → 1369.8 ms (10.61% less);
+  Node synthesis 2096.4 → 1859.7 ms (11.29% less). Node real-ROM/TRD
+  cold boot plus both excerpts, 66.2 emulated seconds with AY and
+  NullRenderer display events, takes 4450.2 → 4182.6 ms (6.01% less).
+  These are host CPU workload timings, not GPU/whole-browser speed claims.
+- **Verification:** 1,048,576 stereo Float64 frames and internal state
+  are bit exact across AY/YM, 44.1/48 kHz, all envelope shapes, noise,
+  period/volume/mixer changes and live reconfiguration. Each machine
+  trial asserts identical PCM, mapped RAM, CPU/PSG/disk state and clock.
+  All 1356 pinned Fuse vectors, shared-clock cadence/stall checks,
+  keyboard and eight RC filter cases pass. Candidate integration smoke
+  matches baseline exactly. No target Z80 change: delta 0 T.
+- **Interrupted setup/decision:** The initial benchmark stopped at the
+  upstream XHR ROM loader; repair only the Node harness and discard its
+  partial timings. An occupied preview port was replaced with a free
+  task-owned port. Accept the bounded allocation optimization. Existing
+  physical-disk lost-data/timing limitations remain; no full-movie or
+  hardware qualification is claimed. [Scripts, raw trials and coverage](web/reports/performance/README.md).
 
 ## 2026-11-02 — Check the same note-envelope improvements in Alicia
 

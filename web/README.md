@@ -209,6 +209,15 @@ Alicia excerpts, and verifies that disk insertion preserves the
 mapped memory and CPU program counter. It does not measure browser output
 devices or qualify a complete movie's deadlines.
 
+### Synthesis performance
+
+Ayumi caches its 23 stereo FIR window pairs instead of creating two typed
+views for every sample. Synthesis PCM and internal state remain bit exact.
+Five alternating pairs measured 10.61% less synthesis time in the built-in
+browser and 6.01% less host time for a complete Node real-ROM/TRD workload;
+these are bounded host measurements, not a browser rendering or physical
+disk qualification. [Reproduction, raw trials and correctness scope](reports/performance/README.md).
+
 ### Stereo output investigation
 
 The reported left-only music output did not reproduce after reloading the

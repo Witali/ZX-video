@@ -109,6 +109,16 @@ function Ayumi() {
   this.firLeft = new Float64Array(FIR_SIZE * 2);
   this.firRight = new Float64Array(FIR_SIZE * 2);
   this.firIndex = 0;
+
+  // Each ring position uses the same two aliasing views on every cycle.
+  // Retain all 192 FIR taps and their original floating-point operation order.
+  this.firViewsLeft = [];
+  this.firViewsRight = [];
+  for (var index = 0; index < FIR_SIZE / DECIMATE_FACTOR - 1; index++) {
+    var offset = FIR_SIZE - index * DECIMATE_FACTOR;
+    this.firViewsLeft.push(this.firLeft.subarray(offset));
+    this.firViewsRight.push(this.firRight.subarray(offset));
+  }
 }
 
 Ayumi.prototype.Channel = function() {
@@ -365,9 +375,8 @@ Ayumi.prototype.process = function() {
   var cRight = this.interpolatorRight.c;
   var yRight = this.interpolatorRight.y;
 
-  var firOffset = FIR_SIZE - this.firIndex * DECIMATE_FACTOR;
-  var firLeft = this.firLeft.subarray(firOffset);
-  var firRight = this.firRight.subarray(firOffset);
+  var firLeft = this.firViewsLeft[this.firIndex];
+  var firRight = this.firViewsRight[this.firIndex];
 
   this.firIndex = (this.firIndex + 1) % (FIR_SIZE / DECIMATE_FACTOR - 1);
 

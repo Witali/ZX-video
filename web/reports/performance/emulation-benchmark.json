@@ -1,0 +1,258 @@
+{
+  "scope": "Node/V8 host timing, not browser GPU or physical-machine qualification. PSG: 3M stereo frames after 100k warmup. Machine: cold real-ROM/TRD boot plus both 3.1s songs, AY and NullRenderer display events, 66.2 emulated seconds. Setup/parsing and post-run hashes excluded.",
+  "node": "v22.22.3",
+  "baselineAyumiSha256": "bd189a818201aa57e9185d3c5bd809ead8cd6ac6a0a9b9ee8df17d0ef483326d",
+  "candidateAyumiSha256": "8a42f52606509f0fc96cb0ecc2647a494935122ee68de0384cb17c0d2aca710c",
+  "coreSha256": "75fe5555411d60e68ccc927d734b06dab5b25b129b379358d6a8d62f0af7b874",
+  "diskSha256": "3ae7d156f12baba8f551f893dc50d4fcd1d5331495ae0167ab59c95ba3209e71",
+  "alternatingFreshProcessPairs": 5,
+  "allComparedOutputsExact": true,
+  "results": [
+    {
+      "kind": "psg",
+      "pair": 0,
+      "variant": "before",
+      "elapsedMs": 2060.9333,
+      "cpuMs": 2062
+    },
+    {
+      "kind": "psg",
+      "pair": 0,
+      "variant": "after",
+      "elapsedMs": 1950.2711000000002,
+      "cpuMs": 1953
+    },
+    {
+      "kind": "psg",
+      "pair": 1,
+      "variant": "after",
+      "elapsedMs": 1859.7145,
+      "cpuMs": 1860
+    },
+    {
+      "kind": "psg",
+      "pair": 1,
+      "variant": "before",
+      "elapsedMs": 2057.5836999999997,
+      "cpuMs": 2047
+    },
+    {
+      "kind": "psg",
+      "pair": 2,
+      "variant": "before",
+      "elapsedMs": 2108.3116999999997,
+      "cpuMs": 2109
+    },
+    {
+      "kind": "psg",
+      "pair": 2,
+      "variant": "after",
+      "elapsedMs": 1827.2386,
+      "cpuMs": 1812
+    },
+    {
+      "kind": "psg",
+      "pair": 3,
+      "variant": "after",
+      "elapsedMs": 1924.5652,
+      "cpuMs": 1922
+    },
+    {
+      "kind": "psg",
+      "pair": 3,
+      "variant": "before",
+      "elapsedMs": 2096.3940000000002,
+      "cpuMs": 2094
+    },
+    {
+      "kind": "psg",
+      "pair": 4,
+      "variant": "before",
+      "elapsedMs": 2241.572,
+      "cpuMs": 2219
+    },
+    {
+      "kind": "psg",
+      "pair": 4,
+      "variant": "after",
+      "elapsedMs": 1826.9216000000001,
+      "cpuMs": 1828
+    },
+    {
+      "kind": "machine",
+      "pair": 0,
+      "variant": "before",
+      "elapsedMs": 4232.291,
+      "cpuMs": 4688
+    },
+    {
+      "kind": "machine",
+      "pair": 0,
+      "variant": "after",
+      "elapsedMs": 4117.205400000001,
+      "cpuMs": 4563
+    },
+    {
+      "kind": "machine",
+      "pair": 1,
+      "variant": "after",
+      "elapsedMs": 4182.636299999999,
+      "cpuMs": 4766
+    },
+    {
+      "kind": "machine",
+      "pair": 1,
+      "variant": "before",
+      "elapsedMs": 4450.161899999999,
+      "cpuMs": 5048
+    },
+    {
+      "kind": "machine",
+      "pair": 2,
+      "variant": "before",
+      "elapsedMs": 4301.7876,
+      "cpuMs": 4813
+    },
+    {
+      "kind": "machine",
+      "pair": 2,
+      "variant": "after",
+      "elapsedMs": 4227.152700000001,
+      "cpuMs": 4751
+    },
+    {
+      "kind": "machine",
+      "pair": 3,
+      "variant": "after",
+      "elapsedMs": 4376.4628,
+      "cpuMs": 4767
+    },
+    {
+      "kind": "machine",
+      "pair": 3,
+      "variant": "before",
+      "elapsedMs": 4507.574,
+      "cpuMs": 5032
+    },
+    {
+      "kind": "machine",
+      "pair": 4,
+      "variant": "before",
+      "elapsedMs": 4855.5205000000005,
+      "cpuMs": 5251
+    },
+    {
+      "kind": "machine",
+      "pair": 4,
+      "variant": "after",
+      "elapsedMs": 3957.947,
+      "cpuMs": 4454
+    }
+  ],
+  "summary": [
+    {
+      "kind": "psg",
+      "beforeMs": 2096.3940000000002,
+      "afterMs": 1859.7145,
+      "reductionPercent": 11.289838646742933
+    },
+    {
+      "kind": "machine",
+      "beforeMs": 4450.161899999999,
+      "afterMs": 4182.636299999999,
+      "reductionPercent": 6.011592522060827
+    }
+  ],
+  "additionalIdentityCheck": {
+    "scope": "One extra unreported-timing before/after pair retained full identity; previous five timed pairs already asserted this exact equality internally.",
+    "machine": {
+      "pcmSha256": "186d3877129f8595fd3998165f6df242cea22b7a71531593202b0231d858d4d0",
+      "packets": 5701,
+      "memorySha256": "8a8b59b973c95b6778a926999983567f3acee481747b608238b763250e19c309",
+      "cpu": {
+        "af_": 68,
+        "bc_": 773,
+        "de_": 71,
+        "hl_": 10072,
+        "af": 0,
+        "bc": 254,
+        "de": 21504,
+        "hl": 19279,
+        "ix": 33755,
+        "iy": 23610,
+        "sp": 48384,
+        "pc": 32893,
+        "r": 110,
+        "i": 190,
+        "memptr": 32893,
+        "q": 0,
+        "imf": 3,
+        "iff": 3,
+        "prefix_dd": false,
+        "prefix_fd": false,
+        "prefix_ed": false,
+        "prefix_cb": false
+      },
+      "clockTstates": 234705482,
+      "disk": {
+        "vg93": {
+          "track": 7,
+          "sector": 9,
+          "data": 0,
+          "command": 128,
+          "status": 128,
+          "intrq": 0,
+          "drq": 0
+        },
+        "drive": 0,
+        "head": 1,
+        "headReady": 1,
+        "doubleDensity": true
+      },
+      "psg": {
+        "psg0": {
+          "address": 9,
+          "registers": [
+            100,
+            1,
+            100,
+            1,
+            1,
+            0,
+            31,
+            56,
+            7,
+            5,
+            16,
+            53,
+            0,
+            14,
+            0,
+            0
+          ]
+        },
+        "psg1": {
+          "registers": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "activePsg": 0
+      }
+    }
+  }
+}
