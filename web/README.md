@@ -118,6 +118,39 @@ the apparent freezes as long disk waits; correctness of the screen bytes
 does not qualify playback timing. Synthesized audio was not checked by that
 run. [Full report](reports/rotational-video-part02.json).
 
+The bounded read diagnostic reproduces **178 LOST DATA completions out of
+775 completed sector reads** in 120 emulated seconds. All 178 errors include
+an IM2 dispatcher entry during the largest data-register service gap. The
+first four failed reads transfer only 254 bytes, with gaps of 324–384 T
+(about 91–108 microseconds, versus a 32-microsecond disk-byte period).
+This identifies an IRQ/read-service conflict in the current model; it does
+not certify that model against hardware. The partial run compares 328 screen
+identities with no errors and cannot pass release timing.
+[Diagnostic report](reports/disk-reads-partial.json). Reproduce with:
+
+```powershell
+node web/tools/check-video.mjs C:/Work/ZX-video 2 120 .tmp/disk-reads.json --profile-reads
+```
+
+### Shared machine time
+
+CPU, ULA interrupts/display, AY sample generation and floppy-controller
+events use the same T-state counter and ordered event queue. Each device's
+period is converted to that common timeline. The browser's monotonic
+`performance.now()` paces machine time. Delayed callbacks process bounded
+catch-up slices while retaining the real-time origin and every pending
+hardware event. They no longer silently discard time after 50 ms. Explicit
+pause/resume rebases the host clock for the whole machine; a hidden tab
+pauses through the existing page policy.
+
+The [clock test](tools/check-clock.mjs) compares complete event sequences
+with regular/irregular callbacks, a 700-ms stall, wall-clock edits, and a
+two-second pause. All five cases produce identical ULA/disk-byte/audio-sample
+timelines over 3,545,400 T. This isolates scheduling with a four-T NOP CPU;
+it is not a full-machine speed, audio-output or disk-accuracy qualification.
+[Clock report](reports/clock.json). Retaining elapsed time cannot by itself
+repair the IRQ-associated read errors or guarantee real time on a slow host.
+
 ### Backend selection
 
 Choose **Fuse as the full-machine reference and practical basis for a

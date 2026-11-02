@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Retain shared machine time and trace IRQ-associated disk retries
+
+- **Objective/baseline:** Investigate uneven playback at `8707b3fc` and keep
+  CPU, video, AY and physical disk events on a common timeline paced by real
+  time. Preserve ROM/TRD bytes, standard rotational waits and target code.
+- **Clock change/results:** Use monotonic browser time instead of wall-clock
+  time. Keep bounded 50-ms catch-up slices but retain elapsed-time debt and
+  the original host origin. Previously, delayed callbacks silently discarded
+  time. Regular/irregular callbacks, a 700-ms stall, wall-clock jumps and
+  pause/resume now produce identical ordered ULA/disk/audio events over
+  3,545,400 T with a four-T NOP CPU. The same regression check against the
+  previous core stops at 3,148,340 T instead of 3,545,400 T under irregular
+  callbacks. This is scheduler evidence, not a full-machine speed benchmark.
+  [Reproducer](web/tools/check-clock.mjs), [report](web/reports/clock.json).
+- **Read diagnostic:** Read-only port and IM2-dispatch observations over 120
+  emulated seconds of unchanged refined disk 2 find 776 read attempts, 775
+  completions and 178 LOST DATA errors. Every error includes an IRQ entry
+  in the largest data-service gap. The first four errors transfer 254 bytes
+  and show 324–384 T gaps (about 91–108 microseconds against 32 per disk byte).
+  All 328 sampled screens match; this is a partial run and fails timing.
+  A bounded scratch trace also observes controller overwrites during the
+  player's interrupt handler; its initial instrumentation anchor failed on
+  CRLF input and was normalized before use. No trace patch enters the core.
+  [Read-only reproducer](web/tools/check-video.mjs),
+  [partial report](web/reports/disk-reads-partial.json).
+- **Decision/limits:** Retain the shared-clock correction. The IRQ/read
+  conflict still requires controller/hardware qualification and player I/O
+  investigation; the clock fix does not resolve the known movie stalls.
+  All 1,356 CPU vectors, the real-ROM/TRD/music synthesis smoke and build
+  guards pass again. The rebuilt site contains 250 authenticated images;
+  the in-app browser boots disk 2 with WebGL and no console errors.
+  The earlier complete movie report retains its original producer/core
+  identities. Z80 player/decoder hot paths remain unchanged (0 T delta).
+
 ## 2026-11-02 — Add persistent Canvas/WebGL display settings
 
 - **Objective/change:** Add the user-requested renderer selector to web

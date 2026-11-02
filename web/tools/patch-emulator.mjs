@@ -27,6 +27,31 @@ export function patchEmulator(source) {
   replace('var BYTES_PER_TRACK_FM = 3156;', 'var BYTES_PER_TRACK_FM = 3125;');
   replace('var _intrqDurationTstates = 32;', 'var _intrqDurationTstates = 36; // Original Spectrum 128 ULA interrupt pulse.');
   replace('var _intervalsDependOnFrequency = true;', 'var _intervalsDependOnFrequency = false; // Drive rotation stays at 300 rpm independently of CPU frequency.');
+  const clockBegin = source.indexOf('function ZX_Clock()');
+  const clockEnd = source.indexOf('function TaskQueue(', clockBegin);
+  let clockCode = source.slice(clockBegin, clockEnd);
+  if ((clockCode.match(/Date\.now\(\)/g) || []).length !== 5) throw new Error('Host clock patch changed');
+  clockCode = clockCode.replaceAll('Date.now()', 'hostNow()');
+  clockCode = clockCode.replace('function ZX_Clock() {', `function ZX_Clock() {
+    // All hardware deadlines remain on the shared emulated T-state timeline.
+    // The browser's monotonic clock paces that timeline; wall-clock edits cannot jump it.
+    var hostNow = typeof performance !== 'undefined' && performance.now
+        ? function () { return performance.now(); } : function () { return Date.now(); };`);
+  const capPattern = /if \(plannedTstates > _maxBoostTstates\) \{[\s\S]*?_baseTimestamp \+= [^\n]+\r?\n\t\t\tplannedTstates = _maxBoostTstates;\r?\n\t\t\}/g;
+  if ((clockCode.match(capPattern) || []).length !== 2) throw new Error('Catch-up patch changed');
+  clockCode = clockCode.replace(capPattern, `if (plannedTstates > _maxBoostTstates) {
+            // Bound work per callback, retaining the original real-time origin and debt.
+            // Later callbacks catch up the whole machine without skipping hardware events.
+            plannedTstates = _maxBoostTstates;
+        }`);
+  const commentBegin = clockCode.indexOf('\t// Принцип выполнения итерации');
+  const processBegin = clockCode.indexOf('\tfunction process()', commentBegin);
+  if (commentBegin < 0 || processBegin < 0) throw new Error('Clock documentation anchor changed');
+  clockCode = clockCode.slice(0, commentBegin) + `    // Advance every module from one CPU T-state counter and ordered event queue.
+    // Host callback cadence only controls the amount of pending work, not event phases.
+    // Pause/resume explicitly starts a new host-time origin without advancing the machine.
+` + clockCode.slice(processBegin);
+  source = source.slice(0, clockBegin) + clockCode + source.slice(clockEnd);
   const trdBegin = source.indexOf('    this.insertTRD = function');
   const trdEnd = source.indexOf('    this.insertSCL = function', trdBegin);
   const loopBegin = source.indexOf('            for ( var sec = 0; sec < 16; sec++)', trdBegin);

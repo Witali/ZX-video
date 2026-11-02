@@ -9544,6 +9544,10 @@ function VG93AMDetector(doubleDensity) {
 
 // Upstream module: hardware/clock.js
 function ZX_Clock() {
+    // All hardware deadlines remain on the shared emulated T-state timeline.
+    // The browser's monotonic clock paces that timeline; wall-clock edits cannot jump it.
+    var hostNow = typeof performance !== 'undefined' && performance.now
+        ? function () { return performance.now(); } : function () { return Date.now(); };
 	/*
 	 * Вроде как, в Pentagon прерывание происходит каждые 71680 тактов.
 	 * При частоте 3.5МГц это означает, что:
@@ -9598,7 +9602,7 @@ function ZX_Clock() {
 			return;
 		_debug = false;
 		_running = true;
-		var now = Date.now();
+		var now = hostNow();
 		_intervalId = setInterval(process, 4);
 		_baseTstates = _tstates;
 		_baseTimestamp = now;
@@ -9612,7 +9616,7 @@ function ZX_Clock() {
 			return;
 		_debug = true;
 		_running = true;
-		var now = Date.now();
+		var now = hostNow();
 		_intervalId = setInterval(processDebug, 4);
 		_baseTstates = _tstates;
 		_baseTimestamp = now;
@@ -9633,28 +9637,12 @@ function ZX_Clock() {
 		}
 	}
 
-	// Принцип выполнения итерации следующий:
-	// 1. Вычисляется время, прошедшее с последней фиксации информации о производительности.
-	// 2. Если время из п.1 достигло секунды, то рассчитывается примерная частота работы 
-	//    процессора и количество фреймов (прерываний), выполненных за это время. После этого
-	//	  время и счетчики производительности начинают считаться заново.
-	// 3. Вычисляется количество прошедших реальных миллисекунд с точки отсчета (изначально это время запуска тактового генератора).
-	// 4. Вычисляется количество фактически выполненных тактов процессора с точки отсчета.
-	// 5. Учитывая текущие настройки тактового генератора вычисляется количество тактов, которое должно было быть выполнено за реально время из п.3.
-	// 6. Разница между значениями, полученными в п.5 и п.4, является количеством тактов, подлежащих выполнению в текущей итерации.
-	//    При этом, если количество тактов процессора получилось слишком большое (превышает maxBoostTstates), то точка отсчета сдвигается вперед
-	//	  таким образом, что будет выполнено только maxBoostTstates тактов, а дальше эмулация продолжится со штатной скоростью. Это нужно для случаев, 
-	//	  когда пользователь переключется со вкладки эмулятора на дргие вкладки или в другие приложения. В этом случае рабочий цикл
-	//    приостанавливается и интервал между итерациями может оказаться таким большим, что попытка обработать столько тактов за одну итерацию приведет
-	//    к зависанию вкладки. Аудио-буфер также будет переполняться до нормализации скорости эмуляции.
-	// 7. Прерывания реализуются путем планирования в общей очереди событий. Время возникнования
-	//    очередного запланированного события рассчитывается, исходя из количества выполненных тактов
-	//    процессора и его тактовой частоты.
-	// 8. В процессе выполнения итерации в нужных случаях корректируются счетчики производительности,
-	//    тактов и т.п.
+    // Advance every module from one CPU T-state counter and ordered event queue.
+    // Host callback cadence only controls the amount of pending work, not event phases.
+    // Pause/resume explicitly starts a new host-time origin without advancing the machine.
 	function process() {
 		// фиксация время запуска итерации
-		var now = Date.now();
+		var now = hostNow();
 		// проверка на необходимость вывода информации о производительности.
 		var performanceElapsed = now - _performanceTimestamp
 		if ( performanceElapsed >= 1000 ) {
@@ -9673,13 +9661,10 @@ function ZX_Clock() {
 		// количество тактов для выполнения в текущей итерации
 		var plannedTstates = elapsedTstates - (_tstates - _baseTstates);
 		if (plannedTstates > _maxBoostTstates) {
-			// Если замедление более, чем максимально возможное компенсационное
-			// ускорение, то точка отсчета во времени сдвигается вперед так,
-			// что далее компенсируется только максимально возможное ускорение.
-			// Далее эмуляция пойдет со штатной скоростью.
-			_baseTimestamp += (plannedTstates / _tstatesPerMs - _maxBoostMs);
-			plannedTstates = _maxBoostTstates;
-		}
+            // Bound work per callback, retaining the original real-time origin and debt.
+            // Later callbacks catch up the whole machine without skipping hardware events.
+            plannedTstates = _maxBoostTstates;
+        }
 		// сброс счетчика тактов процессора
 		_cpu.set_tstates(0);
 		var lastTstates = 0;
@@ -9699,7 +9684,7 @@ function ZX_Clock() {
 	
 	function processDebug() {
 		// фиксация время запуска итерации
-		var now = Date.now();
+		var now = hostNow();
 		// проверка на необходимость вывода информации о производительности.
 		var performanceElapsed = now - _performanceTimestamp
 		if ( performanceElapsed >= 1000 ) {
@@ -9718,13 +9703,10 @@ function ZX_Clock() {
 		// количество тактов для выполнения в текущей итерации
 		var plannedTstates = elapsedTstates - (_tstates - _baseTstates);
 		if (plannedTstates > _maxBoostTstates) {
-			// Если замедление более, чем максимально возможное компенсационное
-			// ускорение, то точка отсчета во времени сдвигается вперед так,
-			// что далее компенсируется только максимально возможное ускорение.
-			// Далее эмуляция пойдет со штатной скоростью.
-			_baseTimestamp += (plannedTstates / _tstatesPerMs - _maxBoostMs);
-			plannedTstates = _maxBoostTstates;
-		}
+            // Bound work per callback, retaining the original real-time origin and debt.
+            // Later callbacks catch up the whole machine without skipping hardware events.
+            plannedTstates = _maxBoostTstates;
+        }
 		// сброс счетчика тактов процессора
 		_cpu.set_tstates(0);
 		var lastTstates = 0;
@@ -9775,7 +9757,7 @@ function ZX_Clock() {
 			_taskQueue.set_tstatesPerMs(_tstatesPerMs);
 			_maxBoostTstates = _maxBoostMs * _tstatesPerMs;
 			_baseTstates = _tstates;
-			_baseTimestamp = Date.now();
+			_baseTimestamp = hostNow();
 			_rescheduleTaskOnNextInterrupt = true;
 		}
 	}
