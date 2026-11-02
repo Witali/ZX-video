@@ -3,6 +3,7 @@ import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { showInLibrary } from './catalog-policy.mjs';
 
 const source = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const root = resolve(source, '..');
@@ -44,7 +45,7 @@ for (const path of tracked) {
   await mkdir(dirname(join(output, diskPath)), { recursive: true });
   await copyFile(join(diskRoot, path), join(output, diskPath));
   const group = catalogue.groups[entry?.group];
-  images.push({ path, url: diskPath, name: path.split('/').pop(),
+  if (showInLibrary(path, entry, group)) images.push({ path, url: diskPath, name: path.split('/').pop(),
     category: path.startsWith('toolkit/') || /video/i.test(path) ? 'Video' : /music|entertainer|sea.foam/i.test(path) ? 'Music' : 'Audio',
     root: !path.includes('/'), catalogued: !!entry, bytes: bytes.length, sha256,
     description: group?.description || entry?.subject || 'Retained project experiment; no curated catalogue description.',
@@ -66,4 +67,4 @@ for (const name of ['index.html', 'styles.css', 'app.js', 'emulator.js', 'audio-
 await copyTree(join(source, 'vendor'), join(output, 'vendor'));
 await writeFile(join(output, 'catalog.json'), JSON.stringify({ images }, null, 2) + '\n');
 await writeFile(join(output, '.nojekyll'), '');
-console.log(`Built ${images.length} TRDs (${images.filter(i => i.root).length} root, ${images.filter(i => !i.catalogued).length} without curated descriptions) in ${output}`);
+console.log(`Built ${tracked.length} authenticated TRDs; library offers ${images.length} (${images.filter(i => i.root).length} root, ${images.filter(i => !i.catalogued).length} without curated descriptions) in ${output}`);

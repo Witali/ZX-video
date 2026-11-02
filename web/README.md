@@ -33,7 +33,13 @@ node web/tools/build.mjs .tmp/web-site C:/Work/ZX-video
 
 ## Use
 
-Select a root disk or switch to all project disks. Search matches filenames,
+The public library excludes historical one-bit beeper PDM experiments,
+including their root aliases. Classification follows converter provenance,
+not IMA/mu-law names, so AY/YM music and speech remain available. Authenticated
+direct TRD downloads are retained for historical links; repository archives
+are preserved. [Library policy](tools/catalog-policy.mjs).
+
+Select a root disk or switch to all library disks. Search matches filenames,
 paths and descriptions; media filters narrow the list. **Play disk** inserts
 into drive A and resets to TR-DOS. If TR-DOS displays its prompt, press Enter
 to start the disk's `boot` file. Some archived fixtures are not bootable.

@@ -1,5 +1,24 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Hide historical beeper PDM auditions from the web library
+
+- **Objective/baseline:** The user reports strong hiss/noise in the old
+  pulse-density audio experiments and requests hiding them from the public
+  page. Baseline `b120b135` offered all 250 tracked TRDs (55 root aliases).
+- **Change:** Classify by beeper converter/guide provenance and three
+  independently verified uncatalogued root aliases, rather than matching
+  IMA/mu-law filenames. Exclude 118 PDM auditions from library selection and
+  search; retain AY/YM music, speech and video. Historical authenticated TRD
+  download URLs and repository files remain intact. The public catalogue
+  now offers 132 images, including 34 root and 27 uncatalogued images.
+- **Verification/decision:** The authenticated 250-image build and existing
+  LFS/geometry/committed-SHA guards pass. Representative old PDM aliases are
+  absent from the library while current music, AY/YM speech and refined
+  video remain; archived direct downloads remain 655360-byte TRDs. Accept
+  the catalogue change. Target Z80 instructions/data unchanged, delta 0 T.
+  [Publication policy](web/tools/catalog-policy.mjs),
+  [build checks](web/tools/check-build.mjs).
+
 ## 2026-11-02 — Check the same note-envelope improvements in Alicia
 
 - **Objective/input:** The user asks whether Alicia can receive the same
