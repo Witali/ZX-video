@@ -18054,3 +18054,17 @@ Final inspection exposed Windows default text decoding when rearranging
 SECOND_PASS.md: retained items10–24 had double-encoded punctuation. Repair
 that prefix using explicit UTF-8; items25–29, all measurements, source code,
 reports and defaults are unchanged. The authenticated summary still passes.
+# 2026-11-02 — Compile fourteen native Expedition 33 illustrations
+
+Added fourteen generated scene/character interpretations and a reproducible
+256x192 Spectrum conversion with two colors per aligned 8x8 attribute cell,
+no FLASH, scene-specific borders and one shared Cinzel title mask. References
+and prompts are recorded in `music-menu/artwork/README.md` and `prompts.json`.
+Independent validation checks 688,128 native pixels, 6,193,152 enlarged pixels,
+10,752 attribute cells and exact footer bitmap identity across all fourteen.
+Sanitization removed 324,232 bytes of nonvisual PNG metadata while preserving
+all IDAT bytes and all 22,015,392 source pixels. See `artwork/QA.md` and its
+machine-readable verification/sanitization reports. Assets are accepted for
+native player integration; this is not a qualified TRD or playback release.
+Target CPU paths are unchanged (0 T delta).
+
