@@ -1,5 +1,25 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Check the same note-envelope improvements in Alicia
+
+- **Objective/input:** The user asks whether Alicia can receive the same
+  improvements. They are already included in qualified TRD `3ae7d156…3209e71`:
+  four repeated C5 notes at 54.191/71.777/118.329/135.915 s receive two silent
+  fields and a new attack; 174 noise accents occupy piano rests. The full
+  7886-field Fuse trace already verifies their actual register writes and
+  unchanged bass hardware envelope.
+- **Additional evidence:** Capture 59.985 s of actual Fuse sound, zero
+  clipped samples, first bass peak 65.356636 Hz versus 65.354142 Hz target.
+  Retain an unprocessed 8-second slice from source 50..58 s, containing the
+  first repeated C5. [Capture and clip provenance](music-menu/reports/autoplay/alicia-repeat-excerpt.json).
+  The other three boundaries retain complete execution coverage, not
+  recorded-audio coverage from this partial excerpt.
+- **Decision:** Same improvement is suitable and already present in the
+  published disk. Add the audition for listening; target code/data and
+  T-states unchanged (delta 0 T). GitHub Pages build/deploy for `f141e3f8`
+  passed; downloaded public TRD/catalog hashes match the qualified release.
+  Built-in-browser cold autoplay and switching to Alicia pass.
+
 ## 2026-11-02 — Qualify the rebuilt music disk in the web player
 
 - **Scope/input:** Final autoplay TRD `3ae7d156…3209e71`, committed at

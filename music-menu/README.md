@@ -65,6 +65,10 @@ and [Alicia report](reports/autoplay/alicia-recording.json)
 bind the final disk and WAV hashes. Physical-board audio and subjective
 listening approval are not claimed.
 
+[Alicia repeated-note excerpt](previews/alicia-repeat-ay.wav) is an actual
+8-second Fuse capture of source seconds 50..58. The rearticulated C5 occurs
+about 4.19 seconds into this clip. [Capture provenance](reports/autoplay/alicia-repeat-excerpt.json).
+
 ## Build and reproduce
 
 Python 3.12+, NumPy, Pillow and pyz80; native checks additionally use the

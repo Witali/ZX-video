@@ -122,3 +122,20 @@ browser check reaches the visible PLAYING state from Play disk without
 Spectrum keypresses, with no captured console warnings/errors. This is
 browser integration coverage; complete ULA timing qualification is the
 independent Fuse result above.
+
+## Alicia follow-up
+
+The same articulation and sparse-noise changes already apply to Alicia.
+Its four repeated C5 boundaries occur at source seconds **54.190981,
+71.777188, 118.328912 and 135.915119**. The complete cold-Fuse trace above
+verifies their actual AY writes, including the two silent lead fields.
+The 174 noise accents use piano rests and preserve the bass envelope.
+
+An additional actual **59.985-second Fuse capture** has zero clipped samples
+and a 65.356636-Hz measured initial bass peak (65.354142-Hz target).
+[Capture report](reports/autoplay/alicia-60s-recording.json).
+The [8-second audition](previews/alicia-repeat-ay.wav) copies source seconds
+50..58 without processing, with the first rearticulated C5 about 4.19 seconds
+into the clip. [Source/output hashes and slice](reports/autoplay/alicia-repeat-excerpt.json).
+The remaining three repeats are covered by complete execution, not by this
+partial audio excerpt. No further target code/data or CPU cost changed.
