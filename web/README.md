@@ -50,6 +50,11 @@ browser requires a user click before audio starts. Use Copy link to share
 the selection; shared links do not autoplay. A local TRD is read in the
 browser and never uploaded.
 
+The display uses a fixed 2× CSS pixel scale: the 256×192 active screen is
+512×384, with a 32-pixel border on each side (576×448 overall). Each source
+pixel is a square of 2×2 CSS pixels. Narrow windows scroll the monitor instead
+of shrinking or stretching the image. Full screen retains this same scale.
+
 TR-DOS uses the emulated floppy controller rather than a ROM fast-load
 trap. A disk that preloads its full audio cache can take about a minute to
 start; the loading screen remains visible during that time.

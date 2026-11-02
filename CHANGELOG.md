@@ -1,5 +1,15 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Use an exact 2× browser screen scale
+
+- **Objective/change:** Apply the user's square-pixel preference to web
+  baseline `7ab105a4`. Set the active 256×192 display to 512×384 CSS pixels
+  and its border-inclusive surface to 576×448. Preserve the scale in full
+  screen; narrow monitors scroll instead of resampling the image.
+- **Verification/decision:** Browser element bounds confirm the exact 2×
+  active screen and border geometry. Emulator canvas pixels, timing and
+  target player code are unchanged (0 T difference).
+
 ## 2026-11-02 — Keep the loading indicator above the screen
 
 - **Objective/change:** Apply the user's layout preference to web-player
