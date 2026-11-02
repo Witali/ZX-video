@@ -1,5 +1,14 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Keep the loading indicator above the screen
+
+- **Objective/change:** Apply the user's layout preference to web-player
+  baseline `f5d3dbc0`: remove the duplicate indicator below the display and
+  retain the spinner and floppy-read status in the machine header.
+- **Verification/decision:** JavaScript syntax and focused browser checks
+  confirm one indicator during disk reads. Controller activity detection,
+  emulator execution and target player code are unchanged (0 T difference).
+
 ## 2026-11-02 — Add the browser TRD library and GitHub Pages player
 
 - **Objective/baseline:** Add browser playback for retained project disks at

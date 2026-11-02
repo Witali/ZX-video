@@ -12,8 +12,6 @@ function controls() {
   $('pause').textContent = paused ? 'Resume' : 'Pause';
   const loading = busy || (readingDisk && !paused);
   $('machine-status').dataset.loading = String(loading);
-  $('disk-loading').hidden = !loading;
-  $('loading-label').textContent = busy ? 'Loading disk…' : 'Reading floppy…';
   $('machine-state').textContent = busy ? 'Loading disk…' : paused ? 'Paused' : readingDisk ? 'Reading floppy…' : mounted ? 'Running · drive A' : 'Ready when you are';
 }
 function select(image, bytes) {
