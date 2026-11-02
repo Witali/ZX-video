@@ -16,8 +16,8 @@ export class SpectrumPlayer {
     this.audio = null;
     this.muted = false;
     this.lowpassCutoff = 20000;
-    this.rendererPreference = 'canvas';
-    this.activeRenderer = 'canvas';
+    this.rendererPreference = 'webgl';
+    this.activeRenderer = 'webgl';
     this.onRendererChanged = () => {};
     this.onDiskActivity = () => {};
     this.diskActive = false;

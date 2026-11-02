@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Use WebGL as the default browser renderer
+
+- **Objective/baseline:** Apply the user's preferred default after the Canvas
+  composition fix at `0a4979eb`. Keep Canvas selectable and preserve saved
+  choices, explicit renderer URLs and WebGL-unavailable/context-loss recovery.
+- **Change/verification:** Select WebGL in the initial HTML and adapter
+  constructor. Inspect the fresh-origin browser page without a renderer
+  parameter, an explicit WebGL URL overriding a saved Canvas choice, and live
+  selection/reload in the preview tab. The renderer fixture passes live
+  switching and context-loss fallback with machine state preserved.
+  Keep this preference change; no machine timing, disk or Z80 path changes
+  (0 T delta). The existing renderer fixture covers state-preserving fallback.
+
 ## 2026-11-02 — Compose Canvas border and screen on one visible pixel grid
 
 - **Objective/evidence:** Follow up `eafcce98` after the user confirms the

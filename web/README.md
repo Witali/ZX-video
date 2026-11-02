@@ -257,8 +257,9 @@ The production Worklet-to-output stereo probe also passes with the default
 
 ### Display settings
 
-**Settings → Display renderer** switches between Canvas (the default) and
-WebGL. The browser saves the choice, and the URL retains it even when local
+**Settings → Display renderer** switches between WebGL (the default) and
+Canvas. Existing saved choices and explicit selection URLs still take
+priority over the default. The browser saves the choice, and the URL retains it even when local
 storage is unavailable; an explicit URL choice takes priority. Switching during playback rebuilds only
 the display surfaces, preserving CPU, RAM, disk state and sound. Both retain
 native 256×192 frame data and share the physical-pixel scaling. Canvas uses
