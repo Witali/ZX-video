@@ -1,5 +1,31 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Trace both music-menu audio channels through browser and Windows
+
+- **Objective/baseline:** Investigate reported left-only Lumiere/Alicia
+  playback at web baseline `7d37ccf4` (keyboard changes completed separately
+  as `88a5667b`). Preserve the AY stream, ABC mix, ROM/TRD and OS settings.
+- **Measurements:** The real-ROM/TRD smoke now isolates both 3.1-second song
+  excerpts, 136,704 samples each. Left/right RMS is 0.09895/0.09838 for
+  Lumiere and 0.07898/0.10083 for Alicia; neither channel clips. An initial
+  scratch probe included loading silence in its summary, then isolated
+  song-only statistics before the retained test. The production AudioWorklet
+  and gain graph passes separate left/right/stereo probes at 44.1 kHz:
+  isolated opposite-channel RMS is zero, active RMS is about 0.01065.
+  A 25-second read-only Windows output-meter window is silent for its first
+  14 seconds, then receives the probes in both channels (peaks 0.18412 and
+  0.19772). No raw system audio, device identity or microphone data is read.
+  [Core report](web/reports/audio.json),
+  [browser report](web/reports/audio-output-browser.json),
+  [Windows report](web/reports/audio-output-windows.json).
+- **Decision/coverage:** After page reload, the user confirms both channels
+  are audible. The original transient loss is not reproduced or explained;
+  no mixer or OS-setting fix is claimed. Retain per-channel song checks in
+  CI and the local [browser fixture](web/tools/audio-check.html) and
+  [read-only Windows meter](web/tools/measure-windows-audio.ps1). These are
+  bounded checks, not a new complete-song/physical-hardware qualification.
+  Existing disk bytes and Z80 player hot paths remain unchanged (0 T delta).
+
 ## 2026-11-02 — Support Spectrum cursor keys while the display has focus
 
 - **Objective/baseline:** Make host arrow keys work as the Spectrum cursor

@@ -190,9 +190,37 @@ node web/tools/check-emulator.mjs
 
 It boots the real music-menu TRD through the real ROM/controller/core,
 matches the fourteen title glyphs against the stock ROM font, checks actual
-nonzero synthesized audio, and verifies that disk insertion preserves the
+nonzero synthesized audio separately in both channels of short Lumiere and
+Alicia excerpts, and verifies that disk insertion preserves the
 mapped memory and CPU program counter. It does not measure browser output
 devices or qualify a complete movie's deadlines.
+
+### Stereo output investigation
+
+The reported left-only music output did not reproduce after reloading the
+page, and the user then confirmed hearing both channels. The unchanged
+ABC mix pans AY A/B/C at 10/50/90% toward the right: it is stereo separation,
+not a missing channel. The two 3.1-second excerpts produce left/right RMS
+levels of 0.09895/0.09838 (Lumiere) and 0.07898/0.10083 (Alicia), with no
+clipped samples. These are bounded output checks, not complete-song or
+physical-listening qualification. [Core report](reports/audio.json).
+
+The browser [audio fixture](tools/audio-check.html) exercises the production
+AudioWorklet-to-gain graph with separate left/right and stereo signals.
+Both outputs are nonzero, with zero observed opposite-channel signal for
+the isolated probes. Windows output meters also receive both channels while
+other player audio is paused. No microphone or raw system audio is recorded,
+and no Windows balance/volume settings are changed.
+[Browser report](reports/audio-output-browser.json),
+[Windows report](reports/audio-output-windows.json).
+The original transient fault remains unexplained; no audio-mixing fix is
+claimed or installed.
+
+For local reproduction, copy `web/tools/audio-check.html` to the built
+site root and open it over the same HTTP server. It is a development fixture
+and is excluded from the Pages artifact. On Windows, start
+`web/tools/measure-windows-audio.ps1 -Seconds 25` and run the browser probe
+during that interval to read the default multimedia endpoint's peak meters.
 
 ### Display settings
 

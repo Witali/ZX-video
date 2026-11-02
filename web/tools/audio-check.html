@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Spectrum stereo output verification</title>
+<script src="vendor/ayumi.js"></script><script src="vendor/zx-dream.js"></script>
+<button id="run">Check left, right and stereo output</button><pre id="result">Ready</pre><div id="fixture" hidden></div>
+<script type="module">
+import { SpectrumPlayer } from './emulator.js';
+document.getElementById('run').onclick=async()=>{
+  const result=document.getElementById('result'),player=new SpectrumPlayer(document.getElementById('fixture'));
+  try {
+    await player.enableAudio();
+    // Exercise the production Worklet -> gain graph, measuring each output
+    // independently before the OS/device; this cannot certify the speakers.
+    const splitter=player.audio.createChannelSplitter(2);
+    const meters=[player.audio.createAnalyser(),player.audio.createAnalyser()];
+    player.gain.connect(splitter);meters.forEach((meter,i)=>{meter.fftSize=1024;splitter.connect(meter,i);});
+    player.gain.gain.value=0.15;
+    const probes=[];
+    for(const name of ['left','right','stereo']) {
+      player.output.port.postMessage({clear:true});
+      let sample=0;const size=512,rate=player.audio.sampleRate,energy=[0,0];
+      const packet=()=>{
+        const left=new Float32Array(size),right=new Float32Array(size);
+        for(let i=0;i<size;i++,sample++){
+          if(name!=='right')left[i]=0.1*Math.sin(2*Math.PI*440*sample/rate);
+          if(name!=='left')right[i]=0.1*Math.sin(2*Math.PI*660*sample/rate);
+        }
+        player.output.port.postMessage({left,right});
+      };
+      packet();const timer=setInterval(packet,1000*size/rate);
+      for(let n=0;n<16;n++) {
+        await new Promise(resolve=>setTimeout(resolve,40));
+        meters.forEach((meter,i)=>{
+          const data=new Float32Array(meter.fftSize);meter.getFloatTimeDomainData(data);
+          energy[i]=Math.max(energy[i],Math.sqrt(data.reduce((sum,x)=>sum+x*x,0)/data.length));
+        });
+      }
+      clearInterval(timer);probes.push({name,leftRms:energy[0],rightRms:energy[1]});
+      result.textContent=JSON.stringify({probes},null,2);
+      player.output.port.postMessage({clear:true});await new Promise(resolve=>setTimeout(resolve,100));
+    }
+    const passed=probes[0].leftRms>0.001&&probes[0].rightRms<1e-6
+      &&probes[1].rightRms>0.001&&probes[1].leftRms<1e-6
+      &&probes[2].leftRms>0.001&&probes[2].rightRms>0.001;
+    result.textContent=JSON.stringify({scope:'Browser output graph before OS/device',sampleRate:player.audio.sampleRate,
+      destinationChannels:player.audio.destination.channelCount,
+      destinationMaxChannels:player.audio.destination.maxChannelCount,probes,passed},null,2);
+  }catch(error){result.textContent='FAILED: '+error.message;}
+  finally{await player.audio?.close();}
+};
+</script></html>

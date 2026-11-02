@@ -4,6 +4,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 const root = resolve(process.argv[2] || '.tmp/web-site');
 const timers = new Map();
 let now = 0, timerId = 0;
@@ -26,8 +27,13 @@ h.bus.opt('TSTATES_PER_INTRQ',70908); h.bus.opt('INTRQ_PERIOD',20);
 h.bus.opt('EXTENDED_MEMORY',0);
 h.psg.applySettings(true,0.35,1,0,0,1773400,512,0.7);
 var audio = { packets: 0, nonzero: 0, peak: 0 };
+var songAudio=null;
 h.psg.get_onDataReady().subscribe(p => { audio.packets++; for (var i=0;i<p.sampleCount;i++) {
-var a=Math.abs(p.left[i])+Math.abs(p.right[i]); if(a>0.0001)audio.nonzero++; audio.peak=Math.max(audio.peak,a); } });
+var left=p.left[i],right=p.right[i],a=Math.abs(left)+Math.abs(right);
+if(a>0.0001)audio.nonzero++; audio.peak=Math.max(audio.peak,a);
+if(songAudio){songAudio.samples++;songAudio.leftEnergy+=left*left;songAudio.rightEnergy+=right*right;
+songAudio.leftPeak=Math.max(songAudio.leftPeak,Math.abs(left));songAudio.rightPeak=Math.max(songAudio.rightPeak,Math.abs(right));}
+} });
 `, context);
 await vm.runInContext('h.rom.get_ready$()', context);
 function advance(ms) { const until = now + ms; while (now < until) { now += 4; for (const fn of [...timers.values()]) fn(); } }
@@ -52,8 +58,17 @@ for (const [column, character] of [...'SPECTRUM MUSIC'].entries()) {
   if (equal) matching++;
 }
 assert.equal(matching, 'SPECTRUM MUSIC'.length, 'Music-menu title must reach the screen');
-vm.runInContext('h.keyboard.switchKeys([{index:3,bit:0}],true)', context); advance(100);
-vm.runInContext('h.keyboard.switchKeys([{index:3,bit:0}],false)', context); advance(3000);
+const excerpts=[];
+for(const [name,bit] of [['Lumiere',0],['Alicia',1]]) {
+  vm.runInContext('songAudio={samples:0,leftEnergy:0,rightEnergy:0,leftPeak:0,rightPeak:0}',context);
+  vm.runInContext(`h.keyboard.switchKeys([{index:3,bit:${bit}}],true)`,context);advance(100);
+  vm.runInContext(`h.keyboard.switchKeys([{index:3,bit:${bit}}],false)`,context);advance(3000);
+  const stats=vm.runInContext('songAudio',context);
+  assert(stats.leftEnergy>0.01&&stats.rightEnergy>0.01,`${name} must have nonzero audio in both channels`);
+  assert(stats.leftPeak<1&&stats.rightPeak<1,`${name} must not clip`);
+  excerpts.push({name,samples:stats.samples,leftRms:Math.sqrt(stats.leftEnergy/stats.samples),
+    rightRms:Math.sqrt(stats.rightEnergy/stats.samples),leftPeak:stats.leftPeak,rightPeak:stats.rightPeak});
+}
 const audio = vm.runInContext('audio', context);
 assert(audio.nonzero > 100, 'The menu must produce actual nonzero AY/beeper samples');
 const memory = vm.runInContext('Array.from({length:65536},(_,i)=>h.bus.mem_read(i))', context);
@@ -63,6 +78,8 @@ vm.runInContext('h.clock.stop(); h.drives[0].insertTRD(image)', context);
 assert.deepEqual(vm.runInContext('Array.from({length:65536},(_,i)=>h.bus.mem_read(i))', context), memory, 'Swap must preserve the mapped RAM and ROM');
 assert.equal(vm.runInContext('h.cpu.get_state().pc', context), pc, 'Swap must preserve PC');
 const report = { scope: 'Deterministic upstream-core smoke, not full release timing', musicTitleGlyphs: matching,
-  emulatedMilliseconds: now, audio: { ...audio }, swapPreservedMemoryAndPC: true };
+  emulatedMilliseconds: now, audio: { ...audio }, songExcerpts:excerpts,
+  coreSha256:createHash('sha256').update(await readFile(resolve(root,'vendor/zx-dream.js'))).digest('hex'),
+  diskSha256:createHash('sha256').update(music).digest('hex'),swapPreservedMemoryAndPC: true };
 console.log(JSON.stringify(report, null, 2));
 if (process.argv[3]) await writeFile(process.argv[3], JSON.stringify(report, null, 2) + '\n');
