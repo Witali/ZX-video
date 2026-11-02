@@ -1,5 +1,40 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Use one visible full-frame surface in WebGL as well as Canvas
+
+- **Objective/baseline:** Investigate the same thin boundary/uneven-raster
+  report in WebGL at `0cb3e088`. The user explicitly requests one visible
+  surface in both modes. Canvas was already unified; WebGL still exposed
+  independently scaled border and screen canvases.
+- **Change:** Keep native 256×192 GPU bank buffers hidden. Transfer the
+  selected bank to a native-size texture in one visible 576×448 WebGL surface,
+  clear its border there and draw the active texture in the integer
+  (32,32,512,384) viewport with nearest sampling. No playback `readPixels`,
+  PNG encoding or JS RGBA readback is added. Preserve cached banks and skip
+  unchanged uploads. Use high-precision shader coordinates. Extend recovery
+  to the visible context as well as the two native contexts. The reproducible
+  vendor generator records the presentation override as a local patch.
+- **Verification/decision:** WebGL 1 and 2 each pass the independent 192-row,
+  both-bank/partial-write oracle (1,769,472 pixels), continuous border/screen
+  and border-only updates (1,161,216 pixels each), cached bank flips without
+  writes (4,644,864 bytes), and sixteen full-frame colour/FLASH comparisons
+  with Canvas (16,515,072 RGBA bytes). All mismatch counts are zero. Switching,
+  unavailable GL and visible/hidden context-loss fallback preserve CPU/RAM/
+  paging/disk state; both modes expose one canvas. The real direct-IMA TRD
+  reaches its complete title screen in the in-app browser at DPR 1.25. An
+  initial early pause captured unfinished ROM painting; resuming completed
+  boot. Vendor regeneration reproduces staged bytes exactly, and every machine
+  module outside WebGL remains byte-identical. The initial local regeneration
+  check mistakenly normalized CRLF on only one comparison operand; correcting
+  the harness to compare raw bytes resolved that false failure. Keep unified
+  GPU composition. This does not qualify all host DPI/zoom
+  configurations or GPU speed; the extra presentation context is not a speed
+  claim. CPU/player bytes and absolute target T-state costs stay unchanged
+  (delta 0 T).
+  [Override](web/tools/webgl-presentation.js),
+  [fixture](web/tools/renderer-check.html),
+  [report](web/reports/webgl-composition.json).
+
 ## 2026-11-02 — Use WebGL as the default browser renderer
 
 - **Objective/baseline:** Apply the user's preferred default after the Canvas

@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+const webglPresentation = readFileSync(new URL('./webgl-presentation.js', import.meta.url), 'utf8');
 // Local fixes to pinned ZX-Dream. Match exact upstream text so upgrades fail safely.
 export function patchEmulator(source) {
   function replace(before, after) {
@@ -134,5 +136,14 @@ export function patchEmulator(source) {
 });`);
   if (!canvasCode.includes('ctx.drawImage(this._nativeLayers[layer]')) throw new Error('Canvas presentation anchor changed');
   source = source.slice(0, canvasBegin) + canvasCode + source.slice(canvasEnd);
+  const webglBegin = source.indexOf('function WebGLRenderer()');
+  const webglEnd = source.indexOf('// Upstream module: hardware/keyboard.js', webglBegin);
+  if (webglBegin < 0 || webglEnd < 0) throw new Error('WebGL presentation anchor changed');
+  const webglCode = source.slice(webglBegin, webglEnd);
+  const drawAnchor = 'if (glBufferIndex) {';
+  if (!webglCode.includes(drawAnchor)) throw new Error('WebGL dirty upload anchor changed');
+  source = source.slice(0, webglBegin)
+    + webglCode.replace(drawAnchor, `${drawAnchor}\n                this._presentationChanged = true;`)
+    + webglPresentation + '\n\n' + source.slice(webglEnd);
   return source;
 }

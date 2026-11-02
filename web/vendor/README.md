@@ -11,6 +11,11 @@ monotonic host pacing that retains pending shared-machine time, and a native
 Canvas framebuffer with a completed-frame nearest-neighbor presentation blit.
 Canvas bank buffers are hidden and copied together with the border to one
 visible surface, preserving one pixel grid across the screen boundaries.
+The [WebGL presentation override](../tools/webgl-presentation.js) likewise
+exposes one full-frame GPU surface and keeps both native bank canvases hidden.
+Its final texture uses nearest-neighbor GPU scaling and high-precision sample
+coordinates; context loss on any of the three GPU contexts triggers Canvas
+recovery. It does not read GPU pixels into JavaScript during playback.
 The upstream UI, debugger, PHP services, example
 disks, jQuery and Knockout are not included. Upstream comments are retained.
 See [MIT license](LICENSE.zx-dream) and the per-module hashes in

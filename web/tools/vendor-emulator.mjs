@@ -37,5 +37,5 @@ for (const name of ['ayumi.js', ...['48.rom', '48turbo.rom', '128tr.rom', 'tr5_0
 await writeFile(join(output, 'provenance.json'), JSON.stringify({
   upstream: 'https://github.com/XMypuK/zx-dream',
   revision: 'ef68e190753d599752d1367050a94b85a06121c8', modules: hashes,
-  localPatches: ['web/tools/patch-emulator.mjs']
+  localPatches: ['web/tools/patch-emulator.mjs', 'web/tools/webgl-presentation.js']
 }, null, 2) + '\n');

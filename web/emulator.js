@@ -83,17 +83,17 @@ export class SpectrumPlayer {
   bindDisplay() {
     const bind = mode => {
       this.container.querySelectorAll('canvas').forEach(canvas => canvas.remove());
-      // Canvas has a device-sized presentation surface and a separate native
-      // framebuffer. Its final nearest-neighbor blit creates exact 2x2 blocks.
+      // Both backends expose one device-sized surface including the border.
+      // WebGL keeps its hidden bank buffers native and scales them on the GPU.
       const presentationScale = mode === 'canvas' ? 2 : 1;
       this.hw.bus.opt('RENDERING_PARAMS', { scale: presentationScale, scaleType: 1,
         rendererType: mode === 'webgl' ? 3 : 1, renderOnAnimationFrame: false });
       const canvases = [0, 1, 2].map(index => {
         const canvas = document.createElement('canvas');
-        canvas.width = (index ? 256 : 288) * presentationScale;
-        canvas.height = (index ? 192 : 224) * presentationScale;
+        canvas.width = index ? 256 * presentationScale : 576;
+        canvas.height = index ? 192 * presentationScale : 448;
         canvas.className = index ? 'screen-layer' : 'border-layer';
-        if (index) canvas.addEventListener('webglcontextlost', event => {
+        canvas.addEventListener('webglcontextlost', event => {
           event.preventDefault();
           if (this.container.contains(canvas) && this.activeRenderer === 'webgl') {
             bind('canvas');
