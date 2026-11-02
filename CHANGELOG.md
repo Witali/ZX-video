@@ -18,6 +18,32 @@
   the catalogue change. Target Z80 instructions/data unchanged, delta 0 T.
   [Publication policy](web/tools/catalog-policy.mjs),
   [build checks](web/tools/check-build.mjs).
+## 2026-11-02 — Prepare three additional Spectrum artwork proposals
+
+- **Objective/input:** The user requests a separate artwork agent and more
+  varied actual game screenshot references alongside the main 14-image set.
+  From `b120b135`, generate a Paintress/Monolith landscape, Sirene environment
+  and Gestral village panorama with the built-in ImageGen tool. Reference
+  screenshots are retained locally only; URLs/hashes and exact prompts are
+  recorded in [proposal provenance](music-menu/artwork/proposals/provenance.json).
+- **Changed parameters/iteration:** Reuse the main set's exact shared Cinzel
+  wordmark mask. Compile 256×192 screens with one legal two-color pair per
+  8×8 cell, common BRIGHT and no FLASH. Supersede the first Sirene upper-body
+  composition with a wider stage/cavern view after the environment-variety
+  steering; retain its source as final-edit provenance, not a fourth proposal.
+  Borders are black/black/yellow for Paintress/Sirene/village.
+  Before committing, exclude nonvisual generated caBX metadata from source
+  copies; retain untouched originals locally and prove every IDAT pixel
+  stream unchanged in the sanitization report. Native SCR bytes are unchanged.
+- **Measured validation:** Three 6912-byte SCRs; independent Pillow decoding
+  checks 147,456 native pixels, 1,327,104 3× preview pixels, 2304 attribute
+  cells and every shared footer byte. All checks pass; all three native
+  previews were visually inspected for recognizable silhouette and scene.
+  [Saved proof](music-menu/artwork/proposals/verification.json).
+- **Decision/scope:** Deliver three artwork proposals for the main agent's
+  RAM/decompression/timing comparison. No player, audio stream, TRD or web
+  release changes. Target instructions unchanged, delta 0 T; emulator,
+  transition-effect and physical-screen qualification remain pending.
 
 ## 2026-11-02 — Check the same note-envelope improvements in Alicia
 
