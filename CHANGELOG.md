@@ -1,5 +1,42 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Add the browser TRD library and GitHub Pages player
+
+- **Objective/baseline:** Add browser playback for retained project disks at
+  repository baseline `928cd3b2`; no existing web frontend or Pages workflow.
+- **Change:** Build a static library from all 250 tracked TRDs, including
+  55 root images and 60 images without curated descriptions. Retain the
+  catalogue's coverage distinction. Vendor pinned ZX-Dream hardware and
+  Ayumi; use stock Spectrum 128 ROMs and TR-DOS 5.03. Add search, media/archive
+  filters, local file reading, selection links, pause/mute/fullscreen,
+  keyboard/touch keys and manual disk insertion without resetting RAM.
+  A loading spinner follows actual floppy-controller activity as well as
+  initial image fetching, including later reads during playback.
+  Pages CI materializes LFS and packages only explicit website assets and
+  authenticated disk images. [Implementation and reproduction](web/README.md),
+  [source/ROM identities](web/vendor/provenance.json).
+- **Verification:** The complete site build authenticates every image against
+  its committed bytes and the 190 curated identities. Negative build checks
+  reject LFS pointers, invalid TRDs and modified bytes. The deterministic
+  real-ROM/core/controller integration smoke reaches all 14 music-title
+  glyphs; 63.1 emulated seconds produce 5,434 stereo packets, including
+  136,115 nonzero samples, maximum summed channel magnitude 0.664809.
+  Inserting another disk preserves mapped memory and CPU PC. Reproduce with
+  [build checks](web/tools/check-build.mjs) and
+  [emulator smoke](web/tools/check-emulator.mjs).
+  In-app browser checks cover music-menu and Sea Foam lineart video boot,
+  search/empty results, selection links, pause, insertion without reset and
+  opening a local TRD. No browser JavaScript errors were observed.
+- **Limits/decision:** Keep as a browser preview. This is not a complete
+  movie EOF/timing qualification or a physical audio-output measurement.
+  The upstream bus lacks Spectrum ULA contention; target player hot paths,
+  existing release bytes and their timing evidence are unchanged (0 T
+  target-code difference). Full-cache loading can take about a minute with
+  the emulated floppy controller. The initial full worktree checkout ran out
+  of disk space and was replaced by a sparse checkout; a temporary requested
+  cleanup pause preserved the unfinished web work. These host setup issues
+  did not change disk images or release qualification.
+
 ## 2026-10-26 — Bind the catalogue to the repaired ROM-menu artifact
 
 - **Objective/change:** Update the music-menu entry to the final artifact

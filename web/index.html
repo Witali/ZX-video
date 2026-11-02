@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Play ZX-video TRD disks in your browser with a ZX Spectrum emulator, AY sound and Beta Disk.">
+  <meta name="color-scheme" content="dark">
+  <title>ZX-video · Online player</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="vendor/ayumi.js"></script>
+  <script defer src="vendor/zx-dream.js"></script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="ZX-video home"><span class="brand-icon" aria-hidden="true">ZX<span></span></span><span>ZX-video <small>ONLINE PLAYER</small></span></a>
+    <a href="https://github.com/Witali/ZX-video" target="_blank" rel="noopener noreferrer">View project <span aria-hidden="true">↗</span></a>
+  </header>
+  <main>
+    <div class="intro"><p class="eyebrow">A LITTLE MACHINE. A WHOLE DISK OF POSSIBILITIES.</p><h1>Put a disk on.</h1><p>Video, music and audio experiments, running on a Spectrum in your browser.</p></div>
+    <div class="workspace">
+      <aside class="library" aria-label="Disk library">
+        <div class="panel-title"><h2>Disk library</h2><span id="total" class="count">…</span></div>
+        <label class="search"><span class="sr-only">Search disks</span><input id="search" type="search" placeholder="Search name or experiment…" autocomplete="off"></label>
+        <div class="filters"><label><span class="sr-only">Disk location</span><select id="scope"><option value="root">Root disks</option><option value="all">All project disks</option></select></label><label><span class="sr-only">Media type</span><select id="category"><option value="all">All media</option><option>Video</option><option>Music</option><option>Audio</option></select></label></div>
+        <p id="results" class="results" role="status">Loading library…</p>
+        <div id="disks" class="disk-list" aria-label="Available disks"></div>
+        <label class="local-file">＋ Open a local TRD<input id="local" type="file" accept=".trd" hidden></label>
+        <p class="local-note">Local files stay in your browser.</p>
+      </aside>
+      <section class="player-panel" aria-label="Spectrum player">
+        <div class="player-heading"><span class="eyebrow">ZX SPECTRUM · 128K</span><span id="machine-status" class="machine-status" role="status"><i aria-hidden="true"></i><span id="machine-state">Ready when you are</span></span></div>
+        <div id="monitor" class="monitor">
+          <div id="display" class="display" tabindex="0" role="application" aria-label="Spectrum keyboard and display. Click here to use your keyboard.">
+            <div id="welcome" class="welcome"><div class="spectrum-stripes" aria-hidden="true"><b></b><b></b><b></b><b></b></div><p class="welcome-title">Your Spectrum is ready.</p><p>Choose a disk. Press play.</p><span>128 KB RAM &nbsp; / &nbsp; AY SOUND &nbsp; / &nbsp; TR-DOS</span></div>
+          </div>
+          <div id="disk-loading" class="disk-loading" aria-hidden="true" hidden><span class="loading-spinner"></span><span id="loading-label">Reading floppy…</span></div>
+        </div>
+        <div class="transport"><button id="play" class="primary" disabled>▶ Play disk</button><button id="swap" disabled title="Insert the selected disk into drive A while keeping RAM and playback state">Insert without reset</button><div class="transport-secondary"><button id="pause" disabled>Pause</button><button id="restart" disabled>Restart</button><button id="mute" aria-pressed="false">Mute</button><button id="fullscreen">Full screen</button></div></div>
+        <p id="status" class="status" role="status" aria-live="polite">Choose a disk to begin.</p>
+        <div class="selected-info"><div><p class="eyebrow">SELECTED DISK</p><h2 id="disk-name">Loading…</h2></div><a id="download" hidden download>Download TRD ↓</a><p id="description"></p><p id="disk-path" class="disk-path"></p><div class="details"><span id="disk-size"></span><a id="guide" target="_blank" rel="noopener noreferrer">Read notes ↗</a><button id="share">Copy link</button></div><p id="mounted" class="mounted">Drive A is empty.</p></div>
+        <details class="help"><summary>Keyboard &amp; changing disks</summary><p>Click the screen to send your keyboard to the Spectrum. Shift is Caps Shift; Alt is Symbol Shift. Search and other controls keep their normal keyboard behavior.</p><p>Use the on-screen keys on a touch device, or to confirm a disk prompt:</p><div class="key-buttons"><button data-key="Enter" disabled>Enter</button><button data-key="Space" disabled>Space</button><button data-key="1" disabled>1</button><button data-key="2" disabled>2</button></div><p>When a program asks for the next disk, select it and choose <strong>Insert without reset</strong>, then press the key requested on screen. <strong>Play disk</strong> starts a fresh boot. Archived test images may need manual commands or may not boot by themselves.</p><p>The browser emulator is a listening and viewing preview. Project timing and release qualifications remain those recorded in the repository.</p></details>
+      </section>
+    </div>
+    <noscript>This player needs JavaScript enabled to emulate the Spectrum.</noscript>
+  </main>
+  <footer><span>Made for a machine with 128 KB of memory.</span><span>Emulation: <a href="https://github.com/XMypuK/zx-dream" target="_blank" rel="noopener noreferrer">ZX-Dream</a> + Ayumi · <a href="vendor/README.md">Credits &amp; ROM notices</a></span></footer>
+</body>
+</html>

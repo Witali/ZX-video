@@ -1,5 +1,10 @@
 # ZX-video
 
+The [online TRD player](https://witali.github.io/ZX-video/) provides a
+searchable disk library and a browser Spectrum emulator with AY sound.
+Choose **Play disk** to boot, or **Insert without reset** when a multi-disk
+program requests the next volume. [Local preview and GitHub Pages setup](web/README.md).
+
 The curated [TRD catalogue](TRD_CATALOG.md) describes retained disk images,
 its producer scripts, exact artifact commit, recorded branch reference and
 SHA-256. [Unsuccessful images retired on 2026-10-05](docs/maintenance/2026-10-05-retired-trds.md)

@@ -1,0 +1,54 @@
+name: Online TRD player
+
+on:
+  push:
+    branches: [main]
+    paths: ['web/**', '.github/workflows/pages.yml', 'toolkit/trd_catalog.json', '**.trd', '**.TRD']
+  pull_request:
+    paths: ['web/**', '.github/workflows/pages.yml', 'toolkit/trd_catalog.json', '**.trd', '**.TRD']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          lfs: true
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate browser source and build authenticated disk library
+        run: |
+          node --check web/app.js
+          node --check web/emulator.js
+          node --check web/audio-worklet.js
+          node web/tools/build.mjs
+          node web/tools/check-build.mjs
+          node web/tools/check-emulator.mjs
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: .tmp/web-site
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Deploy player
+        id: deployment
+        uses: actions/deploy-pages@v4

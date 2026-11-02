@@ -1,4 +1,8 @@
 # Disk images belong in Git LFS, including uppercase file extensions.
+/web/** text eol=lf
+# Preserve pinned third-party source and ROM hashes byte-for-byte.
+/web/vendor/** -text -whitespace
+/.github/workflows/*.yml text eol=lf
 /audiobook-beeper/experiments/ima-3bit-series/**/*.bin -text -diff
 /audiobook-beeper/experiments/ima-3bit-series/**/*.txt -text -diff
 /audiobook-beeper/experiments/ima-3bit-series/**/*.szx filter=lfs diff=lfs merge=lfs -text
