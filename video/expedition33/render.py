@@ -166,7 +166,7 @@ Original game by Sandfall Interactive, published by Kepler Interactive. Original
 
 Title font: Cinzel (SIL Open Font License).
 
---- Русский ---
+Русский
 
 Это моя попытка отдать дань уважения создателям оригинальной Clair Obscur: Expedition 33. Спасибо за мир, музыку и образы, которые вдохновили меня на это демо.
 

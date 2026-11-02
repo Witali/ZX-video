@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-11-03 — Remove accidental YouTube description strikethrough
+
+- **Trigger/baseline:** The published bilingual description used an ASCII
+  `--- Russian ---`-style separator around its Russian-language heading.
+  YouTube interpreted the hyphens as strikethrough; the user asks for plain
+  text. Replace the actual `--- Русский ---` line with plain `Русский` in
+  the public description, local upload text and render generator.
+- **Verification/scope:** Save in YouTube Studio and check the refreshed
+  public description. Retain both tribute paragraphs, all direct project
+  links and chapter starts. No media, musical or native target code changes;
+  target delta **0 T**.
+
 ## 2026-11-03 — Publish the reviewed Expedition 33 video on YouTube
 
 - The user approves revision-2 sound (no reported clicks) and explicitly
