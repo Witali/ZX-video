@@ -305,6 +305,14 @@ artifact. The first fixture readback incorrectly requested WebGL1 after the
 upstream renderer selected WebGL2; the final fixture handles both contexts.
 # Expedition 33 Demo preview
 
+Fullscreen centers the active 256x192 raster, fitting it to the available
+viewport while retaining at least two character cells (16 native pixels) of
+border on every side. Remaining space uses the current Spectrum border color.
+Canvas and WebGL draw the complete result on one visible device-sized canvas;
+no second border or screen overlay is introduced. Windowed mode restores exact
+2x2 physical pixels, including Windows DPI/browser zoom compensation. WebGL
+remains the default; saved explicit Canvas preferences remain available.
+
 The default disk is now `Expedition-33-Demo.trd`. It contains the complete
 looping Lumiere/Alicia AY playlist and eighteen native illustrations. The
 first loading screen remains visible until playback; any Spectrum key opens

@@ -24,6 +24,11 @@ export class SpectrumPlayer {
     this.diskBusyUntil = 0;
     this.held = new Map();
     this.keyCounts = new Map();
+    this.presentationLayout = { width: 576, height: 448, viewport: null };
+    container.addEventListener('spectrum-layout', event => {
+      this.presentationLayout = event.detail;
+      this.applyPresentationLayout();
+    });
     const rows = ['ShiftLeft,Z,X,C,V', 'A,S,D,F,G', 'Q,W,E,R,T', '1,2,3,4,5',
       '0,9,8,7,6', 'P,O,I,U,Y', 'Enter,L,K,J,H', 'Space,AltLeft,M,N,B'];
     this.keys = new Map(rows.flatMap((row, index) => row.split(',').map((key, bit) =>
@@ -104,6 +109,7 @@ export class SpectrumPlayer {
         return canvas;
       });
       this.hw.display.bind(canvases);
+      this.applyPresentationLayout();
       this.hw.display.force_redraw();
       this.activeRenderer = mode;
       this.container.dataset.renderer = mode;
@@ -116,6 +122,15 @@ export class SpectrumPlayer {
       bind('canvas');
       this.onRendererChanged('canvas', true);
     }
+  }
+  applyPresentationLayout() {
+    const canvas = this.container.querySelector('canvas.border-layer');
+    if (!canvas || !this.hw) return;
+    const { width, height, viewport } = this.presentationLayout;
+    if (canvas.width !== width) canvas.width = width;
+    if (canvas.height !== height) canvas.height = height;
+    canvas.spectrumViewport = viewport;
+    this.hw.display.force_redraw();
   }
   async enableAudio() {
     if (!this.audio) {

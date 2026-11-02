@@ -108,12 +108,31 @@ export function patchEmulator(source) {
         this._displayedLayer = -1;
         this._presentationChanged = true;`);
   canvasCode = canvasCode.replace('\tdrawData: function', `    displayLayer: function (layer) {
-        if (this._displayedLayer !== layer || this._presentationChanged) {
-            var border = this._borderWidth * this._scale;
-            this._borderCtx.drawImage(layer ? this._layer1 : this._layer0, border, border);
+        if (this._displayedLayer !== layer || this._presentationChanged ||
+            this._presentedWidth !== this._border.width || this._presentedHeight !== this._border.height ||
+            this._presentedViewport !== this._border.spectrumViewport) {
             this._displayedLayer = layer;
             this._presentationChanged = false;
+            this._presentFrame();
         }
+    },
+    drawBorder: function (color) {
+        this._lastBorderColor = color.slice(0, 4);
+        if (this._border.spectrumViewport) this._presentFrame();
+        else RendererBase.prototype.drawBorder.call(this, color);
+    },
+    _presentFrame: function () {
+        var ctx = this._borderCtx, border = this._borderWidth * this._scale;
+        this._presentedWidth = this._border.width;
+        this._presentedHeight = this._border.height;
+        this._presentedViewport = this._border.spectrumViewport;
+        var viewport = this._border.spectrumViewport ||
+            { x: border, y: border, width: 256 * this._scale, height: 192 * this._scale };
+        ctx.fillStyle = 'rgba(' + this._lastBorderColor.join(',') + ')';
+        ctx.fillRect(0, 0, this._border.width, this._border.height);
+        ctx.imageSmoothingEnabled = false;
+        if (this._displayedLayer >= 0) ctx.drawImage(this._nativeLayers[this._displayedLayer],
+            0, 0, 256, 192, viewport.x, viewport.y, viewport.width, viewport.height);
     },
 \tdrawData: function`);
   canvasCode = canvasCode.replace('sampleScale = ( this._scaleType == VAL_SCALE_METHOD_PRE ) ? this._scale : 1,',

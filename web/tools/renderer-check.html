@@ -1,6 +1,7 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><title>Spectrum renderer verification</title>
 <script src="vendor/ayumi.js"></script><script src="vendor/zx-dream.js"></script>
 <body><label><input id="webgl1" type="checkbox">Force WebGL 1</label>
+<button id="fullscreen-check">Verify centered fullscreen and solid border</button><pre id="fullscreen-result">Ready</pre>
 <button id="rows">Verify Spectrum scanline addresses and scaling</button><pre id="rows-result">Ready</pre>
 <div id="row-screens" style="display:flex;gap:20px;flex-wrap:wrap"></div>
 <button id="run">Compare native Canvas and WebGL pixels</button><pre id="result">Ready</pre>
@@ -11,6 +12,53 @@ const defaultGlContext=WebGLRenderer.prototype._glGetContext;
 document.getElementById('webgl1').onchange=event=>{
   WebGLRenderer.prototype._glGetContext=event.target.checked
     ? function(canvas,options){return canvas.getContext('webgl',options);}:defaultGlContext;
+};
+document.getElementById('fullscreen-check').onclick=()=>{
+  try {
+    let borderPixels=0,rasterPixels=0;
+    const cases=[];
+    for(const renderer of [1,3]){
+      const fixture=create(renderer,renderer===1?2:1);
+      const native=new Uint8Array(6912);
+      for(let y=0;y<192;y++)for(let x=0;x<32;x++){
+        const offset=((y&192)<<5)|((y&7)<<8)|((y&56)<<2)|x;
+        native[offset]=(y*17+x*43)&255;
+      }
+      for(let i=6144;i<6912;i++)native[i]=64|((i&7)||7);
+      native.forEach((v,i)=>fixture.bus.mem_write(0x4000+i,v));
+      for(const [width,height] of [[960,540],[540,960],[887,613],[576,448]]){
+        fixture.visible.width=width;fixture.visible.height=height;
+        const scale=Math.min(width/288,height/224);
+        const w=Math.floor(256*scale),h=Math.floor(192*scale);
+        const viewport={x:Math.round((width-w)/2),y:Math.round((height-h)/2),width:w,height:h};
+        fixture.visible.spectrumViewport=width===576?null:viewport;
+        const active=fixture.visible.spectrumViewport||{x:32,y:32,width:512,height:384};
+        for(let color=0;color<8;color++){
+          fixture.bus.var_write('port_fe_value',color);fixture.display.force_redraw();
+          const pixels=readVisible(fixture);
+          const border=[color&2?191:0,color&4?191:0,color&1?191:0,255];
+          for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+            if(x>=active.x&&x<active.x+active.width&&y>=active.y&&y<active.y+active.height)continue;
+            const p=(y*width+x)*4;
+            if(border.some((v,c)=>pixels[p+c]!==v))throw Error(`Border mismatch renderer=${renderer} ${width}x${height} color=${color} at ${x},${y}`);
+            borderPixels++;
+          }
+          for(let y=0;y<192;y++)for(let x=0;x<256;x++){
+            const dx=active.x+Math.floor((x+.5)*active.width/256),dy=active.y+Math.floor((y+.5)*active.height/192);
+            const p=(dy*width+dx)*4,offset=((y&192)<<5)|((y&7)<<8)|((y&56)<<2)|(x>>3);
+            const attr=native[6144+(y>>3)*32+(x>>3)];
+            const ink=native[offset]&(128>>(x&7))?attr&7:0;
+            const expected=[ink&2?255:0,ink&4?255:0,ink&1?255:0,255];
+            if(expected.some((v,c)=>pixels[p+c]!==v))throw Error(`Raster mismatch renderer=${renderer} ${width}x${height} at ${x},${y}; actual=${Array.from(pixels.slice(p,p+4))} expected=${expected} destination=${dx},${dy}`);
+            rasterPixels++;
+          }
+        }
+        cases.push({renderer,webglVersion:fixture.webglVersion,width,height,active});
+      }
+      fixture.dispose();
+    }
+    document.getElementById('fullscreen-result').textContent=JSON.stringify({pass:true,borderPixels,rasterPixels,cases},null,2);
+  } catch(error){document.getElementById('fullscreen-result').textContent=error.stack;}
 };
 function create(rendererType,presentationScale=1) {
   const bus = new ZX_Bus(), display = new ZX_Display();

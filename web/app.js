@@ -10,7 +10,7 @@ function status(message, error = false) { $('status').textContent = message; $('
 player.onRendererChanged = (actual, fallback) => {
   $('renderer-status').textContent = fallback
     ? 'WebGL unavailable. Canvas is active; playback is preserved.'
-    : `${actual === 'webgl' ? 'WebGL' : 'Canvas'} · native 256×192 buffer · exact 2× physical pixels.`;
+    : `${actual === 'webgl' ? 'WebGL' : 'Canvas'} · native 256×192 buffer · exact 2× physical pixels in windowed mode.`;
 };
 try {
   const saved = new URL(location.href).searchParams.get('renderer') || localStorage.getItem('zx-video.renderer');
@@ -113,7 +113,15 @@ $('swap').addEventListener('click', () => load(false));
 $('restart').addEventListener('click', () => load(true, mounted, mounted.data));
 $('pause').addEventListener('click', () => { paused = !paused; player.pause(paused); controls(); status(paused ? 'Playback paused.' : 'Playback resumed.'); });
 $('mute').addEventListener('click', () => { player.setMuted(!player.muted); $('mute').setAttribute('aria-pressed', String(player.muted)); $('mute').textContent = player.muted ? 'Unmute' : 'Mute'; });
-$('fullscreen').addEventListener('click', async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $('monitor').requestFullscreen(); } catch { status('Full screen is unavailable in this browser.'); } });
+$('fullscreen').addEventListener('click', async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else {
+      await $('monitor').requestFullscreen();
+      $('display').focus({ preventScroll: true });
+    }
+  } catch { status('Full screen is unavailable in this browser.'); }
+});
 for (const id of ['search', 'scope', 'category']) $(id).addEventListener(id === 'search' ? 'input' : 'change', render);
 $('local').addEventListener('change', async event => {
   const file = event.target.files[0]; if (!file) return;

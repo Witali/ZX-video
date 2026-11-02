@@ -18250,3 +18250,34 @@ the correct image MIME type. Browser review checks the logo and icon links;
 the existing build guards remain intact. This changes no emulation or target
 Z80 path (0 T delta).
 
+# 2026-11-02 — Center fullscreen output with automatic colored margins
+
+The user requested a larger fullscreen image, centered active raster and the
+entire surrounding area filled with the program's current BORDER color, then
+specified at least two character cells of margin on all four sides. Fit the
+256x192 raster using the full 288x224 native outline and center it in a
+device-sized visible surface; wide/portrait excess also receives BORDER.
+Both Canvas and WebGL use one visible canvas, preserving the earlier unified
+presentation fix. Native 256x192 buffers remain unchanged. Exit restores
+576x448 device pixels and the exact windowed 2x2 DPI-compensated scale. WebGL
+remains the existing default. No Spectrum timing, CPU, disk, AY or Z80 path
+changes (target delta 0 T).
+
+The initial resize test found that an unchanged or paused picture could remain
+blank after returning to the normal canvas: force_redraw does not mark native
+pixels dirty. Both presenters now invalidate on surface/viewport changes and
+redraw the retained frame immediately. Canvas samples its native buffer once
+with smoothing disabled; WebGL retains NEAREST filtering. Preserve the initial
+failed resize attempt as a corrected presentation issue, not a qualified result.
+
+Built-in Chromium checks Canvas plus WebGL2 and forced WebGL1 at 960x540,
+540x960, 887x613 and restored 576x448, with all eight border colors. Each run
+checks 13,065,872 border pixels and 3,145,728 native sample centers, with exact
+colors/geometry. The normal-mode comparison matches all 16,515,072 RGBA bytes
+across sixteen patterns. Actual Full screen entry fills a 2560x1440 device
+canvas at Windows DPR1.25; exit restores 576x448 and CSS460.8x358.4. The final
+two-cell-margin geometry is retained in `web/reports/fullscreen/` alongside the
+unchanged-ROM/TRD/stereo integration report. All 1356 Fuse opcode vectors,
+shared clock, keyboard and eight RC-filter cases pass. The release TRD remains
+`fd8868220ad6e9f429fc367a9887a446adfccc9c230caa94f37b8805a5046db4`.
+

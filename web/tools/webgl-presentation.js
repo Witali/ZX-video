@@ -46,7 +46,9 @@ Object.assign(WebGLRenderer.prototype, {
         this._lastBorderColor = [0, 0, 0, 255];
     },
     displayLayer: function (layer) {
-        if (this._displayedLayer !== layer || this._presentationChanged) {
+        if (this._displayedLayer !== layer || this._presentationChanged ||
+            this._presentedWidth !== this._border.width || this._presentedHeight !== this._border.height ||
+            this._presentedViewport !== this._border.spectrumViewport) {
             const gl = this._screenCtx;
             gl.bindTexture(gl.TEXTURE_2D, this._copyTexture);
             // Canvas-to-texture transfer; no readPixels, PNG or JS RGBA readback.
@@ -63,15 +65,22 @@ Object.assign(WebGLRenderer.prototype, {
     },
     _presentFrame: function () {
         const gl = this._screenCtx, color = this._lastBorderColor;
+        this._presentedWidth = this._border.width;
+        this._presentedHeight = this._border.height;
+        this._presentedViewport = this._border.spectrumViewport;
         const scale = this._border.width / (256 + 2 * this._borderWidth);
         const border = this._borderWidth * scale;
+        const viewport = this._border.spectrumViewport ||
+            { x: border, y: border, width: 256 * scale, height: 192 * scale };
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.clearColor(color[0] / 255, color[1] / 255, color[2] / 255, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
         if (this._displayedLayer >= 0) {
-            // Integer viewport and NEAREST filtering give each native texel
-            // exactly 2x2 output pixels, on the same grid as the border.
-            gl.viewport(border, border, 256 * scale, 192 * scale);
+            // One surface contains both the centered raster and every border
+            // pixel. Fullscreen supplies a top-left-origin device viewport;
+            // normal mode retains exact 2x2 texels and its sixteen-pixel border.
+            gl.viewport(viewport.x, this._border.height - viewport.y - viewport.height,
+                viewport.width, viewport.height);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
         gl.flush();
