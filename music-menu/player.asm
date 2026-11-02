@@ -48,8 +48,19 @@ loaded: CALL install_irq
         LD (status),A
         CALL show_status
         CALL cursor
-        EI
 ready:  NOP
+; Start the first cached song once, on a real ULA field after all disk reads.
+; choose applies tick zero and marks the menu dirty. Reuse its ordinary UI
+; completion path; later fields enter menu_ready and pay no autoplay test.
+; The extra CALL/JP cost 17+10 = 27 CPU T, once; HALT/IRQ waiting is separate.
+; Keep EI adjacent to HALT: accepting an IRQ before HALT would delay the
+; initial note until another field. The ready marker runs while DI is held.
+        EI
+autoplay_wait:
+        HALT
+autoplay_start:
+        CALL choose
+        JP finish_ui
 menu_ready:
         HALT
 ; Audio is serviced first, before any cursor/attribute work. The remaining

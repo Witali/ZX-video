@@ -27,6 +27,8 @@ h.bus.opt('TSTATES_PER_INTRQ',70908); h.bus.opt('INTRQ_PERIOD',20);
 h.bus.opt('EXTENDED_MEMORY',0);
 h.psg.applySettings(true,0.35,1,0,0,1773400,512,0.7);
 var audio = { packets: 0, nonzero: 0, peak: 0 };
+var ayDataWrites = 0;
+h.bus.on_io_write(function () { ayDataWrites++; }, { mask: 0xffff, value: 0xbffd });
 var songAudio=null;
 h.psg.get_onDataReady().subscribe(p => { audio.packets++; for (var i=0;i<p.sampleCount;i++) {
 var left=p.left[i],right=p.right[i],a=Math.abs(left)+Math.abs(right);
@@ -58,6 +60,9 @@ for (const [column, character] of [...'SPECTRUM MUSIC'].entries()) {
   if (equal) matching++;
 }
 assert.equal(matching, 'SPECTRUM MUSIC'.length, 'Music-menu title must reach the screen');
+const autoplay = vm.runInContext('({ ayDataWrites, nonzeroSamples: audio.nonzero })', context);
+assert(autoplay.ayDataWrites > 100, 'Cold boot must play AY music before any keyboard input');
+assert(autoplay.nonzeroSamples > 100, 'Autoplay must produce actual sound');
 const excerpts=[];
 for(const [name,bit] of [['Lumiere',0],['Alicia',1]]) {
   vm.runInContext('songAudio={samples:0,leftEnergy:0,rightEnergy:0,leftPeak:0,rightPeak:0}',context);
@@ -78,7 +83,7 @@ vm.runInContext('h.clock.stop(); h.drives[0].insertTRD(image)', context);
 assert.deepEqual(vm.runInContext('Array.from({length:65536},(_,i)=>h.bus.mem_read(i))', context), memory, 'Swap must preserve the mapped RAM and ROM');
 assert.equal(vm.runInContext('h.cpu.get_state().pc', context), pc, 'Swap must preserve PC');
 const report = { scope: 'Deterministic upstream-core smoke, not full release timing', musicTitleGlyphs: matching,
-  emulatedMilliseconds: now, audio: { ...audio }, songExcerpts:excerpts,
+  emulatedMilliseconds: now, autoplayBeforeInput: autoplay, audio: { ...audio }, songExcerpts:excerpts,
   coreSha256:createHash('sha256').update(await readFile(resolve(root,'vendor/zx-dream.js'))).digest('hex'),
   diskSha256:createHash('sha256').update(music).digest('hex'),swapPreservedMemoryAndPC: true };
 console.log(JSON.stringify(report, null, 2));

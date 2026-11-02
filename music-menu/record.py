@@ -23,9 +23,11 @@ def record(fuse,output,song,seconds,*,captured=False):
     script = '\n'.join([
         'set $started 0','set $ticks 0',
         f'br {labels["key_changed"]}','com 1',
-        f'set z80:a {1+int(song=="alicia")}','set $started 1','co','end','cond 1 $started==0',
-        f'br {labels["song_started"]}','com 2','pr 12345','pr spectrum:frames','pr ula:tstates','co','end',
+        f'set z80:a {1+int(song=="alicia")}','co','end','cond 1 $started==0',
+        f'br {labels["song_started"]}','com 2','set $started 1','pr 12345','pr spectrum:frames','pr ula:tstates','co','end',
+        f'cond 2 [{labels["playing"]}]=={int(song=="alicia")}',
         f'br {labels["music_tick"]}','com 3','set $ticks $ticks+1','co','end',
+        'cond 3 $started==1',
         f'br {labels["menu_frame_done"]}','com 4','ex 77','end',
         f'cond 4 $ticks>={round(seconds*meta["control_hz"])}',
     ])
@@ -76,7 +78,7 @@ def record(fuse,output,song,seconds,*,captured=False):
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-click-fix')
+    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-autoplay')
     parser.add_argument('--fuse',type=Path,required=True)
     parser.add_argument('--song',choices=('lumiere','alicia'),required=True)
     parser.add_argument('--seconds',type=float,default=12)

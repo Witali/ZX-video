@@ -505,12 +505,14 @@
       "guide": "ZX-video-full-50Hz.md"
     },
     "music-menu": {
-      "description": "AY-only Lumiere/Alicia music menu with standard Spectrum ROM text, generator-before-volume register ordering and smoother envelopes. Both complete arrangements are cached together; keyboard and Kempston mouse switch songs during playback without disk reads. Both full songs, four switches and all 125 ROM glyphs pass real128 Fuse verification.",
+      "description": "AY-only Lumiere/Alicia music menu with automatic Lumiere playback, distinct repeated lead notes, soft software envelopes and sparse noise percussion in piano rests. Both complete arrangements are cached together; keyboard and Kempston mouse switch songs without disk reads. Both full songs, three live switches and all 125 ROM glyphs pass real128 Fuse verification.",
       "scripts": [
         "music-menu/build.py",
         "music-menu/verify.py",
         "music-menu/record.py",
         "music-menu/preview.py",
+        "music-menu/audit_notes.py",
+        "music-menu/audit_timing.py",
         "music-menu/analyze_clicks.py",
         "music-menu/probe_timbres.py"
       ],
@@ -521,19 +523,20 @@
     {
       "path": "ZX-Music-Menu.trd",
       "bytes": 655360,
-      "sha256": "80da9ca73e81cd38c65842d066fed930850d449e6b3a31fc0a494ab41b9ef607",
-      "commit": "29415f99f300f1c85cad59570968fce44c668656",
-      "subject": "Use Spectrum ROM text and qualify repaired music playback",
+      "sha256": "3ae7d156f12baba8f551f893dc50d4fcd1d5331495ae0167ab59c95ba3209e71",
+      "commit": null,
+      "subject": "Autoplay Lumiere with distinct repeated notes and quiet AY noise percussion",
       "group": "music-menu",
       "evidence": [
-        "music-menu/reports/click-fix/final/build.json",
-        "music-menu/reports/click-fix/final/verification.json"
+        "music-menu/reports/autoplay/build.json",
+        "music-menu/reports/autoplay/fuse-lumiere.json",
+        "music-menu/reports/autoplay/fuse-alicia.json"
       ],
       "branch_reference": {
-        "name": "codex/music-menu",
-        "head": "29415f99f300f1c85cad59570968fce44c668656",
+        "name": "codex/music-menu-autoplay",
+        "head": null,
         "distance": 0,
-        "evidence": "music-menu/reports/click-fix/final/catalog-provenance.json"
+        "evidence": "music-menu/reports/autoplay/build.json"
       },
       "build_head": null,
       "build_branch": null,

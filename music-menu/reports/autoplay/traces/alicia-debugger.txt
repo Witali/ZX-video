@@ -1,0 +1,124 @@
+base 10
+set $live 0
+set $segment 0
+set $ticks 0
+br 32884
+com 1
+pr 100
+pr spectrum:frames*70908+ula:tstates
+set $live 1
+co
+end
+br 33340
+com 2
+pr 101
+pr spectrum:frames*70908+ula:tstates
+pr z80:de
+pr z80:hl
+pr z80:b
+pr $live
+pr ula:mem7ffd
+co
+end
+br 32887
+com 3
+pr 109
+pr spectrum:frames*70908+ula:tstates
+pr 120
+pr spectrum:frames*70908+ula:tstates
+co
+end
+br 32928
+com 4
+pr 110
+pr spectrum:frames*70908+ula:tstates
+pr $segment
+set z80:a 1+($segment==1)+($segment==3)
+co
+end
+cond 4 $segment<4 && $ticks>=100
+br 33121
+com 5
+pr 111
+pr spectrum:frames*70908+ula:tstates
+pr [33737]
+set $segment $segment+1
+set $ticks 0
+co
+end
+br 33126
+com 6
+pr 103
+pr spectrum:frames*70908+ula:tstates
+pr $segment
+pr $ticks+1
+set $ticks $ticks+1
+co
+end
+br 33198
+com 7
+pr 104
+pr spectrum:frames*70908+ula:tstates
+pr $segment
+pr $ticks
+pr [33757]
+pr [33758]
+pr [33759]
+co
+end
+br port write 49149
+com 8
+pr 105
+pr spectrum:frames*70908+ula:tstates
+pr $segment
+pr $ticks
+pr z80:a
+pr z80:h
+co
+end
+cond 8 z80:pc==33187
+br 33325
+com 9
+pr 108
+pr z80:a
+pr z80:e
+co
+end
+cond 9 $live==1
+br 33021
+com 10
+pr 106
+pr spectrum:frames*70908+ula:tstates
+co
+end
+cond 10 $live==1
+br port write 254
+com 11
+pr 107
+pr z80:a
+co
+end
+cond 11 $live==1
+br 32894
+com 12
+pr 120
+pr spectrum:frames*70908+ula:tstates
+co
+end
+cond 12 $live==1
+br 33018
+com 13
+pr 121
+pr spectrum:frames*70908+ula:tstates
+co
+end
+cond 13 $live==1
+br 33018
+com 14
+pr 200
+pr spectrum:frames*70908+ula:tstates
+pr [33737]
+ex 77
+co
+end
+cond 14 $segment==4 && $ticks==7887

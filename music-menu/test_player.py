@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from arrangement import notes_for_pattern, timeline
-from build import HERE, ROOT, REGISTER_ORDER, MUTE_WRITES, build, control_frames, pack_frames, sha, triangle_period
+from build import HERE, ROOT, REGISTER_ORDER, MUTE_WRITES, CONTROL_HZ, REPEAT_GAP_FIELDS, build, control_frames, pack_frames, sha, triangle_period
 from verify import native_check, unpack
 
 
@@ -30,6 +30,8 @@ class MusicMenuTests(unittest.TestCase):
             self.assertTrue(report['controls']['mouse_switch_during_playback'])
             self.assertTrue(report['controls']['keyboard_switch_during_playback'])
             self.assertEqual(report['irq_handler_tstates'],18)
+            self.assertTrue(all(s['automatic_lumiere_start'] for s in report['songs']))
+            self.assertLess(report['songs'][0]['autoplay_first_field_tstates'],meta['frame_tstates'])
 
     def test_delta_roundtrip_preserves_envelope_restart_events(self):
         start = bytearray(14)
@@ -73,7 +75,7 @@ class MusicMenuTests(unittest.TestCase):
         for name in ('lumiere','alicia'):
             score = json.loads((HERE/'scores'/f'{name}.json').read_text())
             baseline,before = control_frames(score,click_safe=False)
-            fixed,after = control_frames(score)
+            fixed,after = control_frames(score,articulation=False,percussion=False)
             self.assertEqual(before['frames_sha256'],next(s for s in old['songs'] if s['song']==name)['frames_sha256'])
             self.assertEqual(before['ticks'],after['ticks'])
             self.assertLess(after['envelope_restarts'],before['envelope_restarts']//2)
@@ -81,6 +83,69 @@ class MusicMenuTests(unittest.TestCase):
             rows = unpack(fixed)
             self.assertTrue(all(row[11]+256*row[12]>0 and row[6]==31 for row in rows))
             self.assertGreater(after['phase_preserved_bass_note_changes'],0)
+
+    def test_repeated_lead_notes_have_real_silent_fields(self):
+        for name in ('lumiere','alicia'):
+            score = json.loads((HERE/'scores'/f'{name}.json').read_text())
+            data,meta = control_frames(score)
+            rows = unpack(data)
+            count = 0
+            notes = timeline(score)[0][0]
+            for before,after in zip(notes,notes[1:]):
+                onset = round(after[0]*CONTROL_HZ)
+                end = round((before[0]+before[1])*CONTROL_HZ)
+                if before[2]!=after[2] or not 0<=onset-end<REPEAT_GAP_FIELDS:
+                    continue
+                self.assertTrue(all(row[8]==0 for row in rows[onset-REPEAT_GAP_FIELDS:onset]))
+                self.assertGreater(rows[onset][8],0)
+                self.assertEqual(rows[onset-REPEAT_GAP_FIELDS-1][:2],rows[onset][:2])
+                count += 1
+            self.assertEqual(count,len(meta['repeated_note_articulation']))
+            self.assertGreater(count,0)
+
+    def test_repeat_attack_release_and_ties(self):
+        score = dict(tempo_bpm=120,beats_per_bar=4,playlist=['A'],
+                     patterns=dict(A=['C4:1 C4:1 R:2']),chord_pairs=[['Bm','Bm']])
+        data,meta = control_frames(score,percussion=False)
+        rows = unpack(data)
+        onset = round(.5*CONTROL_HZ)
+        attack = [row[8] for row in rows[onset:onset+5]]
+        self.assertEqual(attack,sorted(attack))
+        self.assertLess(attack[0],attack[-1])
+        tail = [row[8] for row in rows[onset-6:onset]]
+        self.assertEqual(tail,sorted(tail,reverse=True))
+        self.assertEqual(tail[-2:],[0,0])
+        score['patterns']['A'] = ['C4:4~','C4:4']
+        tied,tied_meta = control_frames(score,percussion=False)
+        middle = round(2*CONTROL_HZ)
+        self.assertEqual(len(timeline(score)[0][0]),1)
+        self.assertFalse(tied_meta['repeated_note_articulation'])
+        self.assertTrue(all(row[8]>0 for row in unpack(tied)[middle-2:middle+2]))
+
+    def test_noise_uses_only_silent_piano_slots_and_preserves_bass_envelope(self):
+        for name in ('lumiere','alicia'):
+            score = json.loads((HERE/'scores'/f'{name}.json').read_text())
+            plain,plain_meta = control_frames(score,percussion=False)
+            noisy,meta = control_frames(score)
+            without,with_noise = unpack(plain),unpack(noisy)
+            self.assertEqual(len(without),len(with_noise))
+            count = 0
+            for a,b in zip(without,with_noise):
+                self.assertGreater(b[11]+256*b[12],0)
+                self.assertTrue(all(b[r]<16 for r in (8,9)))
+                self.assertEqual(b[7]&(8|32),8|32)
+                if b[7]&16:
+                    self.assertEqual(a,b)
+                else:
+                    self.assertEqual(a[9],0)
+                    self.assertEqual(b[7]&2,2)
+                    self.assertIn(b[6],(4,12))
+                    self.assertIn(b[9],(5,7))
+                    self.assertTrue(all(a[r]==b[r] for r in range(14) if r not in (6,7,9)))
+                    count += 1
+            self.assertEqual(count,meta['noise_fields'])
+            self.assertGreater(count,0)
+            self.assertEqual(meta['envelope_restarts'],plain_meta['envelope_restarts'])
 
     def test_generators_are_programmed_before_channel_enable(self):
         for volume in (8,9,10):

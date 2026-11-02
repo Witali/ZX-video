@@ -20,14 +20,15 @@ def render(output, *, fuse=None, rom=None):
         # Only the requested 6912-byte display is read, never unrelated memory.
         for offset in range(0,6912,1728):
             count = min(1728,6912-offset)
-            script = '\n'.join([f'br {meta["player_labels"]["ready"]}','com 1','pr 12345',
+            label = 'menu_frame_done' if meta.get('autoplay_song') else 'ready'
+            script = '\n'.join([f'br {meta["player_labels"][label]}','com 1','pr 12345',
                 *(f'pr [{0x4000+offset+i}]' for i in range(count)),'ex 77','end'])
             result,trace = run_fuse(fuse,output,script,timeout=60)
             assert result.returncode==77,('Fuse screen capture failed',result.returncode)
             values = [int(m.group(1),0) for m in re.finditer(rb'(?m)^(-?\d+|0x[\da-fA-F]+)\r*$',trace)]
             assert len(values)==count+1 and values[0]==12345
             screen.extend(values[1:])
-        scope = 'Actual Fuse cold-boot display at ready, assembled from four bounded screen-memory reads.'
+        scope = 'Actual Fuse cold-boot display after startup/autoplay, assembled from four bounded screen-memory reads.'
     else:
         if rom is None:
             raise ValueError('Use --fuse for an actual screen or --rom for native ROM-output-stub preview')
@@ -66,7 +67,7 @@ def render(output, *, fuse=None, rom=None):
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-click-fix')
+    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-autoplay')
     parser.add_argument('--fuse',type=Path)
     parser.add_argument('--rom',type=Path)
     args = parser.parse_args()

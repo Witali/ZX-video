@@ -4,6 +4,7 @@
 and plays the complete existing instrumental arrangements of **Lumière
 (3:42)** and **Alicia (2:38)** using AY. The ULA beeper stays silent.
 
+**Lumiere starts automatically** on the first ULA field after both songs load.
 Click either title with a Kempston mouse, or press **1/2**, to start or switch
 songs. **7/6** move the selection while the current song continues; **Enter**
 starts the selection. **Space** stops. Re-selecting a song restarts it. The
@@ -16,10 +17,10 @@ with ROM `CLS`. No font bitmap is included. Live selection/status changes
 use attributes and the cursor; ROM printing finishes before loading the
 songs and does not run during audio playback.
 
-Both songs load into RAM once at startup. The cache is **39,304 bytes** in
+Both songs load into RAM once at startup. The cache is **42,865 bytes** in
 three uncontended data banks `(0,4,6)`. Switching or restarting needs no disk
-access. Fuse measures about 6.1 seconds for the initial cache load. The disk
-uses **219 data sectors**, has **2325 free**, and is independently bootable.
+access. Fuse measures about 6.54 seconds for the initial cache load. The disk
+uses **233 data sectors**, has **2311 free**, and is independently bootable.
 
 ## Sound and click repair
 
@@ -29,7 +30,11 @@ JSON/playlist/note identities are preserved. Lead and piano use tone
 generators with software attack/decay/release levels. Bass uses the shared
 repeating **triangle envelope (shape 14)** when its integer period stays
 within **18 cents** of the target; other notes use the finer tone generator.
-Only one channel owns the shared envelope.
+Only one channel owns the shared envelope. Separate repeated lead notes now
+receive two silent fields (about **40 ms**), a release and a fresh soft attack;
+explicit ties remain continuous. This fixes **61 boundaries in Lumiere** and
+**4 in Alicia**. Quiet one-field noise accents use only otherwise silent
+piano rests on channel B. [Articulation, envelope audit and release evidence](AUTOPLAY_ARTICULATION.md).
 
 The repair prepares period/shape registers **before channel volumes and
 envelope enables**, retains a positive unused envelope period, and silences
@@ -54,8 +59,9 @@ perceptual score. The AY timbres differ from the sampled source players;
 physical filtering and chip variants can affect their sound.
 [Music and sample provenance](SOURCES.md).
 
-Actual repaired Fuse sound excerpts: [Lumière](previews/lumiere-ay.wav) and
-[Alicia](previews/alicia-ay.wav). Their [capture reports](reports/click-fix/final/verification.json)
+Actual current Fuse sound excerpts: [Lumière, 36 seconds](previews/lumiere-ay.wav) and
+[Alicia, 12 seconds](previews/alicia-ay.wav). Their [capture reports](reports/autoplay/lumiere-recording.json)
+and [Alicia report](reports/autoplay/alicia-recording.json)
 bind the final disk and WAV hashes. Physical-board audio and subjective
 listening approval are not claimed.
 
@@ -71,12 +77,13 @@ python -m unittest discover -s music-menu -p test_player.py -v
 python music-menu/verify.py
 python music-menu/verify.py --fuse C:/Tools/Fuse/fuse.exe --song lumiere
 python music-menu/verify.py --fuse C:/Tools/Fuse/fuse.exe --song alicia
-python music-menu/record.py --fuse C:/Tools/Fuse/fuse.exe --song lumiere --seconds 12
+python music-menu/audit_notes.py
+python music-menu/record.py --fuse C:/Tools/Fuse/fuse.exe --song lumiere --seconds 36
 python music-menu/record.py --fuse C:/Tools/Fuse/fuse.exe --song alicia --seconds 12
 python music-menu/preview.py --fuse C:/Tools/Fuse/fuse.exe --rom C:/Tools/Fuse/roms/128-1.rom
 ```
 
-Output goes to ignored `build/music-menu-click-fix/`: disk, assembler input,
+Output goes to ignored `build/music-menu-autoplay/`: disk, assembler input,
 listing and binary, streams, complete native/Fuse reports and traces,
 recordings and a framebuffer PNG. `--rom` is optional for a Fuse screenshot;
 it additionally authenticates glyphs against the user's local 16-KiB ROM.
@@ -91,19 +98,20 @@ and the existing vendored Ayumi renderer; see [its invocation](CLICK_REPAIR.md).
 
 ## Complete playback and menu verification
 
-[Current build](reports/click-fix/final/build.json),
-[native CPU](reports/click-fix/final/native.json) and
-[complete Fuse evidence](reports/click-fix/final/verification.json) bind the
-retained disk and player. Seven tests cover score identities, register order,
+[Current build](reports/autoplay/build.json),
+[native CPU](reports/autoplay/native.json) and
+[complete Fuse evidence](reports/autoplay/fuse-lumiere.json) bind the
+retained disk and player. Ten tests cover score identities, register order,
 restart/delta contracts, complete foreground/menu replay, cached switching,
 held-key debouncing, mouse wrap/clicks, stop, EOF, register states, stack
 balance and records crossing physical bank boundaries. Native tests use
 explicit ROM read/text stubs; real ROM behavior is checked separately in Fuse.
 
-Each of two Fuse 1.9.0 runs cold boots the real TR-DOS loader, plays 100 ticks
-of one song, switches to the other for 100 ticks, switches back and finishes
-the selected song through EOF. Both complete songs pass: **18,991 full-song
-fields**, plus 400 preliminary fields and four switches. Every actual AY
+Each of two Fuse 1.9.0 runs cold boots the real TR-DOS loader. Lumiere runs
+automatically through EOF with no input. The Alicia run tests three live
+switches, with 100 preliminary fields per segment, then finishes Alicia.
+Both complete songs pass: **18,991 full-song fields**, plus 300 preliminary
+fields and three switches. Every actual AY
 data-port write matches the stream. No ULA field is skipped, there is no
 accumulated song drift, and no disk is read after ready.
 
@@ -114,7 +122,7 @@ and the complete initial state within 5288 T (1.491 ms). Input is polled once
 per field. Fuse commands are injected at menu dispatch; loader/audio code
 and cached bytes are not patched.
 
-The [actual cold-boot screen check](reports/click-fix/final/menu-verification.json)
+The [actual cold-boot screen check](reports/autoplay/menu-verification.json)
 authenticates all **125 displayed characters** against stock ROM glyphs.
 The [pre-existing catalogue coverage gap](reports/catalog-coverage.json)
 remains recorded separately. Target timing and control-step diagnostics do
@@ -161,6 +169,13 @@ Native fixtures check write counts 0/1/3/13/14 and a boundary inside a value
 list. The ROM-text change adds **0 T to playback hot paths**; ROM output is
 startup-only. ULA waits, HALT, disk and ROM execution remain separate from
 these deterministic components and are included where applicable in Fuse.
+
+The autoplay/articulation release retains these per-call costs. Its one-shot
+startup CALL/JP adds **27 T**, with **no new per-field branch**. Extra volume
+and noise records increase complete native audio service CPU from
+9,880,537 to **10,501,777 T** for Lumiere (+621,240) and from 5,928,394 to
+**6,139,315 T** for Alicia (+210,921), including choose/its external CALL.
+[Measured accounting and exact scope](reports/autoplay/timing-comparison.json).
 
 Historical hybrid/PWM evidence remains under `reports/` and
 `previews/*-hybrid.wav`; `1b5ae95f` retains its original TRD. The previous

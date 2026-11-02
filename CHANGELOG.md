@@ -1,5 +1,52 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Autoplay music disk, articulate repeated notes and add sparse noise percussion
+
+- **Objective/baseline:** Update the actual independently bootable
+  `ZX-Music-Menu.trd` from `67b19924` (SHA256 `80da9ca7…b9ef607`), not just
+  browser controls. The user identifies merged repeated notes in Lumiere
+  and requests autoplay, percussion and a note-envelope check. A rebuilt
+  baseline matched the released disk byte for byte; a 36-second baseline
+  Fuse audio capture was retained in ignored build output.
+- **Diagnosis/change:** All 61 close repeated lead boundaries in Lumiere
+  held volume 13 through the boundary because the prior click repair bridged
+  separate same-pitch events. End the release two fields early and restart
+  the soft attack, giving 39.983 ms of actual silence; four Alicia boundaries
+  use the same rule. Explicit ties, source score identities, pitches, onset
+  grid and full durations remain unchanged. Check software attack/release
+  and preserve every bass hardware envelope register at every field.
+  Add 295/174 quiet one-field AY-noise accents only in literal piano rests
+  on B, at the rounded quarter beat or preceding free field. The shared
+  shape-14 bass waveform and A/C mixer bits remain untouched.
+- **Autoplay:** After caching, EI immediately precedes HALT; first ULA IRQ
+  starts Lumiere through ordinary choose/UI. A preliminary EI/NOP/HALT
+  ordering could consume a pending IRQ before HALT; corrected before final
+  qualification. The intermediate disk was not released. No recurring
+  branch is added. Startup CALL/JP costs 27 T versus 0 T; decoder/IRQ/reader
+  per-call costs are unchanged. Complete measured native audio CPU rises
+  9,880,537 → 10,501,777 T (+621,240) for Lumiere and
+  5,928,394 → 6,139,315 T (+210,921) for Alicia, including choose/CALL.
+  UI, contention, ULA/IRQ/HALT and ROM/disk remain separate.
+- **Footprint/delivery:** Streams 39,304 → 42,865 bytes, still banks 0/4/6;
+  disk 219 → 233 used sectors, 2311 free. Complete cold Fuse runs measure
+  168 startup reads, none after ready, cache loading about 6.54 s. Full
+  Lumiere autoplays with no input; Alicia tests three live switches then
+  plays to EOF. All 18,991 complete-song fields plus 300 preliminary fields
+  match AY writes; zero skipped ULA fields or accumulated drift. Foreground
+  maximum is 22,489/70,908 T, initial autoplay 19,685 T with contention
+  (19,356 native). EOF mutes and keeps the menu active.
+- **Verification/decision:** Ten tests cover full native execution, controls,
+  score identities, every repeated gate, monotonic synthetic attack/release,
+  true ties, safe noise slots and unchanged shared ENV. Retain final disk
+  SHA256 `3ae7d156…3209e71`, actual Fuse excerpts, ROM-glyph check and complete
+  traces under [the release evidence](music-menu/reports/autoplay/).
+  [Algorithms, exact CPU totals and reproduction](music-menu/AUTOPLAY_ARTICULATION.md).
+  Python setup first selected incompatible 3.14 binary dependencies; use
+  3.12. The isolated Fuse copy initially lacked its font resource; copying
+  its existing lib/ui resources repaired the harness. Neither setup failure
+  qualifies as a player test. Accept the independently verified music disk;
+  subjective listening and physical-board sound are not claimed.
+
 ## 2026-11-02 — Use one visible full-frame surface in WebGL as well as Canvas
 
 - **Objective/baseline:** Investigate the same thin boundary/uneven-raster

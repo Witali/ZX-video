@@ -1,0 +1,90 @@
+{
+  "baseline_trd_sha256": "80da9ca73e81cd38c65842d066fed930850d449e6b3a31fc0a494ab41b9ef607",
+  "trd_sha256": "3ae7d156f12baba8f551f893dc50d4fcd1d5331495ae0167ab59c95ba3209e71",
+  "scope": "Compare complete native audio CPU costs with an authenticated old build.\n\nThe instruction formulas are in libraries/Z80_TIMINGS.md and README.md.\nField histograms include the normal 41-T audio caller. choose includes its\nfirst stream row, mute, bank selection and RET; its external CALL is 17 T.\nULA contention, IRQ/HALT, UI and ROM/disk costs stay separate.\n",
+  "startup_only_autoplay_call_and_jump_tstates": 27,
+  "previous_autoplay_control_tstates": 0,
+  "autoplay_control_delta_tstates": 27,
+  "first_autoplay_foreground_native_tstates": 19356,
+  "per_call_components": {
+    "held_audio_with_caller": [
+      92,
+      92,
+      0
+    ],
+    "zero_write_delta_record": [
+      1452,
+      1452,
+      0
+    ],
+    "one_write_delta_record": [
+      1616,
+      1616,
+      0
+    ],
+    "fourteen_write_delta_record": [
+      3748,
+      3748,
+      0
+    ],
+    "mute": [
+      1164,
+      1164,
+      0
+    ],
+    "irq_body": [
+      18,
+      18,
+      0
+    ],
+    "im2_entry_and_body": [
+      37,
+      37,
+      0
+    ],
+    "ordinary_byte_reader": [
+      75,
+      75,
+      0
+    ],
+    "extra_bank_crossing": [
+      185,
+      185,
+      0
+    ]
+  },
+  "songs": [
+    {
+      "song": "lumiere",
+      "before": {
+        "song": "lumiere",
+        "choose_body_with_tick_zero_tstates": 5265,
+        "subsequent_fields_audio_with_caller_tstates": 9875255,
+        "audio_with_required_choose_and_call_tstates": 9880537
+      },
+      "after": {
+        "song": "lumiere",
+        "choose_body_with_tick_zero_tstates": 5265,
+        "subsequent_fields_audio_with_caller_tstates": 10496495,
+        "audio_with_required_choose_and_call_tstates": 10501777
+      },
+      "audio_cpu_delta_tstates": 621240
+    },
+    {
+      "song": "alicia",
+      "before": {
+        "song": "alicia",
+        "choose_body_with_tick_zero_tstates": 5265,
+        "subsequent_fields_audio_with_caller_tstates": 5923112,
+        "audio_with_required_choose_and_call_tstates": 5928394
+      },
+      "after": {
+        "song": "alicia",
+        "choose_body_with_tick_zero_tstates": 5265,
+        "subsequent_fields_audio_with_caller_tstates": 6134033,
+        "audio_with_required_choose_and_call_tstates": 6139315
+      },
+      "audio_cpu_delta_tstates": 210921
+    }
+  ]
+}

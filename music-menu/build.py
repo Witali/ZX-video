@@ -27,6 +27,7 @@ AY_LEVELS = (0., .009994659, .014450294, .02105745, .03070115, .04554818,
              .06449989, .1073625, .1265888, .2049897, .2922103, .3728389,
              .4925307, .6353246, .8055848, 1.)
 TRIANGLE_MAX_CENTS = 18
+REPEAT_GAP_FIELDS = 2
 # The mask describes these slots, not numerical register order. Prepare the
 # oscillators/envelope before enabling a channel's new volume or ENV bit.
 REGISTER_ORDER = (0,1,2,3,4,5,6,7,11,12,13,8,9,10)
@@ -76,7 +77,52 @@ def pack_frames(frames):
     return bytes(data), len(runs), writes
 
 
-def control_frames(score, *, triangle=True, click_safe=True):
+def percussion_beats(score):
+    """Absolute quarter-note positions, respecting each bar's tempo and meter."""
+    cursor = 0.
+    for name in score['playlist']:
+        pattern = score['patterns'][name]
+        if isinstance(pattern, dict):
+            tempo = pattern['tempo_bpm']
+            bars = [bar.get('beats', pattern['beats_per_bar']) for bar in pattern['bars']]
+        else:
+            tempo = score['tempo_bpm']
+            bars = [score['beats_per_bar']]*len(pattern)
+        for beats in bars:
+            for beat in range(math.ceil(beats)):
+                yield cursor+beat*60/tempo,beat
+            cursor += beats*60/tempo
+
+
+def add_percussion(frames, states, score):
+    """Use only literal piano rests: never replace a pitched note or share ENV.
+
+    All three AY voices are occupied. A short noise pulse on B occupies the
+    closest silent field at a quarter-note position, or the preceding field.
+    No melody onset moves. The one-field pulse is intentional percussion,
+    not an attempt to use AY's shared envelope for a fourth musical voice.
+    """
+    hits = []
+    for seconds,beat in percussion_beats(score):
+        nominal = round(seconds*CONTROL_HZ)
+        tick = next((t for t in (nominal,nominal-1)
+                     if 0<=t<len(frames) and not states[t][1][0]
+                     and any(states[n][1][0] for n in (t-1,t+1) if 0<=n<len(states))),None)
+        if tick is None:
+            continue
+        row = bytearray(frames[tick])
+        assert row[9]==0
+        snare = bool(beat%2)
+        row[6] = 12 if snare else 4
+        row[7] = (row[7]|2)&~16  # B: tone off, noise on; A/C mixer bits unchanged.
+        row[9] = 7 if snare else 5
+        frames[tick] = bytes(row)
+        hits.append(dict(tick=tick,beat_seconds=seconds,beat_in_bar=beat,
+                         kind='brush' if snare else 'hat',advance_seconds=seconds-tick/CONTROL_HZ))
+    return hits
+
+
+def control_frames(score, *, triangle=True, click_safe=True, articulation=True, percussion=True):
     voices, duration = timeline(score)
     ticks = math.ceil(duration*CONTROL_HZ)
     gains = json.loads((HERE/'balance.json').read_text())['balance']['role_gain']
@@ -84,16 +130,29 @@ def control_frames(score, *, triangle=True, click_safe=True):
     errors = []
     legato_links = 0
     maximum_extension = 0.
+    articulation = bool(articulation and click_safe)
+    percussion = bool(percussion and click_safe)
+    repeats = []
     for role,notes in enumerate(voices):
         for note_id,(start,length,pitch,instrument,gain) in enumerate(notes):
             if not 1<=pitch<=127 or length<=0:
                 raise ValueError('Invalid note')
             previous = notes[note_id-1] if note_id else None
             following = notes[note_id+1] if note_id+1<len(notes) else None
+            first = round(start*CONTROL_HZ)
+            score_stop = min(ticks,round((start+length)*CONTROL_HZ))
+            # Explicit ties have already become one note in timeline(). Only
+            # separate lead events at the same pitch need a new articulation.
+            repeat_before = bool(articulation and role==0 and previous and previous[2]==pitch
+                and 0<=first-round((previous[0]+previous[1])*CONTROL_HZ)<REPEAT_GAP_FIELDS)
+            repeat_after = bool(articulation and role==0 and following and following[2]==pitch
+                and 0<=round(following[0]*CONTROL_HZ)-score_stop<REPEAT_GAP_FIELDS)
             gap_limit = .065 if role==2 else .012
             link_before = bool(click_safe and instrument and previous and previous[3]
+                               and not repeat_before
                                and -.000001<=start-previous[0]-previous[1]<=gap_limit)
             link_after = bool(click_safe and instrument and following and following[3]
+                              and not repeat_after
                               and -.000001<=following[0]-start-length<=gap_limit)
             # Preserve note-on positions. Short string/cello articulation gaps
             # receive a release bridge instead of a repeated hard gate/retrigger.
@@ -101,13 +160,19 @@ def control_frames(score, *, triangle=True, click_safe=True):
             if link_after:
                 legato_links += 1
                 maximum_extension = max(maximum_extension,sound_end-start-length)
-            first = round(start*CONTROL_HZ)
             stop = min(ticks,round(sound_end*CONTROL_HZ))
-            score_stop = min(ticks,round((start+length)*CONTROL_HZ))
+            release_end = start+length
+            if repeat_after:
+                next_first = round(following[0]*CONTROL_HZ)
+                gap = min(REPEAT_GAP_FIELDS,max(0,next_first-first-1))
+                stop = min(stop,next_first-gap)
+                release_end = stop/CONTROL_HZ
+                repeats.append(dict(role=ROLE_NAMES[role],pitch=pitch,next_tick=next_first,
+                                    mute_from_tick=stop,gap_fields=next_first-stop))
             errors.extend((first/CONTROL_HZ-start,score_stop/CONTROL_HZ-start-length))
             for tick in range(first,stop):
                 age = max(0.,tick/CONTROL_HZ-start)
-                tail = max(0.,start+length-tick/CONTROL_HZ)
+                tail = max(0.,release_end-tick/CONTROL_HZ)
                 if instrument==0:
                     if click_safe:
                         points = ((0.,1.),(.04,.74),(.1,.55),(.2,.4),(.4,.28),(.7,.18),(1.2,.1))
@@ -171,13 +236,19 @@ def control_frames(score, *, triangle=True, click_safe=True):
             previous_bass = -1
         triangle_was_active = bool(row[10]&16)
         frames.append(bytes(row))
+    noise_hits = add_percussion(frames,states,score) if percussion else []
     data, records, writes = pack_frames(frames)
     return data, dict(ticks=ticks,score_seconds=duration,playback_seconds=ticks/CONTROL_HZ,
         records=records,register_writes=writes,packed_bytes=len(data),source_notes=[len(v) for v in voices],
         max_note_boundary_error_seconds=max(map(abs,errors)),packed_sha256=sha(data),
+        note_boundary_error_scope='Rounded score grid; repeated-note release gates intentionally end earlier',
         frames_sha256=sha(b''.join(frames)),triangle_fields=triangle_fields,envelope_restarts=envelope_starts,
         click_safe=click_safe,legato_links=legato_links,max_release_extension_seconds=maximum_extension,
         phase_preserved_bass_note_changes=phase_preserved_note_changes,
+        repeated_note_articulation=repeats,repeat_gap_fields=REPEAT_GAP_FIELDS,
+        percussion_hits=noise_hits,noise_fields=len(noise_hits),
+        percussion_channel='B; piano rests only' if percussion else None,
+        max_percussion_advance_seconds=max((h['advance_seconds'] for h in noise_hits),default=0),
         max_triangle_pitch_error_cents=max(map(abs,pitch_errors),default=0),
         retained_roles=['lead','piano_accompaniment','bass'],omitted_role='inner_voice')
 
@@ -237,7 +308,9 @@ def build(output):
         assembly_sha256=sha(source),control_hz=CONTROL_HZ,cpu_hz=CPU_HZ,frame_tstates=FIELD_T,
         tools=dict(pyz80=importlib.metadata.version('pyz80'),pillow=importlib.metadata.version('Pillow')),
         producer_sha256={name:sha((HERE/name).read_bytes()) for name in ('build.py','arrangement.py','balance.json','zx_text.py')},
-        beeper_audio=False,simultaneously_cached_songs=True,font='Stock Spectrum48 ROM via RST10; CHARS=3C00; stream2',
+        beeper_audio=False,simultaneously_cached_songs=True,autoplay_song='lumiere',autoplay_on_first_ula_field=True,
+        autoplay_control_cpu_tstates=27,autoplay_control_previous_cpu_tstates=0,
+        font='Stock Spectrum48 ROM via RST10; CHARS=3C00; stream2',
         record_format='duration U8; changed-register slot mask LE16; register_order values; zero-duration EOF',
         register_order=list(REGISTER_ORDER),mute_writes=[list(pair) for pair in MUTE_WRITES],
         memory=dict(fixed_player_bank=2,display_basic_trdos_bank=5,available_song_banks=list(BANKS),
@@ -251,5 +324,5 @@ def build(output):
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-click-fix')
+    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-autoplay')
     build(parser.parse_args().output)

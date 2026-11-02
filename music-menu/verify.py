@@ -164,7 +164,7 @@ class Machine:
 
 
 def boot(machine, disk):
-    """Explicit ROM read/text stubs for native tests; Fuse uses real ROM."""
+    """Explicit ROM and startup-HALT stubs; Fuse uses real ROM and ULA IRQ."""
     m = machine.cpu
     labels = machine.labels
     m.pc = labels['start']
@@ -172,6 +172,8 @@ def boot(machine, disk):
     for entry in (0x10,0x0DAF,0x1601):
         m.set_breakpoint(entry)
     m.set_breakpoint(labels['menu_ready'])
+    if 'autoplay_wait' in labels:
+        m.set_breakpoint(labels['autoplay_wait'])
     reads = []
     while m.pc!=labels['menu_ready']:
         m.ticks_to_stop = 1000000
@@ -185,12 +187,20 @@ def boot(machine, disk):
             m.sp += 2
         elif m.pc in (0x10,0x0DAF,0x1601):
             machine.rom_stub(m.pc)
+        elif m.pc==labels.get('autoplay_wait'):
+            # Native functional tests have no ULA scheduler. Skip only its
+            # initial wait, then execute the actual autoplay/choose/UI code.
+            # Complete Fuse runs separately authenticate the real IRQ phase.
+            machine.autoplay_first_field_tstates = machine.run_to(
+                labels['autoplay_start'],[labels['menu_frame_done']],50000)
         elif flags&m._TICKS_LIMIT_HIT:
             raise AssertionError('Native startup stalled')
     m.clear_breakpoint(0x3D13)
     for entry in (0x10,0x0DAF,0x1601):
         m.clear_breakpoint(entry)
     m.clear_breakpoint(labels['menu_ready'])
+    if 'autoplay_wait' in labels:
+        m.clear_breakpoint(labels['autoplay_wait'])
     assert m.sp==0xBD00
     expected = [(row,column+i,ord(character)) for row,column,text in MENU_LINES for i,character in enumerate(text)]
     assert machine.rom_output==expected,'ROM text/AT sequence mismatch'
@@ -208,6 +218,11 @@ def native_check(output, metadata):
         scheduled = {r['tick']:r for r in records}
         machine = Machine(blob,labels)
         reads = boot(machine,disk)
+        if metadata.get('autoplay_song'):
+            first,_ = decode_records((output/'lumiere.rows').read_bytes())
+            assert machine.writes==list(MUTE_WRITES)*2+first[0]['writes'],'Autoplay must apply tick zero without a command'
+            assert machine.cpu.memory[labels['playing']]==0
+            assert machine.cpu.memory[labels['status']]==2 and machine.cpu.memory[labels['dirty']]==0
         machine.byte('selected',index)
         start = len(machine.writes)
         machine.call('choose')
@@ -234,6 +249,8 @@ def native_check(output, metadata):
             register_writes=sum(len(r['writes']) for r in records),registers_exact=True,
             no_beeper_audio=True,full_foreground_menu_replayed=True,stack_balanced=True,
             eof_mutes=True,startup_reads=len(reads),
+            automatic_lumiere_start=bool(metadata.get('autoplay_song')),
+            autoplay_first_field_tstates=getattr(machine,'autoplay_first_field_tstates',None),
             audio_service_with_caller_tstates=dict(sorted(audio_hist.items())),
             ui_tstates=dict(sorted(ui_hist.items())),total_foreground_tstates=dict(sorted(total_hist.items()))))
     machine = Machine(blob,labels)
@@ -265,7 +282,7 @@ def native_check(output, metadata):
         im2_hardware_entry_tstates=19,mute_tstates=mute_tstates,
         read_byte_ordinary_tstates=75,read_byte_boundary_extra_tstates=185,
         delta_record_tstates=timings,controls=control_check(blob,labels,disk),
-        scope='Complete independent Z80 foreground/menu replay; explicit bank swaps and ROM-read/text stubs; Fuse separately cold boots real ROM/floppy/text output.')
+        scope='Complete independent Z80 foreground/menu replay; explicit bank swaps, ROM-read/text and initial ULA-wait stubs; Fuse separately cold boots real ROM/floppy and verifies IRQ-aligned autoplay.')
 
 
 def control_check(blob, labels, disk):
@@ -309,14 +326,16 @@ def control_check(blob, labels, disk):
 
 
 def fuse_check(fuse, output, metadata, index, *, captured=False):
-    """Cold boot, switch twice through live menu dispatch, finish a whole song.
+    """Cold boot with no keypress; finish autoplay or exercise cached switches.
 
     At key_changed the debugger supplies a command instead of a hardware key.
     Native tests separately exercise actual input ports. Player/cache/ROM and
-    audio instructions are never patched. Both preliminary segments last100
-    ticks; the final segment starts from tick zero and reaches real EOF.
+    audio instructions are never patched. Lumiere plays automatically through
+    EOF. The Alicia run checks three live switches after 100-field prefixes.
     """
     song = metadata['songs'][index]
+    autoplay = bool(metadata.get('autoplay_song'))
+    segments = ([0] if index==0 else [0,1,0,1]) if autoplay else [index,1-index,index]
     labels = metadata['player_labels']
     folder = output/'fuse'/song['song']
     folder.mkdir(parents=True,exist_ok=True)
@@ -338,9 +357,16 @@ def fuse_check(fuse, output, metadata, index, *, captured=False):
             lines.append(f'cond {event_id} {condition}')
     event(labels['ready'],100,[stamp],['set $live 1'])
     event(labels['disk_call'],101,[stamp,'z80:de','z80:hl','z80:b','$live','ula:mem7ffd'])
-    event(labels['key_changed'],110,[stamp,'$segment'],
-        [f'set z80:a {index+1}+($segment==1)*{1 if index==0 else -1}'],
-        '$segment==0 || ($segment<3 && $ticks>=100)')
+    if autoplay:
+        # Count the one-shot autoplay prefix as the first foreground field.
+        event(labels['autoplay_start'],109,[stamp],['pr 120','pr '+stamp])
+        event(labels['key_changed'],110,[stamp,'$segment'],
+            ['set z80:a 1+($segment==1)+($segment==3)'],
+            f'$segment<{len(segments)} && $ticks>=100')
+    else:
+        event(labels['key_changed'],110,[stamp,'$segment'],
+            [f'set z80:a {index+1}+($segment==1)*{1 if index==0 else -1}'],
+            '$segment==0 || ($segment<3 && $ticks>=100)')
     event(labels['song_started'],111,[stamp,f'[{labels["playing"]}]'],
         ['set $segment $segment+1','set $ticks 0'])
     event(labels['music_tick'],103,[stamp,'$segment','$ticks+1'],['set $ticks $ticks+1'])
@@ -357,7 +383,7 @@ def fuse_check(fuse, output, metadata, index, *, captured=False):
     event(labels['field_start'],120,[stamp],condition='$live==1')
     event(labels['menu_frame_done'],121,[stamp],condition='$live==1')
     event(labels['menu_frame_done'],200,[stamp,f'[{labels["playing"]}]'],['ex 77'],
-        f'$segment==3 && $ticks=={song["ticks"]+1}')
+        f'$segment=={len(segments)} && $ticks=={song["ticks"]+1}')
     script = '\n'.join(lines)
     if captured:
         saved = json.loads((output/f'fuse-{song["song"]}.json').read_text())
@@ -382,7 +408,10 @@ def fuse_check(fuse, output, metadata, index, *, captured=False):
         events[tag].append(numbers[position+1:position+1+width])
         position += width+1
     assert len(events[100])==len(events[200])==1 and events[200][0][1]==255
-    assert [r[1] for r in events[111]]==[index,1-index,index]
+    assert [r[1] for r in events[111]]==segments
+    if autoplay:
+        assert len(events[109])==1 and events[111][0][1]==0
+        assert events[109][0][0]//FIELD_T==(events[106][0][0]//FIELD_T)
     expected_reads = []
     for section in metadata['cache_sections']:
         for sector in range(section['sector'],section['sector']+section['sectors']):
@@ -390,18 +419,19 @@ def fuse_check(fuse, output, metadata, index, *, captured=False):
                                    1,0,16+section['bank']])
     assert [r[1:] for r in events[101]]==expected_reads
     assert events[107] and all(r==[0] for r in events[107]),'Beeper output detected'
-    assert events[108]==[list(pair) for pair in MUTE_WRITES]*4
+    assert events[108]==[list(pair) for pair in MUTE_WRITES]*(len(segments)+1)
     segment_reports = []
-    for segment,which in enumerate((index,1-index,index),1):
+    for segment,which in enumerate(segments,1):
         item = metadata['songs'][which]
         records,total_ticks = decode_records((output/f'{item["song"]}.rows').read_bytes())
-        count = total_ticks if segment==3 else 100
+        final = segment==len(segments)
+        count = total_ticks if final else 100
         expected_ay = [[record['tick']+1,reg,value] for record in records if record['tick']<count
                        for reg,value in record['writes']]
         actual_ay = [r[2:] for r in events[105] if r[1]==segment]
         assert actual_ay==expected_ay,('Fuse AY mismatch',segment,len(actual_ay),len(expected_ay))
         ticks = [r[0] for r in events[103] if r[1]==segment]
-        assert len(ticks)==count+(segment==3)
+        assert len(ticks)==count+final
         assert all(b//FIELD_T==a//FIELD_T+1 for a,b in zip(ticks,ticks[1:])),('Missed music field',segment)
         observed = [r for r in events[104] if r[1]==segment]
         expected_records = [r for r in records if r['tick']<count]
@@ -411,23 +441,26 @@ def fuse_check(fuse, output, metadata, index, *, captured=False):
             ptr = actual[3]+actual[4]*256
             absolute = ((actual[5]+1)*16384 if ptr==0 else actual[5]*16384+ptr-0xC000)
             assert absolute==item['offset']+expected['end'],'Bank/cursor mismatch'
-        segment_reports.append(dict(song=item['song'],ticks=count,complete=segment==3,
+        segment_reports.append(dict(song=item['song'],ticks=count,complete=final,
             register_writes=len(actual_ay),records=len(observed),registers_exact=True))
     irqs = [r[0] for r in events[106]]
     assert all(b//FIELD_T==a//FIELD_T+1 for a,b in zip(irqs,irqs[1:])), 'Skipped ULA IRQ'
     assert len(events[120])==len(events[121])
     foreground = [end[0]-start[0] for start,end in zip(events[120],events[121])]
     assert foreground and min(foreground)>0 and max(foreground)<FIELD_T
-    switch_latencies = [start[0]-request[0] for start,request in zip(events[111],events[110])]
+    requests = ([[events[109][0][0],0]] if autoplay else [])+events[110]
+    assert len(requests)==len(events[111])
+    switch_latencies = [start[0]-request[0] for start,request in zip(events[111],requests)]
     assert all(0<=value<FIELD_T for value in switch_latencies)
     first_write,complete_state = [],[]
-    for segment,request in enumerate(events[110],1):
+    for segment,request in enumerate(requests,1):
         writes = [r[0] for r in events[105] if r[1]==segment and r[2]==1]
         first_write.append(writes[0]-request[0])
         complete_state.append(writes[-1]-request[0])
     assert all(0<value<FIELD_T for value in first_write+complete_state)
     return dict(song=song['song'],trd_sha256=metadata['trd_sha256'],complete=True,cold_boot=True,
-        full_song_ticks=song['ticks'],live_menu_switches=2,segments=segment_reports,
+        full_song_ticks=song['ticks'],live_menu_switches=len(segments)-1,segments=segment_reports,
+        autoplay_without_keypress=autoplay,autoplay_field_aligned=autoplay,
         startup_reads=len(expected_reads),disk_reads_after_ready=0,no_beeper_audio=True,
         no_ula_fields_skipped=True,accumulated_song_drift_fields=0,eof_mutes_and_menu_remains_active=True,
         irq_count=len(irqs),foreground_min_tstates=min(foreground),foreground_max_tstates=max(foreground),
@@ -459,7 +492,7 @@ def run_fuse(fuse, output, script, *, extra=(), sound=False, timeout=240):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-click-fix')
+    parser.add_argument('--output',type=Path,default=ROOT/'build/music-menu-autoplay')
     parser.add_argument('--fuse',type=Path)
     parser.add_argument('--song',choices=('lumiere','alicia'),default='lumiere')
     parser.add_argument('--captured',action='store_true',help='Recheck matching saved full traces without rerunning Fuse')
