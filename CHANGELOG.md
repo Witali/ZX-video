@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-11-03 — Publish the reviewed Expedition 33 video on YouTube
+
+- The user approves revision-2 sound (no reported clicks) and explicitly
+  authorizes uploading it to YouTube. Upload the unchanged 28,957,166-byte MP4,
+  SHA256 `6dec647a7dca169e7a484e95123b16e3c76658ad2b70fda1b8ffab257c2a30e6`,
+  with the generated title/thumbnail, English/Russian tribute and direct
+  emulator/TRD/source links. Omit recording-method details from the description.
+- YouTube Studio confirms **Video published** with **Public** selected.
+  Verify the [public watch page](https://www.youtube.com/watch?v=5YSVaWfLXOQ),
+  exact description destinations, both tribute translations, chapters, 6:36
+  player duration and available 1080p50 decoding at 1920x1080. No project/disk
+  code changes are part of this publication; target delta **0 T**.
+  [Publication identity and verification](video/expedition33/publication.json).
+
 ## 2026-11-03 — Prepare a review-only Expedition 33 video and match website audio
 
 - **Objective/input:** Record the published independently bootable demo from

@@ -6,6 +6,11 @@ Lumiere and Alicia AY arrangements, the inter-track pause, all 18 illustrations
 and the demo's native transitions. A separate four-second title and ending
 identify the project and link to the online player. There is no narration.
 
+Published after user review and explicit approval:
+[Expedition 33 Demo for ZX Spectrum 128 — Lumière & Alicia](https://www.youtube.com/watch?v=5YSVaWfLXOQ).
+The public watch page and 1080p50 playback were verified. Exact source identity
+and public metadata are retained in [publication.json](publication.json).
+
 The user initially required **local review before YouTube upload/publication**.
 After revision 2 played without the reported clicks, they explicitly authorized
 YouTube upload on 2026-11-03. The prepared bilingual
