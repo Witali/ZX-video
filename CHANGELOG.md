@@ -26,9 +26,9 @@
   including all four edges. Sixteen colour/attribute/FLASH patterns match
   native WebGL over 12,582,912 RGBA bytes. Live renderer switching/context-loss
   recovery preserve machine state and Canvas has one visible surface. Inspect
-  the paused TR-DOS screen in the user's in-app browser at DPR 1.25. Retain
-  the unified composition locally for user inspection before publication;
-  final physical-display confirmation remains pending. Browser screenshot
+  the paused TR-DOS screen in the user's in-app browser at DPR 1.25. The user
+  reports that the image appears fixed and requests merge/push. Retain the
+  unified composition; 100%, 150% and 200% remain visually unqualified. Browser screenshot
   capture is in CSS pixels, so it does not certify all OS compositor scales
   or benchmark host speed. Z80/player bytes and absolute target T-state costs
   are unchanged (delta 0 T).
