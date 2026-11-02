@@ -23,6 +23,12 @@ jobs:
         with:
           lfs: true
           persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.gitattributes
+            /web/
+            /toolkit/trd_catalog.json
+            **/*.[tT][rR][dD]
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

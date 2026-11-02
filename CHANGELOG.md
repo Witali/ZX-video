@@ -1,5 +1,22 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Limit the Pages checkout to website sources and TRD images
+
+- **Objective/baseline:** Publish the prepared web player from `d1f1db5a`.
+  Pages run 41494650855 was still fetching the full repository after about
+  three minutes and was deliberately cancelled before publication. The
+  repository tracks 3,889 LFS files, while the website needs 250 TRDs.
+- **Change/decision:** Use actions/checkout's non-cone sparse patterns for
+  web sources, root attributes, the catalogue and every case-insensitive
+  TRD path. Its partial clone avoids unrelated Git blobs; sparse LFS checkout
+  retrieves the selected disks without the archived WAV/video evidence.
+  Preserve the complete catalogue, SHA-256 guards and existing test gates.
+  Git's sparse-rule checker selects 289 files, including all 250 TRDs and
+  exactly 250 LFS paths, with no unrelated files. The first local rule-check
+  harness hit Node's default 1-MiB output limit; raising that harness limit
+  completed the check without changing the selection.
+  This is a deployment-input correction, not a player/timing change (0 T).
+
 ## 2026-11-02 — Trace both music-menu audio channels through browser and Windows
 
 - **Objective/baseline:** Investigate reported left-only Lumiere/Alicia

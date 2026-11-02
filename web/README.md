@@ -81,6 +81,8 @@ For this repository the expected project URL is
 succeeds. Relative asset and disk paths also support a custom domain.
 The workflow materializes LFS before building: Pages must serve actual TRDs,
 not Git LFS pointer text.
+Its partial, sparse checkout includes the web sources, catalogue and all
+tracked TRDs, so unrelated archived audio/video LFS objects are not fetched.
 
 ## Verification scope
 
