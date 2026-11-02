@@ -81,6 +81,66 @@ not Git LFS pointer text.
 
 ## Verification scope
 
+### CPU and disk investigation, 2026-11-02
+
+The patched browser CPU passes **1,356 Fuse instruction vectors**, including
+registers, MEMPTR, refresh register, interrupt flip-flops/mode, modified RAM,
+port addresses/data and total instruction T-states. Four legacy expectations
+for interrupted repeat flags are updated using the independent
+[Banks hardware observations](https://github.com/hoglet67/Z80Decoder/wiki/Undocumented-Flags);
+the report retains both AF values. This is not exhaustive coverage of every
+initial state, interrupt phase or bus contention cycle.
+
+Corrections cover DD/FD-CB non-M1 opcode fetches and internal timing,
+`LD (IX/IY+d),n` timing, INI/IND and OUTI/OUTD port addresses, RETI aliases,
+and IX-prefix/MEMPTR/Q state restoration. They are kept in the generator.
+See [CPU report](reports/opcodes.json). Reproduce using the official Fuse
+repository at `67d72235610a9821c780499a0c10d89512656127`:
+
+```powershell
+node web/tools/check-opcodes.mjs C:/path/to/fuse/z80/tests
+node web/tools/check-video.mjs C:/Work/ZX-video 2 700 .tmp/video-check.json
+```
+
+TRD track generation now uses the canonical Fuse/TR-DOS layout: 6250 MFM
+bytes per revolution, physical IDs `1,9,2,10,...,8,16`, standard ID/data marks,
+CRCs and gaps. Rotation remains **300 rpm**, independently of CPU frequency.
+The controller searches the rotating track and delivers timed DRQ; no
+rotational wait is skipped. TRD has logical sector bytes, so this layout is
+an explicit reconstruction, not recovered physical metadata.
+
+The complete second refined disk produces all **1,360** expected full-screen
+identities and **6,800** AY ticks. However, its rotational-controller run
+takes **617.56 emulated playback seconds** for 136 seconds of content and
+misses 1,330 nominal publication deadlines at the instruction-boundary
+observation point. It **fails the 10-fps timing requirement**. This reproduces
+the apparent freezes as long disk waits; correctness of the screen bytes
+does not qualify playback timing. Synthesized audio was not checked by that
+run. [Full report](reports/rotational-video-part02.json).
+
+### Backend selection
+
+Choose **Fuse as the full-machine reference and practical basis for a
+WebAssembly backend**, while retaining the project's native Z80 adapter as
+an independent CPU reference. Do not claim that an unmodified Fuse disk
+controller meets the stricter physical-timing requirement. No complete
+replacement browser backend has been installed or performance-qualified.
+
+| Candidate | Evidence and decision |
+| --- | --- |
+| [Fuse](https://github.com/fuse-emulator/fuse/tree/67d72235610a9821c780499a0c10d89512656127) / [fuse-libretro](https://github.com/libretro/fuse-libretro/tree/e997e2bc32c888348f862f69f2c53babfedf7791) | Mature complete Spectrum machine and Beta Disk; libretro has Emscripten and disk-control integration. Best practical starting point here. Its Beta setup omits `WD_FLAG_DRQ`, and data-register reads advance bytes; per-byte physical timing needs an explicit qualification/correction. |
+| Project [native core](../emulator/README.md) | Pinned floooh CPU, per-T callbacks, tested banking/IRQ and decoder comparisons. Useful for WebAssembly and independent CPU checks. Fused execution is disabled when a bus is attached. Display, sound and disk are absent; instruction-level ULA contention is not qualified. It cannot replace the full machine by itself. |
+| [ZX84](https://github.com/damieng-zx/zx84/tree/a95a85f353c086fe4fdf588bf17539f9a2f9ca4d) | Broad browser hardware and good inspection tools, but `src/cores/wd179x.ts` explicitly models sector transfers instantly and uses polling counts for lost-data timeouts. This does not satisfy the requested disk timing. |
+| [JSSpeccy 3](https://github.com/gasman/jsspeccy3) | Worker/WebAssembly architecture, Spectrum/AY support; its documented media support does not include TRD/Beta Disk. Not a direct replacement. |
+| Patched ZX-Dream | Usable browser preview and transparent CPU test results, but its Pentagon-style bus lacks qualified original-128 ULA contention and its complete rotational run fails playback timing. Do not promote it to a hardware reference. |
+
+There is **no measured fastest complete backend** in this investigation.
+Native decoder microbenchmarks do not rank full emulators. Compare candidate
+builds on the same browser/device with unchanged ROM/TRD bytes, video/audio,
+disk phase and ULA contention enabled, with acceleration disabled. Require
+full EOF, byte-identical frames and AY states, actual IRQ/DRQ schedules,
+nominal/fallback timing and real-time host headroom before switching defaults.
+
 The web adapter does not change the Z80 player, nominal frame deadlines or
 release disk contents. Browser playback is a preview, not a replacement for
 the full Fuse/native timing, sound and EOF checks in the project evidence.

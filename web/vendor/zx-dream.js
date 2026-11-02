@@ -2025,7 +2025,8 @@ function ZX_Z80 () {
         int_lock = 0;
 
         // считываем очередной код
-        var opcode = read_opcode();
+        // DD/FD CB's final opcode is a non-M1 operand fetch: 3 T, no R increment.
+        var opcode = (prefix_bit && (prefix_ix || prefix_iy)) ? read_operand_byte() : read_opcode();
 
         // проверка на префиксы
 
@@ -2526,9 +2527,7 @@ function ZX_Z80 () {
 
                 pc = read_mem_word(sp);
                 sp = ( sp + 2 ) & 0xffff;
-                if (!(opcode & 0x08)) {
-                    set_iff1(get_iff2());
-                }
+                set_iff1(get_iff2()); // RETN and RETI aliases both restore IFF1 from IFF2.
                 q = 0;
                 memptr = pc;
                 return;
@@ -2610,13 +2609,13 @@ function ZX_Z80 () {
 
                 var data;
                 if (cmd_in) {
-                    data = read_io_byte(( new_b << 8 ) | regs.c ); // именно new_b
+                    data = read_io_byte(( old_b << 8 ) | regs.c ); // INI/IND reads before decrementing B.
                     write_mem_byte(cur_hl, data);
                     memptr = (((old_b << 8) | regs.c) + (increment ? 1 : -1)) & 0xFFFF;
                 }
                 else {
                     data = read_mem_byte(cur_hl);
-                    write_io_byte(( regs.b << 8 ) | regs.c, data);
+                    write_io_byte(( new_b << 8 ) | regs.c, data); // OUTI/OUTD decrements B before the port write.
                     memptr = (((new_b << 8) | regs.c) + (increment ? 1 : -1)) & 0xFFFF;
                 }
 
@@ -2800,13 +2799,13 @@ function ZX_Z80 () {
                     var index_address = (ix + index_offset_cache) & 0xFFFF;
                     write_mem_byte(index_address, result);
                     memptr = index_address;
-                    ts_cnt += 6;
+                    ts_cnt += 3; // Indexed CB internal cycles; opcode fetch is counted separately.
                 }
                 else if (prefix_iy) {
                     var index_address = (iy + index_offset_cache) & 0xFFFF;
                     write_mem_byte(index_address, result);   
                     memptr = index_address;
-                    ts_cnt += 6;
+                    ts_cnt += 3; // Indexed CB internal cycles; opcode fetch is counted separately.
                 }
 
                 switch (r1) {
@@ -2855,13 +2854,13 @@ function ZX_Z80 () {
                     index_address = ( ix + index_offset_cache ) & 0xFFFF;
                     value = read_mem_byte(index_address);
                     memptr = index_address;
-                    ts_cnt += 6;
+                    ts_cnt += 3; // Indexed CB internal cycles; opcode fetch is counted separately.
                 }
                 else if (prefix_iy) {
                     index_address = ( iy + index_offset_cache ) & 0xFFFF;
                     value = read_mem_byte(index_address);
                     memptr = index_address;
-                    ts_cnt += 6;
+                    ts_cnt += 3; // Indexed CB internal cycles; opcode fetch is counted separately.
                 }
                 else {
                     switch (r_dst) {
@@ -2957,13 +2956,13 @@ function ZX_Z80 () {
                     var index_address = ( ix + index_offset_cache ) & 0xFFFF;
                     write_mem_byte(index_address, value);
                     memptr = index_address;
-                    ts_cnt += 6;
+                    ts_cnt += 3; // Indexed CB internal cycles; opcode fetch is counted separately.
                 }
                 else if (prefix_iy) {
                     var index_address = ( iy + index_offset_cache ) & 0xFFFF;
                     write_mem_byte(index_address, value);
                     memptr = index_address;
-                    ts_cnt += 6;
+                    ts_cnt += 3; // Indexed CB internal cycles; opcode fetch is counted separately.
                 }
 
                 switch (r_dst) {
@@ -3174,13 +3173,13 @@ function ZX_Z80 () {
                         var offset = byte_to_svalue(read_operand_byte());
                         addr = (ix + offset) & 0xffff;
                         memptr = addr;
-                        ts_cnt += 5;
+                        ts_cnt += 2; // LD (IX/IY+d),n totals 19 T, including both operands.
                     }
                     else if (prefix_iy) {
                         var offset = byte_to_svalue(read_operand_byte());
                         addr = (iy + offset) & 0xffff;
                         memptr = addr;
-                        ts_cnt += 5;
+                        ts_cnt += 2; // LD (IX/IY+d),n totals 19 T, including both operands.
                     }
                     else {
                         addr = get_hl();
@@ -4566,6 +4565,8 @@ function ZX_Z80 () {
         state.r = r;
         state.i = i;
 
+        state.memptr = memptr;
+        state.q = q;
         state.imf = imf;
         state.iff = iff;
 
@@ -4605,10 +4606,12 @@ function ZX_Z80 () {
         r = state.r;
         i = state.i;
 
+        memptr = state.memptr ?? 0;
+        q = state.q ?? 0;
         imf = state.imf;
         iff = state.iff;
 
-        prefix_iy = state.prefix_dd;
+        prefix_ix = state.prefix_dd;
         prefix_iy = state.prefix_fd;
         prefix_ext = state.prefix_ed;
         prefix_bit = state.prefix_cb;
@@ -6110,7 +6113,7 @@ function ZX_BetaDisk() {
 	var _headReady = 0;
 	var _doubleDensity = 0;
 	var _debugLog = null;
-	var _intervalsDependOnFrequency = true;
+	var _intervalsDependOnFrequency = false; // Drive rotation stays at 300 rpm independently of CPU frequency.
 	var _tstatesPerIntrq = 71680;
 	var _intrqPeriod = 20.48;
 
@@ -6429,19 +6432,20 @@ function ZX_Floppy() {
             var track = (cyl[headIndex] || (cyl[headIndex] = []));
             var trackStream = new MemoryStream(track);
             var sectorSize = (0x0080 << SEC_LENGTH_0x0100);
-            for ( var sec = 0; sec < 16; sec++) {
-                if (index < bin.length) {
-                    trackStream.writeMultiple(
-                        createTrDosSector(cylIndex, sec, sectorSize, bin, index));
-                }
-                else {
-                    var emptyArr = new Array(sectorSize);
-                    emptyArr.fill(0);
-                    trackStream.writeMultiple(
-                        createTrDosSector(cylIndex, sec, sectorSize, emptyArr, 0));
-                }
-                index += sectorSize;
+            // Canonical TR-DOS MFM track, matching Fuse's INTERLEAVE_2 layout:
+            // one 10-byte initial gap; physical IDs 1,9,2,10,...,8,16;
+            // 378 bytes per sector including ID/data marks, CRCs and gaps;
+            // 192 final gap bytes complete 6250 bytes at 250 kbit/s, 300 rpm.
+            trackStream.writeMultiple(new Array(10).fill(0x4E));
+            for (var physical = 0; physical < 16; physical++) {
+                var sec = (physical >> 1) + ((physical & 1) ? 8 : 0);
+                var offset = index + sec * sectorSize;
+                var payload = offset < bin.length ? bin : new Array(sectorSize).fill(0);
+                var payloadOffset = offset < bin.length ? offset : 0;
+                trackStream.writeMultiple(createTrDosSector(cylIndex, sec, sectorSize, payload, payloadOffset).slice(10));
             }
+            trackStream.writeMultiple(new Array(6250 - trackStream.get_length()).fill(0x4E));
+            index += 16 * sectorSize;
         }
 
         _cylinders = cylinders;
@@ -7814,8 +7818,8 @@ function VG93(clock) {
     var _clock = clock;
     var _floppy;
   
-    var BYTES_PER_TRACK_MFM = 6312; // 6250
-    var BYTES_PER_TRACK_FM = 3156; // 3125
+    var BYTES_PER_TRACK_MFM = 6250; // 6250
+    var BYTES_PER_TRACK_FM = 3125; // 3125
 
     var _timeFactor = 1;
     var _baseIntervals = {
@@ -9550,7 +9554,7 @@ function ZX_Clock() {
 	// период запросов маскируемого прерывания в миллисекундах
 	var _intrqPeriod = 20.48;
 	// продолжлительность сигнала прерывания в тактах процессора
-	var _intrqDurationTstates = 32;
+	var _intrqDurationTstates = 36; // Original Spectrum 128 ULA interrupt pulse.
 	// количество выполняемых процессором тактов между маскируемыми прерываниями
 	var _tstatesPerIntrq = 71680;
 	// количество выполняемых процессором тактов за одну миллисекунду

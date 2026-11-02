@@ -2,8 +2,12 @@
 
 ZX-Dream by Evgenii Zeiler is vendored from
 [ef68e190753d599752d1367050a94b85a06121c8](https://github.com/XMypuK/zx-dream/tree/ef68e190753d599752d1367050a94b85a06121c8).
-The hardware modules and common utilities are concatenated, without source
-changes, into `zx-dream.js`. The upstream UI, debugger, PHP services, example
+The hardware modules and common utilities are concatenated into `zx-dream.js`.
+Documented local corrections are reproducible through
+[`patch-emulator.mjs`](../tools/patch-emulator.mjs): indexed instruction
+timings/fetches, block I/O port addresses, RETI aliases, state restoration,
+the original 128's 36-T interrupt pulse, and standard TR-DOS track construction.
+The upstream UI, debugger, PHP services, example
 disks, jQuery and Knockout are not included. Upstream comments are retained.
 See [MIT license](LICENSE.zx-dream) and the per-module hashes in
 [provenance.json](provenance.json).
@@ -35,4 +39,7 @@ The project adapter uses eight addressable RAM banks, 70,908 CPU T-states
 per field, a 20 ms field period and a 1,773,400 Hz AY clock. This does not
 add ULA contention to the upstream Pentagon-style bus or qualify its disk
 latency, browser scheduling or audio accuracy against physical hardware.
-No Z80 player/decoder code or target hot path is changed by this website.
+The TRD model uses the standard interleave (physical IDs 1,9,2,10,...,8,16),
+6250-byte MFM tracks, 300 rpm, normal rotational search, CRCs and timed DRQ.
+Rotational waits are not skipped. This is still not a complete physical-board
+qualification. No Z80 player/decoder code or target hot path is changed.

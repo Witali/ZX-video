@@ -3,6 +3,7 @@ import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import { patchEmulator } from './patch-emulator.mjs';
 const output = resolve(dirname(fileURLToPath(import.meta.url)), '../vendor');
 const upstream = resolve(process.argv[2] || '.tmp/zx-dream');
 const roms = resolve(process.argv[3] || 'C:/Program Files (x86)/Fuse/roms');
@@ -22,7 +23,7 @@ for (const name of modules) {
   const js = name.endsWith('.html') ? source.match(/<script[^>]*>([\s\S]*?)<\/script>/)[1] : source;
   sources.push(`// Upstream module: ${name}\n${js}`);
 }
-await writeFile(join(output, 'zx-dream.js'), sources.join('\n'));
+await writeFile(join(output, 'zx-dream.js'), patchEmulator(sources.join('\n')));
 await copyFile(join(upstream, 'source/js/ayumi.js'), join(output, 'ayumi.js'));
 await copyFile(join(upstream, 'LICENSE'), join(output, 'LICENSE.zx-dream'));
 for (const [target, source] of Object.entries({ '48.rom': '128-1.rom',
@@ -35,5 +36,6 @@ for (const name of ['ayumi.js', ...['48.rom', '48turbo.rom', '128tr.rom', 'tr5_0
 }
 await writeFile(join(output, 'provenance.json'), JSON.stringify({
   upstream: 'https://github.com/XMypuK/zx-dream',
-  revision: 'ef68e190753d599752d1367050a94b85a06121c8', modules: hashes
+  revision: 'ef68e190753d599752d1367050a94b85a06121c8', modules: hashes,
+  localPatches: ['web/tools/patch-emulator.mjs']
 }, null, 2) + '\n');

@@ -1,0 +1,50 @@
+// Local fixes to pinned ZX-Dream. Match exact upstream text so upgrades fail safely.
+export function patchEmulator(source) {
+  function replace(before, after) {
+    const found = before instanceof RegExp ? before.test(source) : source.includes(before);
+    if (!found) throw new Error(`Missing upstream patch anchor: ${String(before).slice(0, 60)}`);
+    source = source.replace(before, after);
+  }
+  replace('var opcode = read_opcode();', `// DD/FD CB's final opcode is a non-M1 operand fetch: 3 T, no R increment.
+        var opcode = (prefix_bit && (prefix_ix || prefix_iy)) ? read_operand_byte() : read_opcode();`);
+  const begin = source.indexOf('        if (prefix_bit) {');
+  const end = source.indexOf('} // endif (prefix_bit)', begin);
+  const bitCode = source.slice(begin, end);
+  if ((bitCode.match(/ts_cnt \+= 6;/g) || []).length !== 6) throw new Error('Indexed CB timing patch changed');
+  source = source.slice(0, begin) + bitCode.replaceAll('ts_cnt += 6;', 'ts_cnt += 3; // Indexed CB internal cycles; opcode fetch is counted separately.') + source.slice(end);
+  const ldBegin = source.indexOf('// LD r, n');
+  const ldEnd = source.indexOf('// 00xxx010', ldBegin);
+  const ldCode = source.slice(ldBegin, ldEnd);
+  if ((ldCode.match(/ts_cnt \+= 5;/g) || []).length !== 2) throw new Error('Indexed immediate timing patch changed');
+  source = source.slice(0, ldBegin) + ldCode.replaceAll('ts_cnt += 5;', 'ts_cnt += 2; // LD (IX/IY+d),n totals 19 T, including both operands.') + source.slice(ldEnd);
+  replace('prefix_iy = state.prefix_dd;', 'prefix_ix = state.prefix_dd;');
+  replace('state.imf = imf;', 'state.memptr = memptr;\n        state.q = q;\n        state.imf = imf;');
+  replace('imf = state.imf;', 'memptr = state.memptr ?? 0;\n        q = state.q ?? 0;\n        imf = state.imf;');
+  replace(/if \(!\(opcode & 0x08\)\) \{\r?\n                    set_iff1\(get_iff2\(\)\);\r?\n                \}/, 'set_iff1(get_iff2()); // RETN and RETI aliases both restore IFF1 from IFF2.');
+  replace('data = read_io_byte(( new_b << 8 ) | regs.c ); // именно new_b', 'data = read_io_byte(( old_b << 8 ) | regs.c ); // INI/IND reads before decrementing B.');
+  replace('write_io_byte(( regs.b << 8 ) | regs.c, data);', 'write_io_byte(( new_b << 8 ) | regs.c, data); // OUTI/OUTD decrements B before the port write.');
+  replace('var BYTES_PER_TRACK_MFM = 6312;', 'var BYTES_PER_TRACK_MFM = 6250;');
+  replace('var BYTES_PER_TRACK_FM = 3156;', 'var BYTES_PER_TRACK_FM = 3125;');
+  replace('var _intrqDurationTstates = 32;', 'var _intrqDurationTstates = 36; // Original Spectrum 128 ULA interrupt pulse.');
+  replace('var _intervalsDependOnFrequency = true;', 'var _intervalsDependOnFrequency = false; // Drive rotation stays at 300 rpm independently of CPU frequency.');
+  const trdBegin = source.indexOf('    this.insertTRD = function');
+  const trdEnd = source.indexOf('    this.insertSCL = function', trdBegin);
+  const loopBegin = source.indexOf('            for ( var sec = 0; sec < 16; sec++)', trdBegin);
+  const loopEnd = source.indexOf('\n        }', loopBegin);
+  if (loopBegin < 0 || loopEnd > trdEnd) throw new Error('TRD layout patch changed');
+  source = source.slice(0, loopBegin) + `            // Canonical TR-DOS MFM track, matching Fuse's INTERLEAVE_2 layout:
+            // one 10-byte initial gap; physical IDs 1,9,2,10,...,8,16;
+            // 378 bytes per sector including ID/data marks, CRCs and gaps;
+            // 192 final gap bytes complete 6250 bytes at 250 kbit/s, 300 rpm.
+            trackStream.writeMultiple(new Array(10).fill(0x4E));
+            for (var physical = 0; physical < 16; physical++) {
+                var sec = (physical >> 1) + ((physical & 1) ? 8 : 0);
+                var offset = index + sec * sectorSize;
+                var payload = offset < bin.length ? bin : new Array(sectorSize).fill(0);
+                var payloadOffset = offset < bin.length ? offset : 0;
+                trackStream.writeMultiple(createTrDosSector(cylIndex, sec, sectorSize, payload, payloadOffset).slice(10));
+            }
+            trackStream.writeMultiple(new Array(6250 - trackStream.get_length()).fill(0x4E));
+            index += 16 * sectorSize;` + source.slice(loopEnd);
+  return source;
+}

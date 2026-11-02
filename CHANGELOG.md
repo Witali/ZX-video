@@ -1,5 +1,42 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Qualify browser CPU instructions and investigate disk stalls
+
+- **Objective/baseline:** Investigate reported hangs on refined disk 2 at
+  web baseline `30fd320c`; retain exact TRDs and the user's physical disk
+  timing requirement. Reuse the independent Fuse/native evidence.
+- **CPU change/results:** Correct indexed CB fetch/timing (27→23 T for
+  read/modify/write; 24→20 T for indexed BIT), indexed immediate stores
+  (22→19 T), block-I/O port addresses, RETI aliases and state restoration.
+  All 1,356 pinned Fuse vectors pass the final register/memory/port/CPU-T
+  comparison. Four old repeat-flag expectations are independently adjusted
+  by the published hardware rules and retained in the report. Early harness
+  attempts incorrectly stopped after prefixes and encoded IFF bits in the
+  wrong order; those harness errors were corrected before the final result.
+  [Reproducer](web/tools/check-opcodes.mjs), [report](web/reports/opcodes.json).
+- **Disk experiments:** The original model builds sequential 6208-byte
+  tracks while its controller assumes 6312 bytes. Changing that length alone
+  did not resolve stalls. An experimental no-rotation-search mode reached all
+  1,360 frames with exact screen hashes, but was discarded when the user
+  required physical rotation; it is not installed. The retained correction
+  builds canonical 6250-byte TR-DOS tracks with `1,9,2,10,...,8,16` physical
+  interleave, standard gaps/CRCs and CPU-independent 300 rpm. No disk wait is
+  skipped. [Regenerable patches](web/tools/patch-emulator.mjs).
+- **Full coverage/failed timing:** All 1,360 disk-2 screen identities and
+  publication OUTs are observed, with 6,800 AY ticks and zero screen errors.
+  Playback takes 617.56 emulated seconds for 136 seconds of content; 1,330
+  callbacks miss the nominal schedule and maximum drift is 1,707,677,364 T.
+  This fails release timing and does not qualify physical hardware or sound.
+  [Reproducer](web/tools/check-video.mjs), [report](web/reports/rotational-video-part02.json).
+- **Backend review/decision:** Prefer Fuse as a full-machine/WebAssembly
+  starting point with explicit FDC-timing qualification. Its default Beta
+  path also simplifies byte transfer; ZX84 explicitly uses instantaneous
+  sectors and polling-based timeouts. Our native CPU remains useful as an
+  independent per-T reference, but lacks disk/audio/display and qualified
+  integrated ULA contention. No fastest complete backend or replacement
+  release is claimed. [Source comparison and remaining acceptance gates](web/README.md#backend-selection).
+  Z80 player/decoder bytes and hot paths are unchanged (0 T target-code delta).
+
 ## 2026-11-02 — Compensate for Windows DPI in the 2× display scale
 
 - **Objective/baseline:** The user's Windows/browser device-pixel ratio is

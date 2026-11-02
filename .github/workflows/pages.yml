@@ -26,11 +26,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Fetch pinned official Fuse instruction vectors
+        uses: actions/checkout@v6
+        with:
+          repository: fuse-emulator/fuse
+          ref: 67d72235610a9821c780499a0c10d89512656127
+          path: .tmp/fuse-tests
+          sparse-checkout: z80/tests
+          persist-credentials: false
       - name: Validate browser source and build authenticated disk library
         run: |
           node --check web/app.js
           node --check web/emulator.js
           node --check web/audio-worklet.js
+          node web/tools/check-opcodes.mjs .tmp/fuse-tests/z80/tests
           node web/tools/build.mjs
           node web/tools/check-build.mjs
           node web/tools/check-emulator.mjs
