@@ -57,6 +57,10 @@ The display compensates for Windows DPI and browser zoom using
 `devicePixelRatio`: the 256×192 active screen occupies 512×384 **device
 pixels**, with a 32-device-pixel border (576×448 overall). Each source pixel
 is a square of 2×2 device pixels. The origin is snapped to the device grid.
+Canvas keeps a native 256×192 framebuffer and copies completed frames into
+a 512×384 presentation surface using nearest-neighbor sampling. Its backing
+pixels therefore match device pixels after DPI compensation; CSS does not
+enlarge the native Canvas raster. WebGL retains its native texture/surface.
 The scale updates after zoom, resizing, full screen and moving between
 monitors. Narrow windows scroll instead of shrinking or stretching the image.
 
@@ -253,14 +257,23 @@ The production Worklet-to-output stereo probe also passes with the default
 **Settings → Display renderer** switches between Canvas (the default) and
 WebGL. The browser saves the choice, and the URL retains it even when local
 storage is unavailable; an explicit URL choice takes priority. Switching during playback rebuilds only
-the display surfaces, preserving CPU, RAM, disk state and sound. Both render
-at native 256×192 and share the exact physical-pixel scaling. Unavailable or
+the display surfaces, preserving CPU, RAM, disk state and sound. Both retain
+native 256×192 frame data and share the physical-pixel scaling. Canvas uses
+a separate 512×384 output surface. Unavailable or
 lost WebGL contexts fall back to Canvas with a status message.
 
 The browser comparison fixture renders sixteen bitmap/attribute/FLASH
-patterns through both backends and compares native RGBA bytes. The observed
-result is 3,145,728 bytes compared with zero differences. This proves those
-rendered patterns, not a speed advantage or full-machine timing.
+patterns through both backends and compares every Canvas 2×2 output pixel
+with the corresponding native WebGL pixel. The observed result is
+12,582,912 RGBA bytes compared with zero differences. An independent inverse
+Spectrum-address oracle also checks all 192 rows, banks 5/7 and incremental
+writes at native and doubled Canvas output sizes: 1,179,648 pixels, zero
+differences. Baseline native output already passed that address oracle;
+the reported visual scaling fault was not reproduced in native readback.
+The revised Canvas presentation was inspected at Windows/browser DPR 1.25.
+These checks cover framebuffer conversion and the integer output blit;
+they do not qualify every OS compositor, a speed advantage or machine timing.
+See the [Canvas scaling report](reports/canvas-scaling.json).
 Serve [renderer-check.html](tools/renderer-check.html) at the built site's
 root for a local check; this developer fixture is not part of the Pages
 artifact. The first fixture readback incorrectly requested WebGL1 after the

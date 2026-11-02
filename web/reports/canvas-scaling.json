@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-02",
+  "baseline": "a91d882c881b84ec2146f1e1c362155046eb4e14",
+  "scope": "Independent scanline address oracle and Canvas presentation readback in the in-app browser; not an OS-compositor or machine-timing qualification",
+  "baselineNativeReadback": {
+    "comparedPixels": 393216,
+    "mismatchedPixels": 0,
+    "visualFaultReproduced": false
+  },
+  "nativeFramebuffer": [256, 192],
+  "canvasPresentation": [512, 384],
+  "scanlineOracle": {
+    "banks": [5, 7],
+    "rows": 192,
+    "incrementalWrites": true,
+    "canvasPresentationSizes": [[256, 192], [512, 384]],
+    "comparedPixels": 1179648,
+    "mismatchedPixels": 0
+  },
+  "colorAndFlashComparison": {
+    "patterns": 16,
+    "comparedBytes": 12582912,
+    "mismatchedBytes": 0
+  },
+  "observedDevicePixelRatio": 1.25,
+  "observedDeviceScreenSize": [512, 384],
+  "observedDeviceBorderSize": [576, 448],
+  "deviceGridOriginMaximumRoundingErrorPixels": 0.000023,
+  "switchPreservesMemoryAndCpu": true,
+  "contextLossFallsBackToCanvas": true,
+  "recoveryPreservesMemoryAndCpu": true,
+  "targetPlayerTstateDelta": 0,
+  "passed": true
+}

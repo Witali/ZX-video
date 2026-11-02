@@ -1,5 +1,32 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Present Canvas frames at an explicit integer pixel size
+
+- **Objective/baseline:** Investigate reported shifted/reordered raster rows
+  and incorrect Canvas scaling at web baseline `a91d882c`. Native readback
+  already matches WebGL across sixteen patterns. A new independent inverse
+  Spectrum-address oracle checks both banks and incremental writes:
+  393,216 pixels, zero mismatches. The visible fault is not reproduced in
+  native framebuffer conversion; do not change the correct Spectrum mapping.
+- **Change:** Retain native 256×192 RGBA frame storage, collect dirty byte
+  updates there and upload one completed frame. Copy it without smoothing
+  to an explicit 512×384 Canvas presentation surface; keep the established
+  DPR compensation and device-grid origin. The Canvas border surface is
+  correspondingly 576×448. Preserve the native WebGL path and renderer-only
+  recovery. Keep the vendor change in the reproducible patch generator.
+- **Verification/decision:** The independent 192-row/banks 5/7 oracle checks
+  native and doubled Canvas plus native WebGL: 1,179,648 pixels, no errors.
+  Sixteen colour/attribute/FLASH patterns compare every doubled output pixel
+  with native WebGL: 12,582,912 RGBA bytes, no errors. Live switching and GPU
+  recovery preserve CPU/RAM/paging/disk state. Inspect the production music
+  menu at DPR 1.25. Keep the explicit presentation path to remove native
+  Canvas enlargement from CSS; these results do not identify the original
+  compositor fault or certify all host scaling configurations. No target
+  Z80/player path changes (absolute target cost unchanged, delta 0 T).
+  [Fixture](web/tools/renderer-check.html),
+  [patch generator](web/tools/patch-emulator.mjs),
+  [report](web/reports/canvas-scaling.json).
+
 ## 2026-11-02 — Add a configurable single-pole RC-style audio output filter
 
 - **Objective/baseline:** Add user-selected 5/10/15/20-kHz low-pass presets

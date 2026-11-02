@@ -1,25 +1,27 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><title>Spectrum renderer verification</title>
 <script src="vendor/ayumi.js"></script><script src="vendor/zx-dream.js"></script>
-<body><button id="run">Compare native Canvas and WebGL pixels</button><pre id="result">Ready</pre>
+<body><button id="rows">Verify Spectrum scanline addresses and scaling</button><pre id="rows-result">Ready</pre>
+<div id="row-screens" style="display:flex;gap:20px;flex-wrap:wrap"></div>
+<button id="run">Compare native Canvas and WebGL pixels</button><pre id="result">Ready</pre>
 <div id="screens" style="display:flex;gap:20px"></div>
 <button id="switch">Test live switching and GPU recovery</button><pre id="switch-result">Ready</pre><div id="fixture" hidden></div>
 <script>
-function create(rendererType) {
+function create(rendererType,presentationScale=1) {
   const bus = new ZX_Bus(), display = new ZX_Display();
   let flash;
   display.connect(bus, {setInterval(fn) {flash=fn;}, setTimeout(fn) {fn();}});
-  bus.opt('RENDERING_PARAMS',{scale:1,scaleType:1,rendererType,renderOnAnimationFrame:false});
+  bus.opt('RENDERING_PARAMS',{scale:presentationScale,scaleType:1,rendererType,renderOnAnimationFrame:false});
   bus.opt('SEMICOLORS',true);
   const canvases=[document.createElement('canvas'),document.createElement('canvas'),document.createElement('canvas')];
-  canvases.forEach((canvas,index)=>{canvas.width=index?256:288;canvas.height=index?192:224;});
+  canvases.forEach((canvas,index)=>{canvas.width=(index?256:288)*presentationScale;canvas.height=(index?192:224)*presentationScale;});
   display.bind(canvases);
   const wrapper=document.createElement('div');wrapper.append(canvases[1]);document.getElementById('screens').append(wrapper);
-  return {bus,display,canvas:canvases[1],flash};
+  return {bus,display,canvas:canvases[1],layers:canvases,flash};
 }
 document.getElementById('run').onclick=()=>{
   try {
     document.getElementById('screens').replaceChildren();
-    const cpu=create(1),gpu=create(3);let mismatchedBytes=0,comparedBytes=0;
+    const cpu=create(1,2),gpu=create(3);let mismatchedBytes=0,comparedBytes=0;
     for(let seed=0;seed<16;seed++) {
       for(let i=0;i<6912;i++) {
         const value=i<6144?(i*73+(i>>5)+seed*17)&255:((i*11+seed*19)&255);
@@ -27,16 +29,74 @@ document.getElementById('run').onclick=()=>{
       }
       if(seed===8){cpu.flash();gpu.flash();}
       cpu.display.force_redraw();gpu.display.force_redraw();
-      const expected=cpu.canvas.getContext('2d').getImageData(0,0,256,192).data;
-      const gl=gpu.canvas.getContext('webgl2')||gpu.canvas.getContext('webgl'),actual=new Uint8Array(expected.length);
+      const expected=cpu.canvas.getContext('2d').getImageData(0,0,512,384).data;
+      const gl=gpu.canvas.getContext('webgl2')||gpu.canvas.getContext('webgl'),actual=new Uint8Array(256*192*4);
       gl.readPixels(0,0,256,192,gl.RGBA,gl.UNSIGNED_BYTE,actual);
-      for(let y=0;y<192;y++)for(let x=0;x<1024;x++)if(expected[y*1024+x]!==actual[(191-y)*1024+x])mismatchedBytes++;
+      for(let y=0;y<384;y++)for(let x=0;x<512;x++)for(let c=0;c<4;c++) {
+        if(expected[(y*512+x)*4+c]!==actual[((191-Math.floor(y/2))*256+Math.floor(x/2))*4+c])mismatchedBytes++;
+      }
       comparedBytes+=expected.length;
     }
-    document.getElementById('result').textContent=JSON.stringify({patterns:16,comparedBytes,mismatchedBytes,nativeResolution:[256,192],passed:mismatchedBytes===0},null,2);
+    document.getElementById('result').textContent=JSON.stringify({patterns:16,comparedBytes,mismatchedBytes,nativeResolution:[256,192],canvasPresentation:[512,384],passed:mismatchedBytes===0},null,2);
   } catch(error) {document.getElementById('result').textContent='FAILED: '+error.message;}
 };
 </script></body></html>
+<script>
+document.getElementById('rows').onclick=()=>{
+  try {
+    document.getElementById('screens').replaceChildren();
+    document.getElementById('row-screens').replaceChildren();
+    let comparedPixels=0,mismatchedPixels=0;
+    const rowAddress=(y,column)=>Math.floor(y/64)*2048+(y%8)*256+Math.floor((y%64)/8)*32+column;
+    for(const [type,scale] of [[1,1],[1,2],[3,1]]) {
+      const fixture=create(type,scale),width=256*scale,height=192*scale;
+      for(const bank of [5,7]) {
+        fixture.bus.var_write('port_7ffd_value',bank===7?15:0);
+        const base=bank===7?0xc000:0x4000;
+        const bytes=new Uint8Array(6144);
+        for(let y=0;y<192;y++)for(let column=0;column<32;column++) {
+          // Each row has its own code; the right half is a one-line comb.
+          const bits=column<16?((y+column*29)^(y>>3))&255:(y%2?255:0);
+          bytes[rowAddress(y,column)]=bits;
+          fixture.bus.mem_write(base+rowAddress(y,column),bits);
+        }
+        for(let a=0;a<768;a++)fixture.bus.mem_write(base+6144+a,0x47);
+        for(const incremental of [false,true]) {
+          if(incremental)for(let y=0;y<192;y++) {
+            const address=rowAddress(y,(y*7)%32);
+            bytes[address]^=255;fixture.bus.mem_write(base+address,bytes[address]);
+          }
+          fixture.display.force_redraw();
+          // Bank 7 occupies the second visible layer.
+          const actualCanvas=bank===7?fixture.layers[2]:fixture.canvas;
+          let actual;
+          if(type===1)actual=actualCanvas.getContext('2d').getImageData(0,0,width,height).data;
+          else {
+            const gl=actualCanvas.getContext('webgl2')||actualCanvas.getContext('webgl');
+            const flipped=new Uint8Array(256*192*4);actual=new Uint8Array(flipped.length);
+            gl.readPixels(0,0,256,192,gl.RGBA,gl.UNSIGNED_BYTE,flipped);
+            for(let y=0;y<192;y++)actual.set(flipped.subarray((191-y)*1024,(192-y)*1024),y*1024);
+          }
+          for(let y=0;y<height;y++)for(let x=0;x<width;x++) {
+            const sourceX=Math.floor(x/scale),sourceY=Math.floor(y/scale);
+            const value=(bytes[rowAddress(sourceY,Math.floor(sourceX/8))]&(128>>(sourceX%8)))?255:0;
+            const p=(y*width+x)*4;
+            if(actual[p]!==value||actual[p+1]!==value||actual[p+2]!==value||actual[p+3]!==255)mismatchedPixels++;
+            comparedPixels++;
+          }
+        }
+      }
+      if(scale===2||type===3) {
+        const wrapper=document.createElement('div'),label=document.createElement('p'),canvas=fixture.layers[2];
+        label.textContent=type===1?'Canvas: native buffer → exact 2× presentation':'WebGL: native texture → 2× display';
+        canvas.style.cssText=`width:${512/devicePixelRatio}px;height:${384/devicePixelRatio}px;image-rendering:pixelated`;
+        wrapper.append(label,canvas);document.getElementById('row-screens').append(wrapper);
+      }
+    }
+    document.getElementById('rows-result').textContent=JSON.stringify({banks:[5,7],rows:192,incrementalWrites:true,canvasPresentationSizes:[[256,192],[512,384]],comparedPixels,mismatchedPixels,devicePixelRatio,passed:mismatchedPixels===0},null,2);
+  }catch(error){document.getElementById('rows-result').textContent='FAILED: '+error.stack;}
+};
+</script>
 <script type="module">
 import { SpectrumPlayer } from './emulator.js';
 document.getElementById('switch').onclick=async()=>{
@@ -47,7 +107,10 @@ document.getElementById('switch').onclick=async()=>{
     player.mount(bytes,true);player.pause(true);
     const snapshot=()=>JSON.stringify({cpu:player.hw.cpu.get_state(),paging:player.hw.bus.var_read('port_7ffd_value'),
       memory:Array.from({length:65536},(_,address)=>player.hw.bus.mem_read(address)),disk:player.hw.disk.get_state()});
-    const before=snapshot();player.setRenderer('canvas');player.setRenderer('webgl');
+    const before=snapshot();player.setRenderer('canvas');
+    const canvasScreen=document.querySelector('#fixture .screen-layer');
+    if(canvasScreen.width!==512||canvasScreen.height!==384)throw new Error('Canvas presentation must be 512 x 384');
+    player.setRenderer('webgl');
     if(snapshot()!==before)throw new Error('Renderer switch changed machine state');
     const canvas=document.querySelector('#fixture .screen-layer');
     const gl=canvas.getContext('webgl2')||canvas.getContext('webgl');
@@ -60,7 +123,7 @@ document.getElementById('switch').onclick=async()=>{
     });
     if(snapshot()!==before)throw new Error('GPU recovery changed machine state');
     document.getElementById('switch-result').textContent=JSON.stringify({switchPreservesMemoryAndCpu:true,
-      contextLossFallsBackToCanvas:true,recoveryPreservesMemoryAndCpu:true,nativeScreen:[256,192],passed:true},null,2);
+      contextLossFallsBackToCanvas:true,recoveryPreservesMemoryAndCpu:true,nativeScreen:[256,192],canvasPresentation:[512,384],passed:true},null,2);
   }catch(error){document.getElementById('switch-result').textContent='FAILED: '+error.message;}
   finally{clearInterval(player.activityTimer);player.hw?.clock.stop();}
 };

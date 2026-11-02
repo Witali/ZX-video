@@ -5554,6 +5554,9 @@ extend(NullRenderer, RendererBase);
 
 function PutImageDataRenderer() {
 	this._samples = [];
+    this._nativeLayers = [];
+    this._nativeContexts = [];
+    this._frames = [];
 	this._layer0Ctx = null;
 	this._layer1Ctx = null;
 	PutImageDataRenderer.superclass.constructor.apply(this, arguments);
@@ -5563,7 +5566,7 @@ Object.assign(PutImageDataRenderer.prototype, {
 	_buildSamples: function() {
 		var 
 			samples = [],
-			scale = ( this._scaleType == VAL_SCALE_METHOD_PRE ) ? this._scale : 1,
+			scale = 1, // Samples and frame storage always use the native 256 x 192 raster.
 			sampleWidth = 8 * scale,
 			sampleHeight = 1 * scale;
 
@@ -5600,15 +5603,26 @@ Object.assign(PutImageDataRenderer.prototype, {
 		PutImageDataRenderer.superclass.bind.call(this, canvases);
 		this._layer0Ctx = this._layer0.getContext('2d', { alpha: false });
 		this._layer1Ctx = this._layer1.getContext('2d', { alpha: false });
+        for (var layer = 0; layer < 2; layer++) {
+            var native = this._createCanvas(256, 192);
+            var context = native.getContext('2d', { alpha: false });
+            this._nativeLayers[layer] = native;
+            this._nativeContexts[layer] = context;
+            this._frames[layer] = context.createImageData(256, 192);
+        }
+        this._layer0Ctx.imageSmoothingEnabled = false;
+        this._layer1Ctx.imageSmoothingEnabled = false;
 	},
 	drawData: function (layer, data, dirty, flashInversion, semicolors) {
 		var 
-			sampleScale = ( this._scaleType == VAL_SCALE_METHOD_PRE ) ? this._scale : 1,
+			sampleScale = 1,
 			semicolorsMask = semicolors ? 0x00 : 0x40,
 			flashInversionMask = flashInversion ? 0xFF : 0x7F,
 			ctx = layer ? this._layer1Ctx : this._layer0Ctx;
 
 		if (ctx) {
+            var changed = false;
+            var frame = this._frames[layer];
 			for (var address = 0; address < 0x1800; address++) {
 				if (dirty[address]) {
 					var 
@@ -5619,12 +5633,19 @@ Object.assign(PutImageDataRenderer.prototype, {
 						dy = y * sampleScale, 
 						sampleIndex = (attr << 8) | data[address];
 
-					ctx.putImageData(this._samples[sampleIndex], dx, dy);
+					// Eight adjacent native pixels; Spectrum memory is not row-major.
+                    frame.data.set(this._samples[sampleIndex].data, (dy * 256 + dx) * 4);
+                    changed = true;
 					dirty[address] = 0;
 				}
-			}
-		}
-	}
+            }
+            if (changed) {
+                this._nativeContexts[layer].putImageData(frame, 0, 0);
+                ctx.drawImage(this._nativeLayers[layer], 0, 0, 256, 192,
+                    0, 0, ctx.canvas.width, ctx.canvas.height);
+            }
+        }
+    }
 });
 
 function DrawImageRenderer() {

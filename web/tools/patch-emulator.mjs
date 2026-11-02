@@ -71,5 +71,50 @@ export function patchEmulator(source) {
             }
             trackStream.writeMultiple(new Array(6250 - trackStream.get_length()).fill(0x4E));
             index += 16 * sectorSize;` + source.slice(loopEnd);
+  // Keep the Spectrum framebuffer native. Canvas presents a whole completed
+  // frame at an integer size before browser/DPI composition. CSS only maps
+  // the device-sized presentation surface to CSS units.
+  const canvasBegin = source.indexOf('function PutImageDataRenderer()');
+  const canvasEnd = source.indexOf('function DrawImageRenderer()', canvasBegin);
+  if (canvasBegin < 0 || canvasEnd < 0) throw new Error('Canvas renderer anchor changed');
+  let canvasCode = source.slice(canvasBegin, canvasEnd);
+  if (!canvasCode.includes('ctx.putImageData(this._samples[sampleIndex], dx, dy);')) {
+    throw new Error('Canvas pixel update anchor changed');
+  }
+  canvasCode = canvasCode.replace('this._samples = [];', `this._samples = [];
+    this._nativeLayers = [];
+    this._nativeContexts = [];
+    this._frames = [];`);
+  canvasCode = canvasCode.replace('scale = ( this._scaleType == VAL_SCALE_METHOD_PRE ) ? this._scale : 1,',
+    'scale = 1, // Samples and frame storage always use the native 256 x 192 raster.');
+  canvasCode = canvasCode.replace("this._layer1Ctx = this._layer1.getContext('2d', { alpha: false });", `this._layer1Ctx = this._layer1.getContext('2d', { alpha: false });
+        for (var layer = 0; layer < 2; layer++) {
+            var native = this._createCanvas(256, 192);
+            var context = native.getContext('2d', { alpha: false });
+            this._nativeLayers[layer] = native;
+            this._nativeContexts[layer] = context;
+            this._frames[layer] = context.createImageData(256, 192);
+        }
+        this._layer0Ctx.imageSmoothingEnabled = false;
+        this._layer1Ctx.imageSmoothingEnabled = false;`);
+  canvasCode = canvasCode.replace('sampleScale = ( this._scaleType == VAL_SCALE_METHOD_PRE ) ? this._scale : 1,',
+    'sampleScale = 1,');
+  canvasCode = canvasCode.replace('if (ctx) {', `if (ctx) {
+            var changed = false;
+            var frame = this._frames[layer];`);
+  canvasCode = canvasCode.replace('ctx.putImageData(this._samples[sampleIndex], dx, dy);', `// Eight adjacent native pixels; Spectrum memory is not row-major.
+                    frame.data.set(this._samples[sampleIndex].data, (dy * 256 + dx) * 4);
+                    changed = true;`);
+  canvasCode = canvasCode.replace(/\t\t\t}\r?\n\t\t}\r?\n\t}\r?\n}\);/, `            }
+            if (changed) {
+                this._nativeContexts[layer].putImageData(frame, 0, 0);
+                ctx.drawImage(this._nativeLayers[layer], 0, 0, 256, 192,
+                    0, 0, ctx.canvas.width, ctx.canvas.height);
+            }
+        }
+    }
+});`);
+  if (!canvasCode.includes('ctx.drawImage(this._nativeLayers[layer]')) throw new Error('Canvas presentation anchor changed');
+  source = source.slice(0, canvasBegin) + canvasCode + source.slice(canvasEnd);
   return source;
 }
