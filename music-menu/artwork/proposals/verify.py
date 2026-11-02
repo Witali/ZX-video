@@ -1,4 +1,4 @@
-"""Independently decode the three Spectrum proposal screens and verify PNGs.
+"""Independently decode the selected Spectrum proposal screens and verify PNGs.
 
 This is image-format validation, not native player timing qualification.
 Pillow reads the PNGs independently of the compiler's hand-written PNG codec.
@@ -22,7 +22,7 @@ def verify():
     wordmark_bytes = (ROOT / 'wordmark-mask.json').read_bytes()
     wordmark = json.loads(wordmark_bytes)
     assert compiled['wordmark_mask_sha256'] == digest(wordmark_bytes)
-    assert [a['name'] for a in compiled['images']] == ['paintress', 'sirene', 'gestral-village']
+    assert [a['name'] for a in compiled['images']] == ['paintress', 'sirene', 'gestral-village', 'gustave-sophie']
     expected_footer = [bytes.fromhex(row) for row in wordmark['rows']]
     results = []
     for item in compiled['images']:

@@ -1,7 +1,7 @@
 {
   "date": "2026-11-02",
   "generation_mode": "Built-in image_gen",
-  "scope": "Three selected artwork proposals; native TRD integration pending",
+  "scope": "Four selected artworks; original three plus one additional romantic scene; TRD integration qualified separately",
   "shared_wordmark_mask_sha256": "9f4a0ad758a08d59bc253778e8d93e8556cf64d78d095f88d33520576d955ab0",
   "assets": [
     {
@@ -86,6 +86,48 @@
       ],
       "source_sha256": "1103279d5f7faf535514d76a2e475c3b7189c09f3e843fc9b4e986ce43efc6da",
       "original_generated_sha256": "17774fa44b6fb3adc229a2dd0a33e7233f684044623b2c0a08c32600cfa3f93a"
+    },
+    {
+      "name": "gustave-sophie",
+      "source": "sources/gustave-sophie.png",
+      "prompt": "Use case: stylized-concept.\nAsset: ONE original authentic ZX Spectrum loading-screen illustration for the Clair Obscur: Expedition 33 music demo.\nPrimary request: a tender, tasteful embrace between GUSTAVE and SOPHIE, with one red rose, preserving the recognizable adult characters from the attached actual game references. Compose their heads and upper bodies prominently, faces gently leaning close and smiling softly rather than an obscured kiss. Gustave holds Sophie around the shoulder; the single rose is visible between them at chest height. No other people.\nInput references: image 1 is official Gustave portrait for his exact face, swept-back wavy brown hair, short beard/moustache and age. Image 2 is an actual prologue scene for BOTH identities and their civilian clothes: Gustave's dark tailored Belle Epoque blue suit/waistcoat and white shirt, Sophie's short dark bob with bangs, characteristic red beret, light collared polka-dot blouse, and red floral garland. Image 3 is actual game close-up of Sophie for her face/hairstyle. Use identity references without reproducing wounds, dark dissolving particles, distressed expression, or gameplay scene.\nScene: quiet romantic Lumiere garden at dusk, a few softly simplified French Belle Epoque roof/window silhouettes and a white blossom branch behind them. Warmth and tenderness, spacious black negative space, large clear contours rather than busy ornament. Both adult heads/shoulders should fill most of the upper five-sixths of the picture, and remain readable when reduced to only 256x192 pixels. Landscape 4:3 composition.\nStyle: beautiful hand-pixelled 1980s ZX Spectrum loading art, logical native 256 by 192 pixels with crisp square pixels, confident deliberate pixel clusters and restrained coarse hatching. Restrict palette to BLACK and WHITE for faces and clothing; spatially separate RED accents for Sophie's beret/garland and ONE rose; a little deep BLUE for background architecture only. Black gaps between differently colored details. Respect the true Spectrum constraint: each aligned logical 8x8 attribute block at most TWO colors, one shared brightness per block, no FLASH. Keep both faces monochrome black/white with no colored highlight crossing their contours, avoid attribute-clash rectangles and fine polka-dot noise. Suggest the blouse dots with sparse coarse black marks.\nLayout invariant: the entire bottom ONE SIXTH (logical rows160 through191) must be absolutely empty solid BLACK, clean horizontal boundary, for the common title added later. Draw NO text, letters, logos, watermark or border anywhere. No smooth gradients, antialiasing, photorealistic texture, modern pixel filter, CRT, scanlines, HUD, UI, or extraneous jewelry. This is an original loving interpretation of the characters, not a screenshot filter.",
+      "reference_images": [
+        {
+          "local_label": "gustave-official.png",
+          "url": "https://static.wixstatic.com/media/98aef2_bc19f6a72662456597378693df9762d2~mv2.png",
+          "page": "https://www.expedition33.com/overview/characters",
+          "role": "Official Gustave face, hairstyle, age and beard identity",
+          "sha256": "ae8641c793738b927a3fc8fba613ea98bba90521352c8caaf31d5653df65c57a"
+        },
+        {
+          "local_label": "gustave-sophie-rose.jpg",
+          "url": "https://www.gamereactor.fr/media/74/clairobscur_4697453_650x.jpg",
+          "page": "https://www.gamereactor.fr/nous-nous-entretenons-avec-la-scenariste-principale-de-clair-obscur-pour-en-savoir-plus-sur-les-inspirations-les-defis-et-lhistoire-1947613/",
+          "role": "Actual prologue game image in lead-writer interview; both civilian costumes and rose",
+          "sha256": "8b9c236525c2346400e2298629fa4cfffa7bd026c0bced52a4feb04632a0d0a9"
+        },
+        {
+          "local_label": "gustave-sophie-prologue.jpg",
+          "url": "https://i0.wp.com/gamermatters.com/wp-content/uploads/2025/04/clair-obscure-expedition-33-prologue-6.jpg?resize=1170%2C658&ssl=1",
+          "page": "https://gamermatters.com/clair-obscur-expedition-33s-prologue-is-poignantly-beautiful-and-charmingly-video-gamey/",
+          "role": "Actual prologue game capture; Sophie close-up face, bob, beret and blouse",
+          "sha256": "97c0f05798aa6b76cd44bdbbfca2fc96b1843fd78e121b4a18bc22237e69a896"
+        }
+      ],
+      "identity_verification": {
+        "gustave_primary": "https://www.expedition33.com/post/news-expedition-33-announce",
+        "gustave_role": "Official announcement identifies Gustave as playable engineer from Lumiere",
+        "sophie_visual": "Actual game prologue capture identifies the short-haired woman with red beret and polka-dot blouse",
+        "supporting_production_primary": "https://www.manus-meta.com/use-cases/from-motion-to-masterpiece-clair-obscur-achieves-realistic-hand-animation-with-manus-gloves",
+        "production_note": "Performance-capture supplier names Gustave and Sophie as the paired characters",
+        "relationship_secondary": "https://clairobscur.wiki.gg/wiki/Sophie",
+        "relationship_note": "Game-history context is former romantic partners; artwork is an original affectionate interpretation, not a canonical screenshot"
+      },
+      "generation_count": 1,
+      "border": 0,
+      "source_sha256": "3a6356eae5816a6ec90f32d09d27f45d21a53606825c7ef4aa381cca1348e3c7",
+      "visual_qa": "Exact native/3x preview inspected: readable faces, embrace and rose; monochrome faces preserve contours, fine suit/blouse hatching simplified; shared footer exact. No image regeneration or repainting.",
+      "original_generated_sha256": "4b7c7b47d71ca186ae32fb2e200e4e1bb839502d113f0c7039ee14f35f71a18d"
     }
   ],
   "superseded_study": {

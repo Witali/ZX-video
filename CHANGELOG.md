@@ -18,6 +18,33 @@
   the catalogue change. Target Z80 instructions/data unchanged, delta 0 T.
   [Publication policy](web/tools/catalog-policy.mjs),
   [build checks](web/tools/check-build.mjs).
+## 2026-11-02 — Prepare a romantic Gustave and Sophie Spectrum screen
+
+- **Objective/input:** The user requests one additional affectionate image of
+  the initial protagonist and his partner, then asks to see it before any
+  publication. Verify Gustave against the official character material and
+  use actual game prologue captures for both civilian costumes and Sophie's
+  face. Produce exactly one built-in ImageGen image: upper-body embrace and
+  one red rose against Lumiere architecture. Save prompts, reference URLs
+  and hashes in [provenance](music-menu/artwork/proposals/provenance.json).
+- **Changed parameters:** Add `gustave-sophie` to the existing proposal
+  compiler using a black/blue/red/white scene palette and black border.
+  Keep faces monochrome and reuse the exact common 32-row Cinzel footer;
+  accent its second line red. Exclude nonvisual source caBX metadata while
+  retaining byte-identical IDAT and decoded pixels. Existing three screens
+  and previews remain unchanged.
+- **Measured validation:** The additional SCR is 6912 bytes. Independent
+  decoding checks all 49,152 native pixels, 442,368 enlarged pixels and 768
+  attribute cells, with no FLASH and exact shared footer bytes. The same
+  checks pass for all four selected screens. Native preview visually
+  inspected: readable faces, embrace, rose, beret and civilian suit; fine
+  hatching is simplified by the real hardware restrictions. Saved proof is
+  [verification](music-menu/artwork/proposals/verification.json).
+- **Decision/scope:** Commit local review artwork only. No push, publication,
+  web/TRD change or integration qualification. Target CPU instructions are
+  unchanged, delta 0 T. Resident demo capacity and native playback timing
+  remain the integrating player's responsibility.
+
 ## 2026-11-02 — Prepare three additional Spectrum artwork proposals
 
 - **Objective/input:** The user requests a separate artwork agent and more

@@ -21,9 +21,9 @@ const wordmarkBytes=fs.readFileSync(new URL('wordmark-mask.json',import.meta.url
 const wordmark=JSON.parse(wordmarkBytes);
 if(wordmark.width!==256||wordmark.height!==32)throw Error('Unexpected wordmark geometry');
 const mask=wordmark.rows.flatMap(row=>Array.from({length:256},(_,x)=>(parseInt(row.slice((x>>3)*2,(x>>3)*2+2),16)>>(7-(x&7)))&1));
-const assets=[['paintress',.84,6],['sirene',.785,3],['gestral-village',.8,6]];
-const sceneColors={paintress:[0,1,6,7],sirene:[0,1,3,6,7],'gestral-village':[0,2,4,6,7]};
-const borders={paintress:0,sirene:0,'gestral-village':6};
+const assets=[['paintress',.84,6],['sirene',.785,3],['gestral-village',.8,6],['gustave-sophie',.8333333333333334,2]];
+const sceneColors={paintress:[0,1,6,7],sirene:[0,1,3,6,7],'gestral-village':[0,2,4,6,7],'gustave-sophie':[0,1,2,7]};
+const borders={paintress:0,sirene:0,'gestral-village':6,'gustave-sophie':0};
 const reports=[];
 for(const [name,crop,accent]of assets){const file=new URL(`sources/${name}.png`,import.meta.url);const source=fs.readFileSync(file),src=readPNG(source),target=new Float32Array(256*192*3);for(let y=0;y<160;y++)for(let x=0;x<256;x++){const x0=x*src.w/256,x1=(x+1)*src.w/256,y0=y*src.h*crop/160,y1=(y+1)*src.h*crop/160;let total=0;for(let sy=Math.floor(y0);sy<Math.ceil(y1);sy++)for(let sx=Math.floor(x0);sx<Math.ceil(x1);sx++){let weight=(Math.min(sx+1,x1)-Math.max(sx,x0))*(Math.min(sy+1,y1)-Math.max(sy,y0));total+=weight;for(let c=0;c<3;c++)target[(y*256+x)*3+c]+=src.pixels[(sy*src.w+sx)*src.channels+c]*weight;}for(let c=0;c<3;c++)target[(y*256+x)*3+c]/=total;}
  const scr=Buffer.alloc(6912),indices=new Uint8Array(256*192);
@@ -35,4 +35,4 @@ for(const [name,crop,accent]of assets){const file=new URL(`sources/${name}.png`,
  const rgb=new Uint8Array(256*192*3);let luma=0;const counts=Array(8).fill(0);for(let i=0;i<indices.length;i++){rgb.set(palette[indices[i]],i*3);if(i<256*160){const p=palette[indices[i]];luma+=(.2126*p[0]+.7152*p[1]+.0722*p[2])/255;counts[indices[i]]++;}}luma/=256*160;const dominant=[...Array(8).keys()].sort((a,b)=>counts[b]-counts[a]);const border=luma>.43?dominant.find(c=>c===5||c===6||c===7)??7:0;
  fs.writeFileSync(new URL(`${name}.scr`,import.meta.url),scr);fs.writeFileSync(new URL(`${name}-native.png`,import.meta.url),png(256,192,rgb));const scale=3,large=new Uint8Array(768*576*3);for(let y=0;y<576;y++)for(let x=0;x<768;x++)large.set(rgb.subarray(((y/3|0)*256+(x/3|0))*3,((y/3|0)*256+(x/3|0))*3+3),(y*768+x)*3);fs.writeFileSync(new URL(`${name}-preview.png`,import.meta.url),png(768,576,large));
  reports.push({name,source_sha256:crypto.createHash('sha256').update(source).digest('hex'),scr_sha256:crypto.createHash('sha256').update(scr).digest('hex'),border:borders[name],automatic_border_candidate:border,art_luminance:luma,bytes:scr.length,flash_cells:0,colors_per_cell:2});}
-fs.writeFileSync(new URL('compiled.json',import.meta.url),JSON.stringify({scope:'Three proposals only; native TRD RAM/timing integration pending',wordmark:'Exact shared Cinzel 1-bit mask; no local font fallback',wordmark_mask_sha256:crypto.createHash('sha256').update(wordmarkBytes).digest('hex'),images:reports},null,2)+'\n');console.log(JSON.stringify(reports,null,2));
+fs.writeFileSync(new URL('compiled.json',import.meta.url),JSON.stringify({scope:'Four selected artwork proposals; native TRD RAM/timing integration qualified separately',wordmark:'Exact shared Cinzel 1-bit mask; no local font fallback',wordmark_mask_sha256:crypto.createHash('sha256').update(wordmarkBytes).digest('hex'),images:reports},null,2)+'\n');console.log(JSON.stringify(reports,null,2));

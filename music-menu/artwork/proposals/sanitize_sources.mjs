@@ -9,7 +9,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const reportFile=path.join(root,'source-sanitization.json');
 const report=fs.existsSync(reportFile)?JSON.parse(fs.readFileSync(reportFile)): {
   scope:'Nonvisual caBX metadata excluded; pixel streams unchanged; untouched originals remain local only',images:[]};
-for(const name of ['paintress','sirene','gestral-village','sirene-study']){
+for(const name of ['paintress','sirene','gestral-village','sirene-study','gustave-sophie']){
  const file=path.join(root,'sources',name+'.png'),raw=fs.readFileSync(file),kept=[raw.subarray(0,8)],idat=[];
  let offset=8,removed=0;
  while(offset<raw.length){const length=raw.readUInt32BE(offset),type=raw.toString('ascii',offset+4,offset+8),chunk=raw.subarray(offset,offset+length+12);
