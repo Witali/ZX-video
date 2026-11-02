@@ -3,8 +3,8 @@
 [Expedition-33-Demo.trd](../Expedition-33-Demo.trd) is an independently
 bootable **Spectrum128 + Beta Disk** demo with eighteen native illustrations,
 the complete existing AY arrangements of **Lumiere** and **Alicia**, and an
-automatic looping playlist. This build is a local preview awaiting the user's
-review; it has not been published. The ULA beeper remains silent.
+automatic looping playlist. The complete demo was reviewed before publication.
+The ULA beeper remains silent.
 
 The first Lumiere city picture appears before PLAYER and its caches load.
 That picture stays visible throughout loading. Music then starts on the first

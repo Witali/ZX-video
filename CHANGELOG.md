@@ -18224,3 +18224,19 @@ both stereo excerpts without clipping, and preserved RAM/PC on disk swap.
 Target Z80 CPU paths are unchanged by this website change (0T delta). This is
 an unpublished local preview: the user requested a complete review first.
 
+# 2026-11-02 — Approve the reviewed Expedition 33 Demo for publication
+
+The user approved merging main, pushing and publishing the complete local
+demo after reviewing it in the built-in browser. Prepare the release from
+`24342f8c` with the independently bootable TRD unchanged:
+`fd8868220ad6e9f429fc367a9887a446adfccc9c230caa94f37b8805a5046db4`.
+Reuse the complete native/Fuse/browser evidence in `music-menu/reports/demo/`
+and `web/reports/expedition-demo-preview.json`; this documentation update
+changes no target or emulator execution path (0 T delta). The outgoing audit
+checks every newly exposed Git blob, all twenty historical LFS payloads and
+the exact 269-file Pages artifact, including decompressed evidence and PNG
+metadata. No sensitive findings remain; two unchanged historical binary
+email-pattern matches were cleared only against their previously reviewed
+exact hashes. The separate blog update retains its rendered-review approval
+requirement before its own publication.
+

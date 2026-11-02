@@ -314,7 +314,7 @@ disk. The local-file path remains browser-only and hides that download link.
 
 Existing `?disk=ZX-Music-Menu.trd` links select the renamed demo. The static
 build retains `disks/ZX-Music-Menu.trd` as a byte-identical download alias,
-without a second library card. This preview is saved locally for user review;
-it has not been pushed or deployed. Native qualification is documented in
+without a second library card. The complete demo was reviewed before publication.
+Native qualification is documented in
 `music-menu/README.md`; `check-emulator.mjs` checks the new cold boot, autoplay,
 menu-on-Space title, stereo excerpts and preserved disk-swap state.
