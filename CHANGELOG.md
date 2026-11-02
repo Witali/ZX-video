@@ -18240,3 +18240,13 @@ email-pattern matches were cleared only against their previously reviewed
 exact hashes. The separate blog update retains its rendered-review approval
 requirement before its own publication.
 
+# 2026-11-02 — Reuse the ZX logo as the emulator site's favicon
+
+Added the existing ZX mark with its four-color stripe as `web/favicon.svg`.
+The page header and browser icon now use the same SVG asset, keeping their
+shape and colors identical. The authenticated static build copies the icon
+through its explicit allowlist, and the local preview server serves SVG with
+the correct image MIME type. Browser review checks the logo and icon links;
+the existing build guards remain intact. This changes no emulation or target
+Z80 path (0 T delta).
+
