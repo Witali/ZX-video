@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Spectrum renderer verification</title>
+<script src="vendor/ayumi.js"></script><script src="vendor/zx-dream.js"></script>
+<body><button id="run">Compare native Canvas and WebGL pixels</button><pre id="result">Ready</pre>
+<div id="screens" style="display:flex;gap:20px"></div>
+<button id="switch">Test live switching and GPU recovery</button><pre id="switch-result">Ready</pre><div id="fixture" hidden></div>
+<script>
+function create(rendererType) {
+  const bus = new ZX_Bus(), display = new ZX_Display();
+  let flash;
+  display.connect(bus, {setInterval(fn) {flash=fn;}, setTimeout(fn) {fn();}});
+  bus.opt('RENDERING_PARAMS',{scale:1,scaleType:1,rendererType,renderOnAnimationFrame:false});
+  bus.opt('SEMICOLORS',true);
+  const canvases=[document.createElement('canvas'),document.createElement('canvas'),document.createElement('canvas')];
+  canvases.forEach((canvas,index)=>{canvas.width=index?256:288;canvas.height=index?192:224;});
+  display.bind(canvases);
+  const wrapper=document.createElement('div');wrapper.append(canvases[1]);document.getElementById('screens').append(wrapper);
+  return {bus,display,canvas:canvases[1],flash};
+}
+document.getElementById('run').onclick=()=>{
+  try {
+    document.getElementById('screens').replaceChildren();
+    const cpu=create(1),gpu=create(3);let mismatchedBytes=0,comparedBytes=0;
+    for(let seed=0;seed<16;seed++) {
+      for(let i=0;i<6912;i++) {
+        const value=i<6144?(i*73+(i>>5)+seed*17)&255:((i*11+seed*19)&255);
+        cpu.bus.mem_write(0x4000+i,value);gpu.bus.mem_write(0x4000+i,value);
+      }
+      if(seed===8){cpu.flash();gpu.flash();}
+      cpu.display.force_redraw();gpu.display.force_redraw();
+      const expected=cpu.canvas.getContext('2d').getImageData(0,0,256,192).data;
+      const gl=gpu.canvas.getContext('webgl2')||gpu.canvas.getContext('webgl'),actual=new Uint8Array(expected.length);
+      gl.readPixels(0,0,256,192,gl.RGBA,gl.UNSIGNED_BYTE,actual);
+      for(let y=0;y<192;y++)for(let x=0;x<1024;x++)if(expected[y*1024+x]!==actual[(191-y)*1024+x])mismatchedBytes++;
+      comparedBytes+=expected.length;
+    }
+    document.getElementById('result').textContent=JSON.stringify({patterns:16,comparedBytes,mismatchedBytes,nativeResolution:[256,192],passed:mismatchedBytes===0},null,2);
+  } catch(error) {document.getElementById('result').textContent='FAILED: '+error.message;}
+};
+</script></body></html>
+<script type="module">
+import { SpectrumPlayer } from './emulator.js';
+document.getElementById('switch').onclick=async()=>{
+  const player=new SpectrumPlayer(document.getElementById('fixture'));
+  try {
+    player.setRenderer('webgl');await player.initialize();
+    const bytes=new Uint8Array(await (await fetch('disks/ZX-video-refined_part02.trd')).arrayBuffer());
+    player.mount(bytes,true);player.pause(true);
+    const snapshot=()=>JSON.stringify({cpu:player.hw.cpu.get_state(),paging:player.hw.bus.var_read('port_7ffd_value'),
+      memory:Array.from({length:65536},(_,address)=>player.hw.bus.mem_read(address)),disk:player.hw.disk.get_state()});
+    const before=snapshot();player.setRenderer('canvas');player.setRenderer('webgl');
+    if(snapshot()!==before)throw new Error('Renderer switch changed machine state');
+    const canvas=document.querySelector('#fixture .screen-layer');
+    const gl=canvas.getContext('webgl2')||canvas.getContext('webgl');
+    const extension=gl.getExtension('WEBGL_lose_context');
+    if(!extension)throw new Error('GPU context-loss extension unavailable');
+    await new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(new Error('Canvas recovery timeout')),3000);
+      player.onRendererChanged=(actual,fallback)=>{if(actual==='canvas'&&fallback){clearTimeout(timer);resolve();}};
+      extension.loseContext();
+    });
+    if(snapshot()!==before)throw new Error('GPU recovery changed machine state');
+    document.getElementById('switch-result').textContent=JSON.stringify({switchPreservesMemoryAndCpu:true,
+      contextLossFallsBackToCanvas:true,recoveryPreservesMemoryAndCpu:true,nativeScreen:[256,192],passed:true},null,2);
+  }catch(error){document.getElementById('switch-result').textContent='FAILED: '+error.message;}
+  finally{clearInterval(player.activityTimer);player.hw?.clock.stop();}
+};
+</script>

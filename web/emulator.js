@@ -14,6 +14,9 @@ export class SpectrumPlayer {
     this.hw = null;
     this.audio = null;
     this.muted = false;
+    this.rendererPreference = 'canvas';
+    this.activeRenderer = 'canvas';
+    this.onRendererChanged = () => {};
     this.onDiskActivity = () => {};
     this.diskActive = false;
     this.diskBusyUntil = 0;
@@ -42,15 +45,7 @@ export class SpectrumPlayer {
     h.bus.opt('INTRQ_PERIOD', 20);
     h.bus.opt('EXTENDED_MEMORY', 0);
     h.bus.opt('SEMICOLORS', true);
-    h.bus.opt('RENDERING_PARAMS', { scale: 1, scaleType: 1, rendererType: 1, renderOnAnimationFrame: false });
-    const canvases = [document.createElement('canvas'), document.createElement('canvas'), document.createElement('canvas')];
-    canvases.forEach((canvas, index) => {
-      canvas.width = index ? 256 : 288;
-      canvas.height = index ? 192 : 224;
-      canvas.className = index ? 'screen-layer' : 'border-layer';
-      this.container.append(canvas);
-    });
-    h.display.bind(canvases);
+    this.bindDisplay();
     h.psg.applySettings(true, 0.35, 1, 0, 0, 1773400, 512, 0.7);
     h.psg.get_onDataReady().subscribe(packet => {
       if (this.output && this.audio?.state === 'running') this.output.port.postMessage({ left: packet.left, right: packet.right });
@@ -68,6 +63,45 @@ export class SpectrumPlayer {
         this.onDiskActivity(active);
       }
     }, 80);
+  }
+  setRenderer(mode) {
+    if (!['canvas', 'webgl'].includes(mode)) throw new Error('Unknown renderer');
+    this.rendererPreference = mode;
+    if (this.hw) this.bindDisplay();
+  }
+  bindDisplay() {
+    const bind = mode => {
+      this.container.querySelectorAll('canvas').forEach(canvas => canvas.remove());
+      this.hw.bus.opt('RENDERING_PARAMS', { scale: 1, scaleType: 1,
+        rendererType: mode === 'webgl' ? 3 : 1, renderOnAnimationFrame: false });
+      const canvases = [0, 1, 2].map(index => {
+        const canvas = document.createElement('canvas');
+        canvas.width = index ? 256 : 288;
+        canvas.height = index ? 192 : 224;
+        canvas.className = index ? 'screen-layer' : 'border-layer';
+        if (index) canvas.addEventListener('webglcontextlost', event => {
+          event.preventDefault();
+          if (this.container.contains(canvas) && this.activeRenderer === 'webgl') {
+            bind('canvas');
+            this.onRendererChanged('canvas', true);
+          }
+        });
+        this.container.append(canvas);
+        return canvas;
+      });
+      this.hw.display.bind(canvases);
+      this.hw.display.force_redraw();
+      this.activeRenderer = mode;
+      this.container.dataset.renderer = mode;
+    };
+    try {
+      bind(this.rendererPreference);
+      this.onRendererChanged(this.activeRenderer, false);
+    } catch (error) {
+      if (this.rendererPreference !== 'webgl') throw error;
+      bind('canvas');
+      this.onRendererChanged('canvas', true);
+    }
   }
   async enableAudio() {
     if (!this.audio) {

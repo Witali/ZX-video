@@ -1,5 +1,25 @@
 # Changelog and optimization experiments
 
+## 2026-11-02 — Add persistent Canvas/WebGL display settings
+
+- **Objective/change:** Add the user-requested renderer selector to web
+  baseline `1f90db13`. Preserve native 256×192 surfaces, shared compensation
+  for Windows DPI/browser zoom, CPU/RAM/disk state and audio while switching.
+  Store the preference locally and in the selection URL, so reloading also
+  works when browser storage is unavailable. Fall back to Canvas if WebGL is unavailable
+  or its active context is lost. Ignore context-loss events on removed surfaces.
+- **Verification/decision:** The independent Canvas/WebGL browser fixture
+  compares 16 bitmap/attribute/FLASH patterns: 3,145,728 RGBA bytes, zero
+  differences. Live Canvas→WebGL→Canvas switches preserve mounted disk and
+  playback state, with no browser errors; reloading retains the preference.
+  A simulated WebGL context loss recovers through Canvas with identical CPU,
+  mapped RAM, paging and disk state.
+  An early readback requested WebGL1 after a WebGL2 context had been created;
+  the fixture was corrected before the final result. This is output
+  equivalence evidence, not a host-speed benchmark or a fix for disk stalls.
+  [Fixture](web/tools/renderer-check.html), [report](web/reports/renderer.json).
+  Target player code is unchanged.
+
 ## 2026-11-02 — Qualify browser CPU instructions and investigate disk stalls
 
 - **Objective/baseline:** Investigate reported hangs on refined disk 2 at

@@ -6,6 +6,24 @@ keepPhysicalPixelScale($('display'));
 let images = [], selected, mounted, localBytes, busy = false, paused = false, readingDisk = false;
 player.onDiskActivity = active => { readingDisk = active; controls(); };
 function status(message, error = false) { $('status').textContent = message; $('status').classList.toggle('error', error); }
+player.onRendererChanged = (actual, fallback) => {
+  $('renderer-status').textContent = fallback
+    ? 'WebGL unavailable. Canvas is active; playback is preserved.'
+    : `${actual === 'webgl' ? 'WebGL' : 'Canvas'} · native 256×192 buffer · exact 2× physical pixels.`;
+};
+try {
+  const saved = new URL(location.href).searchParams.get('renderer') || localStorage.getItem('zx-video.renderer');
+  if (['canvas', 'webgl'].includes(saved)) $('renderer').value = saved;
+} catch { /* Rendering still works when browser storage is unavailable. */ }
+player.setRenderer($('renderer').value);
+$('renderer').addEventListener('change', () => {
+  const mode = $('renderer').value;
+  player.setRenderer(mode);
+  try { localStorage.setItem('zx-video.renderer', mode); } catch { /* Optional preference storage. */ }
+  const url = new URL(location.href);
+  url.searchParams.set('renderer', mode);
+  history.replaceState(null, '', url);
+});
 function controls() {
   $('play').disabled = busy || !selected;
   $('swap').disabled = busy || !mounted || !selected;

@@ -157,3 +157,21 @@ matches the fourteen title glyphs against the stock ROM font, checks actual
 nonzero synthesized audio, and verifies that disk insertion preserves the
 mapped memory and CPU program counter. It does not measure browser output
 devices or qualify a complete movie's deadlines.
+
+### Display settings
+
+**Settings → Display renderer** switches between Canvas (the default) and
+WebGL. The browser saves the choice, and the URL retains it even when local
+storage is unavailable; an explicit URL choice takes priority. Switching during playback rebuilds only
+the display surfaces, preserving CPU, RAM, disk state and sound. Both render
+at native 256×192 and share the exact physical-pixel scaling. Unavailable or
+lost WebGL contexts fall back to Canvas with a status message.
+
+The browser comparison fixture renders sixteen bitmap/attribute/FLASH
+patterns through both backends and compares native RGBA bytes. The observed
+result is 3,145,728 bytes compared with zero differences. This proves those
+rendered patterns, not a speed advantage or full-machine timing.
+Serve [renderer-check.html](tools/renderer-check.html) at the built site's
+root for a local check; this developer fixture is not part of the Pages
+artifact. The first fixture readback incorrectly requested WebGL1 after the
+upstream renderer selected WebGL2; the final fixture handles both contexts.
