@@ -27,7 +27,8 @@ if (worker) {
       function advanceChip(count){for(var i=0;i<count;i++){chip.process();chip.removeDC();}}
       advanceChip(100000);`, context);
   } else {
-    vm.runInContext(fs.readFileSync(resolve(siteRoot, 'vendor/zx-dream.js'), 'utf8'), context);
+    // Optional core path lets CPU experiments reuse this exact real-machine workload.
+    vm.runInContext(fs.readFileSync(resolve(process.argv[6] || siteRoot + '/vendor/zx-dream.js'), 'utf8'), context);
     // Upstream common.js declares its own XHR loader; replace it only in this
     // Node harness, after evaluation, with the same authenticated local ROMs.
     context.loadServerFile = async name => new Uint8Array(fs.readFileSync(resolve(siteRoot, 'vendor/roms', name)));
@@ -41,7 +42,8 @@ if (worker) {
       h.psg.applySettings(true,.35,1,0,0,1773400,512,.7);
       var packets=[];h.psg.get_onDataReady().subscribe(p=>packets.push([p.left,p.right]));`, context);
     await vm.runInContext('h.rom.get_ready$()', context);
-    context.diskImage = new Uint8Array(fs.readFileSync(resolve(siteRoot, 'disks/ZX-Music-Menu.trd')));
+    context.diskImage = new Uint8Array(fs.readFileSync(resolve(siteRoot,
+      kind === 'movie' ? 'disks/ZX-video-refined_part02.trd' : 'disks/ZX-Music-Menu.trd')));
   }
   const cpuStart = process.cpuUsage(), start = performance.now();
   if (kind === 'psg') {
@@ -50,7 +52,7 @@ if (worker) {
     vm.runInContext('h.drives[0].insertTRD(diskImage);h.bus.reset(2);h.clock.run()', context);
     function advance(ms) { const until = now + ms; while (now < until) { now += 4; for (const fn of [...timers.values()]) fn(); } }
     advance(60000);
-    for (const bit of [0, 1]) {
+    for (const bit of kind === 'movie' ? [] : [0, 1]) {
       vm.runInContext(`h.keyboard.switchKeys([{index:3,bit:${bit}}],true)`, context);advance(100);
       vm.runInContext(`h.keyboard.switchKeys([{index:3,bit:${bit}}],false)`, context);advance(3000);
     }

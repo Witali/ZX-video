@@ -1,0 +1,405 @@
+{
+  "scope": "Actual Z80, banked RAM, bus and 50-Hz clock; 1s warmup and 20s timed machine time per kernel. No audio/video or physical-machine claim.",
+  "node": "v22.22.3",
+  "baselineSha256": "cde80f05689c267c62948da10e3326b8e217e7db7c1c0d5720f07e27a994933d",
+  "candidateSha256": "f3cc41645f3c3a90025292dc2cd240e7bd56443487fd4b8bfea121db8b90b7d0",
+  "identities": {
+    "alu": {
+      "state": {
+        "af_": 65535,
+        "bc_": 0,
+        "de_": 0,
+        "hl_": 0,
+        "af": 65322,
+        "bc": 42146,
+        "de": 17006,
+        "hl": 12910,
+        "ix": 0,
+        "iy": 0,
+        "sp": 65280,
+        "pc": 32782,
+        "r": 13,
+        "i": 0,
+        "memptr": 32768,
+        "q": 1,
+        "imf": 0,
+        "iff": 0,
+        "prefix_dd": false,
+        "prefix_fd": false,
+        "prefix_ed": false,
+        "prefix_cb": false
+      },
+      "t": 74453402,
+      "ram": "1496c6b84582c5ddb0a9021aa5553ff88e77be9bdfe582b6e58fc1b4f30e53f4",
+      "interrupts": {
+        "count": 1050,
+        "sha256": "d117492636cdd135b2ae466e95c9077a159a14e73bd7c2fd1fbacbb9085e7d5e"
+      }
+    },
+    "copy": {
+      "state": {
+        "af_": 65535,
+        "bc_": 0,
+        "de_": 0,
+        "hl_": 0,
+        "af": 65477,
+        "bc": 3179,
+        "de": 41877,
+        "hl": 37781,
+        "ix": 0,
+        "iy": 0,
+        "sp": 65280,
+        "pc": 32777,
+        "r": 49,
+        "i": 0,
+        "memptr": 32778,
+        "q": 1,
+        "imf": 0,
+        "iff": 0,
+        "prefix_dd": false,
+        "prefix_fd": false,
+        "prefix_ed": false,
+        "prefix_cb": false
+      },
+      "t": 74453402,
+      "ram": "48a7b10d9289e1b50cc1585b1b176480fbcf207265c60c9af193a6c1e7087496",
+      "interrupts": {
+        "count": 1050,
+        "sha256": "7749a4e2e90d5ec1e05cbc5acae55b4ea77a4ca3d61146bf1375c6cdbbc2ba95"
+      }
+    },
+    "indexed": {
+      "state": {
+        "af_": 65535,
+        "bc_": 0,
+        "de_": 0,
+        "hl_": 0,
+        "af": 23296,
+        "bc": 4660,
+        "de": 45056,
+        "hl": 40960,
+        "ix": 40961,
+        "iy": 0,
+        "sp": 65280,
+        "pc": 32768,
+        "r": 60,
+        "i": 0,
+        "memptr": 32768,
+        "q": 0,
+        "imf": 0,
+        "iff": 0,
+        "prefix_dd": false,
+        "prefix_fd": false,
+        "prefix_ed": false,
+        "prefix_cb": false
+      },
+      "t": 74453400,
+      "ram": "9b82acaa35e46b05c74a5498bc4ee01ab4e044ff4d04ed4f2a92301e2097b663",
+      "interrupts": {
+        "count": 1050,
+        "sha256": "82e55d35501c430c1b9de12c35f1acbf1269c0dc9aa6662653ef83e3f3d181f8"
+      }
+    },
+    "flow": {
+      "state": {
+        "af_": 65535,
+        "bc_": 0,
+        "de_": 0,
+        "hl_": 0,
+        "af": 39561,
+        "bc": 2612,
+        "de": 45056,
+        "hl": 40960,
+        "ix": 0,
+        "iy": 0,
+        "sp": 65280,
+        "pc": 32770,
+        "r": 98,
+        "i": 0,
+        "memptr": 32770,
+        "q": 0,
+        "imf": 0,
+        "iff": 0,
+        "prefix_dd": false,
+        "prefix_fd": false,
+        "prefix_ed": false,
+        "prefix_cb": false
+      },
+      "t": 74453410,
+      "ram": "217d4f159aed9cf691a01e229d2ba6a8baf5afa3da3473323ee78fb8fe176b83",
+      "interrupts": {
+        "count": 1050,
+        "sha256": "b6bcd6c1569e6751c0158ce6daf23524873226008d1d16c4196ed145e0ad65c6"
+      }
+    }
+  },
+  "rows": [
+    {
+      "pair": 0,
+      "name": "before",
+      "kind": "alu",
+      "ms": 486.383
+    },
+    {
+      "pair": 0,
+      "name": "before",
+      "kind": "copy",
+      "ms": 181.23389999999995
+    },
+    {
+      "pair": 0,
+      "name": "before",
+      "kind": "indexed",
+      "ms": 262.82910000000004
+    },
+    {
+      "pair": 0,
+      "name": "before",
+      "kind": "flow",
+      "ms": 191.26479999999992
+    },
+    {
+      "pair": 0,
+      "name": "after",
+      "kind": "alu",
+      "ms": 452.4693
+    },
+    {
+      "pair": 0,
+      "name": "after",
+      "kind": "copy",
+      "ms": 159.97899999999993
+    },
+    {
+      "pair": 0,
+      "name": "after",
+      "kind": "indexed",
+      "ms": 246.26229999999998
+    },
+    {
+      "pair": 0,
+      "name": "after",
+      "kind": "flow",
+      "ms": 203.23599999999988
+    },
+    {
+      "pair": 1,
+      "name": "after",
+      "kind": "alu",
+      "ms": 449.61249999999995
+    },
+    {
+      "pair": 1,
+      "name": "after",
+      "kind": "copy",
+      "ms": 157.14599999999996
+    },
+    {
+      "pair": 1,
+      "name": "after",
+      "kind": "indexed",
+      "ms": 243.9525
+    },
+    {
+      "pair": 1,
+      "name": "after",
+      "kind": "flow",
+      "ms": 178.98019999999997
+    },
+    {
+      "pair": 1,
+      "name": "before",
+      "kind": "alu",
+      "ms": 488.76700000000005
+    },
+    {
+      "pair": 1,
+      "name": "before",
+      "kind": "copy",
+      "ms": 180.80220000000008
+    },
+    {
+      "pair": 1,
+      "name": "before",
+      "kind": "indexed",
+      "ms": 266.2256
+    },
+    {
+      "pair": 1,
+      "name": "before",
+      "kind": "flow",
+      "ms": 197.68759999999997
+    },
+    {
+      "pair": 2,
+      "name": "before",
+      "kind": "alu",
+      "ms": 470.60890000000006
+    },
+    {
+      "pair": 2,
+      "name": "before",
+      "kind": "copy",
+      "ms": 180.67539999999997
+    },
+    {
+      "pair": 2,
+      "name": "before",
+      "kind": "indexed",
+      "ms": 254.52189999999996
+    },
+    {
+      "pair": 2,
+      "name": "before",
+      "kind": "flow",
+      "ms": 198.17509999999993
+    },
+    {
+      "pair": 2,
+      "name": "after",
+      "kind": "alu",
+      "ms": 435.3238
+    },
+    {
+      "pair": 2,
+      "name": "after",
+      "kind": "copy",
+      "ms": 154.90739999999994
+    },
+    {
+      "pair": 2,
+      "name": "after",
+      "kind": "indexed",
+      "ms": 235.8194000000001
+    },
+    {
+      "pair": 2,
+      "name": "after",
+      "kind": "flow",
+      "ms": 177.3680999999999
+    },
+    {
+      "pair": 3,
+      "name": "after",
+      "kind": "alu",
+      "ms": 445.7355
+    },
+    {
+      "pair": 3,
+      "name": "after",
+      "kind": "copy",
+      "ms": 155.1486
+    },
+    {
+      "pair": 3,
+      "name": "after",
+      "kind": "indexed",
+      "ms": 233.4701
+    },
+    {
+      "pair": 3,
+      "name": "after",
+      "kind": "flow",
+      "ms": 175.30549999999994
+    },
+    {
+      "pair": 3,
+      "name": "before",
+      "kind": "alu",
+      "ms": 475.587
+    },
+    {
+      "pair": 3,
+      "name": "before",
+      "kind": "copy",
+      "ms": 179.29060000000004
+    },
+    {
+      "pair": 3,
+      "name": "before",
+      "kind": "indexed",
+      "ms": 267.6806
+    },
+    {
+      "pair": 3,
+      "name": "before",
+      "kind": "flow",
+      "ms": 246.3853999999999
+    },
+    {
+      "pair": 4,
+      "name": "before",
+      "kind": "alu",
+      "ms": 467.82489999999996
+    },
+    {
+      "pair": 4,
+      "name": "before",
+      "kind": "copy",
+      "ms": 179.11159999999995
+    },
+    {
+      "pair": 4,
+      "name": "before",
+      "kind": "indexed",
+      "ms": 259.73799999999994
+    },
+    {
+      "pair": 4,
+      "name": "before",
+      "kind": "flow",
+      "ms": 190.5163
+    },
+    {
+      "pair": 4,
+      "name": "after",
+      "kind": "alu",
+      "ms": 435.9791
+    },
+    {
+      "pair": 4,
+      "name": "after",
+      "kind": "copy",
+      "ms": 154.7446
+    },
+    {
+      "pair": 4,
+      "name": "after",
+      "kind": "indexed",
+      "ms": 234.16269999999997
+    },
+    {
+      "pair": 4,
+      "name": "after",
+      "kind": "flow",
+      "ms": 175.0073000000001
+    }
+  ],
+  "summary": [
+    {
+      "kind": "alu",
+      "beforeMs": 475.587,
+      "afterMs": 445.7355,
+      "reductionPercent": 6.276769550050776
+    },
+    {
+      "kind": "copy",
+      "beforeMs": 180.67539999999997,
+      "afterMs": 155.1486,
+      "reductionPercent": 14.12854212582343
+    },
+    {
+      "kind": "indexed",
+      "beforeMs": 262.82910000000004,
+      "afterMs": 235.8194000000001,
+      "reductionPercent": 10.276525696735995
+    },
+    {
+      "kind": "flow",
+      "beforeMs": 197.68759999999997,
+      "afterMs": 177.3680999999999,
+      "reductionPercent": 10.278591069950805
+    }
+  ],
+  "allExact": true
+}

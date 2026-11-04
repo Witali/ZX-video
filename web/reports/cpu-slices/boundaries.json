@@ -1,0 +1,58 @@
+{
+  "scope": "Real Z80 instructions, bus timestamps, dynamic I/O deadlines, IRQ/NMI, cancellation, frequency changes, pause, debug and fractional deadlines; differential against instruction-step scheduling.",
+  "coreSha256": "f3cc41645f3c3a90025292dc2cd240e7bd56443487fd4b8bfea121db8b90b7d0",
+  "referenceSha256": "cde80f05689c267c62948da10e3326b8e217e7db7c1c0d5720f07e27a994933d",
+  "cases": [
+    {
+      "name": "regular",
+      "t": 439639,
+      "busFetches": 60131,
+      "ioReads": 939,
+      "ioWrites": 939,
+      "slices": 31,
+      "traceSha256": "6960a7a82c7bbea729cb7902bf7cb7ccc82599c0bde833a033d88d8ece2f4be3",
+      "memorySha256": "a012bfaccf62dd9cf3e980df5c9afd4fa0b15e86262ce83d46d730886a779910"
+    },
+    {
+      "name": "irregular",
+      "t": 439639,
+      "busFetches": 60131,
+      "ioReads": 939,
+      "ioWrites": 939,
+      "slices": 17,
+      "traceSha256": "6960a7a82c7bbea729cb7902bf7cb7ccc82599c0bde833a033d88d8ece2f4be3",
+      "memorySha256": "a012bfaccf62dd9cf3e980df5c9afd4fa0b15e86262ce83d46d730886a779910"
+    },
+    {
+      "name": "catch-up",
+      "t": 439639,
+      "busFetches": 60131,
+      "ioReads": 939,
+      "ioWrites": 939,
+      "slices": 7,
+      "traceSha256": "6960a7a82c7bbea729cb7902bf7cb7ccc82599c0bde833a033d88d8ece2f4be3",
+      "memorySha256": "a012bfaccf62dd9cf3e980df5c9afd4fa0b15e86262ce83d46d730886a779910"
+    },
+    {
+      "name": "frequency change",
+      "t": 439156,
+      "busFetches": 60067,
+      "ioReads": 938,
+      "ioWrites": 938,
+      "slices": 31,
+      "traceSha256": "b21d2baed0b0c4ab17ef3afe2c78fc8db14d66077b5183d02e7fad064c45535f",
+      "memorySha256": "5d1cff843527ff9892ce63a0f4ba886b7d8a977bb4bbed7e88e6f2cfdc98fd92"
+    },
+    {
+      "name": "debug step path",
+      "t": 6877,
+      "busFetches": 950,
+      "ioReads": 15,
+      "ioWrites": 15,
+      "slices": 0,
+      "traceSha256": "18cecd42ee1e3c9cf11643df5bec40fc01282254b846053fd355aad2cf1810a1",
+      "memorySha256": "e8414afae2891a78641f1085e4c05a41066da96b10ebcc94c68f1fe9f1dcdfc8"
+    }
+  ],
+  "allExact": true
+}

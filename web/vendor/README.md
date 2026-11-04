@@ -64,3 +64,10 @@ The TRD model uses the standard interleave (physical IDs 1,9,2,10,...,8,16),
 6250-byte MFM tracks, 300 rpm, normal rotational search, CRCs and timed DRQ.
 Rotational waits are not skipped. This is still not a complete physical-board
 qualification. No Z80 player/decoder code or target hot path is changed.
+
+The [CPU event-loop patch](../tools/patch-cpu-slices.mjs) keeps instruction
+execution inside the CPU until the paced host budget ends, dispatching the
+same device queue at instruction/prefix boundaries. New I/O deadlines can
+shorten the next dispatch immediately. It retains instruction stepping for
+debugging and preserves the original bus timestamp contract.
+[CPU measurements, rejected variants and exact differential checks](../reports/cpu-slices/README.md).

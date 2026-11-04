@@ -4631,6 +4631,22 @@ function ZX_Z80 () {
     // переход в процедуру обработки.
     this.process = process;
 
+    var eventDeadline = 0, instructionStart = 0;
+    this.run_until = function (limit, dispatch) {
+        eventDeadline = 0;
+        while (ts_cnt < limit) {
+            instructionStart = ts_cnt;
+            if (ts_cnt >= eventDeadline) eventDeadline = dispatch(ts_cnt);
+            process();
+        }
+    };
+    // An I/O command may schedule a device BEFORE the previous event deadline.
+    // Finish this CPU step, then dispatch at the same boundary as step mode.
+    this.reschedule_event = function (deadline) {
+        if (deadline < eventDeadline) eventDeadline = deadline;
+    };
+    this.get_instruction_start = function () { return instructionStart; };
+
     // get_state();
     // Возвращает объект с внутренним состоянием
     // регистров и триггеров процессора
@@ -9737,6 +9753,25 @@ function ZX_Clock() {
 	var _hwState = HWState.get_instance();
 	var _bus;
 	var _cpu;
+    var _slicing = false, _sliceMachineOrigin = 0;
+
+    // Ports observe the START of the current CPU step, preserving the previous
+    // core's bus contract even after operand cycles have accrued inside it.
+    function currentTstates() {
+        return _slicing ? _sliceMachineOrigin + _cpu.get_instruction_start() : _tstates;
+    }
+    function dispatchHardware(cpuTstates) {
+        _tstates = _sliceMachineOrigin + cpuTstates;
+        _taskQueue.process(_tstates);
+        var next = _taskQueue.nextTask;
+        // Subtract absolute timestamps before adding a relative CPU counter;
+        // this retains fractional deadlines just above an integer T-state.
+        return next ? next.tsEvent - _sliceMachineOrigin : Infinity;
+    }
+    function rescheduleEvent(task) {
+        if (_slicing) _cpu.reschedule_event(task.tsEvent - _sliceMachineOrigin);
+        return task;
+    }
 	var _taskQueue = new TaskQueue(_tstatesPerMs);
 	var _interruptActiveTask = null;
 	var _interruptInactiveTask = null;
@@ -9819,12 +9854,25 @@ function ZX_Clock() {
 		var lastTstates = 0;
 		var curTstates;
 		// работа процессора
+        if (_cpu.run_until && plannedTstates > 0) {
+            _sliceMachineOrigin = _tstates;
+            _slicing = true;
+            try { _cpu.run_until(plannedTstates, dispatchHardware); }
+            finally {
+                // Also leave the old instruction-start timestamp on exceptions.
+                lastTstates = _cpu.get_instruction_start();
+                _tstates = _sliceMachineOrigin + lastTstates;
+                _slicing = false;
+            }
+            curTstates = _cpu.get_tstates();
+        } else {
 		while ((curTstates = _cpu.get_tstates()) < plannedTstates) {
 			_tstates += (curTstates - lastTstates);
 			lastTstates = curTstates;
 			_taskQueue.process(_tstates);
 			_cpu.process();
 		}
+        }
 		// корректировка счетчиков
 		_tstates += (curTstates - lastTstates);
 		lastTstates = curTstates;
@@ -9900,12 +9948,13 @@ function ZX_Clock() {
 	}
 
 	function updateTstatesPerMs() {
+        if (_slicing) _cpu.reschedule_event(_cpu.get_instruction_start());
 		var tstatesPerMs = _tapeBoostFactor * _tstatesPerIntrq / _intrqPeriod;
 		if (_tstatesPerMs != tstatesPerMs) {
 			_tstatesPerMs = tstatesPerMs;
 			_taskQueue.set_tstatesPerMs(_tstatesPerMs);
 			_maxBoostTstates = _maxBoostMs * _tstatesPerMs;
-			_baseTstates = _tstates;
+			_baseTstates = currentTstates();
 			_baseTimestamp = hostNow();
 			_rescheduleTaskOnNextInterrupt = true;
 		}
@@ -9921,8 +9970,8 @@ function ZX_Clock() {
 	this.runDebug = runDebug;
 	this.stop = stop;
 	this.get_running = function () { return _running; }
-	this.get_tstates = function () { return _tstates; }
-	this.get_ms = function () { return _tstates / _tstatesPerMs; }
+	this.get_tstates = currentTstates;
+	this.get_ms = function () { return currentTstates() / _tstatesPerMs; }
 	this.connect = function (bus, cpu) {
 		_bus = bus;
 		_cpu = cpu;
@@ -9945,11 +9994,11 @@ function ZX_Clock() {
 		rescheduleInterruptTask();
 	}
 	this.setTimeout = function(func, ms) {
-		return _taskQueue.enqueue(_tstates, ms, func);
+		return rescheduleEvent(_taskQueue.enqueue(currentTstates(), ms, func));
 	}
 	this.setInterval = function (func, interval, count, firstInterval) {
 		var firstInterval = (firstInterval !== undefined) ? firstInterval : interval;
-		return _taskQueue.enqueue(_tstates, firstInterval, func, count, interval);
+		return rescheduleEvent(_taskQueue.enqueue(currentTstates(), firstInterval, func, count, interval));
 	}
 }
 
@@ -9961,6 +10010,7 @@ function TaskQueue(tstatesPerMs) {
 	var begin = 0;
 	var end = 0;
 	var _tstatesPerMs = tstatesPerMs;
+    this.nextTask = undefined;
 
 	this.set_tstatesPerMs = function (value) {
 		_tstatesPerMs = value;
@@ -10000,6 +10050,7 @@ function TaskQueue(tstatesPerMs) {
 		}
 		queue[i % capacity] = task;
 		end = (end + 1) % capacity;
+        this.nextTask = begin !== end ? queue[begin] : undefined;
 		return task;
 	}
 
@@ -10028,6 +10079,7 @@ function TaskQueue(tstatesPerMs) {
 		}
 		queue[i % capacity] = task;
 		end = (end + 1) % capacity;
+        this.nextTask = begin !== end ? queue[begin] : undefined;
 		return task;
 	}
 
@@ -10037,6 +10089,7 @@ function TaskQueue(tstatesPerMs) {
 			if (begin < linearEnd && queue[begin].tsEvent <= tsNow) {
 				var task = queue[begin++];
 				begin %= capacity;
+                this.nextTask = begin !== end ? queue[begin] : undefined;
 				if (!task.cancelled) {
 					task.invoke();
 					if (!task.cancelled && (!task.count || task.next < task.count)) {

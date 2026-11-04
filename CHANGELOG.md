@@ -1,5 +1,32 @@
 # Changelog and optimization experiments
 
+## 2026-11-04 — Reduce CPU execution and device-dispatch overhead
+
+- **Objective/baseline:** Optimize actual browser Z80 execution from `aef79237`,
+  with identical instructions, bus timestamps and shared-device timelines.
+  Keep the interpreter inside one CPU loop and dispatch hardware only at its
+  next deadline; I/O can immediately create an earlier deadline. Debugging
+  retains instruction stepping. No target instruction or RAM changes, delta 0 T.
+- **Measurements:** Five alternating pairs on actual CPU/banked-RAM/bus/50-Hz
+  workloads (1 s warmup, 20 s timed): built-in Chromium medians improve
+  **9.15% arithmetic, 11.32% LDIR, 7.50% indexed/CB, 8.69% branch/stack**.
+  Node reductions are 6.28/14.13/10.28/10.28%. These isolate CPU/clock work.
+  Whole-machine AY workloads establish no overall gain: music is 2.60% slower,
+  video 0.27% faster in the retained runs. Do not generalize CPU gains to FPS.
+- **Rejected attempts:** Returning to the clock on every device event slows
+  music 15.80%; a dense-event fallback gives an inconclusive 0.87% and leaves
+  normal AY playback on the old path. Retain both full measurements. Earlier
+  opcode-family, flag-type, specialized-load and common-opcode probes did not
+  justify changing the decoder. Correct VM proxy lookups in the microbenchmark;
+  discard initial setup/anchor failures. Guard the first fractional-deadline
+  rounding hang with a regression at 129998.00000000001 T.
+- **Verification/decision:** Complete M1/I/O/event/RAM/CPU traces match the
+  previous core under IRQ/NMI, early I/O events, cancellation, nested events,
+  frequency changes, pause/catch-up and debug. All real-ROM/TRD/AY runs retain
+  exact PCM, memory and device state. Keep the bounded CPU-loop change for
+  lower CPU/clock overhead; retain the music tradeoff and all timing limits.
+  [Reproduction and reports](web/reports/cpu-slices/README.md).
+
 ## 2026-11-04 — Stream WebGL vertices without per-frame GPU waits
 
 - **Objective/baseline:** Speed up browser Spectrum emulation from `1cabface`
