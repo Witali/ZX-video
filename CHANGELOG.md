@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-11-04 — Stream WebGL vertices without per-frame GPU waits
+
+- **Objective/baseline:** Speed up browser Spectrum emulation from `1cabface`
+  without changing machine time, sound, disk latency or visible pixels.
+  Preliminary queue-head, ED/CB split and paged-RAM probes show no useful
+  improvement across three browser trials: baseline 3078.6 ms versus
+  3188.6/3075.0/3106.4 ms for the same 66.2-second cold music workload.
+  Reject all three. One-shot opcode-dispatch/AY-phase Node probes remain
+  inconclusive and are not promoted; retain the original CPU and DSP code.
+- **Selected change:** Fill existing WebGL vertex storage directly instead
+  of creating an array per dirty byte. Allocate each GPU bank buffer once,
+  upload only dirty vertices with `bufferSubData`, and remove each redraw's
+  blocking `finish()` while retaining submission and one-surface presentation.
+  Full redraws remove 6144 temporary arrays; 64-byte updates transfer 6144
+  instead of 589824 bytes. Keep native resolution, colors, scaling and banks.
+- **Measurements:** Built-in Chromium 156 / WebGL 2, five alternating pairs
+  of 200-frame batches, including final GPU completion: full-update median
+  **133.4 -> 67.6 ms (-49.33%)**, sparse **62.0 -> 8.0 ms (-87.10%)**.
+  Unchanged-frame 6.3 -> 5.9 ms is treated as noise. These are instrumented
+  renderer timings on this host, not overall Z80 throughput or real-time FPS.
+- **Verification:** Zero pixel differences against Canvas in WebGL 1/2,
+  all rows, FLASH, both banks, incremental writes, border-only changes and
+  four viewport sizes. Context-loss/fallback retains machine state.
+  295344 independent vertices, 1356 Fuse vectors, seven clock schedules,
+  background/keyboard/filter checks, exact before/after PCM/RAM/CPU/disk/PSG
+  identity, 67.2-second integration smoke and authenticated build guards pass.
+  Vendor regeneration is exact. No native instruction or disk changes;
+  absolute player T-state paths unchanged, **delta 0 T**, target RAM delta 0 B.
+- **Decision/evidence:** Retain the bounded WebGL optimization, with no
+  cross-GPU or full-movie timing claim. The mixed-EOL prefix-split parsing
+  failure and missing-site profiling setup were discarded before screening.
+  [Reproduction, raw results and limits](web/reports/webgl-streaming/README.md).
+
 ## 2026-11-03 — Remove accidental YouTube description strikethrough
 
 - **Trigger/baseline:** The published bilingual description used an ASCII

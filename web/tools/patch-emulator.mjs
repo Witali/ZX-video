@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { patchWebGLStreaming } from './patch-webgl-streaming.mjs';
 const webglPresentation = readFileSync(new URL('./webgl-presentation.js', import.meta.url), 'utf8');
 // Local fixes to pinned ZX-Dream. Match exact upstream text so upgrades fail safely.
 export function patchEmulator(source) {
@@ -168,7 +169,7 @@ export function patchEmulator(source) {
   const drawAnchor = 'if (glBufferIndex) {';
   if (!webglCode.includes(drawAnchor)) throw new Error('WebGL dirty upload anchor changed');
   source = source.slice(0, webglBegin)
-    + webglCode.replace(drawAnchor, `${drawAnchor}\n                this._presentationChanged = true;`)
+    + patchWebGLStreaming(webglCode).replace(drawAnchor, `${drawAnchor}\n                this._presentationChanged = true;`)
     + webglPresentation + '\n\n' + source.slice(webglEnd);
   return source;
 }

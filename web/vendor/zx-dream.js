@@ -5923,6 +5923,8 @@ Object.assign(WebGLRenderer.prototype, {
 
 	    var buffer = glContext.createBuffer();
 	    glContext.bindBuffer(glContext.ARRAY_BUFFER, buffer);
+        // Allocate each bank's vertex storage once, not on every redraw.
+        glContext.bufferData(glContext.ARRAY_BUFFER, this._glBuffer.byteLength, glContext.DYNAMIC_DRAW);
 
 		glContext.bindAttribLocation(program, 0, 'a_params');
 		var paramsLocation = glContext.getAttribLocation(program, 'a_params');
@@ -6069,28 +6071,27 @@ Object.assign(WebGLRenderer.prototype, {
 						sx = data[address],
 						sp = sx+1,
 						sy = attr,
-						sq = sy+1,
-						glData = [
-							x, y, sx, sy,
-							p, y, sp, sy,
-							p, q, sp, sq,
-							x, y, sx, sy,
-							x, q, sx, sq,
-							p, q, sp, sq
-						];
+						sq = sy+1;
 
-					this._glBuffer.set(glData, glBufferIndex);
-					glData.length = 0;
-					glBufferIndex += 24;
+                    // Write the same six vertices directly, without a temporary
+                    // 24-number Array for every dirty group of eight pixels.
+                    this._glBuffer[glBufferIndex++] = x; this._glBuffer[glBufferIndex++] = y; this._glBuffer[glBufferIndex++] = sx; this._glBuffer[glBufferIndex++] = sy;
+                    this._glBuffer[glBufferIndex++] = p; this._glBuffer[glBufferIndex++] = y; this._glBuffer[glBufferIndex++] = sp; this._glBuffer[glBufferIndex++] = sy;
+                    this._glBuffer[glBufferIndex++] = p; this._glBuffer[glBufferIndex++] = q; this._glBuffer[glBufferIndex++] = sp; this._glBuffer[glBufferIndex++] = sq;
+                    this._glBuffer[glBufferIndex++] = x; this._glBuffer[glBufferIndex++] = y; this._glBuffer[glBufferIndex++] = sx; this._glBuffer[glBufferIndex++] = sy;
+                    this._glBuffer[glBufferIndex++] = x; this._glBuffer[glBufferIndex++] = q; this._glBuffer[glBufferIndex++] = sx; this._glBuffer[glBufferIndex++] = sq;
+                    this._glBuffer[glBufferIndex++] = p; this._glBuffer[glBufferIndex++] = q; this._glBuffer[glBufferIndex++] = sp; this._glBuffer[glBufferIndex++] = sq;
 					dirty[address] = 0;
 				}
 			}
 			if (glBufferIndex) {
                 this._presentationChanged = true;
-				ctx.bufferData(ctx.ARRAY_BUFFER, this._glBuffer, ctx.STATIC_DRAW);
+				// Empty frames never upload. Sparse updates transfer only populated vertices.
+                ctx.bufferSubData(ctx.ARRAY_BUFFER, 0, this._glBuffer.subarray(0, glBufferIndex));
 				ctx.drawArrays(ctx.TRIANGLES, 0, glBufferIndex >> 2);
 				ctx.flush();
-				ctx.finish();
+                // flush submits the bank before canvas-to-texture presentation.
+                // The browser synchronizes that copy; do not block the CPU on finish().
 			}
 		}
 	},

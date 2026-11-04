@@ -17,6 +17,11 @@ exposes one full-frame GPU surface and keeps both native bank canvases hidden.
 Its final texture uses nearest-neighbor GPU scaling and high-precision sample
 coordinates; context loss on any of the three GPU contexts triggers Canvas
 recovery. It does not read GPU pixels into JavaScript during playback.
+The [streaming patch](../tools/patch-webgl-streaming.mjs) retains identical
+vertices and pixels, fills the shared vertex array directly, allocates GPU
+bank storage once and uploads only dirty vertices. It submits draws without
+waiting synchronously for GPU completion on each bank update.
+[Browser measurements and correctness checks](../reports/webgl-streaming/README.md).
 The upstream UI, debugger, PHP services, example
 disks, jQuery and Knockout are not included. Upstream comments are retained.
 See [MIT license](LICENSE.zx-dream) and the per-module hashes in

@@ -303,6 +303,10 @@ The historical [Canvas scaling](reports/canvas-scaling.json) and
 [Canvas composition](reports/canvas-composition.json) reports retain the earlier
 bank-only test limitation, user observations and reverted transform/zoom
 experiments. Z80/player timing qualification is separate from display checks.
+The [WebGL streaming optimization](reports/webgl-streaming/README.md) reduces
+temporary arrays, redundant vertex uploads and synchronous GPU waits, while
+retaining these pixel checks. Its rendering benchmark measures host work;
+the emulated CPU, disk and sound keep the same real-time schedule.
 Serve [renderer-check.html](tools/renderer-check.html) at the built site's
 root for a local check; this developer fixture is not part of the Pages
 artifact. The first fixture readback incorrectly requested WebGL1 after the
