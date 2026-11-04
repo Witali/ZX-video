@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Spectrum 50-Hz frame clock check</title>
+<script src="vendor/ayumi.js"></script><script src="vendor/zx-dream.js"></script>
+<h1>Native 50-Hz fields and browser presentation</h1>
+<label>Renderer<select id="renderer"><option value="webgl">WebGL</option><option value="canvas">Canvas</option></select></label>
+<button id="run">Run five-second check</button><pre id="result">Ready</pre><div id="display" tabindex="0"></div>
+<script type="module">
+import {SpectrumPlayer} from './emulator.js';
+const output=document.querySelector('#result');
+document.querySelector('#run').onclick=async()=>{
+  const button=document.querySelector('#run');button.disabled=true;output.textContent='Running';
+  const mode=document.querySelector('#renderer').value;
+  const prototype=mode==='webgl'?WebGLRenderer.prototype:PutImageDataRenderer.prototype;
+  const draw=prototype.drawData,show=prototype.displayLayer,raf=window.requestAnimationFrame,cancel=window.cancelAnimationFrame;
+  const captures=[],presentations=[],interrupts=[],queued=new Set();let maxQueued=0,record=false,player;
+  try{
+    window.requestAnimationFrame=callback=>{
+      let id=raf.call(window,time=>{queued.delete(id);callback(time);});queued.add(id);maxQueued=Math.max(maxQueued,queued.size);return id;
+    };
+    window.cancelAnimationFrame=id=>{queued.delete(id);cancel.call(window,id);};
+    prototype.drawData=function(...args){if(record)captures.push(player.hw.clock.get_tstates());return draw.apply(this,args);};
+    prototype.displayLayer=function(...args){if(record)presentations.push(performance.now());return show.apply(this,args);};
+    player=new SpectrumPlayer(document.querySelector('#display'));player.setRenderer(mode);await player.initialize();
+    // An actual CPU memory-write loop, with no disk wait or sound diagnostics.
+    [0x21,0x00,0x40,0x34,0xc3,0x03,0x80].forEach((v,i)=>player.hw.bus.mem_write(0x8000+i,v));
+    const state=player.hw.cpu.get_state();Object.assign(state,{pc:0x8000,iff:0});player.hw.cpu.set_state(state);
+    const coreSha256=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',
+      await (await fetch('vendor/zx-dream.js')).arrayBuffer()))).map(v=>v.toString(16).padStart(2,'0')).join('');
+    player.hw.bus.on_var_write((name,value)=>{if(value&&record)interrupts.push(player.hw.clock.get_tstates());},'intrq');
+    record=true;const start=performance.now();player.hw.clock.run();
+    await new Promise(resolve=>setTimeout(resolve,5000));player.pause(true);
+    // Drain the final completed frame; this check does not add a display timer.
+    await new Promise(resolve=>raf.call(window,resolve));record=false;
+    const emulatedMs=player.hw.clock.get_ms(),elapsedMs=performance.now()-start;
+    const capturesMatchInterrupts=JSON.stringify(captures)===JSON.stringify(interrupts);
+    const maxNativePhaseErrorT=Math.max(...captures.map((t,i)=>Math.abs(t-captures[0]-i*70908)));
+    // Exclude the initial field from the interval-rate estimate, preserving
+    // the core's existing cold-start IRQ phase rather than counting it twice.
+    const nativeFramesPerEmulatedSecond=(captures.length-1)*3545400/(captures.at(-1)-captures[0]);
+    const report={mode,coreSha256,captures:captures.length,presentations:presentations.length,emulatedMs,elapsedMs,
+      nativeFramesPerEmulatedSecond,maxNativePhaseErrorT,
+      capturesMatchInterrupts,maxQueuedAnimationCallbacks:maxQueued,
+      presentationIntervalsMs:presentations.slice(1).map((t,i)=>t-presentations[i]),
+      passed:capturesMatchInterrupts&&maxNativePhaseErrorT<=11&&maxQueued<=1};
+    output.textContent=JSON.stringify(report,null,2);
+  }catch(error){output.textContent=error.stack;}
+  finally{
+    player?.pause(true);if(player?.activityTimer)clearInterval(player.activityTimer);
+    prototype.drawData=draw;prototype.displayLayer=show;window.requestAnimationFrame=raf;window.cancelAnimationFrame=cancel;
+    button.disabled=false;
+  }
+};
+</script></html>

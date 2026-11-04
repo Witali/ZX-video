@@ -5194,6 +5194,38 @@ function ZX_Display () {
 	var _flashInversion = false;
 	var _flashInterval = 512;
 	var _renderOnAnimationFrame = false;
+    var _animationFrameId = null, _presentationGeneration = 0;
+    var _pendingLayer = 0, _pendingBorderColor = null;
+
+    function invalidatePresentation() {
+        _presentationGeneration++;
+        if (_animationFrameId !== null && typeof cancelAnimationFrame === 'function')
+            cancelAnimationFrame(_animationFrameId);
+        _animationFrameId = null;
+        _pendingBorderColor = null;
+        _borderChanged = true;
+    }
+    function queuePresentation(layer) {
+        _pendingLayer = layer;
+        if (_borderChanged) {
+            var attrs = _port_fe_value & 7;
+            _pendingBorderColor = ZX_Display.getColor(!_semicolors, attrs & 2, attrs & 4, attrs & 1);
+            _borderChanged = false;
+        }
+        if (_animationFrameId !== null) return;
+        var generation = _presentationGeneration;
+        _animationFrameId = requestAnimationFrame(function () {
+            if (generation !== _presentationGeneration) return;
+            _animationFrameId = null;
+            if (_threading === VAL_THREADING_SINGLE) _renderer.displayLayer(_pendingLayer);
+            else _renderer.copyLayerToScreen(_pendingLayer);
+            if (_pendingBorderColor) {
+                var color = _pendingBorderColor;
+                _pendingBorderColor = null;
+                _renderer.drawBorder(color);
+            }
+        });
+    }
 
 	var _bus = null;
 	var _clock = null;
@@ -5207,10 +5239,11 @@ function ZX_Display () {
 	var _screen5Dirty = new Uint8Array(0x1800);
 	var _screen7Data = new Uint8Array(0x1B00);
 	var _screen7Dirty = new Uint8Array(0x1800);
-	var _deferredData = new Uint8Array(0x1B00);
-	var _deferredDirty = new Uint8Array(0x1800);
+
+
 
 	function initRenderer() {
+        invalidatePresentation();
 		switch ( _rendererType ) {
 			case VAL_RENDERER_PUT_IMAGE_DATA: _renderer = new PutImageDataRenderer(_borderWidth, _scale, _scaleType); break;
 			case VAL_RENDERER_DRAW_IMAGE: _renderer = new DrawImageRenderer(_borderWidth, _scale, _scaleType); break;
@@ -5221,6 +5254,7 @@ function ZX_Display () {
 	}
 
 	function bind(canvases) {
+        invalidatePresentation();
 		_renderer && _renderer.bind(canvases);
 		_borderChanged = true;
 		_screen5Dirty.fill(1);
@@ -5255,48 +5289,27 @@ function ZX_Display () {
 		}
 	}
 
-	function scheduleRedraw(intrqVar, intrqActive) {
-		if (!intrqActive)
-			return;
-		// Probable renering windows:
-		// Spectrum 48: 	4.096 - 24.064
-		// Spectrum 128:	4.104 - 24.364
-		// Pentagon 48/128: 5.12  - 25.6
-		//
-		// static rendering delay as a temporary solution for Arkanoid :)
-		_clock.setTimeout(beginRedraw, 6.6); 
-	}
-
-	function beginRedraw() {
-		var layer = +!!(_port_7ffd_value & 0x08);
-		var data = layer ? _screen7Data : _screen5Data;
-		var dirty = layer ? _screen7Dirty : _screen5Dirty;
-
-		if (_threading == VAL_THREADING_SINGLE) {
-			if (_renderOnAnimationFrame) {
-				// (копирование буферов понижает производительность)
-				_deferredData.set(data);
-				_deferredDirty.set(dirty);
-				requestAnimationFrame(function () {
-					endRedrawInMainThread(layer, _deferredData, _deferredDirty, _flashInversion, _semicolors);
-				});
-			}
-			else {
-				endRedrawInMainThread(layer, data, dirty, _flashInversion, _semicolors);
-			}
-		}
-		else {
-			_renderer.drawData(layer, data, dirty, _flashInversion, _semicolors);
-			if (_renderOnAnimationFrame) {
-				requestAnimationFrame(function () {
-					endRedrawInDedicatedThread(layer);
-				});
-			}
-			else {
-				endRedrawInDedicatedThread(layer);
-			}
-		}
-	}
+    function scheduleRedraw(intrqVar, intrqActive) {
+        // Exactly one completed-frame snapshot per emulated 50-Hz interrupt.
+        // There is no independent wall timer or arbitrary 6.6-ms phase delay.
+        if (intrqActive) beginRedraw(false);
+    }
+    function beginRedraw(forceImmediate) {
+        var layer = +!!(_port_7ffd_value & 8);
+        var data = layer ? _screen7Data : _screen5Data;
+        var dirty = layer ? _screen7Dirty : _screen5Dirty;
+        if (_renderOnAnimationFrame && !forceImmediate) {
+            // Consume dirty data NOW, while the field is complete. CPU writes
+            // after this boundary belong to the next field, not to this vsync.
+            _renderer.drawData(layer, data, dirty, _flashInversion, _semicolors);
+            queuePresentation(layer);
+        } else if (_threading === VAL_THREADING_SINGLE) {
+            endRedrawInMainThread(layer, data, dirty, _flashInversion, _semicolors);
+        } else {
+            _renderer.drawData(layer, data, dirty, _flashInversion, _semicolors);
+            endRedrawInDedicatedThread(layer);
+        }
+    }
 
 	function endRedrawInMainThread(layer, data, dirty, flashInversion, semicolors) {
 		_renderer.drawData(layer, data, dirty, flashInversion, semicolors);
@@ -5375,7 +5388,13 @@ function ZX_Display () {
 		_port_fe_value = value;
 	}
 
-	this.force_redraw = beginRedraw;
+	this.force_redraw = function () {
+        // Paused layout/renderer changes need an immediate redraw, independent
+        // of field/vsync delivery. Invalidate any older queued presentation.
+        invalidatePresentation();
+        _borderChanged = true;
+        beginRedraw(true);
+    };
 
 	function opt_extendedMemory(name, value) {
 		if ( _extendedMemory !== value ) {
@@ -5392,7 +5411,8 @@ function ZX_Display () {
 		_scale = value.scale;
 		_scaleType = value.scaleType;
 		_rendererType = value.rendererType;
-		_renderOnAnimationFrame = value.renderOnAnimationFrame;
+		if (_renderOnAnimationFrame !== value.renderOnAnimationFrame) invalidatePresentation();
+        _renderOnAnimationFrame = value.renderOnAnimationFrame;
 		if (recreateRenderer) {
 			initRenderer();
 		}
@@ -5427,6 +5447,7 @@ function ZX_Display () {
 		return _threading;
 	}
 	this.set_threading = function (value) {
+        invalidatePresentation();
 		_threading = value;
 	}
 }

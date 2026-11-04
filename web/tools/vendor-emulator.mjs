@@ -40,6 +40,6 @@ await writeFile(join(output, 'provenance.json'), JSON.stringify({
   upstream: 'https://github.com/XMypuK/zx-dream',
   revision: 'ef68e190753d599752d1367050a94b85a06121c8', modules: hashes,
   upstreamAssets: { 'ayumi.js': createHash('sha256').update(ayumiSource).digest('hex') },
-  localPatches: ['web/tools/patch-emulator.mjs', 'web/tools/patch-webgl-streaming.mjs', 'web/tools/patch-cpu-slices.mjs',
+  localPatches: ['web/tools/patch-emulator.mjs', 'web/tools/patch-webgl-streaming.mjs', 'web/tools/patch-cpu-slices.mjs', 'web/tools/patch-frame-clock.mjs',
     'web/tools/webgl-presentation.js', 'web/tools/patch-ayumi.mjs']
 }, null, 2) + '\n');

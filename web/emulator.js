@@ -94,7 +94,7 @@ export class SpectrumPlayer {
       // WebGL keeps its hidden bank buffers native and scales them on the GPU.
       const presentationScale = mode === 'canvas' ? 2 : 1;
       this.hw.bus.opt('RENDERING_PARAMS', { scale: presentationScale, scaleType: 1,
-        rendererType: mode === 'webgl' ? 3 : 1, renderOnAnimationFrame: false });
+        rendererType: mode === 'webgl' ? 3 : 1, renderOnAnimationFrame: true });
       const canvases = [0, 1, 2].map(index => {
         const canvas = document.createElement('canvas');
         canvas.width = index ? 256 * presentationScale : 576;

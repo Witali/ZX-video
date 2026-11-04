@@ -1,5 +1,31 @@
 # Changelog and optimization experiments
 
+## 2026-11-04 — Lock native frames to the emulated 50-Hz field clock
+
+- **Objective/baseline:** From `0ba22c13`, replace the display's arbitrary
+  6.6-ms delayed redraw with a completed-field capture at each ULA interrupt.
+  Enable browser-vsync presentation in both Canvas and WebGL without changing
+  CPU/disk/audio time, scaling or the single visible surface.
+- **Change:** Consume native dirty pixels on the field boundary, capture the
+  bank/border together, and coalesce browser presentation to one pending
+  animation callback. Hidden/stalled tabs select the latest completed frame.
+  Cancel/invalidate callbacks on rebind; keep explicit paused redraws immediate
+  and retain a queued border when switching presentation modes. Remove the
+  old shared deferred arrays. No native instruction/TRD changes, delta 0 T.
+- **Verification:** Eight deterministic monitor/cadence/visibility/rebind cases
+  capture 50 native frames per second exactly at IRQ timestamps, with at most
+  one queued callback. Real Canvas/WebGL five-second checks observe approximately
+  50.000-Hz interval cadence, matching every IRQ, with at most 9-T phase deviation
+  for the test kernel. WebGL 1/2 pixel/FLASH/bank/border/fullscreen and recovery
+  checks pass. Preserve CPU/clock traces, cold autoplay, stereo and disk-swap
+  identity. The initial fixture used the bright-border default; configure the
+  adapter's semicolor mode for the intended oracle. Measure intervals between
+  captures rather than counting the preserved cold-start field twice.
+- **Limits/decision:** Keep the field-locked schedule. Vsync still follows the
+  monitor; 50-Hz machine time does not force 50-Hz physical scanout on a 60-Hz
+  monitor. This is a completed-frame approximation, not raster-level ULA proof.
+  [Reproduction and reports](web/reports/frame-clock/README.md).
+
 ## 2026-11-04 — Reduce CPU execution and device-dispatch overhead
 
 - **Objective/baseline:** Optimize actual browser Z80 execution from `aef79237`,

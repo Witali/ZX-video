@@ -307,6 +307,11 @@ The [WebGL streaming optimization](reports/webgl-streaming/README.md) reduces
 temporary arrays, redundant vertex uploads and synchronous GPU waits, while
 retaining these pixel checks. Its rendering benchmark measures host work;
 the emulated CPU, disk and sound keep the same real-time schedule.
+Native frames are now captured directly on the emulated 50-Hz interrupt.
+Both renderers present the latest completed frame on browser vsync, with at
+most one queued callback; hidden tabs do not accumulate old presentations.
+Paused layout/renderer redraws remain immediate.
+[Frame scheduling and browser checks](reports/frame-clock/README.md).
 Serve [renderer-check.html](tools/renderer-check.html) at the built site's
 root for a local check; this developer fixture is not part of the Pages
 artifact. The first fixture readback incorrectly requested WebGL1 after the

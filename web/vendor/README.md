@@ -71,3 +71,9 @@ same device queue at instruction/prefix boundaries. New I/O deadlines can
 shorten the next dispatch immediately. It retains instruction stepping for
 debugging and preserves the original bus timestamp contract.
 [CPU measurements, rejected variants and exact differential checks](../reports/cpu-slices/README.md).
+
+[Field-locked display scheduling](../tools/patch-frame-clock.mjs) replaces
+the old 6.6-ms delay with a native capture at each emulated ULA interrupt.
+One coalesced animation callback presents the completed bank and border;
+explicit paused redraws remain synchronous. Both rendering backends share
+this schedule. [Verification and monitor-refresh limits](../reports/frame-clock/README.md).

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { patchWebGLStreaming } from './patch-webgl-streaming.mjs';
 import { patchCpuSlices } from './patch-cpu-slices.mjs';
+import { patchFrameClock } from './patch-frame-clock.mjs';
 const webglPresentation = readFileSync(new URL('./webgl-presentation.js', import.meta.url), 'utf8');
 // Local fixes to pinned ZX-Dream. Match exact upstream text so upgrades fail safely.
 export function patchEmulator(source) {
@@ -172,5 +173,5 @@ export function patchEmulator(source) {
   source = source.slice(0, webglBegin)
     + patchWebGLStreaming(webglCode).replace(drawAnchor, `${drawAnchor}\n                this._presentationChanged = true;`)
     + webglPresentation + '\n\n' + source.slice(webglEnd);
-  return patchCpuSlices(source);
+  return patchFrameClock(patchCpuSlices(source));
 }
