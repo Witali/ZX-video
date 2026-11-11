@@ -3,7 +3,7 @@ import { keepPhysicalPixelScale } from './display-scale.js';
 import { LOWPASS_CUTOFFS } from './audio-filter.js';
 const $ = id => document.getElementById(id);
 const parameters = new URL(location.href).searchParams;
-const cpuBackend = parameters.get('cpu') === 'wasm' ? 'wasm' : 'js';
+const cpuBackend = parameters.get('cpu') === 'js' ? 'js' : 'wasm';
 const ayBackend = parameters.get('ay') === 'js' ? 'js' : 'wasm';
 const player = new SpectrumPlayer($('display'), cpuBackend, ayBackend);
 keepPhysicalPixelScale($('display'));

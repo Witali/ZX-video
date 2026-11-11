@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-11-11 — Make the WASM Spectrum and AY the web default
+
+- **Objective:** Promote the tested WASM Z80 and block-based AY from
+  `7ec7281b` to ordinary disk links. Support `cpu=js` and fall back to the
+  JavaScript emulator if WASM initialization fails.
+- **Verification:** The release build authenticates 250 TRDs. All 1,356
+  Fuse instruction vectors and the clock, renderer, input and audio checks
+  pass. The 67.2-second Expedition 33 smoke produces 3,360 fields at 50 Hz
+  and 5,788 stereo PCM blocks identical to JavaScript AY on the same WASM
+  CPU. Pages CI runs both the WASM audio test and the demo smoke before
+  uploading the artifact. Guest code and guest timing are unchanged.
+  [Audio timing and browser measurements](web/reports/spectrum-wasm-ay/README.md).
+
 ## 2026-11-11 — Render AY and beeper blocks in the Spectrum WASM core
 
 - **Objective/baseline:** Use the Ayumi C core to eliminate per-sample

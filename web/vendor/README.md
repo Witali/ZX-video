@@ -78,12 +78,14 @@ One coalesced animation callback presents the completed bank and border;
 explicit paused redraws remain synchronous. Both rendering backends share
 this schedule. [Verification and monitor-refresh limits](../reports/frame-clock/README.md).
 
-The experimental `?cpu=wasm` backend uses the project's pinned
+The default web backend uses the project's pinned
 [z80-tester CPU](../../emulator/vendor/z80_tester/provenance.json), derived
 from floooh/chips under the [zlib/libpng license](LICENSE.z80-tester).
 The WASM module uses a banked Spectrum bus, the generated Z80 slices, and
 the pinned [Ayumi C core](../../emulator/vendor/ayumi/provenance.json) under
 the [MIT license](LICENSE.ayumi). It emits 512-frame PCM blocks driven by
 the Z80 clock. JavaScript supplies keyboard, Beta Disk, the shared device
-scheduler, and display presentation. Append `&ay=js` to compare the
-original JavaScript synthesis with the same WASM CPU.
+scheduler, and display presentation. Set `cpu=js` in the URL to use the
+JavaScript CPU and audio. Set `ay=js` to compare JavaScript synthesis
+with the WASM CPU. The player falls back to JavaScript when WASM cannot
+initialize.

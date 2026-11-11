@@ -51,10 +51,17 @@ export class SpectrumPlayer {
   }
   async initialize() {
     if (this.hw) return;
-    const wasm = this.cpuBackend === 'wasm';
-    const cpu = wasm
-      ? await (await import('./wasm-cpu.js')).createWasmCpu(window.loadServerFile, { audio: this.ayBackend === 'wasm' })
-      : new ZX_Z80();
+    let wasmCpu;
+    if (this.cpuBackend === 'wasm') {
+      try {
+        const { createWasmCpu } = await import('./wasm-cpu.js');
+        wasmCpu = await createWasmCpu(window.loadServerFile, { audio: this.ayBackend === 'wasm' });
+      } catch (error) {
+        console.warn('Spectrum WASM initialization failed. Using the JavaScript emulator.', error);
+      }
+    }
+    const wasm = Boolean(wasmCpu);
+    const cpu = wasmCpu ?? new ZX_Z80();
     const h = this.hw = { bus: new ZX_Bus(), clock: new ZX_Clock(), cpu,
       rom: wasm ? null : new ZX_ROM(), ram: wasm ? null : new ZX_RAM(), display: new ZX_Display(),
       keyboard: new ZX_Keyboard(), drives: Array.from({ length: 4 }, () => new ZX_Floppy()),
@@ -82,7 +89,7 @@ export class SpectrumPlayer {
     });
     try { await h.rom?.get_ready$(); }
     catch (error) { this.hw = null; this.container.querySelectorAll('canvas').forEach(c => c.remove()); throw error; }
-    this.container.dataset.cpu = this.cpuBackend;
+    this.container.dataset.cpu = wasm ? 'wasm' : 'js';
     this.container.dataset.ay = cpu.audio ? 'wasm' : 'js';
     // Poll the controller's side-effect-free state, not its I/O status port.
     // Hold brief gaps between sector commands so one read shows a steady spinner.

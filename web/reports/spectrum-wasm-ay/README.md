@@ -1,7 +1,7 @@
 # AY and beeper in the Spectrum WASM module
 
-Select `?cpu=wasm` in the player to run the Z80, single AY-3-8910 and
-beeper in one module. Append `&ay=js` to compare with the previous
+The player defaults to running the Z80, single AY-3-8910 and beeper in one
+WASM module. Set `ay=js` in the URL to compare with the previous
 per-sample JavaScript synthesis on the same CPU. The compiled module
 uses the [pinned upstream Ayumi C source](../../../emulator/vendor/ayumi/provenance.json)
 with double arithmetic and FP contraction disabled.

@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const source = fs.readFileSync('web/app.js', 'utf8').replace(/^import .*;\r?\n/gm, '');
-async function fixture(saved, blocked = false) {
+async function fixture(saved, blocked = false, query = '') {
   const fields = new Map();
   function element(id) {
     if (!fields.has(id)) fields.set(id, { value: ({renderer:'webgl',lowpass:'20000',scope:'root',category:'all'})[id] || '',
@@ -17,12 +17,13 @@ async function fixture(saved, blocked = false) {
     createElement:()=>element(Symbol()), addEventListener(name,fn){this.handlers[name]=fn;}};
   class Player {
     calls=[]; running=false;
+    constructor(container, cpu, ay) { this.backends = [cpu, ay]; }
     setRenderer(){} setLowpassCutoff(){} setPlayInBackground(v){this.background=v;} async enableAudio(){} async initialize(){}
     mount(){this.running=true;} pause(value){this.calls.push(value);this.running=!value;}
   }
   const context = vm.createContext({document, SpectrumPlayer:Player, keepPhysicalPixelScale(){},
     LOWPASS_CUTOFFS:[5000,10000,15000,20000], URL, Uint8Array, console,
-    location:{href:'http://localhost/'}, history:{replaceState(){}},
+    location:{href:'http://localhost/' + query}, history:{replaceState(){}},
     localStorage:{getItem(key){if(blocked)throw Error('blocked');return key==='zx-video.play-in-background'?saved:null;},
       setItem(key,value){if(blocked)throw Error('blocked');writes.set(key,value);}},
     fetch:async()=>({ok:true,json:async()=>({images:[]})})});
@@ -34,6 +35,9 @@ async function fixture(saved, blocked = false) {
     pause(){element('pause').handlers.click();}};
 }
 const enabled=await fixture(); assert(enabled.fields.get('play-in-background').checked);
+assert.deepEqual(enabled.app.player.backends, ['wasm', 'wasm']);
+assert.equal((await fixture(null, false, '?cpu=js')).app.player.backends[0], 'js');
+assert.deepEqual((await fixture(null, false, '?cpu=wasm&ay=js')).app.player.backends, ['wasm', 'js']);
 await enabled.load(); enabled.hidden(true); enabled.hidden(false);
 assert.equal(enabled.app.player.running,true);assert.deepEqual(enabled.app.player.calls,[]);
 enabled.setting(false); enabled.hidden(true);assert.equal(enabled.app.player.running,false);

@@ -51,11 +51,13 @@ jobs:
           node web/tools/check-background.mjs
           node web/tools/check-keyboard.mjs
           node web/tools/check-audio-filter.mjs
+          node web/tools/check-wasm-audio.mjs
           node web/tools/check-webgl-streaming.mjs
           node web/tools/check-opcodes.mjs .tmp/fuse-tests/z80/tests
           node web/tools/build.mjs
           node web/tools/check-build.mjs
           node web/tools/check-emulator.mjs
+          node web/tools/check-spectrum-wasm.mjs .tmp/web-site .tmp/wasm-smoke.json 1
       - uses: actions/upload-pages-artifact@v4
         with:
           path: .tmp/web-site
