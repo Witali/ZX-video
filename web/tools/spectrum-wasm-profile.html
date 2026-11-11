@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Expedition 33 emulator profile</title>
+<script src="vendor/ayumi.js"></script>
+<script src="vendor/zx-dream.js"></script>
+<h1>Expedition 33 emulator profile</h1>
+<button id="bench">Run CPU and audio comparison</button>
+<button id="live">Measure live WebGL</button>
+<p id="status">Ready</p>
+<div id="display" tabindex="0"></div>
+<pre id="result"></pre>
+<script type="module">
+import { SpectrumPlayer } from './emulator.js';
+import { createWasmCpu } from './wasm-cpu.js';
+
+const status = document.querySelector('#status');
+const output = document.querySelector('#result');
+const display = document.querySelector('#display');
+const realNow = performance.now.bind(performance);
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+const noOp = () => {};
+const modes = ['full', 'noDSP', 'sampleClock', 'noSamples'];
+const backends = ['js', 'wasm'];
+const phases = ['boot', 'playing'];
+const phaseMs = 24_000;
+const liveBackend = new URL(location.href).searchParams.get('cpu') === 'js' ? 'js' : 'wasm';
+const digest = async bytes => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)),
+  byte => byte.toString(16).padStart(2, '0')).join('');
+const median = values => {
+  const sorted = [...values].sort((a, b) => a - b);
+  return sorted[Math.floor(sorted.length / 2)];
+};
+
+async function loadDisk() {
+  const response = await fetch('disks/Expedition-33-Demo.trd');
+  if (!response.ok) throw new Error(`TRD request failed (${response.status})`);
+  return new Uint8Array(await response.arrayBuffer());
+}
+
+// Register diagnostic timing only in a separate full run. The measured
+// ablations below never put performance.now() in the sample or CPU loop.
+function traceDisk(machine, timing, phase) {
+  const { clock, bus, disk, drives } = machine;
+  const diskClock = Object.create(clock);
+  function wrap(callback, kind) {
+    return (...args) => {
+      const record = timing[phase()];
+      const start = realNow();
+      const value = callback(...args);
+      record[kind + 'Ms'] += realNow() - start;
+      record[kind + 'Count']++;
+      return value;
+    };
+  }
+  for (const method of ['setInterval', 'setTimeout']) {
+    diskClock[method] = (callback, ...args) => clock[method](wrap(callback, 'diskTasks'), ...args);
+  }
+  const read = bus.on_io_read, write = bus.on_io_write;
+  bus.on_io_read = (callback, filter) => read(wrap(callback, 'diskPorts'), filter);
+  bus.on_io_write = (callback, filter) => write(wrap(callback, 'diskPorts'), filter);
+  try { disk.connect(bus, diskClock, drives); }
+  finally { bus.on_io_read = read; bus.on_io_write = write; }
+}
+
+async function virtualRun(backend, mode, disk, instrument = false) {
+  let now = 0, phase = 'boot', wake;
+  const originals = { now: performance.now, interval: window.setInterval, clear: window.clearInterval };
+  const clock = new ZX_Clock();
+  const cpu = backend === 'wasm' ? await createWasmCpu(window.loadServerFile) : new ZX_Z80();
+  const h = { bus: new ZX_Bus(), clock, cpu, disk: new ZX_BetaDisk(),
+    drives: Array.from({ length: 4 }, () => new ZX_Floppy()), display: new ZX_Display() };
+  cpu.connect(h.bus);
+  clock.connect(h.bus, cpu);
+  if (backend === 'wasm') h.display.set_screen_source(cpu.screen);
+  else {
+    const rom = new ZX_ROM();
+    rom.connect(h.bus);
+    new ZX_RAM().connect(h.bus);
+    await rom.get_ready$();
+  }
+  for (const device of [new ZX_Port7FFD(), new ZX_PortFE(), new ZX_Keyboard()]) device.connect(h.bus);
+  h.display.connect(h.bus, clock);
+  const timing = Object.fromEntries(phases.map(name => [name,
+    { diskTasksMs: 0, diskTasksCount: 0, diskPortsMs: 0, diskPortsCount: 0, dispatches: 0 }]));
+  if (instrument) {
+    traceDisk(h, timing, () => phase);
+    const run = cpu.run_until;
+    cpu.run_until = (limit, dispatch) => run(limit, time => {
+      timing[phase].dispatches++;
+      return dispatch(time);
+    });
+  } else h.disk.connect(h.bus, clock, h.drives);
+
+  const OriginalAyumi = window.Ayumi;
+  if (mode === 'noDSP') {
+    window.Ayumi = class extends OriginalAyumi {
+      process() {}
+      removeDC() {}
+    };
+  }
+  let psg;
+  try { psg = new ZX_PSG(); }
+  finally { window.Ayumi = OriginalAyumi; }
+  const audioClock = Object.create(clock);
+  audioClock.setInterval = (callback, period, ...args) => {
+    if (period === 1000 / 44100) {
+      if (mode === 'noSamples') return { cancelled: true };
+      if (mode === 'sampleClock') callback = noOp;
+    }
+    return clock.setInterval(callback, period, ...args);
+  };
+  psg.connect(h.bus, audioClock);
+  h.bus.opt('TSTATES_PER_INTRQ', 70908);
+  h.bus.opt('INTRQ_PERIOD', 20);
+  h.bus.opt('EXTENDED_MEMORY', 0);
+  h.bus.opt('SEMICOLORS', true);
+  psg.applySettings(true, .35, 1, 0, 0, 1773400, 512, .7);
+  let packets = 0, fields = 0;
+  const ay = [];
+  psg.get_onDataReady().subscribe(() => { packets++; });
+  h.bus.on_var_write((name, value) => { if (value) fields++; }, 'intrq');
+  h.bus.on_io_write((port, value) => ay.push(value), { mask: 0xe002, value: 0xa000 });
+  h.drives[0].insertTRD(disk);
+  h.bus.reset(2);
+  performance.now = () => now;
+  window.setInterval = callback => { wake = callback; return -1; };
+  window.clearInterval = id => { if (id !== -1) originals.clear.call(window, id); };
+  try {
+    clock.run();
+    for (const name of phases) {
+      phase = name;
+      const end = now + phaseMs;
+      const start = realNow();
+      while (now < end) { now += 4; wake(); }
+      timing[name].elapsedMs = realNow() - start;
+    }
+  } finally {
+    clock.stop();
+    performance.now = originals.now;
+    window.setInterval = originals.interval;
+    window.clearInterval = originals.clear;
+  }
+  if (ay.length < 1000 || fields !== 2400 || packets !== (mode === 'full' || mode === 'noDSP' ? 4134 : 0))
+    throw new Error(`Unexpected work for ${backend}/${mode}: ${ay.length} AY writes, ${fields} fields, ${packets} packets`);
+  return { backend, mode, timing, fields, packets, aySha256: await digest(Uint8Array.from(ay)) };
+}
+
+async function compare() {
+  const disk = await loadDisk();
+  const variants = backends.flatMap(backend => modes.map(mode => [backend, mode]));
+  const trials = [], traced = [], identities = {};
+  for (const [backend, mode] of variants) {
+    status.textContent = `Warming up ${backend} / ${mode}`;
+    await wait(0);
+    const run = await virtualRun(backend, mode, disk);
+    identities[backend] ??= run.aySha256;
+    if (run.aySha256 !== identities[backend]) throw new Error('AY writes changed');
+  }
+  for (let round = 0; round < 5; round++) {
+    const order = round % 2 ? variants.toReversed() : variants;
+    const offset = round * 3 % order.length;
+    for (const [backend, mode] of [...order.slice(offset), ...order.slice(0, offset)]) {
+      status.textContent = `Round ${round + 1}/5 — ${backend} / ${mode}`;
+      await wait(0);
+      const run = await virtualRun(backend, mode, disk);
+      if (run.aySha256 !== identities[backend]) throw new Error('AY writes changed');
+      trials.push({ round: round + 1, backend, mode, ...Object.fromEntries(phases.map(name => [name, run.timing[name].elapsedMs])) });
+    }
+  }
+  for (const mode of ['full', 'noSamples']) {
+    status.textContent = `Tracing WASM dispatch and disk / ${mode}`;
+    await wait(0);
+    const run = await virtualRun('wasm', mode, disk, true);
+    if (run.aySha256 !== identities.wasm) throw new Error('Instrumented AY writes changed');
+    traced.push(run);
+  }
+  const medians = Object.fromEntries(backends.map(backend => [backend,
+    Object.fromEntries(modes.map(mode => [mode, Object.fromEntries(phases.map(phase => [phase,
+      median(trials.filter(trial => trial.backend === backend && trial.mode === mode).map(trial => trial[phase]))]))]))]));
+  return { phaseMs, diskSha256: await digest(disk), identities, medians, traced, trials };
+}
+
+async function live() {
+  const player = new SpectrumPlayer(display, liveBackend);
+  const prototype = WebGLRenderer.prototype;
+  const interval = window.setInterval;
+  const originals = {};
+  const timing = Object.fromEntries(phases.map(name => [name,
+    { wake: 0, drawData: 0, displayLayer: 0, drawBorder: 0, fields: 0 }]));
+  let phase = 'boot', running = false;
+  for (const method of ['drawData', 'displayLayer', 'drawBorder']) {
+    originals[method] = prototype[method];
+    prototype[method] = function (...args) {
+      if (!running) return originals[method].apply(this, args);
+      const start = realNow();
+      const value = originals[method].apply(this, args);
+      timing[phase][method] += realNow() - start;
+      if (method === 'drawData') timing[phase].fields++;
+      return value;
+    };
+  }
+  try {
+    await player.enableAudio();
+    await player.initialize();
+    if (player.activeRenderer !== 'webgl') throw new Error('WebGL unavailable');
+    const disk = await loadDisk();
+    window.setInterval = (callback, delay) => interval(() => {
+      const start = realNow();
+      callback();
+      timing[phase].wake += realNow() - start;
+    }, delay);
+    try { player.mount(disk, true); running = true; }
+    finally { window.setInterval = interval; }
+    for (const name of phases) {
+      phase = name;
+      status.textContent = `${liveBackend} with WebGL / ${phase}`;
+      await wait(phaseMs);
+    }
+    return { backend: liveBackend, phaseMs, emulatedMs: player.hw.clock.get_ms(), timing };
+  } finally {
+    running = false;
+    player.hw?.clock.stop();
+    clearInterval(player.activityTimer);
+    await player.audio?.close();
+    for (const [method, original] of Object.entries(originals)) prototype[method] = original;
+  }
+}
+
+const buttons = [...document.querySelectorAll('button')];
+const results = {};
+function bind(button, experiment) {
+  document.querySelector('#' + button).onclick = async () => {
+    buttons.forEach(button => { button.disabled = true; });
+    try {
+      results[button] = await experiment();
+      status.textContent = 'Complete';
+    } catch (error) { status.textContent = 'Failed — ' + error.message; }
+    finally {
+      output.textContent = JSON.stringify(results, null, 2);
+      buttons.forEach(button => { button.disabled = false; });
+    }
+  };
+}
+bind('bench', compare);
+bind('live', live);
+</script>
+</html>

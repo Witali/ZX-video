@@ -1,0 +1,82 @@
+{
+  "base": "17f84fdfdc160e2f7a8a83cb0f350212cdeafda4",
+  "diskSha256": "fd8868220ad6e9f429fc367a9887a446adfccc9c230caa94f37b8805a5046db4",
+  "ayDataSha256AllVariants": "86cccbb49c3636a36f479ca18c5c015f81c29b02e6e6976867aef88314ca1534",
+  "phaseEmulatedMs": 24000,
+  "headlessColumns": ["round", "backend", "variant", "bootMs", "playingMs"],
+  "headlessTrials": [
+    [1, "js", "full", 1404.6, 1276.9],
+    [1, "js", "noDSP", 931.9, 740.1],
+    [1, "js", "sampleClock", 937.8, 743.5],
+    [1, "js", "noSamples", 758.2, 639],
+    [1, "wasm", "full", 1398, 1104.8],
+    [1, "wasm", "noDSP", 749.8, 581.2],
+    [1, "wasm", "sampleClock", 692.1, 503.2],
+    [1, "wasm", "noSamples", 317.6, 211.4],
+    [2, "wasm", "full", 1283.9, 1114.8],
+    [2, "js", "noSamples", 779, 665.5],
+    [2, "js", "sampleClock", 805.5, 716.7],
+    [2, "js", "noDSP", 1015.1, 842.5],
+    [2, "js", "full", 1571.2, 1490.3],
+    [2, "wasm", "noSamples", 362.5, 228.4],
+    [2, "wasm", "sampleClock", 659.4, 502.4],
+    [2, "wasm", "noDSP", 696.6, 547.7],
+    [3, "wasm", "sampleClock", 628.8, 495.3],
+    [3, "wasm", "noSamples", 324.9, 222.3],
+    [3, "js", "full", 1555.1, 1312.6],
+    [3, "js", "noDSP", 934.4, 814.5],
+    [3, "js", "sampleClock", 947.9, 740.3],
+    [3, "js", "noSamples", 775.9, 649.6],
+    [3, "wasm", "full", 1331.3, 1108.1],
+    [3, "wasm", "noDSP", 763, 601.8],
+    [4, "wasm", "sampleClock", 701.1, 520.1],
+    [4, "wasm", "noDSP", 728.9, 566.1],
+    [4, "wasm", "full", 1362.3, 1114.1],
+    [4, "js", "noSamples", 769.2, 657.2],
+    [4, "js", "sampleClock", 857.8, 730.1],
+    [4, "js", "noDSP", 988.2, 787.4],
+    [4, "js", "full", 1700, 1367],
+    [4, "wasm", "noSamples", 334.3, 219.1],
+    [5, "wasm", "full", 1325.6, 1088.5],
+    [5, "wasm", "noDSP", 847.1, 611.4],
+    [5, "wasm", "sampleClock", 709.8, 521.7],
+    [5, "wasm", "noSamples", 323.8, 225.1],
+    [5, "js", "full", 1575.3, 1313],
+    [5, "js", "noDSP", 1072.7, 817.6],
+    [5, "js", "sampleClock", 939.6, 737.4],
+    [5, "js", "noSamples", 770.4, 656.6]
+  ],
+  "wasmTraces": {
+    "full": {
+      "boot": { "diskTasksMs": 45.1, "diskTasksCount": 395056, "diskPortsMs": 112, "diskPortsCount": 1068308, "dispatches": 1455631, "elapsedMs": 1665 },
+      "playing": { "diskTasksMs": 0, "diskTasksCount": 0, "diskPortsMs": 0, "diskPortsCount": 0, "dispatches": 1065647, "elapsedMs": 1114.3 }
+    },
+    "noSamples": {
+      "boot": { "diskTasksMs": 43, "diskTasksCount": 395056, "diskPortsMs": 99.8, "diskPortsCount": 1068308, "dispatches": 403491, "elapsedMs": 650.6 },
+      "playing": { "diskTasksMs": 0, "diskTasksCount": 0, "diskPortsMs": 0, "diskPortsCount": 0, "dispatches": 8447, "elapsedMs": 218 }
+    }
+  },
+  "ayumiProbe": {
+    "stereoFramesPerTrial": 1572864,
+    "comparedStereoFrames": 65536,
+    "differentSamples": 0,
+    "maxError": 0,
+    "trialsMs": {
+      "js": [660.3, 675.9, 680.7, 684, 652.3],
+      "wasmSample": [400.9, 396.7, 398.3, 385.3, 381.6],
+      "wasmBlock": [382.9, 395.2, 396.7, 377, 375.7]
+    }
+  },
+  "live": {
+    "wasm": {
+      "emulatedMs": 48004.5,
+      "boot": { "wakeMs": 1697.4, "drawDataMs": 12.9, "displayLayerMs": 3.9, "drawBorderMs": 0.1, "fields": 1201 },
+      "playing": { "wakeMs": 1342.9, "drawDataMs": 13.1, "displayLayerMs": 8.7, "drawBorderMs": 0, "fields": 1200 }
+    },
+    "js": {
+      "emulatedMs": 48004.5,
+      "boot": { "wakeMs": 1517.5, "drawDataMs": 11.4, "displayLayerMs": 3.3, "drawBorderMs": 0, "fields": 1201 },
+      "playing": { "wakeMs": 1493.3, "drawDataMs": 11.7, "displayLayerMs": 6.5, "drawBorderMs": 0.1, "fields": 1200 }
+    }
+  }
+}

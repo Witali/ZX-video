@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-11-11 — Profile Expedition 33 after the WASM CPU prototype
+
+- **Objective/baseline:** Explain the near-tie in the first live comparison
+  at `17f84fdf` and evaluate AY and disk as WASM candidates.
+- **Measurement:** Five rotated browser rounds cover 48 emulated seconds
+  per case. In the playing window, WASM takes 1,108 ms versus 1,313 ms
+  for JS with the null renderer. Differences between WASM ablations
+  estimate 48% DSP, 7% mixer and packets, and 25% sample scheduling
+  and CPU deadline fragmentation. Removing sample events reduces
+  measured dispatches from 1,065,647 to 8,447 in that window.
+- **Live and disk:** The paired WebGL/AudioWorklet run has near-equal
+  total wake time. WASM takes 150 ms less during the playing window and
+  180 ms more in the boot window. The live boot difference has one
+  observation and its cause remains unisolated. CPU-side WebGL calls
+  cost about 18–22 ms during 24 s of playback. The disk handler trace
+  measures about 157 ms in the boot window and zero activity in playback.
+- **Verification and decision:** The ablations match guest AY data writes,
+  duration and field count. The standalone C Ayumi block probe takes
+  383 ms versus 676 ms for the current JS DSP, with exact comparison of
+  65,536 stereo frames. Prioritize block generation with T-state-stamped
+  writes and qualify it in the complete player. Consider disk work for
+  loading or a disk-streamed workload. This change adds diagnostic
+  fixtures and reports. Guest code and T-state counts are unchanged.
+  [Reproduction and measurements](web/reports/spectrum-wasm-profile/README.md).
+
 ## 2026-11-11 — Prototype a browser WASM Z80 backend
 
 - **Objective/baseline:** Reuse the pinned z80-tester core and compare it with

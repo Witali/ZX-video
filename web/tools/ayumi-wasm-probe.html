@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Ayumi synthesis WASM probe</title>
+<script src="vendor/ayumi.js"></script>
+<h1>Ayumi synthesis WASM probe</h1>
+<button id="run">Compare synthesis</button>
+<p id="status">Ready</p>
+<pre id="result"></pre>
+<script type="module">
+const status = document.querySelector('#status');
+const output = document.querySelector('#result');
+const button = document.querySelector('#run');
+const block = 512;
+const variants = ['js', 'wasmSample', 'wasmBlock'];
+
+function jsChip() {
+  const ay = new Ayumi();
+  ay.configure(false, 1773400, 44100);
+  for (let i = 0; i < 3; i++) {
+    ay.setPan(i, [.1, .5, .9][i], false);
+    ay.setTone(i, 65 + 120 * i);
+    ay.setVolume(i, 12 - i);
+    ay.setMixer(i, 0, 0, i === 2);
+  }
+  ay.setNoise(11);
+  ay.setEnvelope(54);
+  ay.setEnvelopeShape(14);
+  const stereo = new Float64Array(block * 2);
+  return { stereo, render() {
+    for (let i = 0; i < block; i++) {
+      ay.process();
+      ay.removeDC();
+      stereo[i * 2] = ay.left;
+      stereo[i * 2 + 1] = ay.right;
+    }
+  } };
+}
+
+button.onclick = async () => {
+  button.disabled = true;
+  try {
+    const response = await fetch('ayumi-probe.wasm');
+    if (!response.ok) throw new Error('Build ayumi-probe.wasm first');
+    const binary = await response.arrayBuffer();
+    const { instance } = await WebAssembly.instantiate(binary);
+    const wasm = instance.exports;
+    const stereo = new Float64Array(wasm.memory.buffer, wasm.buffer(), block * 2);
+    const chip = jsChip();
+    wasm.reset();
+    let different = 0, maxError = 0;
+    for (let batch = 0; batch < 128; batch++) {
+      chip.render();
+      wasm.render(0, block);
+      for (let i = 0; i < stereo.length; i++) {
+        if (stereo[i] !== chip.stereo[i]) different++;
+        maxError = Math.max(maxError, Math.abs(stereo[i] - chip.stereo[i]));
+      }
+    }
+    if (maxError > 1e-12) throw new Error(`Different DSP output: ${maxError}`);
+
+    const play = (variant, batches) => {
+      if (variant === 'js') {
+        const chip = jsChip();
+        for (let batch = 0; batch < batches; batch++) chip.render();
+        return chip.stereo[0];
+      }
+      wasm.reset();
+      if (variant === 'wasmBlock') {
+        for (let batch = 0; batch < batches; batch++) wasm.render(0, block);
+      } else {
+        for (let batch = 0; batch < batches; batch++) {
+          for (let offset = 0; offset < block; offset++) wasm.render(offset, 1);
+        }
+      }
+      return stereo[0];
+    };
+    const batches = 3072;
+    const trials = [];
+    for (const variant of variants) play(variant, 256);
+    let reference;
+    for (let round = 0; round < 5; round++) {
+      for (const variant of round % 2 ? variants.toReversed() : variants) {
+        status.textContent = `Round ${round + 1}/5 — ${variant}`;
+        await new Promise(resolve => setTimeout(resolve, 0));
+        const start = performance.now();
+        const sample = play(variant, batches);
+        const elapsedMs = performance.now() - start;
+        reference ??= sample;
+        if (Math.abs(sample - reference) > 1e-12) throw new Error('Different final sample');
+        trials.push({ round: round + 1, variant, elapsedMs });
+      }
+    }
+    const medians = Object.fromEntries(variants.map(variant =>
+      [variant, trials.filter(trial => trial.variant === variant).map(trial => trial.elapsedMs).sort((a, b) => a - b)[2]]));
+    output.textContent = JSON.stringify({ stereoFramesPerTrial: batches * block,
+      comparedStereoFrames: 128 * block, different, maxError, medians, trials }, null, 2);
+    status.textContent = 'Complete';
+  } catch (error) { status.textContent = 'Failed — ' + error.message; }
+  finally { button.disabled = false; }
+};
+</script>
+</html>
