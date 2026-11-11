@@ -17,7 +17,8 @@ mkdirSync(build, { recursive: true });
 execFileSync(python, [join(root, 'emulator/tools/generate_fast_decoder.py'), '--spectrum',
   '--output', join(build, 'spectrum_slices.h')], { stdio: 'inherit' });
 execFileSync(clang, ['--target=wasm32-unknown-unknown', '--sysroot=' + sysroot, '-std=c11',
-  '-O3', '-DNDEBUG', '-ffreestanding', '-nostdlib', '-Wall', '-Wextra', '-Werror',
+  '-O3', '-DNDEBUG', '-ffp-contract=off', '-fno-math-errno', '-ffreestanding', '-nostdlib', '-Wall', '-Wextra', '-Werror',
   '-I', build, '-Wl,--no-entry,--strip-all,--export-memory',
-  join(root, 'emulator/src/spectrum_wasm.c'), '-o', join(root, 'web/vendor/spectrum-z80.wasm')],
+  ...['src/spectrum_wasm.c', 'src/spectrum_audio.c', 'vendor/ayumi/ayumi.c'].map(file => join(root, 'emulator', file)),
+  '-o', join(root, 'web/vendor/spectrum-z80.wasm')],
 { stdio: 'inherit' });

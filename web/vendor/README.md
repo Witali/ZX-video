@@ -81,7 +81,9 @@ this schedule. [Verification and monitor-refresh limits](../reports/frame-clock/
 The experimental `?cpu=wasm` backend uses the project's pinned
 [z80-tester CPU](../../emulator/vendor/z80_tester/provenance.json), derived
 from floooh/chips under the [zlib/libpng license](LICENSE.z80-tester).
-The WASM module uses a new banked Spectrum bus and the existing generated
-Z80 slices. JavaScript still supplies keyboard, Beta Disk, AY synthesis,
-clocked events and display presentation. See the [build and measurement
-report](../reports/spectrum-wasm/README.md).
+The WASM module uses a banked Spectrum bus, the generated Z80 slices, and
+the pinned [Ayumi C core](../../emulator/vendor/ayumi/provenance.json) under
+the [MIT license](LICENSE.ayumi). It emits 512-frame PCM blocks driven by
+the Z80 clock. JavaScript supplies keyboard, Beta Disk, the shared device
+scheduler, and display presentation. Append `&ay=js` to compare the
+original JavaScript synthesis with the same WASM CPU.

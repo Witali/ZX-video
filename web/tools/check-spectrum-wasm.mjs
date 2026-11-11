@@ -31,11 +31,12 @@ async function run(backend) {
   vm.runInContext(zxDream.toString(), context);
   context.loadServerFile = loadRom;
   context.diskBytes = disk;
-  context.wasm = backend === 'js' ? null : await createWasmCpu(loadRom, { binary, fast: backend === 'wasm' });
+  context.wasm = backend === 'js' ? null : await createWasmCpu(loadRom,
+    { binary, fast: backend !== 'wasm-tick', audio: backend !== 'wasm-js-ay' });
   vm.runInContext(`
     var h = { bus: new ZX_Bus(), clock: new ZX_Clock(), cpu: wasm || new ZX_Z80(),
       keyboard: new ZX_Keyboard(), disk: new ZX_BetaDisk(), paging: new ZX_Port7FFD(), fe: new ZX_PortFE(),
-      drives: Array.from({length:4}, () => new ZX_Floppy()), psg: new ZX_PSG(), display: new ZX_Display() };
+      drives: Array.from({length:4}, () => new ZX_Floppy()), psg: wasm?.audio || new ZX_PSG(), display: new ZX_Display() };
     var frames = [], ayWrites = [], packets = [], firstSound = null, ready;
     var visible, menu, screenMilestones = [];
     // Capture exactly what the selected screen bank passes to the renderer.
@@ -60,17 +61,17 @@ async function run(backend) {
     [h.keyboard, h.fe, h.paging].forEach(device => device.connect(h.bus));
     h.display.connect(h.bus, h.clock);
     h.disk.connect(h.bus, h.clock, h.drives);
-    h.psg.connect(h.bus, h.clock);
+    if (!wasm?.audio) h.psg.connect(h.bus, h.clock);
     h.bus.opt('TSTATES_PER_INTRQ', 70908);
     h.bus.opt('INTRQ_PERIOD', 20);
     h.bus.opt('EXTENDED_MEMORY', 0);
     h.bus.opt('SEMICOLORS', true);
-    h.psg.applySettings(true, .35, 1, 0, 0, 1773400, 512, .7);
+    if (!wasm?.audio) h.psg.applySettings(true, .35, 1, 0, 0, 1773400, 512, .7);
     h.bus.on_io_write((port, value) => ayWrites.push(value), { mask: 65535, value: 0xbffd });
     h.psg.get_onDataReady().subscribe(packet => {
       packets.push(packet);
       if (firstSound === null && packet.left.some(sample => Math.abs(sample) > .0001))
-        firstSound = h.clock.get_tstates();
+        firstSound = packet.tstates ?? h.clock.get_tstates();
     });
     function start() { h.drives[0].insertTRD(diskBytes); h.bus.reset(2); h.clock.run(); }
     function key(row, bit, down) { h.keyboard.switchKeys([{index:row, bit}], down); }
@@ -121,7 +122,9 @@ async function run(backend) {
   assert(frames.length >= Math.floor(now / 20) && maxFrameError <= (backend === 'js' ? 24 : 1),
     `${backend}: ${frames.length} frames, up to ${maxFrameError} T from the native phase`);
   const pcm = createHash('sha256');
-  for (const packet of context.packets) {
+  for (const [index, packet] of context.packets.entries()) {
+    if (context.wasm?.audio)
+      assert.equal(packet.tstates, Math.ceil((index + 1) * 512 * 3545400 / 44100), 'WASM audio block deadline');
     pcm.update(Buffer.from(packet.left.buffer));
     pcm.update(Buffer.from(packet.right.buffer));
   }
@@ -151,16 +154,19 @@ async function run(backend) {
 
 const results = [];
 const reference = await run('wasm-tick');
-let jsIdentity;
+const js = await run('js');
+let jsAyIdentity;
+for (const key of ['coldWrites', 'aySha256', 'frames', 'pcmPackets', 'menuSha256', 'screens'])
+  assert.deepEqual(js.identity[key], reference.identity[key], `JavaScript workload differs in ${key}`);
 for (let pair = 0; pair < pairs; pair++) {
-  for (const backend of pair % 2 ? ['wasm', 'js'] : ['js', 'wasm']) {
+  for (const backend of pair % 2 ? ['wasm', 'wasm-js-ay'] : ['wasm-js-ay', 'wasm']) {
     const result = await run(backend);
     if (backend === 'wasm') assert.deepEqual(result.identity, reference.identity,
       'Fused WASM must match its independent T-by-T execution');
     else {
-      jsIdentity ??= result.identity;
-      assert.deepEqual(result.identity, jsIdentity, 'JavaScript workload changed between pairs');
-      for (const key of ['coldWrites', 'aySha256', 'frames', 'pcmPackets', 'menuSha256', 'screens']) {
+      jsAyIdentity ??= result.identity;
+      assert.deepEqual(result.identity, jsAyIdentity, 'JavaScript AY workload changed between pairs');
+      for (const key of ['coldWrites', 'aySha256', 'frames', 'pcmPackets', 'menuSha256', 'screens', 'pcmSha256']) {
         assert.deepEqual(result.identity[key], reference.identity[key],
           `JavaScript and WASM must perform the same work (${key})`);
       }
@@ -171,13 +177,13 @@ for (let pair = 0; pair < pairs; pair++) {
 }
 const median = backend => results.filter(run => run.backend === backend).map(run => run.wallMs)
   .sort((a, b) => a - b)[Math.floor(pairs / 2)];
-const jsMs = median('js'), wasmMs = median('wasm');
+const jsAyMs = median('wasm-js-ay'), wasmMs = median('wasm');
 const report = {
   scope: '67.2 s, real ROM/TRD/AY, deterministic clock, headless display, no physical audio or GPU timing',
   node: process.version, jsSha256: hash(zxDream), wasmSha256: hash(binary),
   emulatedMs: reference.emulatedMs, diskSha256: reference.diskSha256,
-  medians: { jsMs, wasmMs, reductionPercent: 100 * (1 - wasmMs / jsMs) },
-  jsIdentity, wasmIdentity: reference.identity, perTickWasmMs: reference.wallMs, results
+  medians: { jsAyMs, wasmMs, reductionPercent: 100 * (1 - wasmMs / jsAyMs) },
+  jsIdentity: js.identity, jsAyIdentity, wasmIdentity: reference.identity, perTickWasmMs: reference.wallMs, results
 };
 if (output) await writeFile(output, JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify({ ...report.medians, identity: reference.identity }, null, 2));

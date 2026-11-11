@@ -18,13 +18,14 @@ const button = document.querySelector('#run');
 const display = document.querySelector('#display');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const selectAlicia = new URL(location.href).searchParams.get('song') === 'alicia';
+const ayBackend = new URL(location.href).searchParams.get('ay') === 'js' ? 'js' : 'wasm';
 const coreReport = sessionStorage.getItem('expedition33-live');
 const results = coreReport ? JSON.parse(coreReport) : {};
 output.textContent = JSON.stringify(results, null, 2);
 
 button.onclick = async () => {
   button.disabled = backend.disabled = true;
-  const player = new SpectrumPlayer(display, backend.value);
+  const player = new SpectrumPlayer(display, backend.value, ayBackend);
   const prototype = WebGLRenderer.prototype;
   const capture = prototype.drawData, present = prototype.displayLayer;
   const interval = window.setInterval;
@@ -49,9 +50,9 @@ button.onclick = async () => {
     const disk = new Uint8Array(await response.arrayBuffer());
     const machine = player.hw;
     machine.bus.on_io_write(() => ayWrites++, { mask: 0xffff, value: 0xbffd });
-    machine.psg.get_onDataReady().subscribe(({ left, right, sampleCount: size }) => {
+    machine.psg.get_onDataReady().subscribe(({ left, right, sampleCount: size, tstates }) => {
       if (firstSoundT === null && left.some(value => Math.abs(value) > .0001))
-        firstSoundT = machine.clock.get_tstates();
+        firstSoundT = tstates ?? machine.clock.get_tstates();
       for (let i = 0; i < size; i++) {
         leftEnergy += left[i] ** 2;
         rightEnergy += right[i] ** 2;
@@ -85,6 +86,7 @@ button.onclick = async () => {
     output.textContent = `Running ${backend.value} (45 seconds)…`;
     await wait(24_000);
     const from = await readAudioStats();
+    const bootBusyMs = wakes.reduce((sum, ms) => sum + ms, 0);
     if (selectAlicia) {
       const press = async (index, bit) => {
         machine.keyboard.switchKeys([{ index, bit }], true);
@@ -104,19 +106,19 @@ button.onclick = async () => {
     const frameIntervals = presentations.slice(1).map((time, i) => time - presentations[i]);
     const maxFrameErrorT = fields.reduce((max, time, i) => Math.max(max, Math.abs(time - fields[0] - i * 70908)), 0);
     const check = {
-      backend: backend.value, elapsedMs, emulatedMs, sampleRate: player.audio.sampleRate,
+      backend: backend.value, ay: display.dataset.ay, elapsedMs, emulatedMs, sampleRate: player.audio.sampleRate,
       audioState: player.audio.state, firstSoundT, ayWrites, fields: fields.length,
       nativeHz: (fields.length - 1) * 3545400 / (fields.at(-1) - fields[0]),
       maxFrameErrorT, presentations: presentations.length,
       maxPresentationIntervalMs: Math.max(...frameIntervals),
-      wakeBusyMs: wakes.reduce((sum, ms) => sum + ms, 0), maxWakeMs: Math.max(...wakes),
+      wakeBusyMs: wakes.reduce((sum, ms) => sum + ms, 0), bootBusyMs, maxWakeMs: Math.max(...wakes),
       rms: [Math.sqrt(leftEnergy / sampleCount), Math.sqrt(rightEnergy / sampleCount)],
       audio
     };
     check.passed = firstSoundT !== null && ayWrites > 100 && check.rms.every(rms => rms > .01) &&
       check.audioState === 'running' && audio.missing === 0 && audio.dropped === 0 &&
       audio.rendered > 20 * check.sampleRate && maxFrameErrorT <= (backend.value === 'wasm' ? 1 : 24);
-    results[selectAlicia ? `${backend.value}-alicia` : backend.value] = check;
+    results[`${backend.value}-ay-${display.dataset.ay}${selectAlicia ? '-alicia' : ''}`] = check;
     sessionStorage.setItem('expedition33-live', JSON.stringify(results));
     output.textContent = JSON.stringify(results, null, 2);
   } catch (error) {

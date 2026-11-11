@@ -1,5 +1,35 @@
 # Changelog and optimization experiments
 
+## 2026-11-11 — Render AY and beeper blocks in the Spectrum WASM core
+
+- **Objective/baseline:** Use the Ayumi C core to eliminate per-sample
+  JavaScript scheduler work identified on Expedition 33 at `0daaf6dc`.
+  Keep JavaScript AY available for comparison on the same WASM Z80.
+- **Change:** Render 44.1-kHz stereo PCM from absolute Z80 T-states,
+  applying AY and beeper writes at their strobes. Emit 512-frame blocks
+  and transfer the copied buffers to AudioWorklet without another clone.
+  Reset discards a partial block and restarts sample phase. Guest code
+  and TRD bytes are unchanged, with zero guest hot-path T-state delta.
+- **Measurement:** Five paired 67.2-second deterministic runs take a
+  median 3,538.5 ms for JS AY and 1,864.1 ms for WASM AY, a 47.3%
+  reduction. One visible 45-second WebGL/AudioWorklet pair takes
+  2,734.8 ms and 1,461.7 ms in emulation wakes respectively, a
+  46.6% reduction.
+- **Verification:** Exact stereo PCM across 5,788 packets versus JS AY,
+  identical guest AY writes and checked screen bytes, and exact packet
+  and 50-Hz field deadlines. Synthetic port tests cover beeper ties,
+  partial-block reset and AY readback on both CPU paths. The visible
+  WASM run records 2,251 emulated fields and presentation calls,
+  with zero missing or dropped AudioWorklet samples over 21 s including
+  a switch to Alicia. The JS AY run misses 256 samples. The initial
+  WASM browser run has throttled presentation and is excluded from the
+  live timing pair.
+- **Decision:** Enable block AY for the opt-in WASM player. The current
+  Pages response lacks COOP/COEP for sharing WASM memory directly with
+  AudioWorklet. Verification covers emulator fields and the browser's
+  audio queue before OS output.
+  [Measurements and reproduction](web/reports/spectrum-wasm-ay/README.md).
+
 ## 2026-11-11 — Profile Expedition 33 after the WASM CPU prototype
 
 - **Objective/baseline:** Explain the near-tie in the first live comparison

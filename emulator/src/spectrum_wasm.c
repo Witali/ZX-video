@@ -2,6 +2,7 @@
  * clocked devices; RAM, ROM and Z80 machine cycles stay in this module. */
 #define CHIPS_IMPL
 #include "../vendor/z80_tester/z80.h"
+#include "spectrum_audio.h"
 
 #define EXPORT(name) __attribute__((export_name(#name)))
 #define IMPORT(name) __attribute__((import_module("spectrum"), import_name(#name)))
@@ -18,10 +19,11 @@ typedef struct {
     z80_t cpu;
     uint64_t pins;
     uint32_t ticks, deadline;
+    uint64_t origin;
     uint8_t ram[8][PAGE_SIZE], rom[4][PAGE_SIZE];
     uint8_t *pages[4];
     uint8_t paging, model, q, screen_dirty, nmi_ticks;
-    bool trdos, turbo, int_level;
+    bool trdos, turbo, int_level, native_audio;
 } board;
 
 static board machine;
@@ -79,8 +81,13 @@ static inline void memory_write(board *b, uint16_t address, uint8_t value) {
 }
 
 static inline void board_emit(board *b, uint32_t time, uint16_t port, uint8_t value) {
-    (void)b;
+    if (b->native_audio) spectrum_audio_out(port, value, b->origin + time);
     host_out(port, value, time);
+}
+
+static inline uint8_t board_input(board *b, uint16_t port, uint32_t time) {
+    uint8_t value = host_in(port, time);
+    return b->native_audio ? value & spectrum_audio_in(port) : value;
 }
 
 static inline void board_finish_slice(board *b, uint64_t pins, uint32_t elapsed, uint16_t old) {
@@ -114,9 +121,9 @@ static inline void tick(board *b) {
         if (pins & Z80_M1) {
             Z80_SET_DATA(pins, 255);
         } else if (pins & Z80_RD) {
-            Z80_SET_DATA(pins, host_in(Z80_GET_ADDR(pins), b->ticks));
+            Z80_SET_DATA(pins, board_input(b, Z80_GET_ADDR(pins), b->ticks));
         } else if ((pins & Z80_WR) && !(previous & Z80_WR)) {
-            host_out(Z80_GET_ADDR(pins), Z80_GET_DATA(pins), b->ticks);
+            board_emit(b, b->ticks, Z80_GET_ADDR(pins), Z80_GET_DATA(pins));
         }
     }
     b->pins = pins;
@@ -132,16 +139,23 @@ EXPORT(reset) void spectrum_reset(unsigned mode) {
     b->pages[2] = b->ram[2];
     b->screen_dirty = 3;
     spectrum_page(mode == 0 ? 0 : mode == 1 ? 0x30 : 0x10);
+    if (b->native_audio) spectrum_audio_reset(b->origin + b->ticks);
     host_trdos(b->trdos);
 }
 
+EXPORT(native_audio) void spectrum_native_audio(bool enabled) { machine.native_audio = enabled; }
 EXPORT(int_line) void spectrum_int(bool level) { machine.int_level = level; }
 EXPORT(nmi) void spectrum_nmi(void) { machine.nmi_ticks = 8; }
 EXPORT(rom_ptr) uint8_t *spectrum_rom(void) { return machine.rom[0]; }
 EXPORT(read) uint8_t spectrum_read(uint16_t address) { return memory_read(&machine, address); }
 EXPORT(write) void spectrum_write(uint16_t address, uint8_t value) { memory_write(&machine, address, value); }
 EXPORT(ticks) uint32_t spectrum_ticks(void) { return machine.ticks; }
-EXPORT(set_ticks) void spectrum_set_ticks(uint32_t ticks) { machine.ticks = ticks; }
+EXPORT(set_ticks) void spectrum_set_ticks(uint32_t ticks) {
+    // ZX_Clock rebases its local counter each wake. Keep the absolute
+    // audio timeline continuous across wakes, pause/resume and disk swaps.
+    machine.origin = machine.origin + machine.ticks - ticks;
+    machine.ticks = ticks;
+}
 EXPORT(pc) uint16_t spectrum_pc(void) { return machine.cpu.pc - z80_opdone(&machine.cpu); }
 
 EXPORT(screen) uint8_t *spectrum_screen(unsigned bank) {
@@ -171,9 +185,11 @@ EXPORT(run) uint32_t spectrum_run(uint32_t limit, bool fast) {
             tick(b);
         }
     }
+    if (b->native_audio) spectrum_audio_advance(b->origin + b->ticks);
     return b->ticks;
 }
 
 EXPORT(step) void spectrum_step(void) {
     do { tick(&machine); } while (!z80_opdone(&machine.cpu));
+    if (machine.native_audio) spectrum_audio_advance(machine.origin + machine.ticks);
 }

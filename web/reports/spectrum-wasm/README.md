@@ -1,5 +1,9 @@
 # Spectrum Z80 WASM prototype
 
+This report covers the initial CPU-only prototype. Its playback path is
+available as `?cpu=wasm&ay=js`. The current `?cpu=wasm` path also runs AY
+and the beeper in WASM.
+
 Append `&cpu=wasm` to the normal Expedition 33 player URL and select **Play
 disk**. Omitting the parameter selects the default ZX-Dream JavaScript CPU.
 The prototype uses the C core pinned in

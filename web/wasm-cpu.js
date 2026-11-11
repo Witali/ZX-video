@@ -6,10 +6,11 @@ async function loadBinary() {
   return response.arrayBuffer();
 }
 
-export async function createWasmCpu(loadRom, { fast = true, binary = loadBinary() } = {}) {
+export async function createWasmCpu(loadRom, { fast = true, audio = false, binary = loadBinary() } = {}) {
   const romNames = ['48.rom', '48turbo.rom', '128tr.rom', 'tr5_04t.rom'];
   const [bytes, roms] = await Promise.all([binary, Promise.all(romNames.map(loadRom))]);
   let bus, advanceDevices, runLimit, currentTstates = 0;
+  const listeners = new Set();
   const { instance } = await WebAssembly.instantiate(bytes, {
     spectrum: {
       in_port(port, time) {
@@ -24,16 +25,26 @@ export async function createWasmCpu(loadRom, { fast = true, binary = loadBinary(
       dispatch(time) {
         currentTstates = time;
         return Math.min(runLimit, Math.ceil(advanceDevices(time)));
+      },
+      audio_block(left, right, sampleCount, tstates) {
+        const packet = {
+          left: pcm.slice(left / 4, left / 4 + sampleCount),
+          right: pcm.slice(right / 4, right / 4 + sampleCount),
+          sampleCount, tstates
+        };
+        for (const listener of listeners) listener(packet);
       }
     }
   });
   const core = instance.exports;
   const memory = new Uint8Array(core.memory.buffer);
+  const pcm = new Float32Array(core.memory.buffer);
   roms.forEach((rom, index) => {
     if (rom.length !== 0x4000) throw new Error(`Invalid ROM length for ${romNames[index]}`);
     memory.set(rom, core.rom_ptr() + index * 0x4000);
   });
   return {
+    audio: audio ? { get_onDataReady: () => ({ subscribe: listener => listeners.add(listener) }) } : null,
     connect(hardwareBus) {
       bus = hardwareBus;
       bus.on_mem_read(core.read);
@@ -42,6 +53,7 @@ export async function createWasmCpu(loadRom, { fast = true, binary = loadBinary(
       bus.on_var_write((name, value) => core.int_line(value), 'intrq');
       bus.on_var_write(core.nmi, 'nmirq');
       bus.on_reset(core.reset);
+      core.native_audio(audio);
       core.reset(0);
     },
     get_tstates: core.ticks,

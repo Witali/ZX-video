@@ -10,9 +10,10 @@ window.loadServerFile = async name => {
 };
 
 export class SpectrumPlayer {
-  constructor(container, cpuBackend = 'js') {
+  constructor(container, cpuBackend = 'js', ayBackend = 'wasm') {
     this.container = container;
     this.cpuBackend = cpuBackend;
+    this.ayBackend = ayBackend;
     this.hw = null;
     this.audio = null;
     this.muted = false;
@@ -52,31 +53,37 @@ export class SpectrumPlayer {
     if (this.hw) return;
     const wasm = this.cpuBackend === 'wasm';
     const cpu = wasm
-      ? await (await import('./wasm-cpu.js')).createWasmCpu(window.loadServerFile)
+      ? await (await import('./wasm-cpu.js')).createWasmCpu(window.loadServerFile, { audio: this.ayBackend === 'wasm' })
       : new ZX_Z80();
     const h = this.hw = { bus: new ZX_Bus(), clock: new ZX_Clock(), cpu,
       rom: wasm ? null : new ZX_ROM(), ram: wasm ? null : new ZX_RAM(), display: new ZX_Display(),
       keyboard: new ZX_Keyboard(), drives: Array.from({ length: 4 }, () => new ZX_Floppy()),
-      disk: new ZX_BetaDisk(), fe: new ZX_PortFE(), paging: new ZX_Port7FFD(), psg: new ZX_PSG() };
+      disk: new ZX_BetaDisk(), fe: new ZX_PortFE(), paging: new ZX_Port7FFD(), psg: cpu.audio || new ZX_PSG() };
     h.cpu.connect(h.bus);
     h.clock.connect(h.bus, h.cpu);
     for (const device of [h.rom, h.ram, h.keyboard, h.fe, h.paging]) device?.connect(h.bus);
     if (wasm) h.display.set_screen_source(h.cpu.screen);
     h.display.connect(h.bus, h.clock);
     h.disk.connect(h.bus, h.clock, h.drives);
-    h.psg.connect(h.bus, h.clock);
+    if (!cpu.audio) h.psg.connect(h.bus, h.clock);
     h.bus.opt('TSTATES_PER_INTRQ', 70908);
     h.bus.opt('INTRQ_PERIOD', 20);
     h.bus.opt('EXTENDED_MEMORY', 0);
     h.bus.opt('SEMICOLORS', true);
     this.bindDisplay();
-    h.psg.applySettings(true, 0.35, 1, 0, 0, 1773400, 512, 0.7);
-    h.psg.get_onDataReady().subscribe(packet => {
-      if (this.output && this.audio?.state === 'running') this.output.port.postMessage({ left: packet.left, right: packet.right });
+    if (!cpu.audio) h.psg.applySettings(true, 0.35, 1, 0, 0, 1773400, 512, 0.7);
+    h.psg.get_onDataReady().subscribe(({ left, right }) => {
+      if (this.output && this.audio?.state === 'running') {
+        const port = this.output.port;
+        // Synchronous subscribers can inspect the samples before the transfer
+        // moves the two buffers to the audio thread.
+        queueMicrotask(() => port.postMessage({ left, right }, [left.buffer, right.buffer]));
+      }
     });
     try { await h.rom?.get_ready$(); }
     catch (error) { this.hw = null; this.container.querySelectorAll('canvas').forEach(c => c.remove()); throw error; }
     this.container.dataset.cpu = this.cpuBackend;
+    this.container.dataset.ay = cpu.audio ? 'wasm' : 'js';
     // Poll the controller's side-effect-free state, not its I/O status port.
     // Hold brief gaps between sector commands so one read shows a steady spinner.
     this.activityTimer = window.setInterval(() => {

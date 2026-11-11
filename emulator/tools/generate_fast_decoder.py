@@ -59,7 +59,7 @@ if args.spectrum:
     slice_code = slice_code.replace('codec_flat_read(b,Z80_GET_ADDR(pins))',
                                     'memory_read(b,Z80_GET_ADDR(pins))')
     slice_code = slice_code.replace('++b->writes; BOARD_MEMORY_WRITE', 'memory_write')
-    slice_code = slice_code.replace('BOARD_INPUT(b,pins)', 'host_in(Z80_GET_ADDR(pins),b->ticks+elapsed)')
+    slice_code = slice_code.replace('BOARD_INPUT(b,pins)', 'board_input(b,Z80_GET_ADDR(pins),b->ticks+elapsed)')
 out = [notice, macros, slice_code]
 for case in cases:
     name = case[1]
