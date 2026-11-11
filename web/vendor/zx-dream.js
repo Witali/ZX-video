@@ -5196,6 +5196,8 @@ function ZX_Display () {
 	var _renderOnAnimationFrame = false;
     var _animationFrameId = null, _presentationGeneration = 0;
     var _pendingLayer = 0, _pendingBorderColor = null;
+    var _screenSource = null;
+    this.set_screen_source = function (source) { _screenSource = source; };
 
     function invalidatePresentation() {
         _presentationGeneration++;
@@ -5298,6 +5300,13 @@ function ZX_Display () {
         var layer = +!!(_port_7ffd_value & 8);
         var data = layer ? _screen7Data : _screen5Data;
         var dirty = layer ? _screen7Dirty : _screen5Dirty;
+        if (_screenSource) {
+            var snapshot = _screenSource(layer ? 7 : 5);
+            if (snapshot) {
+                for (var address = 0; address < snapshot.length; address++)
+                    writeScreen(data, dirty, address, snapshot[address]);
+            }
+        }
         if (_renderOnAnimationFrame && !forceImmediate) {
             // Consume dirty data NOW, while the field is complete. CPU writes
             // after this boundary belong to the next field, not to this vsync.
@@ -5359,6 +5368,10 @@ function ZX_Display () {
 			screenData = _screen7Data;
 			screenDirty = _screen7Dirty;
 		}
+        writeScreen(screenData, screenDirty, address, data);
+    }
+
+    function writeScreen(screenData, screenDirty, address, data) {
 		if (screenData[address] == data)
 			return;
 

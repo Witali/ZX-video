@@ -1,5 +1,34 @@
 # Changelog and optimization experiments
 
+## 2026-11-11 — Prototype a browser WASM Z80 backend
+
+- **Objective/baseline:** Reuse the pinned z80-tester core and compare it with
+  the ZX-Dream CPU at `afb4f749` on the committed Expedition 33 TRD.
+- **Change:** Keep banked RAM, ROM and CPU in a standalone WASM module.
+  Share CPU flag hooks with the native adapter and generate bank-aware
+  slices that yield at port strobes. Dispatch existing disk, AY and
+  display events on the common T-state clock. Capture changed screen
+  banks at the normal field boundary. Guest code and disk bytes are
+  unchanged. There is no guest hot-path T-state change.
+- **Measurement:** Five paired 67.2-second headless-machine runs took a
+  median 3,900.2 ms (JS) and 3,552.2 ms (WASM), a reduction of 8.92%.
+  One 45-second WebGL/AudioWorklet pair spent 2,800.7 and 2,787.7 ms
+  respectively in emulation wakes. Live-browser acceleration is
+  inconclusive at this difference.
+- **Verification:** Cold boot autoplay at ~20.53 s of machine time, slideshow,
+  hidden menu and stereo Lumiere/Alicia all pass. Fused WASM matches its
+  per-T path exactly on this workload. JS and WASM match the AY data
+  sequence, frame count and checked screen bytes, with different PCM hashes
+  at the two I/O timing granularities. WASM generates fields every 70,908 T
+  with zero phase error across 3,360 deterministic fields. Live tests
+  record zero AudioWorklet gaps or drops during 21 s each of normal
+  playback and playback including a switch to Alicia. Native 31-test suite
+  and existing JS Fuse vectors pass.
+- **Decision:** Keep WASM opt-in through `?cpu=wasm`. This verifies the
+  tested browser and TRD. ULA contention, other disks, physical scanout and
+  OS audio are outside this prototype verification.
+  [Reproduction and measurements](web/reports/spectrum-wasm/README.md).
+
 ## 2026-11-04 — Lock native frames to the emulated 50-Hz field clock
 
 - **Objective/baseline:** From `0ba22c13`, replace the display's arbitrary

@@ -13,6 +13,8 @@ import re
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--output', type=Path, required=True)
+parser.add_argument('--spectrum', action='store_true',
+                    help='Generate slices for a banked, externally timed Spectrum bus')
 args = parser.parse_args()
 source = (Path(__file__).resolve().parents[1] / 'vendor/z80_tester/z80.h').read_text(encoding='utf-8')
 assert hashlib.sha256(source.encode()).hexdigest() == '6ca70ffd91b1bdbaf00f7a41e7092b326145fd1c95dcdd7bb01183370de734f3'
@@ -26,7 +28,12 @@ repeat_steps = {'1515': 'LDIR', '1528': 'CPIR', '1541': 'INIR', '1554': 'OTIR',
                 '1567': 'LDDR', '1580': 'CPDR', '1593': 'INDR', '1606': 'OTDR'}
 seen_repeats = set()
 
-out = ['/* ALTERED GENERATED SOURCE: derived from pinned floooh/chips z80.h by\n * z80-tester generate_fast_decoder.py; flat RAM reads use codec_flat_read.\n * Copyright (c) 2021 Andre Weissflog; zlib/libpng license, see LICENSE.\n * This is not an unmodified upstream header. */', macros, r'''
+bus_note = 'Spectrum memory and port accesses use the board bus.' if args.spectrum else 'flat RAM reads use codec_flat_read.'
+notice = ('/* ALTERED GENERATED SOURCE: derived from pinned floooh/chips z80.h by\n'
+          f' * z80-tester generate_fast_decoder.py; {bus_note}\n'
+          ' * Copyright (c) 2021 Andre Weissflog; zlib/libpng license, see LICENSE.\n'
+          ' * This is not an unmodified upstream header. */')
+slice_code = r'''
 #undef _mread
 #undef _mwrite
 #undef _ioread
@@ -47,7 +54,13 @@ static uint32_t board_fast_slice(board *b) {
     uint64_t pins = b->pins;
     uint32_t elapsed = 0;
 fast_dispatch:
-    switch (cpu->step) {''']
+    switch (cpu->step) {'''
+if args.spectrum:
+    slice_code = slice_code.replace('codec_flat_read(b,Z80_GET_ADDR(pins))',
+                                    'memory_read(b,Z80_GET_ADDR(pins))')
+    slice_code = slice_code.replace('++b->writes; BOARD_MEMORY_WRITE', 'memory_write')
+    slice_code = slice_code.replace('BOARD_INPUT(b,pins)', 'host_in(Z80_GET_ADDR(pins),b->ticks+elapsed)')
+out = [notice, macros, slice_code]
 for case in cases:
     name = case[1]
     out.append(f'        case {name}: goto fast_{name};')
@@ -76,6 +89,12 @@ for i, case in enumerate(cases):
     # Numeric transitions include conditional paths such as _goto(544+5).
     # The four computed transitions dispatch once at an opcode/prefix boundary.
     body = re.sub(r'_goto\(([^;]+)\)', transition, body)
+    if args.spectrum and re.search(r'_io(read|write)\(', body):
+        # The port callback can insert an earlier device deadline. Return to
+        # the run loop at the strobe, preserving the remaining microsteps.
+        body, count = re.subn(r'goto fast_(\d+);',
+                              rf'cpu->step=\1; goto finish_{name};', body)
+        assert count == 1, name
     body = body.replace('_fetch();', f'pins=_z80_fetch(cpu,pins); goto finish_{name};')
     body = body.replace('goto step_to;', f'goto finish_{name};')
     if name in ('55', '63'):

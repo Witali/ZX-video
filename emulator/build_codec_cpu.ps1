@@ -22,7 +22,7 @@ if ($LASTEXITCODE -ne 0) { throw 'CPU library build failed.' }
 $sha=[System.Security.Cryptography.SHA256]::Create()
 try {
     $inputs=[ordered]@{}
-    $paths=@($sources)+@((Join-Path $PSScriptRoot 'src/codec_cpu.h'),$PSCommandPath)
+    $paths=@($sources)+@((Join-Path $PSScriptRoot 'src/codec_cpu.h'),(Join-Path $PSScriptRoot 'src/z80_flag_hooks.h'),$PSCommandPath)
     $spectrumHeader=Join-Path $PSScriptRoot 'src/spectrum128.h'
     if (Test-Path -LiteralPath $spectrumHeader) { $paths+=@($spectrumHeader) }
     $paths+=@(Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'vendor/z80_tester') -File | ForEach-Object { $_.FullName })

@@ -10,8 +10,9 @@ window.loadServerFile = async name => {
 };
 
 export class SpectrumPlayer {
-  constructor(container) {
+  constructor(container, cpuBackend = 'js') {
     this.container = container;
+    this.cpuBackend = cpuBackend;
     this.hw = null;
     this.audio = null;
     this.muted = false;
@@ -49,13 +50,18 @@ export class SpectrumPlayer {
   }
   async initialize() {
     if (this.hw) return;
-    const h = this.hw = { bus: new ZX_Bus(), clock: new ZX_Clock(), cpu: new ZX_Z80(),
-      rom: new ZX_ROM(), ram: new ZX_RAM(), display: new ZX_Display(),
+    const wasm = this.cpuBackend === 'wasm';
+    const cpu = wasm
+      ? await (await import('./wasm-cpu.js')).createWasmCpu(window.loadServerFile)
+      : new ZX_Z80();
+    const h = this.hw = { bus: new ZX_Bus(), clock: new ZX_Clock(), cpu,
+      rom: wasm ? null : new ZX_ROM(), ram: wasm ? null : new ZX_RAM(), display: new ZX_Display(),
       keyboard: new ZX_Keyboard(), drives: Array.from({ length: 4 }, () => new ZX_Floppy()),
       disk: new ZX_BetaDisk(), fe: new ZX_PortFE(), paging: new ZX_Port7FFD(), psg: new ZX_PSG() };
     h.cpu.connect(h.bus);
     h.clock.connect(h.bus, h.cpu);
-    for (const device of [h.rom, h.ram, h.keyboard, h.fe, h.paging]) device.connect(h.bus);
+    for (const device of [h.rom, h.ram, h.keyboard, h.fe, h.paging]) device?.connect(h.bus);
+    if (wasm) h.display.set_screen_source(h.cpu.screen);
     h.display.connect(h.bus, h.clock);
     h.disk.connect(h.bus, h.clock, h.drives);
     h.psg.connect(h.bus, h.clock);
@@ -68,8 +74,9 @@ export class SpectrumPlayer {
     h.psg.get_onDataReady().subscribe(packet => {
       if (this.output && this.audio?.state === 'running') this.output.port.postMessage({ left: packet.left, right: packet.right });
     });
-    try { await h.rom.get_ready$(); }
+    try { await h.rom?.get_ready$(); }
     catch (error) { this.hw = null; this.container.querySelectorAll('canvas').forEach(c => c.remove()); throw error; }
+    this.container.dataset.cpu = this.cpuBackend;
     // Poll the controller's side-effect-free state, not its I/O status port.
     // Hold brief gaps between sector commands so one read shows a steady spinner.
     this.activityTimer = window.setInterval(() => {

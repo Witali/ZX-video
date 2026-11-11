@@ -77,3 +77,11 @@ the old 6.6-ms delay with a native capture at each emulated ULA interrupt.
 One coalesced animation callback presents the completed bank and border;
 explicit paused redraws remain synchronous. Both rendering backends share
 this schedule. [Verification and monitor-refresh limits](../reports/frame-clock/README.md).
+
+The experimental `?cpu=wasm` backend uses the project's pinned
+[z80-tester CPU](../../emulator/vendor/z80_tester/provenance.json), derived
+from floooh/chips under the [zlib/libpng license](LICENSE.z80-tester).
+The WASM module uses a new banked Spectrum bus and the existing generated
+Z80 slices. JavaScript still supplies keyboard, Beta Disk, AY synthesis,
+clocked events and display presentation. See the [build and measurement
+report](../reports/spectrum-wasm/README.md).

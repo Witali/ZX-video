@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Expedition 33 browser timing check</title>
+<script src="vendor/ayumi.js"></script>
+<script src="vendor/zx-dream.js"></script>
+<h1>Expedition 33 browser timing check</h1>
+<label>CPU <select id="backend"><option value="wasm">WASM</option><option value="js">JavaScript</option></select></label>
+<button id="run">Run live check</button>
+<div id="display" tabindex="0" style="width:576px"></div>
+<pre id="result">Ready</pre>
+<script type="module">
+import { SpectrumPlayer } from './emulator.js';
+
+const output = document.querySelector('#result');
+const backend = document.querySelector('#backend');
+const button = document.querySelector('#run');
+const display = document.querySelector('#display');
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+const selectAlicia = new URL(location.href).searchParams.get('song') === 'alicia';
+const coreReport = sessionStorage.getItem('expedition33-live');
+const results = coreReport ? JSON.parse(coreReport) : {};
+output.textContent = JSON.stringify(results, null, 2);
+
+button.onclick = async () => {
+  button.disabled = backend.disabled = true;
+  const player = new SpectrumPlayer(display, backend.value);
+  const prototype = WebGLRenderer.prototype;
+  const capture = prototype.drawData, present = prototype.displayLayer;
+  const interval = window.setInterval;
+  const fields = [], presentations = [], wakes = [];
+  let running = false, firstSoundT = null, ayWrites = 0;
+  let leftEnergy = 0, rightEnergy = 0, sampleCount = 0;
+  prototype.drawData = function (...args) {
+    if (running) fields.push(player.hw.clock.get_tstates());
+    return capture.apply(this, args);
+  };
+  prototype.displayLayer = function (...args) {
+    if (running) presentations.push(performance.now());
+    return present.apply(this, args);
+  };
+  try {
+    output.textContent = 'Loading Expedition 33…';
+    await player.enableAudio();
+    await player.initialize();
+    if (player.activeRenderer !== 'webgl') throw new Error('WebGL is unavailable');
+    const response = await fetch('disks/Expedition-33-Demo.trd');
+    if (!response.ok) throw new Error(`TRD request failed (${response.status})`);
+    const disk = new Uint8Array(await response.arrayBuffer());
+    const machine = player.hw;
+    machine.bus.on_io_write(() => ayWrites++, { mask: 0xffff, value: 0xbffd });
+    machine.psg.get_onDataReady().subscribe(({ left, right, sampleCount: size }) => {
+      if (firstSoundT === null && left.some(value => Math.abs(value) > .0001))
+        firstSoundT = machine.clock.get_tstates();
+      for (let i = 0; i < size; i++) {
+        leftEnergy += left[i] ** 2;
+        rightEnergy += right[i] ** 2;
+      }
+      sampleCount += size;
+    });
+    const readAudioStats = () => new Promise((resolve, reject) => {
+      const port = player.output.port;
+      const receive = ({ data }) => {
+        if (!data.stats) return;
+        clearTimeout(timeout);
+        port.removeEventListener('message', receive);
+        resolve(data.stats);
+      };
+      const timeout = setTimeout(() => {
+        port.removeEventListener('message', receive);
+        reject(new Error('AudioWorklet did not respond'));
+      }, 2000);
+      port.addEventListener('message', receive);
+      port.postMessage({ stats: true });
+    });
+    window.setInterval = (callback, delay) => interval(() => {
+      const start = performance.now();
+      callback();
+      wakes.push(performance.now() - start);
+    }, delay);
+    try { player.mount(disk, true); }
+    finally { window.setInterval = interval; }
+    running = true;
+    const start = performance.now();
+    output.textContent = `Running ${backend.value} (45 seconds)…`;
+    await wait(24_000);
+    const from = await readAudioStats();
+    if (selectAlicia) {
+      const press = async (index, bit) => {
+        machine.keyboard.switchKeys([{ index, bit }], true);
+        await wait(100);
+        machine.keyboard.switchKeys([{ index, bit }], false);
+        await wait(100);
+      };
+      await press(7, 0); // Space opens the hidden menu.
+      await press(3, 1); // 2 starts Alicia.
+    }
+    await wait(selectAlicia ? 20_600 : 21_000);
+    const to = await readAudioStats();
+    const elapsedMs = performance.now() - start;
+    const emulatedMs = machine.clock.get_ms();
+    running = false;
+    const audio = Object.fromEntries(Object.keys(to).map(key => [key, to[key] - from[key]]));
+    const frameIntervals = presentations.slice(1).map((time, i) => time - presentations[i]);
+    const maxFrameErrorT = fields.reduce((max, time, i) => Math.max(max, Math.abs(time - fields[0] - i * 70908)), 0);
+    const check = {
+      backend: backend.value, elapsedMs, emulatedMs, sampleRate: player.audio.sampleRate,
+      audioState: player.audio.state, firstSoundT, ayWrites, fields: fields.length,
+      nativeHz: (fields.length - 1) * 3545400 / (fields.at(-1) - fields[0]),
+      maxFrameErrorT, presentations: presentations.length,
+      maxPresentationIntervalMs: Math.max(...frameIntervals),
+      wakeBusyMs: wakes.reduce((sum, ms) => sum + ms, 0), maxWakeMs: Math.max(...wakes),
+      rms: [Math.sqrt(leftEnergy / sampleCount), Math.sqrt(rightEnergy / sampleCount)],
+      audio
+    };
+    check.passed = firstSoundT !== null && ayWrites > 100 && check.rms.every(rms => rms > .01) &&
+      check.audioState === 'running' && audio.missing === 0 && audio.dropped === 0 &&
+      audio.rendered > 20 * check.sampleRate && maxFrameErrorT <= (backend.value === 'wasm' ? 1 : 24);
+    results[selectAlicia ? `${backend.value}-alicia` : backend.value] = check;
+    sessionStorage.setItem('expedition33-live', JSON.stringify(results));
+    output.textContent = JSON.stringify(results, null, 2);
+  } catch (error) {
+    output.textContent = error.stack;
+  } finally {
+    running = false;
+    player.hw?.clock.stop();
+    clearInterval(player.activityTimer);
+    await player.audio?.close();
+    prototype.drawData = capture;
+    prototype.displayLayer = present;
+    button.disabled = backend.disabled = false;
+  }
+};
+</script>
+</html>

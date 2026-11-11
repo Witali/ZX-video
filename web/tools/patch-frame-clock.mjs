@@ -12,6 +12,8 @@ export function patchFrameClock(source) {
   once('var _renderOnAnimationFrame = false;', `var _renderOnAnimationFrame = false;
     var _animationFrameId = null, _presentationGeneration = 0;
     var _pendingLayer = 0, _pendingBorderColor = null;
+    var _screenSource = null;
+    this.set_screen_source = function (source) { _screenSource = source; };
 
     function invalidatePresentation() {
         _presentationGeneration++;
@@ -59,6 +61,13 @@ export function patchFrameClock(source) {
         var layer = +!!(_port_7ffd_value & 8);
         var data = layer ? _screen7Data : _screen5Data;
         var dirty = layer ? _screen7Dirty : _screen5Dirty;
+        if (_screenSource) {
+            var snapshot = _screenSource(layer ? 7 : 5);
+            if (snapshot) {
+                for (var address = 0; address < snapshot.length; address++)
+                    writeScreen(data, dirty, address, snapshot[address]);
+            }
+        }
         if (_renderOnAnimationFrame && !forceImmediate) {
             // Consume dirty data NOW, while the field is complete. CPU writes
             // after this boundary belong to the next field, not to this vsync.
@@ -83,5 +92,12 @@ export function patchFrameClock(source) {
   once('_renderOnAnimationFrame = value.renderOnAnimationFrame;', `if (_renderOnAnimationFrame !== value.renderOnAnimationFrame) invalidatePresentation();
         _renderOnAnimationFrame = value.renderOnAnimationFrame;`);
   once('this.set_threading = function (value) {', 'this.set_threading = function (value) {\n        invalidatePresentation();');
+  // The optional bank source shares byte/attribute dirty tracking with the
+  // JavaScript memory-write path without replaying individual bus writes.
+  once('\t\tif (screenData[address] == data)', `        writeScreen(screenData, screenDirty, address, data);
+    }
+
+    function writeScreen(screenData, screenDirty, address, data) {
+\t\tif (screenData[address] == data)`);
   return source.slice(0,begin)+display+source.slice(end);
 }
