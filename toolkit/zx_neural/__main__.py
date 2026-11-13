@@ -12,6 +12,10 @@ from .model import DEFAULT_WEIGHTS, load_weights, predict
 from .objective import Candidates, REFINE_SWEEPS, SHORTLIST, TEMPERATURE, features
 from .screen import ATTRIBUTES, PALETTE, from_cells, pack, prepare
 from .smooth import SmoothCandidates, floyd_bitmap
+from .subject import (
+    SubjectDetector, has_subject, improves_subject, preserves_colors,
+    protect_thin_parts, restore_color_accents, subject_scores, trace_contour,
+)
 
 
 def choose(rgb, candidates, mode, layers=None):
@@ -50,12 +54,43 @@ def render(candidates, labels, *, dither=False, smooth=False, floyd=False, repai
     return screen, from_cells(PALETTE[np.where(bits, ink, paper)])
 
 
+def convert(rgb, mode, layers, *, probability=None, **render_options):
+    candidates = Candidates(rgb)
+    baseline = render(candidates, choose(rgb, candidates, mode, layers), **render_options)
+    return add_subject(rgb, mode, layers, baseline, probability, **render_options)
+
+
+def add_subject(rgb, mode, layers, baseline, probability, **render_options):
+    if probability is None or not has_subject(rgb, probability):
+        return baseline
+    mask = np.clip((probability - .38) / .52, 0, 1)
+    before = subject_scores(rgb, baseline[1], mask)
+    best, best_contrast = baseline, before["luma_contrast"]
+    options = [trace_contour(rgb, *baseline, probability)]
+    target = protect_thin_parts(rgb, baseline[1], probability)
+    if target is not None:
+        candidates = Candidates(target)
+        screen, preview = render(candidates, choose(target, candidates, mode, layers), **render_options)
+        options.append(trace_contour(rgb, screen, preview, probability))
+    for adjusted in options:
+        adjusted = restore_color_accents(rgb, baseline, adjusted)
+        if adjusted[0] == baseline[0]:
+            continue
+        after = subject_scores(rgb, adjusted[1], mask)
+        if (after["luma_contrast"] > best_contrast and improves_subject(before, after)
+                and preserves_colors(rgb, baseline[1], adjusted[1])):
+            best, best_contrast = adjusted, after["luma_contrast"]
+    return best
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("image", type=Path)
     parser.add_argument("screen", type=Path, help="output 6912-byte .scr")
     parser.add_argument("--preview", type=Path, help="optional native RGB preview PNG")
     parser.add_argument("--crop", action="store_true", help="center crop to fill the 4:3 screen")
+    parser.add_argument("--subject-model", type=Path,
+                        help="local U²-NetP ONNX file for automatic subject contrast")
     gradients = parser.add_mutually_exclusive_group()
     gradients.add_argument("--solid", action="store_true", help="use the previous rendering without dithering")
     gradients.add_argument("--dither", action="store_true", help="apply ordered dithering in smooth regions")
@@ -68,6 +103,8 @@ def main():
     use_model = args.mode in ("neural", "hybrid")
     outputs = [path.resolve() for path in (args.screen, args.preview) if path is not None]
     inputs = {args.image.resolve()}
+    if args.subject_model:
+        inputs.add(args.subject_model.resolve())
     if use_model:
         inputs.add(args.weights.resolve())
     if inputs.intersection(outputs) or len(set(outputs)) != len(outputs):
@@ -76,11 +113,12 @@ def main():
         layers = load_weights(args.weights) if use_model else None
         with Image.open(args.image) as image:
             rgb = prepare(image, args.crop)
-        candidates = Candidates(rgb)
+            probability = (SubjectDetector(args.subject_model).predict(image, args.crop)
+                           if args.subject_model else None)
         floyd = args.floyd or not (args.solid or args.dither or args.smooth)
         repair = args.dither or args.smooth or floyd or args.mode in ("spatial", "spatial-full", "hybrid")
-        screen, preview = render(candidates, choose(rgb, candidates, args.mode, layers),
-                                 dither=args.dither, smooth=args.smooth, floyd=floyd, repair=repair)
+        screen, preview = convert(rgb, args.mode, layers, probability=probability,
+                                  dither=args.dither, smooth=args.smooth, floyd=floyd, repair=repair)
         args.screen.write_bytes(screen)
         if args.preview:
             Image.fromarray(preview).save(args.preview, format="PNG")

@@ -225,3 +225,41 @@ The command writes side-by-side sheets, final SCRs for both new modes,
 and per-photo metrics. It independently decodes each SCR before
 measuring it. See [CLIC results](evidence/gradients/clic.json) and
 [BSDS results](evidence/gradients/bsds.json).
+
+## Automatic subject contours
+
+Pass `--subject-model` with the local U²-NetP ONNX weights to protect
+low-contrast silhouettes during conversion. The detector finds salient
+regions automatically from the source photo. A candidate pass increases
+local brightness separation for thin parts that disappeared in the
+first render. Another pass can draw a one-pixel contour where the other
+color in the existing pair improves the boundary. Both passes use the
+original source and the predicted silhouette. There are no object-specific
+rules or hand-drawn masks in the converter.
+
+The converter restores baseline cells that lose a correctly represented
+dominant source channel. It accepts an adjusted screen only when its
+silhouette contrast improves, its pooled seam error stays within the
+allowed increase, and important saturated patches remain visible.
+Strong accents can still limit how much of a contour can be recovered.
+The model can also miss subjects or include parts of the background.
+
+Install the optional runtime and download the pinned model once. The
+command verifies its SHA-256 before loading it. Inference uses CPU
+ONNX Runtime and reads only the local input photo.
+
+```powershell
+python -m pip install "onnxruntime==1.32.0"
+New-Item -ItemType Directory -Force .tmp/neural-screen
+curl.exe --fail --location --output .tmp/neural-screen/u2netp.onnx https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2netp.onnx
+python -m toolkit.zx_neural input.jpg output.scr --preview output.png --mode hybrid --weights toolkit/zx_neural/weights64-clic.npz --subject-model .tmp/neural-screen/u2netp.onnx
+```
+
+Add the same `--subject-model` argument to `compare_gradients` to
+compare the standard Floyd–Steinberg render with automatic contour
+recovery. The experiment uses the same six CLIC and 20 BSDS photos
+as the gradient comparison. The model weights are 4,574,861 bytes
+and come from the [rembg distribution](https://github.com/danielgatis/rembg)
+of [U²-NetP](https://github.com/xuebinqin/U-2-Net).
+See [CLIC results](evidence/subjects/clic.json) and
+[BSDS results](evidence/subjects/bsds.json).

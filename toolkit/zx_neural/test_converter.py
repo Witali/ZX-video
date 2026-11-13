@@ -9,12 +9,13 @@ import unittest
 import numpy as np
 from PIL import Image
 
-from .__main__ import choose, render
+from .__main__ import choose, convert, render
 from .dither import DitherCandidates
 from .evaluate import independent_decode, quality
 from .model import load_weights
 from .objective import COLOR_BUDGET, Candidates, edge_weight
-from .screen import ATTRIBUTES, COLS, HEIGHT, ROWS, WIDTH, prepare
+from .screen import ATTRIBUTES, COLS, HEIGHT, ROWS, WIDTH, pack, prepare
+from .subject import protect_thin_parts, restore_color_accents
 
 
 class ConverterTests(unittest.TestCase):
@@ -58,6 +59,40 @@ class ConverterTests(unittest.TestCase):
         self.assertEqual(native.shape, (HEIGHT, WIDTH, 3))
         self.assertEqual(np.count_nonzero(native[..., 0]), HEIGHT)
         self.assertEqual(native[..., 0].max(), 128)
+
+    def test_subject_recovery_targets_a_vanished_thin_part(self):
+        source = np.full((HEIGHT, WIDTH, 3), 166, dtype=np.uint8)
+        probability = np.zeros((HEIGHT, WIDTH), np.float32)
+        probability[40:100, 50:150] = 1
+        probability[100:140, 121:127] = 1
+        source[probability == 1] = 137
+        visible = source.copy()
+        invisible = visible.copy()
+        invisible[100:140, 121:127] = 166
+        target = protect_thin_parts(source, invisible, probability)
+        self.assertLess(target[120, 124, 0], 110)
+        np.testing.assert_array_equal(target[65, 75], source[65, 75])
+        self.assertIsNone(protect_thin_parts(source, np.where(probability[..., None], 90, 166)
+                                             .repeat(3, axis=-1).astype(np.uint8), probability))
+        uncertain = np.full(probability.shape, .2, dtype=np.float32)
+        old, _ = convert(source, "spatial", None, floyd=True)
+        result, _ = convert(source, "spatial", None, floyd=True, probability=uncertain)
+        self.assertEqual(old, result)
+
+    def test_green_cells_are_restored_in_the_native_screen(self):
+        bits = np.ones((HEIGHT, WIDTH), dtype=bool)
+        before = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        before[2, 3] = 4
+        after = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        after[2, 4] = 2
+        old, candidate = pack(bits, before), pack(bits, after)
+        original = np.full((HEIGHT, WIDTH, 3), (190, 190, 190), dtype=np.uint8)
+        original[16:24, 24:32] = (95, 119, 73)
+        corrected, preview = restore_color_accents(original, (old, independent_decode(old)),
+                                                     (candidate, independent_decode(candidate)))
+        np.testing.assert_array_equal(preview, independent_decode(corrected))
+        np.testing.assert_array_equal(preview[16:24, 24:32], independent_decode(old)[16:24, 24:32])
+        np.testing.assert_array_equal(preview[16:24, 32:40], independent_decode(candidate)[16:24, 32:40])
 
     def test_default_floyd_preserves_gradient_tones(self):
         x = np.broadcast_to(np.linspace(0, 1, WIDTH), (HEIGHT, WIDTH))

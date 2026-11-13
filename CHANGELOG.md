@@ -1,5 +1,37 @@
 # Changelog and optimization experiments
 
+## 2026-11-13 — Recover thin foreground contours while preserving color accents
+
+- **Objective and baseline:** Improve the elephant's low-contrast silhouette,
+  including its trunk, while preserving colors already represented well in
+  the default Floyd–Steinberg result. Use the same six CLIC and 20 BSDS photos
+  and the frozen 64-channel CLIC palette weights.
+- **Trials:** The elephant's BSDS annotation was used to check the
+  feasibility of masked tone adjustment. Automatic U²-NetP saliency covers
+  the trunk. Global or subject-wide desaturation can erase meaningful
+  accents such as red feathers or green glass, so it was dropped. The first
+  one-pixel contour pass improves several silhouettes but cannot recover a
+  trunk in cells whose original pair is white and yellow. Adjust the
+  brightness of thin, low-contrast parts before palette selection, then
+  trace remaining weak boundaries with the existing pair. Restore cells
+  where this would remove a matching dominant source channel.
+- **Results:** The optional automatic mode selects a modified screen on
+  18 of 26 photos. On the elephant, pooled boundary luma contrast rises
+  from 35.09 to 51.08 and pooled seam RMSE from 20.75 to 21.92. All 389
+  original green pixels in the bottle crop are retained. Mean pooled seam
+  RMSE changes from 16.306 to 16.384 on CLIC and 19.060 to 19.443 on BSDS.
+  Some false seams remain. The narrower tone enhancement recovers more
+  of the trunk but has a visible brightness and grain tradeoff. The default
+  path continues to use Floyd–Steinberg without the additional model.
+- **Verification:** Both outputs from all 26 scenes decode to their
+  exact previews. The baseline SCR hashes match the gradient comparison.
+  Eight tests include thin-part recovery and green cell preservation.
+  The CLI reproduces the elephant and bottle SCRs byte for byte.
+  The default result without the model is used for uncertain masks or
+  rejected corrections. Host conversion adds zero guest T-states.
+  [Reproduction](toolkit/zx_neural/README.md) and
+  [measurements](toolkit/zx_neural/evidence/subjects/).
+
 ## 2026-11-13 — Smooth color seams with joint palette search and Floyd–Steinberg
 
 - **Objective and baseline:** Reduce artificial color blocks and preserve
