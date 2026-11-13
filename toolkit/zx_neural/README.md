@@ -156,6 +156,18 @@ The student uses an equal mixture of the original target loss and the
 teacher's soft pair probabilities with temperature 2 and the usual
 temperature-squared loss factor.
 
+Spatial and hybrid conversion also repair false BRIGHT steps between
+solid cells of the same hue. The repair joins cells only where the
+source varies by at most 32 RGB levels within each cell and by at most
+24 across the seam. A joined region may use one common brightness if
+every changed cell stays within 0.017 extra weighted RGB squared error
+(normalized channels) of its initial solid color. The repair removes
+the white island in the CLIC coast photo. It can flatten a smooth
+gradient because standard SCR has separate normal and bright
+attributes. Use `--no-brightness-repair` in the comparison script to
+reproduce the original width results below.
+See [before and after measurements](evidence/widths/brightness-repair.json).
+
 On six CLIC and 20 external BSDS photos, the hybrid seam RMSE is
 26.167 / 30.954 for the original 32-channel model, 26.146 / 30.925
 for 64 channels, and 26.150 / 30.929 for the distilled student.

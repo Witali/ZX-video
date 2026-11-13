@@ -1,5 +1,26 @@
 # Changelog and optimization experiments
 
+## 2026-11-13 — Remove false BRIGHT islands on smooth backgrounds
+
+- **Objective and baseline:** The user marked a white staircase in the
+  smooth sky of the CLIC coast photo from the 64-channel comparison.
+  Sixteen solid cells used BRIGHT white amid normal white cells.
+- **Change:** Join adjacent smooth solid cells of the same hue across
+  source differences of at most 24 RGB levels. Enforce a 32-level
+  within-cell range and a 0.017 per-cell weighted error budget before
+  using common brightness. Apply the repair in spatial and hybrid
+  modes and with optional dithering.
+- **Results:** The coast sky loses the false staircase. Exactly 1,024
+  pixels change. Coast seam RMSE improves from 28.693 to 28.204, with
+  RGB RMSE rising from 53.344 to 53.389 and identical strong-edge RMSE.
+  Only the coast hybrid screen changes in a 52-screen comparison of
+  both hybrid variants over six CLIC and 20 external BSDS photographs.
+  The correction does not address mixed-color blocks.
+- **Verification:** All 52 final SCRs decode to the exact preview.
+  Five focused tests include a smooth grayscale ramp and a real
+  brightness edge. The coast before/after crop was inspected.
+  [Measurements](toolkit/zx_neural/evidence/widths/brightness-repair.json).
+
 ## 2026-11-13 — Compare FP32 network widths and suppress dither seams
 
 - **Training data:** A preliminary BSDS experiment used 100 original photos

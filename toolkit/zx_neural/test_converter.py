@@ -73,6 +73,21 @@ class ConverterTests(unittest.TestCase):
         self.assertLess(quality(source, dithered)["pooled_rgb_rmse"],
                         quality(source, original)["pooled_rgb_rmse"])
 
+    def test_brightness_step_removed_on_ramp_but_kept_at_real_edge(self):
+        ramp = np.linspace(218, 240, 32).round().astype(np.uint8)
+        source = np.zeros((HEIGHT, WIDTH, 3), dtype=np.uint8)
+        source[8:16, :32] = ramp[None, :, None]
+        source[32:40, :16] = 205
+        source[32:40, 16:32] = 255
+        candidates = Candidates(source)
+        labels = candidates.unary.argmin(axis=-1)
+        _, before = render(candidates, labels, repair=False)
+        screen, after = render(candidates, labels, repair=True)
+        self.assertEqual(set(before[8, :32, 0]), {205, 255})
+        self.assertEqual(len(set(after[8, :32, 0])), 1)
+        np.testing.assert_array_equal(after[32:40], before[32:40])
+        np.testing.assert_array_equal(independent_decode(screen), after)
+
 
 if __name__ == "__main__":
     unittest.main()

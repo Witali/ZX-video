@@ -6,10 +6,11 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+from .brightness import repair_brightness
 from .dither import DitherCandidates
 from .model import DEFAULT_WEIGHTS, load_weights, predict
 from .objective import Candidates, REFINE_SWEEPS, SHORTLIST, TEMPERATURE, features
-from .screen import ATTRIBUTES, INK, PAPER, PALETTE, from_cells, pack, prepare
+from .screen import ATTRIBUTES, PALETTE, from_cells, pack, prepare
 
 
 def choose(rgb, candidates, mode, layers=None):
@@ -31,14 +32,19 @@ def choose(rgb, candidates, mode, layers=None):
     return baseline
 
 
-def render(candidates, labels, *, dither=False):
+def render(candidates, labels, *, dither=False, repair=False):
+    source = candidates.source
     if dither:
         candidates = DitherCandidates(candidates)
         labels = candidates.select(labels)
     bits = candidates.bitmap(labels)
-    screen = pack(from_cells(bits), ATTRIBUTES[labels])
-    paper = PAPER[labels][..., None, None]
-    ink = INK[labels][..., None, None]
+    attrs = ATTRIBUTES[labels]
+    if repair:
+        attrs, bits = repair_brightness(source, labels, bits)
+    screen = pack(from_cells(bits), attrs)
+    bright = (attrs >> 3) & 8
+    paper = (((attrs >> 3) & 7) | bright)[..., None, None]
+    ink = ((attrs & 7) | bright)[..., None, None]
     return screen, from_cells(PALETTE[np.where(bits, ink, paper)])
 
 
@@ -65,7 +71,9 @@ def main():
         with Image.open(args.image) as image:
             rgb = prepare(image, args.crop)
         candidates = Candidates(rgb)
-        screen, preview = render(candidates, choose(rgb, candidates, args.mode, layers), dither=args.dither)
+        repair = args.dither or args.mode in ("spatial", "spatial-full", "hybrid")
+        screen, preview = render(candidates, choose(rgb, candidates, args.mode, layers),
+                                 dither=args.dither, repair=repair)
         args.screen.write_bytes(screen)
         if args.preview:
             Image.fromarray(preview).save(args.preview, format="PNG")

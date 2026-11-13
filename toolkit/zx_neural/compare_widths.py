@@ -37,11 +37,11 @@ def comparison_sheet(destination, photos, results, title, modes, metric="seam_rm
     sheet.save(destination / f"{title}.png")
 
 
-def compare(photos, corpus, destination, weights, training_reports):
+def compare(photos, corpus, destination, weights, training_reports, *, brightness_repair=True):
     destination.mkdir(parents=True, exist_ok=True)
     models = {mode: load_weights(path) for mode, path in weights.items()}
     paths = dict(weights)
-    report = dict(corpus=corpus, weights={
+    report = dict(corpus=corpus, brightness_repair=brightness_repair, weights={
         mode: dict(sha256=sha256(path.read_bytes()).hexdigest(), bytes=path.stat().st_size,
                    channels=models[mode][0][0].shape[0]) for mode, path in paths.items()
     }, sources=[])
@@ -78,7 +78,8 @@ def compare(photos, corpus, destination, weights, training_reports):
                 if dither:
                     candidates = DitherCandidates(candidates)
                     labels = candidates.select(labels)
-                screen, preview = render(candidates, labels)
+                repair = brightness_repair and mode in ("spatial", "hybrid")
+                screen, preview = render(candidates, labels, repair=repair)
                 timings.append((perf_counter() - start) * 1000)
             decoded = independent_decode(screen)
             np.testing.assert_array_equal(decoded, preview)
@@ -88,7 +89,7 @@ def compare(photos, corpus, destination, weights, training_reports):
             output = destination / f"{Path(name).stem}-{tag}"
             output.with_suffix(".scr").write_bytes(screen)
             Image.fromarray(decoded).save(output.with_suffix(".png"))
-            entry["results"][tag] = dict(**quality(source, decoded), max_cell_regret=max_regret,
+            entry["results"][tag] = dict(**quality(source, decoded), max_pair_regret=max_regret,
                                           median_cpu_wall_ms=median(timings),
                                           scr_sha256=sha256(screen).hexdigest())
             outputs[tag] = decoded
@@ -135,6 +136,7 @@ def main():
     parser.add_argument("--retrained", type=Path, required=True)
     parser.add_argument("--wide", type=Path, default=CLIC_WIDE_WEIGHTS)
     parser.add_argument("--distilled", type=Path)
+    parser.add_argument("--no-brightness-repair", action="store_true", help="reproduce the original width comparison")
     parser.add_argument("--training-report", type=Path, action="append", required=True)
     args = parser.parse_args()
     weights = dict(original32=DEFAULT_WEIGHTS, retrained32=args.retrained, wide64=args.wide)
@@ -146,7 +148,8 @@ def main():
     else:
         photos = read_evaluation_photos(args.bsds_archive)
         corpus = dict(name="BSDS500", split="test", mirror_revision=REVISION)
-    compare(photos, corpus, args.directory, weights, args.training_report)
+    compare(photos, corpus, args.directory, weights, args.training_report,
+            brightness_repair=not args.no_brightness_repair)
 
 
 if __name__ == "__main__":

@@ -28,6 +28,7 @@ class DitherCandidates(Candidates):
 
     def __init__(self, original):
         source = original.source
+        self.source = source
         palette = PALETTE.astype(np.float32) / 255
         paper, ink = palette[PAPER], palette[INK]
         direction = ink - paper
