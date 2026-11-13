@@ -25,6 +25,7 @@ class DitherCandidates(Candidates):
     """Use the actual dithered colors when comparing neighboring pairs."""
 
     seam_weight = 5.
+    texture_weight = .75
 
     def __init__(self, original):
         source = original.source
@@ -35,34 +36,44 @@ class DitherCandidates(Candidates):
         nearest = original.distances[..., INK] < original.distances[..., PAPER]
         projection = (source @ (direction * COLOR_WEIGHT).T - (paper * direction) @ COLOR_WEIGHT)
         projection /= direction ** 2 @ COLOR_WEIGHT
-        padded = np.pad(from_cells(source), ((1, 1), (1, 1), (0, 0)), mode="edge")
-        windows = np.lib.stride_tricks.sliding_window_view(padded, (3, 3), axis=(0, 1))
-        protected = to_cells(np.max(np.ptp(windows, axis=(-2, -1)), axis=-1) > 34 / 255)
-        smooth = np.ptp(tiles(source), axis=(4, 5)).max(axis=-1) <= 44 / 255
-        proposed = np.where(protected[..., None], nearest, projection > THRESHOLDS[..., None])
         pooled_source = tiles(source).mean(axis=(4, 5))
-        before = paper + tiles(nearest).mean(axis=(4, 5), dtype=np.float32)[..., None] * direction
-        after = paper + tiles(proposed).mean(axis=(4, 5), dtype=np.float32)[..., None] * direction
-        improvement = ((before - pooled_source[..., None, :]) ** 2
-                       - (after - pooled_source[..., None, :]) ** 2) @ COLOR_WEIGHT
-        self.patterns = np.where(tile_pixels(smooth[..., None] & (improvement > (4 / 255) ** 2)),
-                                 proposed, nearest)
+        local_range = self.local_range(source)
+        self.patterns = self.patterns_for(source, pooled_source, nearest, projection, paper, direction, local_range)
         coverage = tiles(self.patterns).mean(axis=(4, 5), dtype=np.float32)[..., None]
         residual = paper + coverage * direction - pooled_source[..., None, :]
         pixel_cost = np.where(self.patterns, original.distances[..., INK], original.distances[..., PAPER])
-        self.unary = .8 * (residual ** 2 @ COLOR_WEIGHT).mean(axis=(2, 3)) + .2 * pixel_cost.mean(axis=(2, 3))
+        self.unary = self.color_cost(residual, pixel_cost, coverage, direction, local_range)
         self.regret = self.unary - self.unary.min(axis=-1, keepdims=True)
         self.allowed = self.regret <= DITHER_COLOR_BUDGET
 
         # Compare both the tile average and the dot-pattern contrast. The
         # second term discourages sudden texture changes on the 8x8 grid.
         texture = np.sqrt(coverage * (1 - coverage)) * np.abs(direction)
-        sides = np.concatenate([residual, .75 * texture], axis=-1) * np.sqrt(np.float32(2))
+        sides = np.concatenate([residual, self.texture_weight * texture], axis=-1) * np.sqrt(np.float32(2))
         self.residuals = np.moveaxis(np.asarray([
             sides[:, :, 0], sides[:, :, -1], sides[:, :, :, 0], sides[:, :, :, -1],
         ]), -2, 3)
         self.horizontal = edge_weight(pooled_source[:, 1:, :, 0] - pooled_source[:, :-1, :, -1])
         self.vertical = edge_weight(pooled_source[1:, :, 0] - pooled_source[:-1, :, -1])
+
+    @staticmethod
+    def local_range(source):
+        padded = np.pad(from_cells(source), ((1, 1), (1, 1), (0, 0)), mode="edge")
+        windows = np.lib.stride_tricks.sliding_window_view(padded, (3, 3), axis=(0, 1))
+        return to_cells(np.max(np.ptp(windows, axis=(-2, -1)), axis=-1))
+
+    def patterns_for(self, source, pooled_source, nearest, projection, paper, direction, local_range):
+        protected = local_range > 34 / 255
+        smooth = np.ptp(tiles(source), axis=(4, 5)).max(axis=-1) <= 44 / 255
+        proposed = np.where(protected[..., None], nearest, projection > THRESHOLDS[..., None])
+        before = paper + tiles(nearest).mean(axis=(4, 5), dtype=np.float32)[..., None] * direction
+        after = paper + tiles(proposed).mean(axis=(4, 5), dtype=np.float32)[..., None] * direction
+        improvement = ((before - pooled_source[..., None, :]) ** 2
+                       - (after - pooled_source[..., None, :]) ** 2) @ COLOR_WEIGHT
+        return np.where(tile_pixels(smooth[..., None] & (improvement > (4 / 255) ** 2)), proposed, nearest)
+
+    def color_cost(self, residual, pixel_cost, coverage, direction, local_range):
+        return .8 * (residual ** 2 @ COLOR_WEIGHT).mean(axis=(2, 3)) + .2 * pixel_cost.mean(axis=(2, 3))
 
     def bitmap(self, labels):
         return np.take_along_axis(self.patterns, labels[..., None, None, None], axis=-1)[..., 0]

@@ -59,6 +59,24 @@ class ConverterTests(unittest.TestCase):
         self.assertEqual(np.count_nonzero(native[..., 0]), HEIGHT)
         self.assertEqual(native[..., 0].max(), 128)
 
+    def test_default_floyd_preserves_gradient_tones(self):
+        x = np.broadcast_to(np.linspace(0, 1, WIDTH), (HEIGHT, WIDTH))
+        source = np.stack((80 + 90 * x, 125 + 35 * x, 180 - 45 * x), axis=-1).astype(np.uint8)
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            original = directory / "input.png"
+            Image.fromarray(source).save(original)
+            decoded = {}
+            for mode in ("default", "floyd", "solid"):
+                output = directory / f"{mode}.scr"
+                flag = [] if mode == "default" else [f"--{mode}"]
+                subprocess.run([sys.executable, "-m", "toolkit.zx_neural",
+                                str(original), str(output), *flag], check=True)
+                decoded[mode] = independent_decode(output.read_bytes())
+        np.testing.assert_array_equal(decoded["default"], decoded["floyd"])
+        self.assertLess(quality(source, decoded["default"])["pooled_rgb_rmse"],
+                        quality(source, decoded["solid"])["pooled_rgb_rmse"])
+
     def test_adaptive_dither_preserves_hard_edge_pixels_and_legal_screen(self):
         source = np.full((HEIGHT, WIDTH, 3), 112, dtype=np.uint8)
         source[47:52] = 255

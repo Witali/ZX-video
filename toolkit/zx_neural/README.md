@@ -17,6 +17,11 @@ whole image on a black canvas. Use `--crop` to fill the 4:3 screen. Alpha
 is composited on black and EXIF orientation is honored. The checked-in
 weights are loaded automatically. PyTorch is only used when training.
 
+By default the renderer uses edge-aware Floyd–Steinberg error diffusion
+after a joint palette search. Use `--solid` for the previous output
+without dithering, `--dither` for the previous ordered mode, or
+`--smooth` for joint palette search with ordered dots.
+
 | Mode | Pair selection |
 | --- | --- |
 | `spatial` (default) | Rank pairs by local color error and refine the best eight against neighbors |
@@ -29,7 +34,8 @@ The converter enumerates 56 unordered pairs (28 per brightness). Equal
 colors are representable by using just one endpoint of a pair. RGB distances
 use channel weights 0.25/0.60/0.15 and up to 1.75× weight at local source
 edges. A candidate may add at most 0.006 to the best mean weighted squared
-error of its cell (RGB channels normalized to 0…1).
+error of its cell (RGB channels normalized to 0…1) during the initial
+pair selection. The final dithered search uses a separate cost.
 
 The CNN sees four quadrant means and four edge means of each cell, exact
 local color fits, and coarse estimates of seams against the baseline
@@ -90,8 +96,8 @@ screen encoding. File I/O and image loading/resizing are excluded.
 
 Spatial refinement reduces seam RMSE by 10.3% on this set, with a 0.27%
 increase in RGB RMSE and a 0.38% decrease in strong-edge RMSE. The hybrid
-offers a similar reduction and takes longer. The default uses the spatial
-shortlist. The evaluation sources were excluded from training and checkpoint
+offers a similar reduction and takes longer. This comparison uses the
+solid renderer. The evaluation sources were excluded from training and checkpoint
 selection, and reused across the exploratory comparisons. The sample size
 and visible posterization in the photos limit generalization. See the
 [training report](evidence/training.json),
@@ -189,3 +195,33 @@ took 25.84 s for the 64-channel optimization loop and the RTX 5060 Ti
 took 10.26 s. Separately, four preparation workers reduced cold
 preparation from 42.37 s to 18.44 s and produced byte-identical arrays.
 These timings exclude dependency installation and report export.
+
+## Smooth color transitions
+
+The new palette search uses up to 13 candidates per cell and alternates
+row and column optimization for up to three passes. Each strip is solved
+with dynamic programming while its neighbors are held fixed. The cost
+compares 4×4 mean colors and dot contrast on opposite sides of each seam.
+A soft penalty also favors matching pair endpoints on smooth source
+transitions. Source edges increase the local pixel fidelity weight and
+gradually reduce dithering. Cells that can reproduce the source exactly
+retain only exact candidates.
+
+The default then scans the whole image in alternating directions with
+Floyd–Steinberg weights 7/16, 3/16, 5/16 and 1/16. It transfers the
+component of the quantization error that the receiving pair can represent.
+The local contrast limits diffusion near real edges. The search uses
+ordered patterns to estimate the pair costs, so it does not guarantee
+that the final error-diffused bitmap has the same seam score.
+
+Reproduce the comparison with the same photos as the width experiment:
+
+```powershell
+python -m toolkit.zx_neural.compare_gradients .tmp/neural-screen/gradients-clic --clic-root $clic
+python -m toolkit.zx_neural.compare_gradients .tmp/neural-screen/gradients-bsds --bsds-archive "$work/BSDS500-mirror.zip"
+```
+
+The command writes side-by-side sheets, final SCRs for both new modes,
+and per-photo metrics. It independently decodes each SCR before
+measuring it. See [CLIC results](evidence/gradients/clic.json) and
+[BSDS results](evidence/gradients/bsds.json).

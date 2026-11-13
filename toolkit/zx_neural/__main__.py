@@ -11,6 +11,7 @@ from .dither import DitherCandidates
 from .model import DEFAULT_WEIGHTS, load_weights, predict
 from .objective import Candidates, REFINE_SWEEPS, SHORTLIST, TEMPERATURE, features
 from .screen import ATTRIBUTES, PALETTE, from_cells, pack, prepare
+from .smooth import SmoothCandidates, floyd_bitmap
 
 
 def choose(rgb, candidates, mode, layers=None):
@@ -32,12 +33,13 @@ def choose(rgb, candidates, mode, layers=None):
     return baseline
 
 
-def render(candidates, labels, *, dither=False, repair=False):
+def render(candidates, labels, *, dither=False, smooth=False, floyd=False, repair=False):
     source = candidates.source
-    if dither:
-        candidates = DitherCandidates(candidates)
+    if dither or smooth or floyd:
+        strategy = SmoothCandidates if smooth or floyd else DitherCandidates
+        candidates = strategy(candidates)
         labels = candidates.select(labels)
-    bits = candidates.bitmap(labels)
+    bits = floyd_bitmap(candidates, labels) if floyd else candidates.bitmap(labels)
     attrs = ATTRIBUTES[labels]
     if repair:
         attrs, bits = repair_brightness(source, labels, bits)
@@ -54,7 +56,11 @@ def main():
     parser.add_argument("screen", type=Path, help="output 6912-byte .scr")
     parser.add_argument("--preview", type=Path, help="optional native RGB preview PNG")
     parser.add_argument("--crop", action="store_true", help="center crop to fill the 4:3 screen")
-    parser.add_argument("--dither", action="store_true", help="apply ordered dithering in smooth regions")
+    gradients = parser.add_mutually_exclusive_group()
+    gradients.add_argument("--solid", action="store_true", help="use the previous rendering without dithering")
+    gradients.add_argument("--dither", action="store_true", help="apply ordered dithering in smooth regions")
+    gradients.add_argument("--smooth", action="store_true", help="optimize gradient dithering across cells")
+    gradients.add_argument("--floyd", action="store_true", help="diffuse color error across cell boundaries (default)")
     parser.add_argument("--mode", choices=("spatial", "hybrid", "neural", "spatial-full", "baseline"),
                         default="spatial")
     parser.add_argument("--weights", type=Path, default=DEFAULT_WEIGHTS)
@@ -71,9 +77,10 @@ def main():
         with Image.open(args.image) as image:
             rgb = prepare(image, args.crop)
         candidates = Candidates(rgb)
-        repair = args.dither or args.mode in ("spatial", "spatial-full", "hybrid")
+        floyd = args.floyd or not (args.solid or args.dither or args.smooth)
+        repair = args.dither or args.smooth or floyd or args.mode in ("spatial", "spatial-full", "hybrid")
         screen, preview = render(candidates, choose(rgb, candidates, args.mode, layers),
-                                 dither=args.dither, repair=repair)
+                                 dither=args.dither, smooth=args.smooth, floyd=floyd, repair=repair)
         args.screen.write_bytes(screen)
         if args.preview:
             Image.fromarray(preview).save(args.preview, format="PNG")

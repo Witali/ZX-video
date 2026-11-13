@@ -1,5 +1,40 @@
 # Changelog and optimization experiments
 
+## 2026-11-13 — Smooth color seams with joint palette search and Floyd–Steinberg
+
+- **Objective and baseline:** Reduce artificial color blocks and preserve
+  tonal transitions on the same six CLIC holdouts and 20 BSDS photos.
+  Freeze the 64-channel CLIC weights. Compare the solid and ordered
+  renders from `6456d642` against joint palette search with ordered
+  dithering and with error diffusion.
+- **Change:** Optimize complete rows and columns under a cost for mean
+  RGB steps, texture contrast, and palette endpoint changes. Fade
+  dithering near source edges and protect exactly representable cells.
+  The first strip-search trial with the old dot patterns displaced
+  details. With edge-weighted pixel costs, validation seam RMSE at
+  seam weights 3/4/6 is 16.749/16.716/16.747, compared with 19.766
+  for the old ordered mode. Retain weight 4. The default uses
+  Floyd–Steinberg with a serpentine scan, edge gating, and error
+  projected onto each receiving pair. `--solid`, `--dither` and
+  `--smooth` expose the other renderers.
+- **Results:** CLIC / BSDS pooled seam RMSE is 18.565 / 23.984 for
+  solid, 17.667 / 20.720 for the old ordered mode, 15.239 / 17.978
+  for joint ordered selection, and 16.306 / 19.060 for the new
+  default. The default improves over solid on 24 of 26 photos.
+  Compared with the old ordered mode, its pooled color RMSE rises
+  from 30.678 / 33.065 to 32.432 / 35.925 while strong-edge RMSE
+  drops from 98.704 / 95.857 to 96.564 / 94.708. It recovers
+  intermediate tones relative to solid output. Some false edges
+  and colored dot patterns remain, notably around the jellyfish.
+- **Verification:** Independently decoded 128 screens from 32 photos
+  and four modes. The two old renderers reproduce their exact
+  saved SCR hashes on the 26 comparison photos. Six tests include
+  a CLI check for the default, color gradients, and exact two-color
+  shapes. The ordinary CLI reproduces the evaluated coast SCR.
+  This is host-only conversion with zero guest T-state delta.
+  [Reproduction](toolkit/zx_neural/README.md) and
+  [measurements](toolkit/zx_neural/evidence/gradients/).
+
 ## 2026-11-13 — Remove false BRIGHT islands on smooth backgrounds
 
 - **Objective and baseline:** The user marked a white staircase in the
