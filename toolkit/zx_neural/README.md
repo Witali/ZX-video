@@ -248,6 +248,17 @@ pair only if the detail's local tone gets closer to the photo, weak
 contrast is retained or improved, and the extra grid error stays bounded.
 Cells with faithfully reproduced color accents are protected.
 
+The subject pass also checks narrow background openings between darker
+source edges. Small openings may be partially filled by the predicted mask.
+The converter uses the source brightness and the surrounding saliency to
+recover these gaps by changing individual pixels within the existing pair.
+
+With Floyd–Steinberg enabled, the final render can recover shades in
+primary-colored areas that lost source brightness variation. It fits a
+compatible highlight and contains diffusion within the detected color
+region. A proposal must improve the local color fit and stay within the
+grid error budget. This pass works with or without the subject model.
+
 The converter restores baseline cells that lose a correctly represented
 dominant source channel. It accepts an adjusted screen only when its
 silhouette contrast improves, its pooled seam error stays within the
@@ -278,3 +289,5 @@ The follow-up compares those screens against the continuity pass.
 See [the follow-up measurements](evidence/subjects/continuity.json).
 See [the detail dither measurements](evidence/subjects/bounded-dither.json)
 for the comparison after restricting the pattern to the detail mask.
+See [the shading and gap measurements](evidence/subjects/detail-shading.json)
+for the comparison against that version.

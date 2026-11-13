@@ -12,11 +12,13 @@ from PIL import Image
 from .__main__ import choose, convert, render
 from .dither import DitherCandidates
 from .evaluate import independent_decode, quality
+from .halftones import restore_halftones
 from .model import load_weights
 from .objective import COLOR_BUDGET, Candidates, edge_weight
 from .screen import ATTRIBUTES, COLS, HEIGHT, ROWS, WIDTH, pack, prepare, to_cells
-from .subject import protect_thin_parts, restore_color_accents
+from .subject import LUMA, box_mean, protect_thin_parts, restore_color_accents
 from .subject_continuity import continue_thin_parts, fit_part, replace_cells
+from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
@@ -136,6 +138,44 @@ class ConverterTests(unittest.TestCase):
         self.assertEqual(set(preview[part][:, 0]), {0, 205})
         self.assertTrue(np.all(preview[16:32, 24:27] == 205))
         np.testing.assert_array_equal(preview[32:40, 24:27], prior[32:40, 24:27])
+
+    def test_flat_primary_shading_recovers_luma(self):
+        y, x = np.indices((HEIGHT, WIDTH))
+        source = np.zeros((HEIGHT, WIDTH, 3), dtype=np.uint8)
+        source[..., 0] = 160 + x // 3
+        shade = np.rint(28 + 20 * (1 + np.sin((x + y) / 3))).astype(np.uint8)
+        source[..., 1] = shade + 16
+        source[..., 2] = shade + 6
+        source[32:72, 16:48] = (0, 205, 0)
+        attrs = np.full((ROWS, COLS), 2, dtype=np.uint8)
+        attrs[4:9, 2:6] = 4
+        screen = pack(np.ones((HEIGHT, WIDTH), dtype=bool), attrs)
+        before = independent_decode(screen)
+        result, preview = restore_halftones(source, (screen, before))
+        np.testing.assert_array_equal(preview, independent_decode(result))
+        np.testing.assert_array_equal(preview[32:72, 16:48], before[32:72, 16:48])
+        target = box_mean(source @ LUMA, 3)
+        before_error = np.mean(abs(box_mean(before @ LUMA, 3) - target))
+        after_error = np.mean(abs(box_mean(preview @ LUMA, 3) - target))
+        self.assertLess(after_error, .65 * before_error)
+
+    def test_source_gap_breaks_a_flat_join_without_changing_attributes(self):
+        source = np.full((HEIGHT, WIDTH, 3), 160, dtype=np.uint8)
+        source[24:104, 32:48] = 112
+        source[24:104, 53:70] = 112
+        probability = np.zeros((HEIGHT, WIDTH), dtype=np.float32)
+        probability[24:104, 32:70] = .9
+        probability[24:104, 48:53] = .6
+        bits = np.ones((HEIGHT, WIDTH), dtype=bool)
+        bits[24:104, 32:70] = np.indices((80, 38)).sum(axis=0) % 2 == 0
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        screen = pack(bits, attrs)
+        before = independent_decode(screen)
+        result, preview = keep_open_gaps(source, (screen, before), probability)
+        np.testing.assert_array_equal(preview, independent_decode(result))
+        self.assertEqual(screen[6144:], result[6144:])
+        self.assertGreater(preview[30:98, 48:53, 0].mean(), before[30:98, 48:53, 0].mean() + 12)
+        np.testing.assert_array_equal(preview[:, :28], before[:, :28])
 
     def test_default_floyd_preserves_gradient_tones(self):
         x = np.broadcast_to(np.linspace(0, 1, WIDTH), (HEIGHT, WIDTH))

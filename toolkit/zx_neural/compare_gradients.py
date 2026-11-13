@@ -12,6 +12,7 @@ from PIL import Image, ImageDraw
 
 from .__main__ import add_subject, choose, render
 from .evaluate import independent_decode, quality
+from .halftones import restore_halftones
 from .model import CLIC_WIDE_WEIGHTS, load_weights
 from .objective import Candidates
 from .photo_corpus import clic_split, read_clic, read_evaluation_photos
@@ -53,6 +54,9 @@ def compare(sources, destination, weights, subject_model=None):
                 continue
             start = perf_counter()
             screen, preview = render(candidates, labels, **options, repair=True)
+            if mode == "floyd":
+                baseline = screen, preview
+                screen, preview = restore_halftones(source, (screen, preview))
             elapsed = (perf_counter() - start) * 1000
             decoded = independent_decode(screen)
             np.testing.assert_array_equal(preview, decoded)
@@ -65,8 +69,9 @@ def compare(sources, destination, weights, subject_model=None):
             start = perf_counter()
             probability = detector.predict(image)
             before = images["floyd"]
-            after_screen, after_preview = add_subject(source, "hybrid", layers, (screen, before),
+            after_screen, after_preview = add_subject(source, "hybrid", layers, baseline,
                                                       probability, floyd=True, repair=True)
+            after_screen, after_preview = restore_halftones(source, (after_screen, after_preview))
             elapsed = (perf_counter() - start) * 1000
             decoded = independent_decode(after_screen)
             np.testing.assert_array_equal(after_preview, decoded)

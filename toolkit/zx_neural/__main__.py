@@ -8,6 +8,7 @@ from PIL import Image
 
 from .brightness import repair_brightness
 from .dither import DitherCandidates
+from .halftones import restore_halftones
 from .model import DEFAULT_WEIGHTS, load_weights, predict
 from .objective import Candidates, REFINE_SWEEPS, SHORTLIST, TEMPERATURE, features
 from .screen import ATTRIBUTES, PALETTE, from_cells, pack, prepare
@@ -17,6 +18,7 @@ from .subject import (
     protect_thin_parts, restore_color_accents, subject_scores, trace_contour,
 )
 from .subject_continuity import continue_thin_parts
+from .subject_gaps import keep_open_gaps
 
 
 def choose(rgb, candidates, mode, layers=None):
@@ -58,7 +60,8 @@ def render(candidates, labels, *, dither=False, smooth=False, floyd=False, repai
 def convert(rgb, mode, layers, *, probability=None, **render_options):
     candidates = Candidates(rgb)
     baseline = render(candidates, choose(rgb, candidates, mode, layers), **render_options)
-    return add_subject(rgb, mode, layers, baseline, probability, **render_options)
+    current = add_subject(rgb, mode, layers, baseline, probability, **render_options)
+    return restore_halftones(rgb, current) if render_options.get("floyd") else current
 
 
 def add_subject(rgb, mode, layers, baseline, probability, **render_options):
@@ -81,7 +84,8 @@ def add_subject(rgb, mode, layers, baseline, probability, **render_options):
         if (after["luma_contrast"] > best_contrast and improves_subject(before, after)
                 and preserves_colors(rgb, baseline[1], adjusted[1])):
             best, best_contrast = adjusted, after["luma_contrast"]
-    return continue_thin_parts(rgb, baseline, best, probability, mask)
+    current = continue_thin_parts(rgb, baseline, best, probability, mask)
+    return keep_open_gaps(rgb, current, probability)
 
 
 def main():

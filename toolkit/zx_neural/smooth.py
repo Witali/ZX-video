@@ -17,13 +17,20 @@ def floyd_bitmap(candidates, labels):
     length = (direction * normal).sum(axis=-1)
     projection = ((source - paper) * normal).sum(axis=-1) / length
     strength = np.clip((34 / 255 - candidates.local_range(source)) / (22 / 255), 0, 1)
-    strength = from_cells(strength).tolist()
-    coverage = from_cells(np.clip(projection, 0, 1)).tolist()
-    unit = direction * np.sqrt(COLOR_WEIGHT) / np.sqrt(length[..., None])
-    unit = from_cells(np.broadcast_to(unit, source.shape))
+    vectors = np.broadcast_to(direction, source.shape)
+    return to_cells(diffuse_coverage(from_cells(projection), from_cells(strength), from_cells(vectors)))
+
+
+def diffuse_coverage(projection, strength, direction):
+    """Dither raster coverage, with zero strength cutting diffusion across a boundary."""
+    coverage = np.clip(projection, 0, 1).tolist()
+    strength = strength.tolist()
+    vectors = direction * np.sqrt(COLOR_WEIGHT)
+    lengths = np.sqrt((direction * (direction * COLOR_WEIGHT)).sum(axis=-1))
+    unit = vectors / lengths[..., None]
     # Transport only the part of the previous error the receiving pair can
     # express. The dot product vanishes for orthogonal color directions.
-    length = from_cells(np.broadcast_to(np.sqrt(length), source.shape[:-1])).tolist()
+    length = lengths.tolist()
     horizontal = np.maximum(0, (unit[:, 1:] * unit[:, :-1]).sum(axis=-1)).tolist()
     vertical = np.maximum(0, (unit[1:] * unit[:-1]).sum(axis=-1)).tolist()
     down_right = np.maximum(0, (unit[1:, 1:] * unit[:-1, :-1]).sum(axis=-1)).tolist()
@@ -51,7 +58,7 @@ def floyd_bitmap(candidates, labels):
                 if 0 <= target < width:
                     similarity = down_left[y][target] if target < x else down_right[y][x]
                     coverage[y + 1][target] += weight * error * similarity * strength[y + 1][target] / length[y + 1][target]
-    return to_cells(bits)
+    return bits
 
 
 class SmoothCandidates(DitherCandidates):

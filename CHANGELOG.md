@@ -1,5 +1,32 @@
 # Changelog and optimization experiments
 
+## 2026-11-13 — Recover saturated shading and narrow silhouette gaps
+
+- **Objective and baseline:** Compare `9cecc807` with automatic recovery
+  of shading lost in saturated areas and narrow background openings lost
+  by quantization. Use the same 20 BSDS and six CLIC holdout photos.
+- **Trials and change:** Reducing edge gating across saturated regions
+  created colored noise and lost green bottle pixels. Restrict recovery
+  to flat primary-color regions with source shading. Fit a compatible
+  highlight, keep neighboring accents, and use bounded Floyd–Steinberg
+  diffusion. The first gap pass applied simultaneous flips and produced
+  dark bars. Require two source gradients around a low-saliency gap and
+  accept compatible bitmap flips only when they improve a local brightness
+  fit. Leave the cell attributes in place for gap recovery. Bound the
+  added 8×8 seam error from the shading pass.
+- **Results:** Shading changes 10 of 26 subject screens and gaps change
+  23. Together they change 24 screens. On the shell color mask, 3×3
+  averaged luma RMSE falls from 43.75 to 19.06. The 389 green bottle
+  pixels match exactly. Between the elephant's leg and tail, pooled
+  brightness separation rises from 23.95 to 33.11 in the reference crop
+  (source 12.60). The elephant's trunk cells retain their exact bitmap
+  colors. Mean pooled grid error moves from 19.456 to 19.615 on BSDS and
+  16.440 to 16.466 on CLIC. Mean pooled RGB RMSE falls by 0.17 and 0.05.
+- **Verification:** Independently decoded all 26 subject screens and
+  checked the pictured pair by CLI. All 12 converter tests pass. Keep the
+  change for the local tonal and contour gains. The ZX player is unaffected.
+  [Measurements](toolkit/zx_neural/evidence/subjects/detail-shading.json).
+
 ## 2026-11-13 — Keep detail dithering inside automatic subject boundaries
 
 - **Objective and baseline:** Remove dark dither dots on the grass next
