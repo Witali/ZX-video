@@ -1,5 +1,32 @@
 # Changelog and optimization experiments
 
+## 2026-11-13 — Keep detail dithering inside automatic subject boundaries
+
+- **Objective and baseline:** Remove dark dither dots on the grass next
+  to the elephant's trunk in the `b2384fb1` subject screen. Compare the
+  same 20 BSDS and six CLIC holdout photos using the existing 64-channel
+  weights and U²-NetP silhouette detector.
+- **Trials and change:** Dither only the pixels of the connected detail.
+  Preserve existing nearby colors when the shared attribute pair contains
+  them. Mapping other pixels to the nearest endpoint using only their
+  old rendering left one new black pixel on the grass. Use the existing
+  blend of source and rendered color for these conversions with a fixed
+  threshold. The pair ranking and acceptance criteria are unchanged.
+- **Results:** Within the touched trunk cells and outside the predicted
+  silhouette, the rendering from `b2384fb1` darkens 50 of 363 pixels by
+  more than 40 luma levels relative to the screen before the continuity
+  pass. The source-aware mapping reduces that count to zero. Trunk
+  3×3-averaged luma RMSE drops from 25.21 to 23.04. All 389 previously
+  green pixels in the bottle crop match exactly. Ten of the 26 subject
+  screens change. The mean pooled grid error moves from 19.462 to 19.456
+  on BSDS and from 16.418 to 16.440 on CLIC. Mean pooled RGB RMSE rises
+  by 0.04 and 0.05 respectively. Keep the change for the cleaner contour.
+- **Verification:** The previous subject screen hashes match for all 26
+  inputs. Independently decoded all new SCRs and checked the two pictured
+  examples through the CLI. All 10 converter tests pass, including a
+  synthetic narrow detail crossing cells with different background colors.
+  [Measurements](toolkit/zx_neural/evidence/subjects/bounded-dither.json).
+
 ## 2026-11-13 — Keep narrow subject details continuous through palette changes
 
 - **Objective and baseline:** Remove the abrupt blue, red and black

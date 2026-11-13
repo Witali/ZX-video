@@ -240,10 +240,13 @@ rules or hand-drawn masks in the converter.
 For a narrow connected detail spanning several cells, the converter
 also tests a common pair across those cells. It keeps the source
 shading in the interior and adds a small contrast increase on the
-inside edge. The pass accepts a pair only if the detail's local tone
-gets closer to the photo, weak contrast is retained or improved, and
-the extra grid error stays bounded. Cells with faithfully reproduced
-color accents are protected.
+inside edge. Only pixels inside the detected detail receive the new
+dither pattern. Outside it, the converter keeps existing colors that
+the pair can represent and maps incompatible colors to one of its
+endpoints using the source and the previous render. The pass accepts a
+pair only if the detail's local tone gets closer to the photo, weak
+contrast is retained or improved, and the extra grid error stays bounded.
+Cells with faithfully reproduced color accents are protected.
 
 The converter restores baseline cells that lose a correctly represented
 dominant source channel. It accepts an adjusted screen only when its
@@ -273,3 +276,5 @@ See [CLIC results](evidence/subjects/clic.json) and
 [BSDS results](evidence/subjects/bsds.json).
 The follow-up compares those screens against the continuity pass.
 See [the follow-up measurements](evidence/subjects/continuity.json).
+See [the detail dither measurements](evidence/subjects/bounded-dither.json)
+for the comparison after restricting the pattern to the detail mask.

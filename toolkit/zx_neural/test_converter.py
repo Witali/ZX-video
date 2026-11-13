@@ -14,9 +14,9 @@ from .dither import DitherCandidates
 from .evaluate import independent_decode, quality
 from .model import load_weights
 from .objective import COLOR_BUDGET, Candidates, edge_weight
-from .screen import ATTRIBUTES, COLS, HEIGHT, ROWS, WIDTH, pack, prepare
+from .screen import ATTRIBUTES, COLS, HEIGHT, ROWS, WIDTH, pack, prepare, to_cells
 from .subject import protect_thin_parts, restore_color_accents
-from .subject_continuity import continue_thin_parts
+from .subject_continuity import continue_thin_parts, fit_part, replace_cells
 
 
 class ConverterTests(unittest.TestCase):
@@ -114,6 +114,28 @@ class ConverterTests(unittest.TestCase):
         core = np.s_[100:140, 108:114, 0]
         self.assertLess(abs(preview[core].mean() - 135), abs(old[core].mean() - 135))
         np.testing.assert_array_equal(preview[:96], old[:96])
+
+    def test_detail_dither_stays_inside_its_mask(self):
+        source = np.full((HEIGHT, WIDTH, 3), (202, 160, 105), dtype=np.uint8)
+        part = np.zeros((HEIGHT, WIDTH), dtype=bool)
+        part[16:40, 27:30] = True
+        source[part] = 109
+        # Some background is already white and some comes from a cell
+        # with a red endpoint. Both should stay solid through the refit.
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        attrs[2:4, 3] = 2
+        bitmap = np.ones_like(part)
+        bitmap[38, 24] = False
+        screen = pack(bitmap, attrs)
+        prior = independent_decode(screen)
+        cells = to_cells(part).any(axis=(2, 3))
+        patterns, rendered, _, _ = fit_part(source, (screen, prior), part, cells, part, -1)
+        pair = np.flatnonzero(ATTRIBUTES == 7).item()
+        result, preview = replace_cells((screen, prior), cells, pair, patterns, rendered)
+        np.testing.assert_array_equal(preview, independent_decode(result))
+        self.assertEqual(set(preview[part][:, 0]), {0, 205})
+        self.assertTrue(np.all(preview[16:32, 24:27] == 205))
+        np.testing.assert_array_equal(preview[32:40, 24:27], prior[32:40, 24:27])
 
     def test_default_floyd_preserves_gradient_tones(self):
         x = np.broadcast_to(np.linspace(0, 1, WIDTH), (HEIGHT, WIDTH))

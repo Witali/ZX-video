@@ -37,8 +37,8 @@ def fit_part(source, current, part, cells, edge, sign):
     """Rank legal shared pairs by local RGB fit and the part's own mean tone."""
     _, preview = current
     palette = PALETTE.astype(np.float32)
-    paper = palette[PAPER]
-    direction = palette[INK] - paper
+    paper, ink = palette[PAPER], palette[INK]
+    direction = ink - paper
     axis = direction * COLOR_WEIGHT
     norm = (direction * axis).sum(axis=-1)
     original = to_cells(source)[cells].astype(np.float32)
@@ -51,7 +51,13 @@ def fit_part(source, current, part, cells, edge, sign):
                       .48 * original + .52 * prior)
     target = target.clip(0, 255)
     coverage = (target @ axis.T - (paper * axis).sum(axis=-1)) / norm
-    patterns = coverage > THRESHOLDS[..., None]
+    # Keep exact background colors when the shared pair supports them.
+    # Map other background colors directly with a fixed threshold so the
+    # detail's dither pattern cannot extend into the surrounding pixels.
+    prior_is_ink = (prior[..., None, :] == ink).all(axis=-1)
+    prior_is_paper = (prior[..., None, :] == paper).all(axis=-1)
+    background_bits = prior_is_ink | (~prior_is_paper & (coverage > .5))
+    patterns = np.where(foreground[..., None], coverage > THRESHOLDS[..., None], background_bits)
     rendered = paper + patterns[..., None] * direction
     residual = rendered - target[..., None, :]
     pooled = residual.reshape(-1, 2, 4, 2, 4, len(ATTRIBUTES), 3).mean(axis=(2, 4))
