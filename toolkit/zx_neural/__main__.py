@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+from .dither import DitherCandidates
 from .model import DEFAULT_WEIGHTS, load_weights, predict
 from .objective import Candidates, REFINE_SWEEPS, SHORTLIST, TEMPERATURE, features
 from .screen import ATTRIBUTES, INK, PAPER, PALETTE, from_cells, pack, prepare
@@ -30,7 +31,10 @@ def choose(rgb, candidates, mode, layers=None):
     return baseline
 
 
-def render(candidates, labels):
+def render(candidates, labels, *, dither=False):
+    if dither:
+        candidates = DitherCandidates(candidates)
+        labels = candidates.select(labels)
     bits = candidates.bitmap(labels)
     screen = pack(from_cells(bits), ATTRIBUTES[labels])
     paper = PAPER[labels][..., None, None]
@@ -44,6 +48,7 @@ def main():
     parser.add_argument("screen", type=Path, help="output 6912-byte .scr")
     parser.add_argument("--preview", type=Path, help="optional native RGB preview PNG")
     parser.add_argument("--crop", action="store_true", help="center crop to fill the 4:3 screen")
+    parser.add_argument("--dither", action="store_true", help="apply ordered dithering in smooth regions")
     parser.add_argument("--mode", choices=("spatial", "hybrid", "neural", "spatial-full", "baseline"),
                         default="spatial")
     parser.add_argument("--weights", type=Path, default=DEFAULT_WEIGHTS)
@@ -60,7 +65,7 @@ def main():
         with Image.open(args.image) as image:
             rgb = prepare(image, args.crop)
         candidates = Candidates(rgb)
-        screen, preview = render(candidates, choose(rgb, candidates, args.mode, layers))
+        screen, preview = render(candidates, choose(rgb, candidates, args.mode, layers), dither=args.dither)
         args.screen.write_bytes(screen)
         if args.preview:
             Image.fromarray(preview).save(args.preview, format="PNG")

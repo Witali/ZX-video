@@ -58,6 +58,8 @@ def pixel_distances(rgb):
 class Candidates:
     """Compute exactly what each legal pair would paint, including its edges."""
 
+    seam_weight = SEAM_WEIGHT
+
     def __init__(self, rgb):
         self.source = to_cells(rgb.astype(np.float32) / 255)
         self.distances = pixel_distances(rgb)
@@ -112,7 +114,7 @@ class Candidates:
         add(cost[:, :-1], edge[RIGHT, :, :-1], chosen[LEFT, :, 1:], horizontal)
         add(cost[1:], edge[TOP, 1:], chosen[BOTTOM, :-1], vertical)
         add(cost[:-1], edge[BOTTOM, :-1], chosen[TOP, 1:], vertical)
-        return unary + SEAM_WEIGHT * cost
+        return unary + self.seam_weight * cost
 
     def refine(self, labels, sweeps, choices=None):
         """Optimize even/odd cells separately so no simultaneous edits share a seam."""

@@ -6,14 +6,26 @@ import numpy as np
 
 from .screen import PAIR_COUNT
 
-LAYERS = ((24 + 2 * PAIR_COUNT, 32, 3), (32, 32, 3), (32, PAIR_COUNT, 1))
+WIDTHS = (32, 64)
 DEFAULT_WEIGHTS = Path(__file__).with_name("weights.npz")
+WIDE_WEIGHTS = Path(__file__).with_name("weights64.npz")
+CLIC_WIDE_WEIGHTS = Path(__file__).with_name("weights64-clic.npz")
+
+
+def architecture(channels):
+    if channels not in WIDTHS:
+        raise ValueError(f"unsupported CNN width: {channels}")
+    return ((24 + 2 * PAIR_COUNT, channels, 3), (channels, channels, 3),
+            (channels, PAIR_COUNT, 1))
 
 
 def load_weights(path=DEFAULT_WEIGHTS):
     layers = []
     with np.load(path, allow_pickle=False) as arrays:
-        for i, (inputs, outputs, kernel) in enumerate(LAYERS):
+        first = arrays["weight0"]
+        if first.ndim != 4:
+            raise ValueError("invalid first CNN layer")
+        for i, (inputs, outputs, kernel) in enumerate(architecture(first.shape[0])):
             weight = arrays[f"weight{i}"]
             bias = arrays[f"bias{i}"]
             if (weight.shape != (outputs, inputs, kernel, kernel)

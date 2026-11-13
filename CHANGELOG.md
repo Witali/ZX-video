@@ -1,5 +1,54 @@
 # Changelog and optimization experiments
 
+## 2026-11-13 — Compare FP32 network widths and suppress dither seams
+
+- **Training data:** A preliminary BSDS experiment used 100 original photos
+  (90 BSDS plus 10 scikit-image) and 232 training views, with 10 separate
+  validation photos. On 20 BSDS test photos, 64 channels scored 30.9555
+  hybrid seam RMSE versus 30.9539 for the original 32. An earlier attempt
+  that included Expedition 33 illustrations was interrupted before
+  producing a checkpoint. The project then used its existing CLIC
+  benchmark corpus. It split the 42 full photos into 30/6/6 before
+  cropping. The final runs use 100 crops and 32 synthetic screens.
+  Expedition 33 is a visual reference. The six CLIC holdouts and the
+  same 20 external BSDS photos supply the final comparison.
+- **Model and runtime:** Train 32 and 64 channels in FP32 with the same
+  data and 80 epochs. The 118,968-parameter GPU checkpoint is 442,373
+  bytes. The 50,296-parameter distilled student is 187,676 bytes.
+  The student uses the best-validation wide checkpoint, temperature 2
+  and an equal loss mixture. The earlier BSDS student run was
+  interrupted after epoch 70 and produced no retained checkpoint.
+  After a C: space failure, CUDA PyTorch was installed on D:. The first
+  completed GPU training hit a CPU/GPU logit tolerance mismatch of
+  2.3e-5. The rerun verifies CPU PyTorch against NumPy and bounds the
+  separate CUDA FP32 difference. The optimization loop took 25.84 s on
+  four CPU threads and 10.26 s on RTX 5060 Ti. Four preparation workers
+  reduced 42.37 s to 18.44 s with byte-identical training arrays.
+- **Width and distillation:** Hybrid seam RMSE on CLIC / BSDS is
+  26.167 / 30.954 for the original 32-channel checkpoint,
+  26.164 / 30.937 for the matched 32-channel training run,
+  26.146 / 30.925 for 64 channels, and 26.150 / 30.929 after distillation.
+  The spatial control gives 26.167 / 30.950. Model width helps the
+  network-only score but changes little in the complete converter.
+- **Dithering trials:** Applying Bayer dithering after pair selection
+  made pooled seams worse (18.669 to 23.061 on CLIC, 23.984 to 27.596 on
+  BSDS). Joint selection tests the dithered mean color and pattern
+  contrast across 8×8 boundaries. A validation sweep selected seam
+  weight 5, color budget 0.022, and texture weight 0.75. The final
+  joint mode scores 17.667 / 20.720 pooled seam RMSE and
+  30.678 / 33.065 pooled RGB RMSE, versus 38.445 / 45.261 pooled
+  RGB RMSE without dithering. Pooled seams improve on 3/6 and 19/20
+  photos respectively. Sharp-edge error and pixel-level seam error
+  increase, and some grid artifacts remain visible. Keep this mode
+  optional. The spatial selector remains the default.
+- **Verification:** The final comparison independently decodes all 286
+  generated screens and checks their previews, FLASH bits, and each
+  mode's color budget. Four focused tests cover native output and
+  protected contour pixels. The comparison sheets were visually
+  checked. The converter runs on the host with zero guest T-state
+  delta. [Reproduction](toolkit/zx_neural/README.md) and
+  [measurements](toolkit/zx_neural/evidence/widths/).
+
 ## 2026-11-13 — Train a neural Spectrum still-image converter and reduce attribute clashes
 
 - **Objective and baseline:** Convert ordinary images with varied subjects

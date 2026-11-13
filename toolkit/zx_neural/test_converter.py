@@ -10,10 +10,11 @@ import numpy as np
 from PIL import Image
 
 from .__main__ import choose, render
+from .dither import DitherCandidates
 from .evaluate import independent_decode, quality
 from .model import load_weights
 from .objective import COLOR_BUDGET, Candidates, edge_weight
-from .screen import HEIGHT, WIDTH, prepare
+from .screen import ATTRIBUTES, COLS, HEIGHT, ROWS, WIDTH, prepare
 
 
 class ConverterTests(unittest.TestCase):
@@ -57,6 +58,20 @@ class ConverterTests(unittest.TestCase):
         self.assertEqual(native.shape, (HEIGHT, WIDTH, 3))
         self.assertEqual(np.count_nonzero(native[..., 0]), HEIGHT)
         self.assertEqual(native[..., 0].max(), 128)
+
+    def test_adaptive_dither_preserves_hard_edge_pixels_and_legal_screen(self):
+        source = np.full((HEIGHT, WIDTH, 3), 112, dtype=np.uint8)
+        source[47:52] = 255
+        candidates = Candidates(source)
+        black_white = np.flatnonzero(ATTRIBUTES == 0x47)[0]
+        labels = np.full((ROWS, COLS), black_white)
+        _, original = render(candidates, labels)
+        dither = DitherCandidates(candidates)
+        screen, dithered = render(dither, labels)
+        np.testing.assert_array_equal(independent_decode(screen), dithered)
+        np.testing.assert_array_equal(original[46:53], dithered[46:53])
+        self.assertLess(quality(source, dithered)["pooled_rgb_rmse"],
+                        quality(source, original)["pooled_rgb_rmse"])
 
 
 if __name__ == "__main__":

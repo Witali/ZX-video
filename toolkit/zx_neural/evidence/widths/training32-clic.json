@@ -1,0 +1,1374 @@
+{
+  "seed": 433,
+  "torch": "2.15.0+cu132",
+  "numpy": "2.5.4",
+  "channels": 32,
+  "dtype": "float32",
+  "epochs": 80,
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 5060 Ti",
+  "optimization_seconds": 11.016164299999218,
+  "source_pixel_sha256": {
+    "clic-25dd27c90988": "25dd27c909880a8b03f6ce00ec191b54ad11f681c368eb47bfb83bfd7659f185",
+    "clic-4acedd46ed7b": "4acedd46ed7bffa185367dfa3e9f608fdd32bc982264f471ad31dd73102fd536",
+    "clic-1904c753e445": "1904c753e44552528e89e49689f8f3b12e62f21b125cf2af8575193fffc96eb2",
+    "clic-7871aedc6081": "7871aedc608107020994f166c06e1318161307a9d598c6d9642bd547a8637596",
+    "clic-b674a030d85b": "b674a030d85b4b997213fc99eeed0949c9969802e6182a65e1f9e8831187104c",
+    "clic-5f74769e0efe": "5f74769e0efeb369e029c9856c40a269faa3e2f81bb0d11eb1be221e7b8b0468",
+    "clic-419654ac274c": "419654ac274c60f16fbc1ef46989130e357ff221ff267b49e871c44dbc567629",
+    "clic-b637092e104e": "b637092e104ea079cb31ecd0565009c8729f9c2aca6dd25cfbafabe7b67b24f7",
+    "clic-f80f9719f7c7": "f80f9719f7c7a61560277c6fc43cc700c7af47b31c226f2679f741fd81bf5566",
+    "clic-1bee6724a58c": "1bee6724a58cf9a54a6829509ba419eda381300a6b2cca5a279ea210bf30a9d4",
+    "clic-e0b4c32ee4d5": "e0b4c32ee4d584fbee222fb22358f3bb8ee1182c33517c86b31d71a9513cb887",
+    "clic-b9b4f05f8fe3": "b9b4f05f8fe386aae5cd1d81afbe1be61c4f0f849b9beb1dfac8bbfd43634616",
+    "clic-4bc0b97a0c03": "4bc0b97a0c03e0af3e47c88df3f47a0b28fc0cf57194dc7450a659259f6b29d4",
+    "clic-ed34d188b18e": "ed34d188b18e22d8b61aca555f96bba5e4ab4da5a49b8307b0152b1d5b6f10e7",
+    "clic-6ac7a5605646": "6ac7a5605646b2c44d95dbc55615fd7cba1bae6f8ba7aeafef3850e81626bac6",
+    "clic-aaeaa10dfa1b": "aaeaa10dfa1bcfca5aea771bd7964cd90f92a11ade00f0427f933ec2f256de3a",
+    "clic-97aa67b31cd3": "97aa67b31cd393c34b938135affc8ff94c5a7895e1120f2422548f1c6e8bf282",
+    "clic-9dc2360523d7": "9dc2360523d727fa77c6c61c4f6a9a7d47dfbbc6c9e8bc2c49751986840d4711",
+    "clic-ca0f28418a90": "ca0f28418a908e23c08c8ebfbfbad4637a347edff87785c98858a53b5ac524d5",
+    "clic-1275f61a13d7": "1275f61a13d7382e611ff37929ce2cd7b3929df003f8fef3f5928e0134897930",
+    "clic-61c62a7d8a7e": "61c62a7d8a7e230120c6703225d82f72aa7a73da2a76c2315a9314c040ba6003",
+    "clic-c2cd21ef50ff": "c2cd21ef50ff422fdf607510fff245a07be5ea9bbadfa4c3f1e7201d14248c05",
+    "clic-a76d6b505516": "a76d6b505516bf6f8ec94b255592944003fac2491672051fd9e9aa7dfe4b2c38",
+    "clic-1563d320d61f": "1563d320d61f0290742c2e29858696e585df01fdab10c42e15b12a8ae580f4da",
+    "clic-df00065ad795": "df00065ad7956e91c65f59b6519f878f2f99f7bc53f4ee25f7e9194e30ee7ff3",
+    "clic-4f9977fb2879": "4f9977fb28790d3139f61c5dbfe9dd19eb2435aed4efb8b9903998a6f430da4d",
+    "clic-557a63a844d6": "557a63a844d6e92945d194cfba67a2187ff665f1a76ecf03eba5c8485cd35912",
+    "clic-32930b394655": "32930b394655667a37e2fd04a395bf4cef2332a41739f8a378a416777e0df459",
+    "clic-6c75f3a17bb9": "6c75f3a17bb938ae0808685e8fb7b5862582a5dfe10ce46b394b7b6110b3869b",
+    "clic-0a63f958cf3e": "0a63f958cf3ef183818f3e68479e51ece3ad18cdd3311c56fc09e6ecd34033d5"
+  },
+  "validation_pixel_sha256": {
+    "clic-edcb2bc13228": "edcb2bc13228dd6e0b85374be71e5f58722bd87050dc9a3c622a1d7f49fe7be9",
+    "clic-850fdc0874e1": "850fdc0874e1b9629d097c72e920cc7bc397928343e585b1d7020f340c981949",
+    "clic-a4461472adc9": "a4461472adc9f47cb7f4371271eaa5e6a238198b8b6e56c1135e7984d6fc1a17",
+    "clic-14f0c6a16e04": "14f0c6a16e0494305837e11c96a7465be8ac47181f06863ddb0de5500748cbe6",
+    "clic-a5f5e996cc97": "a5f5e996cc976f758fb1aea07e713fe21b3494447051daabbdd3268f3846eb5e",
+    "clic-f927617bcee1": "f927617bcee13c79fe29f3ea4842b57c86ccf486d5727c4029612f5e618592e2"
+  },
+  "prepared_corpus_sha256": "31c4aeb2b76c7786b32e39d9394e0e2e6f43861979c5c709af86b43f4b8a3687",
+  "training_screens": 132,
+  "validation_screens": 6,
+  "corpus": "CLIC 2020 Professional Validation",
+  "evaluation_pixel_sha256": {
+    "clic-9ec897ccba56": "9ec897ccba56f84fc9cf0952f8805322ef17a863668a59aab845a173b11f6d2f",
+    "clic-c5cb4ce06337": "c5cb4ce06337e97293c50d82f81db716b86842f848d120f8b5699054fa0a73d5",
+    "clic-3510902dc65b": "3510902dc65bc579b2759c3bccfc9d7878a7da8c7d6be9b654ec7e12e207bf61",
+    "clic-adf319c06f66": "adf319c06f66eb97711e24026e66d1c1fb4249def6f802c50761ff9145d27fa9",
+    "clic-9ac215ec0adc": "9ac215ec0adcd77ec8259481045577cfdcb29e17c367445244cd46c49c20ca9a",
+    "clic-859d48c40e8f": "859d48c40e8fb3156cf209828288d307a7ce021555e529f913aa54fc125d7d65"
+  },
+  "training_crop_boxes": [
+    {
+      "source": "clic-25dd27c90988",
+      "box": [
+        209,
+        334,
+        1293,
+        1147
+      ]
+    },
+    {
+      "source": "clic-25dd27c90988",
+      "box": [
+        1038,
+        524,
+        1990,
+        1238
+      ]
+    },
+    {
+      "source": "clic-25dd27c90988",
+      "box": [
+        305,
+        5,
+        1853,
+        1166
+      ]
+    },
+    {
+      "source": "clic-25dd27c90988",
+      "box": [
+        765,
+        331,
+        1777,
+        1090
+      ]
+    },
+    {
+      "source": "clic-4acedd46ed7b",
+      "box": [
+        53,
+        434,
+        1157,
+        1262
+      ]
+    },
+    {
+      "source": "clic-4acedd46ed7b",
+      "box": [
+        32,
+        510,
+        788,
+        1077
+      ]
+    },
+    {
+      "source": "clic-4acedd46ed7b",
+      "box": [
+        85,
+        203,
+        865,
+        788
+      ]
+    },
+    {
+      "source": "clic-4acedd46ed7b",
+      "box": [
+        269,
+        180,
+        1769,
+        1305
+      ]
+    },
+    {
+      "source": "clic-1904c753e445",
+      "box": [
+        834,
+        379,
+        1798,
+        1102
+      ]
+    },
+    {
+      "source": "clic-1904c753e445",
+      "box": [
+        19,
+        52,
+        1703,
+        1315
+      ]
+    },
+    {
+      "source": "clic-1904c753e445",
+      "box": [
+        27,
+        48,
+        1711,
+        1311
+      ]
+    },
+    {
+      "source": "clic-1904c753e445",
+      "box": [
+        595,
+        314,
+        1931,
+        1316
+      ]
+    },
+    {
+      "source": "clic-7871aedc6081",
+      "box": [
+        667,
+        0,
+        1871,
+        903
+      ]
+    },
+    {
+      "source": "clic-7871aedc6081",
+      "box": [
+        15,
+        121,
+        1147,
+        970
+      ]
+    },
+    {
+      "source": "clic-7871aedc6081",
+      "box": [
+        638,
+        165,
+        1410,
+        744
+      ]
+    },
+    {
+      "source": "clic-7871aedc6081",
+      "box": [
+        142,
+        126,
+        1582,
+        1206
+      ]
+    },
+    {
+      "source": "clic-b674a030d85b",
+      "box": [
+        155,
+        374,
+        1247,
+        1193
+      ]
+    },
+    {
+      "source": "clic-b674a030d85b",
+      "box": [
+        189,
+        325,
+        1341,
+        1189
+      ]
+    },
+    {
+      "source": "clic-b674a030d85b",
+      "box": [
+        85,
+        18,
+        1785,
+        1293
+      ]
+    },
+    {
+      "source": "clic-b674a030d85b",
+      "box": [
+        321,
+        324,
+        1405,
+        1137
+      ]
+    },
+    {
+      "source": "clic-5f74769e0efe",
+      "box": [
+        450,
+        33,
+        1458,
+        789
+      ]
+    },
+    {
+      "source": "clic-5f74769e0efe",
+      "box": [
+        249,
+        91,
+        781,
+        490
+      ]
+    },
+    {
+      "source": "clic-5f74769e0efe",
+      "box": [
+        241,
+        80,
+        1345,
+        908
+      ]
+    },
+    {
+      "source": "clic-5f74769e0efe",
+      "box": [
+        514,
+        205,
+        1406,
+        874
+      ]
+    },
+    {
+      "source": "clic-419654ac274c",
+      "box": [
+        946,
+        210,
+        1670,
+        753
+      ]
+    },
+    {
+      "source": "clic-419654ac274c",
+      "box": [
+        546,
+        235,
+        1950,
+        1288
+      ]
+    },
+    {
+      "source": "clic-419654ac274c",
+      "box": [
+        72,
+        160,
+        1416,
+        1168
+      ]
+    },
+    {
+      "source": "clic-419654ac274c",
+      "box": [
+        348,
+        113,
+        1900,
+        1277
+      ]
+    },
+    {
+      "source": "clic-b637092e104e",
+      "box": [
+        270,
+        408,
+        1206,
+        1110
+      ]
+    },
+    {
+      "source": "clic-b637092e104e",
+      "box": [
+        159,
+        64,
+        1655,
+        1186
+      ]
+    },
+    {
+      "source": "clic-b637092e104e",
+      "box": [
+        640,
+        240,
+        1812,
+        1119
+      ]
+    },
+    {
+      "source": "clic-b637092e104e",
+      "box": [
+        563,
+        251,
+        1611,
+        1037
+      ]
+    },
+    {
+      "source": "clic-f80f9719f7c7",
+      "box": [
+        15,
+        8,
+        159,
+        116
+      ]
+    },
+    {
+      "source": "clic-f80f9719f7c7",
+      "box": [
+        28,
+        20,
+        252,
+        188
+      ]
+    },
+    {
+      "source": "clic-f80f9719f7c7",
+      "box": [
+        1,
+        27,
+        221,
+        192
+      ]
+    },
+    {
+      "source": "clic-f80f9719f7c7",
+      "box": [
+        61,
+        61,
+        169,
+        142
+      ]
+    },
+    {
+      "source": "clic-1bee6724a58c",
+      "box": [
+        317,
+        102,
+        1409,
+        921
+      ]
+    },
+    {
+      "source": "clic-1bee6724a58c",
+      "box": [
+        234,
+        12,
+        1158,
+        705
+      ]
+    },
+    {
+      "source": "clic-1bee6724a58c",
+      "box": [
+        478,
+        821,
+        1194,
+        1358
+      ]
+    },
+    {
+      "source": "clic-1bee6724a58c",
+      "box": [
+        240,
+        34,
+        1520,
+        994
+      ]
+    },
+    {
+      "source": "clic-e0b4c32ee4d5",
+      "box": [
+        881,
+        374,
+        1377,
+        746
+      ]
+    },
+    {
+      "source": "clic-e0b4c32ee4d5",
+      "box": [
+        145,
+        105,
+        1105,
+        825
+      ]
+    },
+    {
+      "source": "clic-e0b4c32ee4d5",
+      "box": [
+        193,
+        6,
+        1305,
+        840
+      ]
+    },
+    {
+      "source": "clic-b9b4f05f8fe3",
+      "box": [
+        740,
+        450,
+        1464,
+        993
+      ]
+    },
+    {
+      "source": "clic-b9b4f05f8fe3",
+      "box": [
+        980,
+        138,
+        2040,
+        933
+      ]
+    },
+    {
+      "source": "clic-b9b4f05f8fe3",
+      "box": [
+        215,
+        204,
+        1183,
+        930
+      ]
+    },
+    {
+      "source": "clic-4bc0b97a0c03",
+      "box": [
+        446,
+        68,
+        1682,
+        995
+      ]
+    },
+    {
+      "source": "clic-4bc0b97a0c03",
+      "box": [
+        191,
+        17,
+        1887,
+        1289
+      ]
+    },
+    {
+      "source": "clic-4bc0b97a0c03",
+      "box": [
+        663,
+        167,
+        1979,
+        1154
+      ]
+    },
+    {
+      "source": "clic-ed34d188b18e",
+      "box": [
+        1118,
+        270,
+        1842,
+        813
+      ]
+    },
+    {
+      "source": "clic-ed34d188b18e",
+      "box": [
+        244,
+        59,
+        1428,
+        947
+      ]
+    },
+    {
+      "source": "clic-ed34d188b18e",
+      "box": [
+        374,
+        80,
+        1530,
+        947
+      ]
+    },
+    {
+      "source": "clic-6ac7a5605646",
+      "box": [
+        50,
+        200,
+        1354,
+        1178
+      ]
+    },
+    {
+      "source": "clic-6ac7a5605646",
+      "box": [
+        407,
+        523,
+        1111,
+        1051
+      ]
+    },
+    {
+      "source": "clic-6ac7a5605646",
+      "box": [
+        541,
+        127,
+        1489,
+        838
+      ]
+    },
+    {
+      "source": "clic-aaeaa10dfa1b",
+      "box": [
+        307,
+        42,
+        1975,
+        1293
+      ]
+    },
+    {
+      "source": "clic-aaeaa10dfa1b",
+      "box": [
+        450,
+        28,
+        1974,
+        1171
+      ]
+    },
+    {
+      "source": "clic-aaeaa10dfa1b",
+      "box": [
+        468,
+        334,
+        1792,
+        1327
+      ]
+    },
+    {
+      "source": "clic-97aa67b31cd3",
+      "box": [
+        76,
+        102,
+        712,
+        579
+      ]
+    },
+    {
+      "source": "clic-97aa67b31cd3",
+      "box": [
+        7,
+        16,
+        791,
+        604
+      ]
+    },
+    {
+      "source": "clic-97aa67b31cd3",
+      "box": [
+        244,
+        9,
+        796,
+        423
+      ]
+    },
+    {
+      "source": "clic-9dc2360523d7",
+      "box": [
+        214,
+        293,
+        1550,
+        1295
+      ]
+    },
+    {
+      "source": "clic-9dc2360523d7",
+      "box": [
+        825,
+        172,
+        1941,
+        1009
+      ]
+    },
+    {
+      "source": "clic-9dc2360523d7",
+      "box": [
+        790,
+        664,
+        1558,
+        1240
+      ]
+    },
+    {
+      "source": "clic-ca0f28418a90",
+      "box": [
+        122,
+        70,
+        842,
+        610
+      ]
+    },
+    {
+      "source": "clic-ca0f28418a90",
+      "box": [
+        66,
+        101,
+        838,
+        680
+      ]
+    },
+    {
+      "source": "clic-ca0f28418a90",
+      "box": [
+        243,
+        29,
+        891,
+        515
+      ]
+    },
+    {
+      "source": "clic-1275f61a13d7",
+      "box": [
+        89,
+        213,
+        1157,
+        1014
+      ]
+    },
+    {
+      "source": "clic-1275f61a13d7",
+      "box": [
+        176,
+        128,
+        1780,
+        1331
+      ]
+    },
+    {
+      "source": "clic-1275f61a13d7",
+      "box": [
+        1052,
+        664,
+        1976,
+        1357
+      ]
+    },
+    {
+      "source": "clic-61c62a7d8a7e",
+      "box": [
+        494,
+        67,
+        1030,
+        469
+      ]
+    },
+    {
+      "source": "clic-61c62a7d8a7e",
+      "box": [
+        333,
+        3,
+        1185,
+        642
+      ]
+    },
+    {
+      "source": "clic-61c62a7d8a7e",
+      "box": [
+        254,
+        20,
+        1126,
+        674
+      ]
+    },
+    {
+      "source": "clic-c2cd21ef50ff",
+      "box": [
+        470,
+        232,
+        1174,
+        760
+      ]
+    },
+    {
+      "source": "clic-c2cd21ef50ff",
+      "box": [
+        135,
+        94,
+        1035,
+        769
+      ]
+    },
+    {
+      "source": "clic-c2cd21ef50ff",
+      "box": [
+        393,
+        160,
+        969,
+        592
+      ]
+    },
+    {
+      "source": "clic-a76d6b505516",
+      "box": [
+        289,
+        73,
+        1793,
+        1201
+      ]
+    },
+    {
+      "source": "clic-a76d6b505516",
+      "box": [
+        9,
+        93,
+        1461,
+        1182
+      ]
+    },
+    {
+      "source": "clic-a76d6b505516",
+      "box": [
+        5,
+        38,
+        1385,
+        1073
+      ]
+    },
+    {
+      "source": "clic-1563d320d61f",
+      "box": [
+        109,
+        107,
+        1637,
+        1253
+      ]
+    },
+    {
+      "source": "clic-1563d320d61f",
+      "box": [
+        168,
+        359,
+        900,
+        908
+      ]
+    },
+    {
+      "source": "clic-1563d320d61f",
+      "box": [
+        227,
+        126,
+        1875,
+        1362
+      ]
+    },
+    {
+      "source": "clic-df00065ad795",
+      "box": [
+        504,
+        468,
+        1496,
+        1212
+      ]
+    },
+    {
+      "source": "clic-df00065ad795",
+      "box": [
+        67,
+        45,
+        1667,
+        1245
+      ]
+    },
+    {
+      "source": "clic-df00065ad795",
+      "box": [
+        261,
+        143,
+        1673,
+        1202
+      ]
+    },
+    {
+      "source": "clic-4f9977fb2879",
+      "box": [
+        35,
+        407,
+        791,
+        974
+      ]
+    },
+    {
+      "source": "clic-4f9977fb2879",
+      "box": [
+        664,
+        603,
+        1616,
+        1317
+      ]
+    },
+    {
+      "source": "clic-4f9977fb2879",
+      "box": [
+        228,
+        133,
+        1308,
+        943
+      ]
+    },
+    {
+      "source": "clic-557a63a844d6",
+      "box": [
+        253,
+        142,
+        649,
+        439
+      ]
+    },
+    {
+      "source": "clic-557a63a844d6",
+      "box": [
+        12,
+        21,
+        748,
+        573
+      ]
+    },
+    {
+      "source": "clic-557a63a844d6",
+      "box": [
+        279,
+        122,
+        839,
+        542
+      ]
+    },
+    {
+      "source": "clic-32930b394655",
+      "box": [
+        210,
+        52,
+        1726,
+        1189
+      ]
+    },
+    {
+      "source": "clic-32930b394655",
+      "box": [
+        106,
+        69,
+        1490,
+        1107
+      ]
+    },
+    {
+      "source": "clic-32930b394655",
+      "box": [
+        397,
+        116,
+        1221,
+        734
+      ]
+    },
+    {
+      "source": "clic-6c75f3a17bb9",
+      "box": [
+        194,
+        172,
+        1122,
+        868
+      ]
+    },
+    {
+      "source": "clic-6c75f3a17bb9",
+      "box": [
+        188,
+        950,
+        1020,
+        1574
+      ]
+    },
+    {
+      "source": "clic-6c75f3a17bb9",
+      "box": [
+        359,
+        1017,
+        907,
+        1428
+      ]
+    },
+    {
+      "source": "clic-0a63f958cf3e",
+      "box": [
+        1163,
+        170,
+        1863,
+        695
+      ]
+    },
+    {
+      "source": "clic-0a63f958cf3e",
+      "box": [
+        76,
+        519,
+        1128,
+        1308
+      ]
+    },
+    {
+      "source": "clic-0a63f958cf3e",
+      "box": [
+        263,
+        13,
+        1987,
+        1306
+      ]
+    }
+  ],
+  "parameters": 50296,
+  "weights_bytes": 187526,
+  "weights_sha256": "130ed169625908a61f05a707c372e80b9fe9d3c7275770048812f0fa977e319f",
+  "best_epoch": 35,
+  "validation_loss": 2.048368215560913,
+  "max_numpy_logit_error": 2.9802322387695312e-08,
+  "max_device_logit_error": 2.9802322387695312e-08,
+  "history": [
+    {
+      "epoch": 1,
+      "training": 2.115219347404711,
+      "validation": 2.0501577854156494
+    },
+    {
+      "epoch": 2,
+      "training": 2.0855072483871924,
+      "validation": 2.050083875656128
+    },
+    {
+      "epoch": 3,
+      "training": 2.084450461647727,
+      "validation": 2.0492212772369385
+    },
+    {
+      "epoch": 4,
+      "training": 2.082285100763494,
+      "validation": 2.0490336418151855
+    },
+    {
+      "epoch": 5,
+      "training": 2.081058155406605,
+      "validation": 2.049565553665161
+    },
+    {
+      "epoch": 6,
+      "training": 2.080290360884233,
+      "validation": 2.0495195388793945
+    },
+    {
+      "epoch": 7,
+      "training": 2.0799530491684424,
+      "validation": 2.0497238636016846
+    },
+    {
+      "epoch": 8,
+      "training": 2.0796809340968276,
+      "validation": 2.0497851371765137
+    },
+    {
+      "epoch": 9,
+      "training": 2.0795246471058237,
+      "validation": 2.0497171878814697
+    },
+    {
+      "epoch": 10,
+      "training": 2.0793891675544507,
+      "validation": 2.0495686531066895
+    },
+    {
+      "epoch": 11,
+      "training": 2.079369978471236,
+      "validation": 2.049048900604248
+    },
+    {
+      "epoch": 12,
+      "training": 2.079279812899503,
+      "validation": 2.049107313156128
+    },
+    {
+      "epoch": 13,
+      "training": 2.0793119488340435,
+      "validation": 2.0493886470794678
+    },
+    {
+      "epoch": 14,
+      "training": 2.079266172466856,
+      "validation": 2.0492031574249268
+    },
+    {
+      "epoch": 15,
+      "training": 2.079254150390625,
+      "validation": 2.049280881881714
+    },
+    {
+      "epoch": 16,
+      "training": 2.0793135671904595,
+      "validation": 2.0487003326416016
+    },
+    {
+      "epoch": 17,
+      "training": 2.0791963519472065,
+      "validation": 2.048686981201172
+    },
+    {
+      "epoch": 18,
+      "training": 2.079208142829664,
+      "validation": 2.0487523078918457
+    },
+    {
+      "epoch": 19,
+      "training": 2.0792072180545693,
+      "validation": 2.048877716064453
+    },
+    {
+      "epoch": 20,
+      "training": 2.079206755667022,
+      "validation": 2.0491082668304443
+    },
+    {
+      "epoch": 21,
+      "training": 2.0792012070164536,
+      "validation": 2.0486977100372314
+    },
+    {
+      "epoch": 22,
+      "training": 2.0792326493696733,
+      "validation": 2.048635721206665
+    },
+    {
+      "epoch": 23,
+      "training": 2.0792217832623106,
+      "validation": 2.048856258392334
+    },
+    {
+      "epoch": 24,
+      "training": 2.0792000510475854,
+      "validation": 2.048845052719116
+    },
+    {
+      "epoch": 25,
+      "training": 2.079185717033617,
+      "validation": 2.0487866401672363
+    },
+    {
+      "epoch": 26,
+      "training": 2.079174850926255,
+      "validation": 2.048725128173828
+    },
+    {
+      "epoch": 27,
+      "training": 2.0791854858398438,
+      "validation": 2.0487968921661377
+    },
+    {
+      "epoch": 28,
+      "training": 2.0791836362896543,
+      "validation": 2.0486385822296143
+    },
+    {
+      "epoch": 29,
+      "training": 2.0791727701822915,
+      "validation": 2.0485565662384033
+    },
+    {
+      "epoch": 30,
+      "training": 2.079171151825876,
+      "validation": 2.048460006713867
+    },
+    {
+      "epoch": 31,
+      "training": 2.0791535810990767,
+      "validation": 2.0484461784362793
+    },
+    {
+      "epoch": 32,
+      "training": 2.07919658314098,
+      "validation": 2.0488386154174805
+    },
+    {
+      "epoch": 33,
+      "training": 2.079151962742661,
+      "validation": 2.048675775527954
+    },
+    {
+      "epoch": 34,
+      "training": 2.0791595921371924,
+      "validation": 2.048644542694092
+    },
+    {
+      "epoch": 35,
+      "training": 2.0791836362896543,
+      "validation": 2.048368215560913
+    },
+    {
+      "epoch": 36,
+      "training": 2.079156817811908,
+      "validation": 2.048563241958618
+    },
+    {
+      "epoch": 37,
+      "training": 2.0791607481060606,
+      "validation": 2.0487060546875
+    },
+    {
+      "epoch": 38,
+      "training": 2.0791621352687026,
+      "validation": 2.048860549926758
+    },
+    {
+      "epoch": 39,
+      "training": 2.0791665279504024,
+      "validation": 2.048903226852417
+    },
+    {
+      "epoch": 40,
+      "training": 2.0791515003551138,
+      "validation": 2.049015998840332
+    },
+    {
+      "epoch": 41,
+      "training": 2.0791570490056817,
+      "validation": 2.048807382583618
+    },
+    {
+      "epoch": 42,
+      "training": 2.0791410966352983,
+      "validation": 2.048732280731201
+    },
+    {
+      "epoch": 43,
+      "training": 2.079142021410393,
+      "validation": 2.0491137504577637
+    },
+    {
+      "epoch": 44,
+      "training": 2.079140403053977,
+      "validation": 2.0489256381988525
+    },
+    {
+      "epoch": 45,
+      "training": 2.0791367039535986,
+      "validation": 2.048938751220703
+    },
+    {
+      "epoch": 46,
+      "training": 2.079132773659446,
+      "validation": 2.0487587451934814
+    },
+    {
+      "epoch": 47,
+      "training": 2.07912861217152,
+      "validation": 2.04878830909729
+    },
+    {
+      "epoch": 48,
+      "training": 2.0791316176905776,
+      "validation": 2.0488979816436768
+    },
+    {
+      "epoch": 49,
+      "training": 2.0791068799567944,
+      "validation": 2.048762559890747
+    },
+    {
+      "epoch": 50,
+      "training": 2.0791156653201943,
+      "validation": 2.048659086227417
+    },
+    {
+      "epoch": 51,
+      "training": 2.0790983257871685,
+      "validation": 2.048696517944336
+    },
+    {
+      "epoch": 52,
+      "training": 2.0791154341264204,
+      "validation": 2.048704147338867
+    },
+    {
+      "epoch": 53,
+      "training": 2.079105030406605,
+      "validation": 2.0487029552459717
+    },
+    {
+      "epoch": 54,
+      "training": 2.0791034120501894,
+      "validation": 2.0487396717071533
+    },
+    {
+      "epoch": 55,
+      "training": 2.0791071111505683,
+      "validation": 2.0487723350524902
+    },
+    {
+      "epoch": 56,
+      "training": 2.0790960138494317,
+      "validation": 2.04874587059021
+    },
+    {
+      "epoch": 57,
+      "training": 2.0791230635209517,
+      "validation": 2.0486671924591064
+    },
+    {
+      "epoch": 58,
+      "training": 2.0790937019116953,
+      "validation": 2.0487241744995117
+    },
+    {
+      "epoch": 59,
+      "training": 2.079099250562263,
+      "validation": 2.04866623878479
+    },
+    {
+      "epoch": 60,
+      "training": 2.0790969386245264,
+      "validation": 2.048687219619751
+    },
+    {
+      "epoch": 61,
+      "training": 2.0790874596798057,
+      "validation": 2.048693895339966
+    },
+    {
+      "epoch": 62,
+      "training": 2.079102256081321,
+      "validation": 2.0487473011016846
+    },
+    {
+      "epoch": 63,
+      "training": 2.079090927586411,
+      "validation": 2.0487608909606934
+    },
+    {
+      "epoch": 64,
+      "training": 2.079084454160748,
+      "validation": 2.048736572265625
+    },
+    {
+      "epoch": 65,
+      "training": 2.0790883844549004,
+      "validation": 2.048689603805542
+    },
+    {
+      "epoch": 66,
+      "training": 2.0790874596798057,
+      "validation": 2.048717975616455
+    },
+    {
+      "epoch": 67,
+      "training": 2.0790821422230112,
+      "validation": 2.048677682876587
+    },
+    {
+      "epoch": 68,
+      "training": 2.0790849165482954,
+      "validation": 2.0486748218536377
+    },
+    {
+      "epoch": 69,
+      "training": 2.079089309229995,
+      "validation": 2.048631429672241
+    },
+    {
+      "epoch": 70,
+      "training": 2.0790835293856533,
+      "validation": 2.04862380027771
+    },
+    {
+      "epoch": 71,
+      "training": 2.0790763623786694,
+      "validation": 2.0486462116241455
+    },
+    {
+      "epoch": 72,
+      "training": 2.0790805238665957,
+      "validation": 2.048661947250366
+    },
+    {
+      "epoch": 73,
+      "training": 2.0790770559599907,
+      "validation": 2.048708915710449
+    },
+    {
+      "epoch": 74,
+      "training": 2.0790779807350854,
+      "validation": 2.048686981201172
+    },
+    {
+      "epoch": 75,
+      "training": 2.0790749752160274,
+      "validation": 2.0487067699432373
+    },
+    {
+      "epoch": 76,
+      "training": 2.0790749752160274,
+      "validation": 2.048719644546509
+    },
+    {
+      "epoch": 77,
+      "training": 2.0790752064098013,
+      "validation": 2.0487327575683594
+    },
+    {
+      "epoch": 78,
+      "training": 2.0790742816347065,
+      "validation": 2.048717975616455
+    },
+    {
+      "epoch": 79,
+      "training": 2.0790740504409326,
+      "validation": 2.0487396717071533
+    },
+    {
+      "epoch": 80,
+      "training": 2.0790735880533853,
+      "validation": 2.048720121383667
+    }
+  ]
+}

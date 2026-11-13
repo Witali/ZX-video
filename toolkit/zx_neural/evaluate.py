@@ -45,7 +45,12 @@ def quality(source, output):
     """Measure false seam steps separately from RGB error and real edge errors."""
     source = source.astype(np.float32) / 255
     residual = output.astype(np.float32) / 255 - source
+    # Four-pixel block averages suppress the ordered dot pattern while
+    # retaining the location and size of each Spectrum attribute boundary.
+    pooled = residual.reshape(HEIGHT // 4, 4, WIDTH // 4, 4, 3).mean(axis=(1, 3))
+    pooled_source = source.reshape(HEIGHT // 4, 4, WIDTH // 4, 4, 3).mean(axis=(1, 3))
     seam_error = seam_weight = 0.
+    pooled_error = pooled_weight = 0.
     strong_edge_sum = strong_edge_count = 0
     for axis in (0, 1):
         source_step = np.diff(source, axis=axis)
@@ -54,11 +59,18 @@ def quality(source, output):
         weights = edge_weight(source_step[seams])
         seam_error += float((error[seams] * weights).sum())
         seam_weight += float(weights.sum())
+        coarse_seams = np.s_[1::2, :] if axis == 0 else np.s_[:, 1::2]
+        coarse_weights = edge_weight(np.diff(pooled_source, axis=axis)[coarse_seams])
+        coarse_error = np.mean(np.diff(pooled, axis=axis)[coarse_seams] ** 2, axis=-1)
+        pooled_error += float((coarse_error * coarse_weights).sum())
+        pooled_weight += float(coarse_weights.sum())
         strong = np.max(np.abs(source_step), axis=-1) >= .30
         strong_edge_count += int(strong.sum())
         strong_edge_sum += float(error[strong].sum())
     return dict(rgb_rmse=float(np.sqrt(np.mean(residual ** 2))) * 255,
+                pooled_rgb_rmse=float(np.sqrt(np.mean(pooled ** 2))) * 255,
                 seam_rmse=np.sqrt(seam_error / seam_weight) * 255,
+                pooled_seam_rmse=np.sqrt(pooled_error / pooled_weight) * 255,
                 strong_edge_rmse=np.sqrt(strong_edge_sum / strong_edge_count) * 255
                 if strong_edge_count else None)
 

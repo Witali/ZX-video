@@ -97,3 +97,83 @@ and visible posterization in the photos limit generalization. See the
 [training report](evidence/training.json),
 [per-source comparison](evidence/evaluation.json) and
 [earlier trials](evidence/trials.json).
+
+## FP32 width comparison on CLIC photographs
+
+The wider CNN has 64 hidden channels and 118,968 parameters. To run the
+checkpoint trained on the RTX 5060 Ti or the distilled 32-channel model:
+
+```powershell
+python -m toolkit.zx_neural input.jpg wide.scr --preview wide.png --mode hybrid --weights toolkit/zx_neural/weights64-clic.npz
+python -m toolkit.zx_neural input.jpg small.scr --preview small.png --mode hybrid --weights toolkit/zx_neural/weights32-distilled.npz
+python -m toolkit.zx_neural input.jpg dither.scr --preview dither.png --mode hybrid --weights toolkit/zx_neural/weights64-clic.npz --dither
+```
+
+The optional dither mode compares each pair after applying ordered dithering
+to suitable smooth 4×4 tiles. It protects pixels at sharp source edges from
+the dot pattern. Pair selection compares averaged RGB and dot contrast on
+both sides of each 8×8 boundary for six sweeps, under a separate 0.022
+weighted color budget. Dithering changes the available color fits and may
+choose different attributes. The RGB and seam metrics averaged over 4×4
+tiles describe changes in tone and the underlying grid. Pixel-level
+metrics still include every visible dot. Some scenes retain false block
+edges and the optional mode can increase strong-edge error.
+
+The photo corpus is the same CLIC 2020 Professional Validation archive
+used by the block-palette-compression benchmark. Its SHA-256 is
+`e56568e20ead6bd215b313fed260d1c98b9ba863540039f00892ab67b1e39baf`.
+The 42 full photos are split by decoded pixel hash into 30 for training,
+6 for validation, and 6 for evaluation. Training uses 100 distinct
+4:3 crops and 32 generated examples. Expedition 33 artwork is a visual
+reference and was outside this training run. External checks use 20
+photos from the BSDS500 test split. Source hashes and crop coordinates
+are recorded in [width trial evidence](evidence/widths/).
+See [CLIC data and license](https://archive.compression.cc/2021/tasks/index.html)
+and the [BIDS BSDS500 mirror](https://github.com/BIDS/BSDS500).
+
+Use the extracted CLIC corpus for reproduction. The CUDA run used the
+PyTorch 2.15.0 cu132 build and disabled TF32 for convolutions and matrix
+multiplication. The CPU build can run the same experiment with
+`--device cpu`. NumPy inference runs on the CPU with either checkpoint.
+
+```powershell
+$clic = "../block-palette-compression/.benchmark-corpus/clic2020-professional-valid"
+$work = ".tmp/neural-screen"
+New-Item -ItemType Directory -Force $work
+$env:OPENBLAS_NUM_THREADS = "1"
+$common = @("--clic-root", $clic, "--device", "cuda", "--workers", "4", "--cache", "$work/clic.npz")
+python -m toolkit.zx_neural.train --channels 64 @common --weights "$work/wide.npz" --report "$work/wide.json"
+python -m toolkit.zx_neural.train --channels 32 @common --weights "$work/narrow.npz" --report "$work/narrow.json"
+python -m toolkit.zx_neural.train --channels 32 @common --teacher "$work/wide.npz" --weights "$work/distilled.npz" --report "$work/distilled.json"
+python -m toolkit.zx_neural.compare_widths "$work/comparison" --clic-root $clic --wide "$work/wide.npz" --retrained "$work/narrow.npz" --distilled "$work/distilled.npz" --training-report toolkit/zx_neural/evidence/training.json --training-report "$work/wide.json" --training-report "$work/narrow.json" --training-report "$work/distilled.json"
+```
+
+The same comparison can be run with `--bsds-archive` in place of
+`--clic-root`. The BSDS mirror revision and download URL are pinned in
+[photo_corpus.py](photo_corpus.py). The comparison writes exact
+`.scr` files, decoded previews, side-by-side sheets and per-photo metrics.
+The student uses an equal mixture of the original target loss and the
+teacher's soft pair probabilities with temperature 2 and the usual
+temperature-squared loss factor.
+
+On six CLIC and 20 external BSDS photos, the hybrid seam RMSE is
+26.167 / 30.954 for the original 32-channel model, 26.146 / 30.925
+for 64 channels, and 26.150 / 30.929 for the distilled student.
+The spatial algorithm without the network reaches 26.167 / 30.950.
+The wider model lowers the network-only seam RMSE from 30.554 / 36.949
+to 29.670 / 35.966 relative to the narrow model trained on the same crops.
+Most of that difference disappears after the spatial refinement.
+
+The joint dither search lowers pooled seam RMSE from 18.669 / 23.984
+to 17.667 / 20.720 and pooled RGB RMSE from 38.445 / 45.261 to
+30.678 / 33.065. Pooled seam RMSE improves on 3 of 6 CLIC and 19 of 20
+BSDS photos. Pixel seam RMSE and strong-edge error increase. Individual
+failures remain visible on smooth water and shadow transitions.
+See the [CLIC results](evidence/widths/clic-comparison.json) and
+[external results](evidence/widths/bsds-comparison.json).
+
+In a paired FP32 run using the same cached inputs, four CPU threads
+took 25.84 s for the 64-channel optimization loop and the RTX 5060 Ti
+took 10.26 s. Separately, four preparation workers reduced cold
+preparation from 42.37 s to 18.44 s and produced byte-identical arrays.
+These timings exclude dependency installation and report export.
