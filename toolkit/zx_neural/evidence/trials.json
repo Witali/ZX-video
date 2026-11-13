@@ -1,0 +1,240 @@
+{
+  "scope": "All trial hybrid modes used unrestricted candidate count within the per-cell RGB budget, with two refinement sweeps from the neural prediction. Spatial used the same sweeps from baseline pairs. See final evaluation for the shipped eight-candidate modes.",
+  "training_screens": 192,
+  "validation_screens": 2,
+  "evaluation_screens": 7,
+  "prepared_corpus_sha256": "52f182479b45ff34c54f6ea473abe9ec263864b86f0bbe2c53e3765052fe62e4",
+  "trials": [
+    {
+      "design": "Direct logits from RGB quadrant and side features",
+      "parameters": 18040,
+      "weights_bytes": 68447,
+      "weights_sha256": "ef114fc70a2d4cfacc6a75db8cb0211f523a67b8b6db740a4c6941f9c80c7bc3",
+      "checkpoint_epoch": 76,
+      "metrics": {
+        "baseline": {
+          "rgb_rmse": 47.39292380000864,
+          "seam_rmse": 33.31046181538648,
+          "strong_edge_rmse": 79.9122846067971,
+          "median_cpu_wall_ms": 32.6805428573737
+        },
+        "spatial": {
+          "rgb_rmse": 47.519814733948024,
+          "seam_rmse": 29.864539673846046,
+          "strong_edge_rmse": 79.60918551910937,
+          "median_cpu_wall_ms": 170.86598571430451
+        },
+        "neural": {
+          "rgb_rmse": 47.59858369295086,
+          "seam_rmse": 33.831435672303265,
+          "strong_edge_rmse": 80.63600893263899,
+          "median_cpu_wall_ms": 34.38969999972739
+        },
+        "hybrid": {
+          "rgb_rmse": 47.55777605410133,
+          "seam_rmse": 30.023526295702073,
+          "strong_edge_rmse": 80.12815894526842,
+          "median_cpu_wall_ms": 181.89077142830814
+        }
+      },
+      "per_source_seam_rmse": {
+        "chelsea.png": {
+          "baseline": 48.91824346787737,
+          "spatial": 43.112394318353196,
+          "neural": 51.52582428891377,
+          "hybrid": 43.96383251973091
+        },
+        "coffee.png": {
+          "baseline": 33.126488001897705,
+          "spatial": 29.51190330371325,
+          "neural": 34.20014629795587,
+          "hybrid": 29.445546314934276
+        },
+        "motorcycle_left.png": {
+          "baseline": 42.17965058139317,
+          "spatial": 37.725516951979344,
+          "neural": 42.866935239625306,
+          "hybrid": 37.796790479526436
+        },
+        "rocket.jpg": {
+          "baseline": 25.28801350195521,
+          "spatial": 21.728679141915702,
+          "neural": 28.13017693622233,
+          "hybrid": 22.020423594450683
+        },
+        "city": {
+          "baseline": 37.969573507940225,
+          "spatial": 34.48315736040205,
+          "neural": 35.82107404041034,
+          "hybrid": 34.44630787998364
+        },
+        "maelle": {
+          "baseline": 16.300743195465817,
+          "spatial": 15.20418941463333,
+          "neural": 15.845818135047388,
+          "hybrid": 15.205846055363137
+        },
+        "underwater": {
+          "baseline": 29.39052045117583,
+          "spatial": 27.285937225925448,
+          "neural": 28.43007476794787,
+          "hybrid": 27.285937225925448
+        }
+      }
+    },
+    {
+      "design": "Residual logits with exact local pair scores",
+      "parameters": 34168,
+      "weights_bytes": 128036,
+      "weights_sha256": "6ee360c1c93b97ea9d1a75b74a051066aacc24a9a69655bd1a0970257d24a6b7",
+      "checkpoint_epoch": 45,
+      "metrics": {
+        "baseline": {
+          "rgb_rmse": 47.39292380000864,
+          "seam_rmse": 33.31046181538648,
+          "strong_edge_rmse": 79.9122846067971,
+          "median_cpu_wall_ms": 30.846885713929492
+        },
+        "spatial": {
+          "rgb_rmse": 47.519814733948024,
+          "seam_rmse": 29.864539673846046,
+          "strong_edge_rmse": 79.60918551910937,
+          "median_cpu_wall_ms": 164.63220000020686
+        },
+        "neural": {
+          "rgb_rmse": 47.41978048746075,
+          "seam_rmse": 33.76087521124542,
+          "strong_edge_rmse": 80.12155929391943,
+          "median_cpu_wall_ms": 34.57171428557818
+        },
+        "hybrid": {
+          "rgb_rmse": 47.520277494830744,
+          "seam_rmse": 29.90058672555847,
+          "strong_edge_rmse": 79.69044442363811,
+          "median_cpu_wall_ms": 171.6734428568348
+        }
+      },
+      "per_source_seam_rmse": {
+        "chelsea.png": {
+          "baseline": 48.91824346787737,
+          "spatial": 43.112394318353196,
+          "neural": 49.98867603170713,
+          "hybrid": 43.2506671909061
+        },
+        "coffee.png": {
+          "baseline": 33.126488001897705,
+          "spatial": 29.51190330371325,
+          "neural": 33.247083872355624,
+          "hybrid": 29.47356930096849
+        },
+        "motorcycle_left.png": {
+          "baseline": 42.17965058139317,
+          "spatial": 37.725516951979344,
+          "neural": 41.56434924010429,
+          "hybrid": 37.721069216542176
+        },
+        "rocket.jpg": {
+          "baseline": 25.28801350195521,
+          "spatial": 21.728679141915702,
+          "neural": 28.158810530116455,
+          "hybrid": 21.88386072880188
+        },
+        "city": {
+          "baseline": 37.969573507940225,
+          "spatial": 34.48315736040205,
+          "neural": 37.461949668209236,
+          "hybrid": 34.48315736040205
+        },
+        "maelle": {
+          "baseline": 16.300743195465817,
+          "spatial": 15.20418941463333,
+          "neural": 15.96495925768979,
+          "hybrid": 15.205846055363137
+        },
+        "underwater": {
+          "baseline": 29.39052045117583,
+          "spatial": 27.285937225925448,
+          "neural": 29.940297878535414,
+          "hybrid": 27.285937225925448
+        }
+      }
+    },
+    {
+      "design": "Residual logits with coarse seam scores and seam-weighted loss",
+      "parameters": 50296,
+      "weights_bytes": 187628,
+      "weights_sha256": "e29fb783ba63c4fc89df4ef7c8c5e699dd35f1986ffcf1e0984a00ef028c59e8",
+      "checkpoint_epoch": 6,
+      "metrics": {
+        "baseline": {
+          "rgb_rmse": 47.39292380000864,
+          "seam_rmse": 33.31046181538648,
+          "strong_edge_rmse": 79.9122846067971,
+          "median_cpu_wall_ms": 33.26488571500314
+        },
+        "spatial": {
+          "rgb_rmse": 47.519814733948024,
+          "seam_rmse": 29.864539673846046,
+          "strong_edge_rmse": 79.60918551910937,
+          "median_cpu_wall_ms": 176.39647142901336
+        },
+        "neural": {
+          "rgb_rmse": 47.392894487295834,
+          "seam_rmse": 33.42998530565291,
+          "strong_edge_rmse": 79.92923233996122,
+          "median_cpu_wall_ms": 76.9340714279159
+        },
+        "hybrid": {
+          "rgb_rmse": 47.5207524693438,
+          "seam_rmse": 29.86184106916333,
+          "strong_edge_rmse": 79.61927306148853,
+          "median_cpu_wall_ms": 189.39580000031648
+        }
+      },
+      "per_source_seam_rmse": {
+        "chelsea.png": {
+          "baseline": 48.91824346787737,
+          "spatial": 43.112394318353196,
+          "neural": 49.09875266526415,
+          "hybrid": 43.15151597773857
+        },
+        "coffee.png": {
+          "baseline": 33.126488001897705,
+          "spatial": 29.51190330371325,
+          "neural": 33.26095885971783,
+          "hybrid": 29.49663539295012
+        },
+        "motorcycle_left.png": {
+          "baseline": 42.17965058139317,
+          "spatial": 37.725516951979344,
+          "neural": 41.91373900022011,
+          "hybrid": 37.681116329848294
+        },
+        "rocket.jpg": {
+          "baseline": 25.28801350195521,
+          "spatial": 21.728679141915702,
+          "neural": 26.25381961276643,
+          "hybrid": 21.728679141915702
+        },
+        "city": {
+          "baseline": 37.969573507940225,
+          "spatial": 34.48315736040205,
+          "neural": 37.85305528681452,
+          "hybrid": 34.48315736040205
+        },
+        "maelle": {
+          "baseline": 16.300743195465817,
+          "spatial": 15.20418941463333,
+          "neural": 16.199032437780712,
+          "hybrid": 15.205846055363137
+        },
+        "underwater": {
+          "baseline": 29.39052045117583,
+          "spatial": 27.285937225925448,
+          "neural": 29.430539277006666,
+          "hybrid": 27.285937225925448
+        }
+      }
+    }
+  ]
+}

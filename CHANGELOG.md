@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-11-13 — Train a neural Spectrum still-image converter and reduce attribute clashes
+
+- **Objective and baseline:** Convert ordinary images with varied subjects
+  to standard 256×192 SCR and reduce false color steps on 8×8 boundaries.
+  The baseline minimizes weighted RGB error independently in each cell.
+  The spatial cost compares the rendered and source color steps and gives
+  more weight to boundaries with a smooth source.
+- **Training trials:** All three CPU runs used the same 192 training views,
+  two checkpoint-selection images and seven evaluation sources. The initial
+  18,040-parameter CNN predicted pairs from quadrant and edge RGB means.
+  Its seam RMSE was 33.83, compared with 33.31 for the baseline, so its
+  predictions did not qualify alone. The 34,168-parameter residual variant
+  added exact pair errors and scored 33.76. The final 50,296-parameter network
+  added coarse seam features and emphasized cells with a larger potential
+  seam reduction. It scored 33.43 alone and 29.86 with unrestricted spatial
+  refinement. The equivalent refinement without the network scored 29.86.
+  [Trial measurements](toolkit/zx_neural/evidence/trials.json).
+- **Decision:** Rank eight candidates per cell before exact spatial
+  refinement. This achieves 29.87 seam RMSE (10.3% lower than the baseline)
+  and 79.61 strong-edge RMSE (0.38% lower), with RGB RMSE rising from 47.39
+  to 47.52. The shortlist takes 94 ms per screen, compared with 191 ms
+  for full spatial search. The network-ranked shortlist gives almost
+  identical metrics and takes 110 ms. The simpler spatial shortlist is the
+  default, with the trained 187,628-byte weights available in hybrid mode.
+  [Run and reproduce](toolkit/zx_neural/README.md).
+- **Verification:** All 35 screens from seven sources and five modes decode
+  independently to their exact previews, with legal attribute pairs,
+  no FLASH and a per-cell color error bound. CLI tests cover lossless
+  encoding of compatible shapes and thin lines, false seams on a smooth
+  ramp, and narrow transparent inputs. NumPy and PyTorch validation
+  logits match within 3e-8. Comparison previews were visually inspected.
+  Evaluation is for still images on the host, with zero guest T-state
+  delta. [Per-source results](toolkit/zx_neural/evidence/evaluation.json).
+
 ## 2026-11-11 — Make the WASM Spectrum and AY the web default
 
 - **Objective:** Promote the tested WASM Z80 and block-based AY from
