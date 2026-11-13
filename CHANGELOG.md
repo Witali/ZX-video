@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-11-13 — Keep narrow subject details continuous through palette changes
+
+- **Objective and baseline:** Remove the abrupt blue, red and black
+  transitions along the elephant's trunk in the automatic subject
+  render from `119d5b3b`. Keep protected source colors such as the
+  green bottle. Use the same learned palette weights, detector and
+  six CLIC plus 20 BSDS photos.
+- **Trials and change:** Using a common solid black endpoint made
+  the detail easier to trace but darkened it too much. Fit a
+  common legal pair to each supported, elongated component of the
+  predicted silhouette instead. Preserve its interior shading and
+  give its weak inside edge a small contrast boost. Evaluate three
+  candidate pairs and charge false chromatic grain. Reject changes
+  that harm local tonal accuracy, weak contrast, or the grid error
+  budget. Lock cells with matching color accents. A blue/yellow
+  mix was closer in mean luma but visually too chromatic, so a
+  neutral pair was preferred in the final elephant render.
+- **Results:** Nine of 26 subject screens change. The measured trunk
+  region is 321 source-supported pixels. Its mean luma is 127.32
+  in the source, 75.95 before, and 109.21 after. Its 3×3-averaged
+  luma RMSE falls from 76.60 to 25.21, and the lower-quintile
+  contrast rises from 21.97 to 48.05. The old solid dark patch
+  becomes a continuous dithered tone. The boundary of the
+  recolored region can still be visible. All 389 previously green
+  pixels in the bottle crop are retained exactly. Mean pooled grid
+  error changes from 16.384 to 16.418 on CLIC and from 19.443 to
+  19.462 on BSDS.
+- **Verification:** Independently decoded all 52 baseline and
+  subject screens. The baseline hashes match the earlier run.
+  Nine tests pass, including a connected detail with an artificial
+  dark break. The CLI reproduces the tested elephant and bottle
+  SCRs byte for byte. The converter runs entirely on the host.
+  [Measurements](toolkit/zx_neural/evidence/subjects/continuity.json).
+
 ## 2026-11-13 — Recover thin foreground contours while preserving color accents
 
 - **Objective and baseline:** Improve the elephant's low-contrast silhouette,

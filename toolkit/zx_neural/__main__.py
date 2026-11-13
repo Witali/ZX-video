@@ -16,6 +16,7 @@ from .subject import (
     SubjectDetector, has_subject, improves_subject, preserves_colors,
     protect_thin_parts, restore_color_accents, subject_scores, trace_contour,
 )
+from .subject_continuity import continue_thin_parts
 
 
 def choose(rgb, candidates, mode, layers=None):
@@ -80,7 +81,7 @@ def add_subject(rgb, mode, layers, baseline, probability, **render_options):
         if (after["luma_contrast"] > best_contrast and improves_subject(before, after)
                 and preserves_colors(rgb, baseline[1], adjusted[1])):
             best, best_contrast = adjusted, after["luma_contrast"]
-    return best
+    return continue_thin_parts(rgb, baseline, best, probability, mask)
 
 
 def main():

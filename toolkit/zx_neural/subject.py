@@ -63,12 +63,16 @@ def box_mean(values, size):
     return (total[size:, size:] - total[:-size, size:] - total[size:, :-size] + total[:-size, :-size]) / size**2
 
 
+def narrow_regions(foreground):
+    mask_image = Image.fromarray(foreground.astype(np.uint8) * 255)
+    wide = np.asarray(mask_image.filter(_OPENING_ERODE).filter(_OPENING_DILATE)) != 0
+    return foreground & ~wide
+
+
 def protect_thin_parts(source, preview, probability):
     """Reinforce narrow silhouette parts that lost their source contrast."""
     foreground = probability >= .50
-    mask_image = Image.fromarray(foreground.astype(np.uint8) * 255)
-    wide = np.asarray(mask_image.filter(_OPENING_ERODE).filter(_OPENING_DILATE)) != 0
-    thin = foreground & ~wide
+    thin = narrow_regions(foreground)
     if not thin.any():
         return None
     source = source.astype(np.float32)
@@ -151,19 +155,23 @@ def screen_pixels(screen, preview):
     return attrs, bits, paper, ink
 
 
+def color_accents(source, output):
+    """Find pixels whose dominant source channel is already represented."""
+    source = source.astype(np.int16)
+    original = output.astype(np.int16)
+    strongest = source.argmax(axis=-1)
+    source_sorted = np.sort(source, axis=-1)
+    old_sorted = np.sort(original, axis=-1)
+    return ((source_sorted[..., 2] - source_sorted[..., 1] >= 13)
+            & (old_sorted[..., 2] - old_sorted[..., 1] >= 40)
+            & (original.argmax(axis=-1) == strongest))
+
+
 def restore_color_accents(source, baseline, adjusted):
     """Restore cells where a correctly represented dominant channel was lost."""
     old_screen, old = baseline
     screen, preview = adjusted
-    source = source.astype(np.int16)
-    original = old.astype(np.int16)
-    strongest = source.argmax(axis=-1)
-    source_sorted = np.sort(source, axis=-1)
-    old_sorted = np.sort(original, axis=-1)
-    faithful = ((source_sorted[..., 2] - source_sorted[..., 1] >= 13)
-                & (old_sorted[..., 2] - old_sorted[..., 1] >= 40)
-                & (original.argmax(axis=-1) == strongest))
-    lost = faithful & np.any(preview != old, axis=-1)
+    lost = color_accents(source, old) & np.any(preview != old, axis=-1)
     cells = to_cells(lost).any(axis=(2, 3))
     if not cells.any():
         return adjusted
@@ -206,7 +214,7 @@ def improves_subject(before, after):
             and after["seam_rmse"] <= before["seam_rmse"] + min(1.25, .06 * before["seam_rmse"]))
 
 
-def preserves_colors(source, before, after):
+def preserves_colors(source, before, after, *, toned_detail=None):
     """Keep saturated source hues already represented by the baseline screen."""
     def chroma(rgb):
         pooled = pool4(rgb.astype(np.float32))
@@ -219,6 +227,11 @@ def preserves_colors(source, before, after):
     adjusted_projection = (adjusted * axis).sum(axis=-1)
     matching = baseline_projection >= .90 * np.linalg.norm(baseline, axis=-1)
     faithful = (magnitude >= 65) & matching & (baseline_projection >= .55 * magnitude)
+    if toned_detail is not None:
+        # Keep the rounded 4x4 patch check outside the silhouette itself.
+        # The per-pixel accent check still protects genuinely matching
+        # colors inside every cell, including the selected detail.
+        faithful &= pool4(toned_detail) < .25
     lost = faithful & (adjusted_projection < np.minimum(.6 * baseline_projection, .55 * magnitude))
     # A small contiguous color accent matters even in a large photograph.
     return not ((lost[1:] & lost[:-1]).any() or (lost[:, 1:] & lost[:, :-1]).any())

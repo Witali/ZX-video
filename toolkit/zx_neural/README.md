@@ -237,6 +237,14 @@ color in the existing pair improves the boundary. Both passes use the
 original source and the predicted silhouette. There are no object-specific
 rules or hand-drawn masks in the converter.
 
+For a narrow connected detail spanning several cells, the converter
+also tests a common pair across those cells. It keeps the source
+shading in the interior and adds a small contrast increase on the
+inside edge. The pass accepts a pair only if the detail's local tone
+gets closer to the photo, weak contrast is retained or improved, and
+the extra grid error stays bounded. Cells with faithfully reproduced
+color accents are protected.
+
 The converter restores baseline cells that lose a correctly represented
 dominant source channel. It accepts an adjusted screen only when its
 silhouette contrast improves, its pooled seam error stays within the
@@ -263,3 +271,5 @@ and come from the [rembg distribution](https://github.com/danielgatis/rembg)
 of [U²-NetP](https://github.com/xuebinqin/U-2-Net).
 See [CLIC results](evidence/subjects/clic.json) and
 [BSDS results](evidence/subjects/bsds.json).
+The follow-up compares those screens against the continuity pass.
+See [the follow-up measurements](evidence/subjects/continuity.json).

@@ -16,6 +16,7 @@ from .model import load_weights
 from .objective import COLOR_BUDGET, Candidates, edge_weight
 from .screen import ATTRIBUTES, COLS, HEIGHT, ROWS, WIDTH, pack, prepare
 from .subject import protect_thin_parts, restore_color_accents
+from .subject_continuity import continue_thin_parts
 
 
 class ConverterTests(unittest.TestCase):
@@ -93,6 +94,26 @@ class ConverterTests(unittest.TestCase):
         np.testing.assert_array_equal(preview, independent_decode(corrected))
         np.testing.assert_array_equal(preview[16:24, 24:32], independent_decode(old)[16:24, 24:32])
         np.testing.assert_array_equal(preview[16:24, 32:40], independent_decode(candidate)[16:24, 32:40])
+
+    def test_connected_detail_recovers_source_tone_across_cells(self):
+        source = np.full((HEIGHT, WIDTH, 3), 166, dtype=np.uint8)
+        foreground = np.zeros((HEIGHT, WIDTH), dtype=bool)
+        foreground[40:96, 64:144] = True
+        foreground[96:146, 108:114] = True
+        source[foreground] = 135
+        bitmap = np.ones_like(foreground)
+        bitmap[112:130, 108:114] = False
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        attrs[12:19, 13:15] = 55
+        attrs[14:17, 13:15] = 7
+        screen = pack(bitmap, attrs)
+        old = independent_decode(screen)
+        mask = foreground.astype(np.float32)
+        result, preview = continue_thin_parts(source, (screen, old), (screen, old), mask, mask)
+        np.testing.assert_array_equal(preview, independent_decode(result))
+        core = np.s_[100:140, 108:114, 0]
+        self.assertLess(abs(preview[core].mean() - 135), abs(old[core].mean() - 135))
+        np.testing.assert_array_equal(preview[:96], old[:96])
 
     def test_default_floyd_preserves_gradient_tones(self):
         x = np.broadcast_to(np.linspace(0, 1, WIDTH), (HEIGHT, WIDTH))
