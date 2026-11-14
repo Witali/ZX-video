@@ -9,8 +9,9 @@ from PIL import Image
 from .brightness import repair_brightness
 from .dither import DitherCandidates
 from .halftones import restore_halftones
-from .model import DEFAULT_WEIGHTS, load_weights, predict
+from .model import CLIC_WIDE_WEIGHTS, DEFAULT_WEIGHTS, PIXEL_ART_WEIGHTS, load_weights, predict
 from .objective import Candidates, REFINE_SWEEPS, SHORTLIST, TEMPERATURE, features
+from .pixel_art import PixelArtCandidates, cluster_pixels, preserve_photo_details
 from .screen import ATTRIBUTES, PALETTE, from_cells, pack, prepare
 from .smooth import SmoothCandidates, floyd_bitmap
 from .subject import (
@@ -21,11 +22,11 @@ from .subject_continuity import continue_thin_parts
 from .subject_gaps import keep_open_gaps
 
 
-def choose(rgb, candidates, mode, layers=None):
+def choose(rgb, candidates, mode, layers=None, *, correction=None):
     baseline = candidates.unary.argmin(axis=-1)
     scores = -candidates.regret / TEMPERATURE
     if mode in ("neural", "hybrid"):
-        scores += predict(features(rgb, candidates), layers)
+        scores += predict(features(rgb, candidates), layers) if correction is None else correction
         if mode == "neural":
             return np.where(candidates.allowed, scores, -np.inf).argmax(axis=-1)
     if mode in ("hybrid", "spatial"):
@@ -40,12 +41,15 @@ def choose(rgb, candidates, mode, layers=None):
     return baseline
 
 
-def render(candidates, labels, *, dither=False, smooth=False, floyd=False, repair=False):
+def render(candidates, labels, *, dither=False, smooth=False, floyd=False, repair=False,
+           pixel_art=False, preference=None):
     source = candidates.source
     if dither or smooth or floyd:
         strategy = SmoothCandidates if smooth or floyd else DitherCandidates
+        if pixel_art:
+            strategy = PixelArtCandidates
         candidates = strategy(candidates)
-        labels = candidates.select(labels)
+        labels = candidates.select(labels, preference) if preference is not None else candidates.select(labels)
     bits = floyd_bitmap(candidates, labels) if floyd else candidates.bitmap(labels)
     attrs = ATTRIBUTES[labels]
     if repair:
@@ -57,11 +61,28 @@ def render(candidates, labels, *, dither=False, smooth=False, floyd=False, repai
     return screen, from_cells(PALETTE[np.where(bits, ink, paper)])
 
 
-def convert(rgb, mode, layers, *, probability=None, **render_options):
+def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layers=None, **render_options):
     candidates = Candidates(rgb)
-    baseline = render(candidates, choose(rgb, candidates, mode, layers), **render_options)
-    current = add_subject(rgb, mode, layers, baseline, probability, **render_options)
-    return restore_halftones(rgb, current) if render_options.get("floyd") else current
+    reference_layers = photo_layers if pixel_art and photo_layers is not None else layers
+    baseline = render_source(rgb, candidates, mode, reference_layers, **render_options)
+    current = add_subject(rgb, mode, reference_layers, baseline, probability, **render_options)
+    if render_options.get("floyd"):
+        current = restore_halftones(rgb, current)
+    if not pixel_art:
+        return current
+    styled = render_source(rgb, candidates, mode, layers, pixel_art=True, **render_options)
+    styled = restore_halftones(rgb, styled)
+    restored, locked = preserve_photo_details(rgb, current, styled, probability)
+    return cluster_pixels(rgb, restored, locked)
+
+
+def render_source(rgb, candidates, mode, layers, *, pixel_art=False, **render_options):
+    correction = preference = None
+    if pixel_art and mode in ("neural", "hybrid"):
+        correction = predict(features(rgb, candidates), layers)
+        preference = -.003 * np.tanh(correction)
+    labels = choose(rgb, candidates, mode, layers, correction=correction)
+    return render(candidates, labels, pixel_art=pixel_art, preference=preference, **render_options)
 
 
 def add_subject(rgb, mode, layers, baseline, probability, **render_options):
@@ -74,7 +95,7 @@ def add_subject(rgb, mode, layers, baseline, probability, **render_options):
     target = protect_thin_parts(rgb, baseline[1], probability)
     if target is not None:
         candidates = Candidates(target)
-        screen, preview = render(candidates, choose(target, candidates, mode, layers), **render_options)
+        screen, preview = render_source(target, candidates, mode, layers, **render_options)
         options.append(trace_contour(rgb, screen, preview, probability))
     for adjusted in options:
         adjusted = restore_color_accents(rgb, baseline, adjusted)
@@ -101,10 +122,13 @@ def main():
     gradients.add_argument("--dither", action="store_true", help="apply ordered dithering in smooth regions")
     gradients.add_argument("--smooth", action="store_true", help="optimize gradient dithering across cells")
     gradients.add_argument("--floyd", action="store_true", help="diffuse color error across cell boundaries (default)")
+    gradients.add_argument("--pixel-art", action="store_true", help="use the pixel-art palette and group dither marks")
     parser.add_argument("--mode", choices=("spatial", "hybrid", "neural", "spatial-full", "baseline"),
-                        default="spatial")
-    parser.add_argument("--weights", type=Path, default=DEFAULT_WEIGHTS)
+                        help="palette search mode (default: spatial, or hybrid with --pixel-art)")
+    parser.add_argument("--weights", type=Path)
     args = parser.parse_args()
+    args.mode = args.mode or ("hybrid" if args.pixel_art else "spatial")
+    args.weights = args.weights or (PIXEL_ART_WEIGHTS if args.pixel_art else DEFAULT_WEIGHTS)
     use_model = args.mode in ("neural", "hybrid")
     outputs = [path.resolve() for path in (args.screen, args.preview) if path is not None]
     inputs = {args.image.resolve()}
@@ -112,17 +136,21 @@ def main():
         inputs.add(args.subject_model.resolve())
     if use_model:
         inputs.add(args.weights.resolve())
+        if args.pixel_art:
+            inputs.add(CLIC_WIDE_WEIGHTS.resolve())
     if inputs.intersection(outputs) or len(set(outputs)) != len(outputs):
         parser.error("outputs must use separate paths from each other and from the inputs")
     try:
         layers = load_weights(args.weights) if use_model else None
+        photo_layers = load_weights(CLIC_WIDE_WEIGHTS) if args.pixel_art and use_model else None
         with Image.open(args.image) as image:
             rgb = prepare(image, args.crop)
             probability = (SubjectDetector(args.subject_model).predict(image, args.crop)
                            if args.subject_model else None)
-        floyd = args.floyd or not (args.solid or args.dither or args.smooth)
+        floyd = not (args.solid or args.dither or args.smooth)
         repair = args.dither or args.smooth or floyd or args.mode in ("spatial", "spatial-full", "hybrid")
-        screen, preview = convert(rgb, args.mode, layers, probability=probability,
+        screen, preview = convert(rgb, args.mode, layers, probability=probability, pixel_art=args.pixel_art,
+                                  photo_layers=photo_layers,
                                   dither=args.dither, smooth=args.smooth, floyd=floyd, repair=repair)
         args.screen.write_bytes(screen)
         if args.preview:

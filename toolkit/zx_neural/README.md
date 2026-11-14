@@ -22,6 +22,35 @@ after a joint palette search. Use `--solid` for the previous output
 without dithering, `--dither` for the previous ordered mode, or
 `--smooth` for joint palette search with ordered dots.
 
+Use `--pixel-art` for a more graphic rendering. It uses a 64-channel
+CNN trained in FP32 on a palette objective that penalizes chromatic
+grain. Joint palette search still enforces the Spectrum constraints.
+Floyd–Steinberg sets the shading, and local pixel swaps group fine dots
+while preserving the average color of each 2×2 block. The converter
+retains accurately represented color accents and can keep details
+inside the detected silhouette when `--subject-model` is supplied.
+
+```powershell
+python -m toolkit.zx_neural input.jpg art.scr --preview art.png --pixel-art --subject-model .tmp/neural-screen/u2netp.onnx
+```
+
+Pixel-art training combines the 100 crops from 30 CLIC photographs
+with two views from each of 90 BSDS500 training photographs and 32
+synthetic screens. Six CLIC and ten BSDS500 validation photos select
+the checkpoint. The same 26 holdout photos used for the earlier
+photo converter are used for comparison.
+
+```powershell
+python -m toolkit.zx_neural.train --pixel-art --channels 64 --epochs 60 --device cuda --workers 4 --clic-root $clic --bsds-archive $archive --weights .tmp/neural-screen/pixel-art-trained.npz --report .tmp/neural-screen/pixel-art-training.json --cache .tmp/neural-screen/pixel-art-teacher.npz
+```
+
+See [measurements](evidence/pixel-art.json) for the full-pipeline comparison
+and the separate effect of using the newly trained weights.
+
+```powershell
+python -m toolkit.zx_neural.compare_pixel_art .tmp/neural-screen/pixel-art-evaluation.json --clic-root $clic --bsds-archive $archive --subject-model .tmp/neural-screen/u2netp.onnx
+```
+
 | Mode | Pair selection |
 | --- | --- |
 | `spatial` (default) | Rank pairs by local color error and refine the best eight against neighbors |

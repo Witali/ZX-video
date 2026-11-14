@@ -1,5 +1,42 @@
 # Changelog and optimization experiments
 
+## 2026-11-14 — Train and compare a pixel-art rendering option
+
+- **Objective and baseline:** Compare the Floyd–Steinberg hybrid render
+  from `9104604c` with a rendering that favors coherent pixel groups.
+  Keep the same native SCR format. Use the existing held-out CLIC and
+  BSDS500 photos and three Expedition 33 illustrations as visual references.
+- **Trials:** Bilateral filtering with full diffusion increased grain on
+  the elephant. Turning off diffusion flattened the elephant and shell
+  details. Unrestricted pixel trades lowered the number of pixel color
+  transitions, but drove the still-life pooled grid error from 21.41 to
+  34.75. Restrict exchanges to individual 2×2 tiles and retain photo
+  cells for the detected subject, faithful accents, and excessive local
+  color regret. Penalize chromatic grain in the joint palette search.
+- **Training:** 120 source photos yield 280 photo views and 32 synthetic
+  screens. Keep 16 validation photos and 26 test photos outside
+  training, verified by decoded image hashes. Run 60 FP32 epochs on an
+  RTX 5060 Ti with seed 433 and four parallel teacher workers. The first
+  run completed optimization but failed the old CPU-versus-NumPy absolute
+  check at a few near-zero logits. Use the existing CUDA FP32 tolerance
+  for both comparisons and repeat from the same cached targets. Epoch 59
+  has the lowest validation loss, 2.7743. The retained network fits in
+  442,564 bytes with 118,968 parameters.
+- **Results:** The new style lowers adjacent pixel color transitions by
+  9.3% overall. Pooled RGB RMSE changes from 35.61 to 35.40 on BSDS and
+  from 32.29 to 32.01 on CLIC. Pooled grid error rises from 19.62 to
+  19.75 and from 16.47 to 16.51 respectively. Some water textures look
+  coarser. With the previous weights in the same style, pooled RGB
+  errors are 35.45 and 32.15. The new weights give a small color gain.
+- **Verification:** Independently decode the outputs of four variants
+  per held-out photo. Verify that the CLI reproduces the elephant and
+  still-life screens and that all 13 converter tests pass. Preserve all
+  389 green bottle pixels, the shell-region brightness error, and the
+  corrected trunk cells. One replayed CLIC baseline hash differs from
+  the prior report. Direct comparison with `9104604c` on that image
+  gives identical photo screens. Keep the style opt-in with `--pixel-art`.
+  [Training and evaluation measurements](toolkit/zx_neural/evidence/pixel-art.json).
+
 ## 2026-11-13 — Recover saturated shading and narrow silhouette gaps
 
 - **Objective and baseline:** Compare `9cecc807` with automatic recovery

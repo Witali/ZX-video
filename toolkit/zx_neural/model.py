@@ -10,6 +10,7 @@ WIDTHS = (32, 64)
 DEFAULT_WEIGHTS = Path(__file__).with_name("weights.npz")
 WIDE_WEIGHTS = Path(__file__).with_name("weights64.npz")
 CLIC_WIDE_WEIGHTS = Path(__file__).with_name("weights64-clic.npz")
+PIXEL_ART_WEIGHTS = Path(__file__).with_name("weights64-pixel-art.npz")
 
 
 def architecture(channels):

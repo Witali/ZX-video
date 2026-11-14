@@ -66,6 +66,7 @@ class SmoothCandidates(DitherCandidates):
 
     seam_weight = 4.
     pair_weight = .025
+    chroma_grain_weight = .12
     budget = .035
     shortlist = 12
     passes = 3
@@ -78,8 +79,10 @@ class SmoothCandidates(DitherCandidates):
         within_budget = self.regret <= self.budget
         self.allowed = np.where(exact.any(axis=-1, keepdims=True), exact, within_budget)
 
-    def select(self, initial):
+    def select(self, initial, preference=None):
         legal_cost = np.where(self.allowed, self.unary, np.inf)
+        if preference is not None:
+            legal_cost = legal_cost + preference
         best = legal_cost.argmin(axis=-1)
         initial = np.where(self.allowed[GRID_Y, GRID_X, initial], initial, best)
         order = np.argsort(legal_cost, axis=-1, kind="stable")[..., :self.shortlist]
@@ -153,4 +156,4 @@ class SmoothCandidates(DitherCandidates):
         chroma_grain = grain * (chroma ** 2 @ COLOR_WEIGHT)
         detail = (local_range > 48 / 255).mean(axis=(2, 3), dtype=np.float32)[..., None]
         fine_weight = .24 + .34 * detail
-        return (1 - fine_weight) * coarse + fine_weight * fine + .12 * chroma_grain
+        return (1 - fine_weight) * coarse + fine_weight * fine + self.chroma_grain_weight * chroma_grain

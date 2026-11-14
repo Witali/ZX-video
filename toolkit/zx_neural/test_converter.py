@@ -32,7 +32,7 @@ class ConverterTests(unittest.TestCase):
             directory = Path(directory)
             original, screen, preview = (directory / name for name in ("in.png", "out.scr", "out.png"))
             Image.fromarray(source).save(original)
-            for extra in ([], ["--mode", "hybrid"]):
+            for extra in ([], ["--mode", "hybrid"], ["--pixel-art"]):
                 with self.subTest(options=extra):
                     subprocess.run([sys.executable, "-m", "toolkit.zx_neural", str(original), str(screen),
                                     "--preview", str(preview), *extra], check=True)
@@ -40,6 +40,22 @@ class ConverterTests(unittest.TestCase):
                     np.testing.assert_array_equal(decoded, source)
                     with Image.open(preview) as image:
                         np.testing.assert_array_equal(decoded, np.asarray(image))
+
+    def test_pixel_art_groups_dots_without_changing_tile_tone(self):
+        from .pixel_art import cluster_pixels
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        source = np.full((HEIGHT, WIDTH, 3), 102, dtype=np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        screen = pack((x + y) % 2 == 0, attrs)
+        before = independent_decode(screen)
+        lock = (x < 32)
+        changed, preview = cluster_pixels(source, (screen, before), lock)
+        np.testing.assert_array_equal(preview, independent_decode(changed))
+        np.testing.assert_array_equal(before[lock], preview[lock])
+        np.testing.assert_array_equal(before.reshape(HEIGHT // 2, 2, WIDTH // 2, 2, 3).sum(axis=(1, 3)),
+                                      preview.reshape(HEIGHT // 2, 2, WIDTH // 2, 2, 3).sum(axis=(1, 3)))
+        self.assertLess(np.count_nonzero(np.diff(preview, axis=0)), np.count_nonzero(np.diff(before, axis=0)))
 
     def test_smooth_ramp_seams_and_real_edges(self):
         y, x = np.indices((HEIGHT, WIDTH))
