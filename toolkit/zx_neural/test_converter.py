@@ -86,6 +86,28 @@ class ConverterTests(unittest.TestCase):
                                       preview.reshape(HEIGHT // 4, 4, WIDTH // 4, 4, 3).sum(axis=(1, 3)))
         self.assertEqual(restore_inner_contours(source, (screen, before), np.zeros(bits.shape))[0], screen)
 
+    def test_dark_edge_strokes_use_existing_black_without_erasing_halftones(self):
+        from .inner_contours import trace_dark_edges
+
+        source = np.zeros((HEIGHT, WIDTH, 3), dtype=np.uint8)
+        source[48:112, 48:96] = (115, 41, 26)
+        source[48:112, 96:144] = (229, 92, 58)
+        bits = np.ones((HEIGHT, WIDTH), dtype=bool)
+        attrs = np.zeros((ROWS, COLS), dtype=np.uint8)
+        attrs[6:14, 6:12] = 2
+        attrs[6:14, 12:18] = (2 << 3) | 7
+        bits[48:112, 96:144] = (np.indices((64, 48)).sum(axis=0) % 2) == 0
+        screen = pack(bits, attrs)
+        prior = independent_decode(screen)
+        result, preview = trace_dark_edges(source, (screen, prior), None)
+        np.testing.assert_array_equal(preview, independent_decode(result))
+        self.assertEqual(screen[6144:], result[6144:])
+        mark = (prior != preview).any(axis=-1)
+        self.assertTrue(mark[56:104, 94:96].any())
+        self.assertFalse(mark[56:104, 52:90].any())
+        np.testing.assert_array_equal(prior[56:104, 100:136], preview[56:104, 100:136])
+        self.assertLessEqual(mark.reshape(HEIGHT // 4, 4, WIDTH // 4, 4).sum(axis=(1, 3)).max(), 2)
+
     def test_pixel_art_protects_smooth_ramp_and_keeps_texture_eligible(self):
         from .pixel_art import preserve_photo_details
 

@@ -1,5 +1,31 @@
 # Changelog and optimization experiments
 
+## 2026-11-14 — Trace dark edges where shading loses part boundaries
+
+- **Objective and baseline:** Separate claws and shell in BSDS500 still
+  life 157032 after the symmetric ridge pass in `268dd9b1`. Keep the
+  same network and detector. Compare the same 26 held-out photos.
+- **Trials and change:** Trial pair substitutions darkened whole cells
+  in the earlier contour pass. The new pass uses the current pair and
+  finds the darker side of a local brightness or saturation step. A
+  version that outlined every sufficiently strong source edge shifted a
+  bottle highlight. Require a weaker step in the 3×3-averaged preview
+  and a genuinely bright destination for displaced highlights. Allow up
+  to two black pixels per 4×4 tile when black is already in the pair,
+  the source supports a dark accent and the change extends an existing
+  break or follows a stronger source edge.
+- **Results:** The pass changes ten screens. It darkens 47 pixels in
+  the claw crop, three of them black. The shell luma RMSE rises from
+  21.69 to 22.52, and 3,068 of 3,072 tile means match exactly on this
+  photo. All 389 measured green bottle pixels match. Pooled grid RMSE
+  rises by 0.007 on BSDS and 0.003 on CLIC. The strongest improvement
+  is at the claw joints. The right-hand outline still has weak spans.
+- **Verification:** Replayed all 26 old hashes, decoded every new SCR,
+  and checked identical attributes in each pair. Reproduced the still
+  life through the CLI in standard and pixel-art modes. All 16 tests
+  pass, including a synthetic edge with halftones on its light side.
+  [Measurements](toolkit/zx_neural/evidence/dark-edge-strokes.json).
+
 ## 2026-11-14 — Recover dark contours inside saturated objects
 
 - **Objective and baseline:** Make the claw joints and shell seams in

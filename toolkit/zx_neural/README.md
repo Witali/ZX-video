@@ -40,9 +40,16 @@ dark interior contours in saturated objects. The converter finds narrow
 dark lines in the source, puts the darker palette endpoint along them,
 and moves the displaced highlight to a brighter pixel of the same hue
 within the 4×4 tile. This preserves the palette and local color balance.
-An optional subject model confines these edits to the detected subject.
+An optional subject model restricts contour recovery to the subject and
+its immediate boundary.
+When a transition loses contrast in the screen preview, the converter
+traces the dark side of the source brightness or saturation change.
+It can place up to two extra black pixels per 4×4 tile
+when the cell's existing pair includes black and the source supports the
+stroke. It keeps the light endpoint in cells that use it for halftones.
 See [contour measurements](evidence/inner-contours.json) for the
-comparison on held-out photos.
+initial comparison and [dark edge measurements](evidence/dark-edge-strokes.json)
+for the follow-up on thin boundaries.
 
 ```powershell
 python -m toolkit.zx_neural input.jpg art.scr --preview art.png --pixel-art --subject-model .tmp/neural-screen/u2netp.onnx
