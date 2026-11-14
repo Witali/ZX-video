@@ -66,6 +66,26 @@ class ConverterTests(unittest.TestCase):
         _, edge_preview = refine_texture(source, (screen, before), lock)
         np.testing.assert_array_equal(edge_preview[10:30, 47:49], before[10:30, 47:49])
 
+    def test_inner_contours_move_highlights_without_changing_palette_or_shading(self):
+        from .inner_contours import restore_inner_contours
+
+        source = np.zeros((HEIGHT, WIDTH, 3), dtype=np.uint8)
+        source[48:112, 48:112] = (228, 96, 63)
+        source[52:108, 73:75] = (137, 47, 28)
+        attrs = np.zeros((ROWS, COLS), dtype=np.uint8)
+        attrs[6:14, 6:14] = (2 << 3) | 7
+        bits = np.zeros((HEIGHT, WIDTH), dtype=bool)
+        bits[48:112, 73:75] = True
+        screen = pack(bits, attrs)
+        before = independent_decode(screen)
+        result, preview = restore_inner_contours(source, (screen, before))
+        np.testing.assert_array_equal(preview, independent_decode(result))
+        self.assertEqual(result[6144:], screen[6144:])
+        self.assertLess(preview[56:104, 73:75, 1].mean(), before[56:104, 73:75, 1].mean() * .20)
+        np.testing.assert_array_equal(before.reshape(HEIGHT // 4, 4, WIDTH // 4, 4, 3).sum(axis=(1, 3)),
+                                      preview.reshape(HEIGHT // 4, 4, WIDTH // 4, 4, 3).sum(axis=(1, 3)))
+        self.assertEqual(restore_inner_contours(source, (screen, before), np.zeros(bits.shape))[0], screen)
+
     def test_pixel_art_protects_smooth_ramp_and_keeps_texture_eligible(self):
         from .pixel_art import preserve_photo_details
 

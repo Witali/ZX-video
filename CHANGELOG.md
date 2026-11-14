@@ -1,5 +1,29 @@
 # Changelog and optimization experiments
 
+## 2026-11-14 — Recover dark contours inside saturated objects
+
+- **Objective and baseline:** Make the claw joints and shell seams in
+  BSDS500 still life 157032 easier to see in `411d43a1`. Use the same
+  20 BSDS500 and six CLIC holdout photos, palette weights and detector.
+- **Trials and change:** Substituting black for the highlight endpoint
+  produced dark 8×8 blocks and removed halftones. Instead detect dark
+  ridges supported by neighboring source pixels and move their highlights
+  to brighter pixels of the same dominant hue in the same 4×4 tile.
+  Limit edits to pairs with an appropriate darker endpoint. An earlier
+  trial shifted bottle-green pixels and touched the trunk. Skip neutral
+  shadows and endpoints already brighter than the corresponding source
+  detail. Run the pass automatically with Floyd–Steinberg and pixel art.
+- **Results:** Nine of 26 pixel-art screens change. In the still life,
+  142 red-region pixels darken along source contours. The stronger
+  strokes raise local 3×3 luma RMSE from 19.06 to 21.69. All 389 measured
+  green bottle pixels and the repaired trunk cells match exactly. The
+  mean pooled grid error and color RMSE stay identical in each group.
+- **Verification:** Replay all 26 baseline hashes, independently decode
+  the new screens and verify their attributes and every 4×4 RGB sum.
+  The CLI reproduces the still life in both modes, and the pass also
+  operates without the optional subject mask. All 15 tests pass.
+  [Measurements](toolkit/zx_neural/evidence/inner-contours.json).
+
 ## 2026-11-14 — Match fine source textures in pixel-art mode
 
 - **Objective and baseline:** Reduce coarse dither patterns on textured

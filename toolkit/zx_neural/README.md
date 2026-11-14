@@ -35,6 +35,15 @@ Smooth gradients retain the photo renderer's palette and fine diffusion.
 The converter detects these regions by measuring source texture after
 subtracting a local average, so shallow ramps can keep their shading.
 
+The default Floyd–Steinberg and `--pixel-art` modes automatically recover
+dark interior contours in saturated objects. The converter finds narrow
+dark lines in the source, puts the darker palette endpoint along them,
+and moves the displaced highlight to a brighter pixel of the same hue
+within the 4×4 tile. This preserves the palette and local color balance.
+An optional subject model confines these edits to the detected subject.
+See [contour measurements](evidence/inner-contours.json) for the
+comparison on held-out photos.
+
 ```powershell
 python -m toolkit.zx_neural input.jpg art.scr --preview art.png --pixel-art --subject-model .tmp/neural-screen/u2netp.onnx
 ```

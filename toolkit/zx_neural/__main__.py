@@ -9,6 +9,7 @@ from PIL import Image
 from .brightness import repair_brightness
 from .dither import DitherCandidates
 from .halftones import restore_halftones
+from .inner_contours import restore_inner_contours
 from .model import CLIC_WIDE_WEIGHTS, DEFAULT_WEIGHTS, PIXEL_ART_WEIGHTS, load_weights, predict
 from .objective import Candidates, REFINE_SWEEPS, SHORTLIST, TEMPERATURE, features
 from .pixel_art import PixelArtCandidates, preserve_photo_details, refine_texture
@@ -68,12 +69,12 @@ def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layer
     current = add_subject(rgb, mode, reference_layers, baseline, probability, **render_options)
     if render_options.get("floyd"):
         current = restore_halftones(rgb, current)
-    if not pixel_art:
-        return current
-    styled = render_source(rgb, candidates, mode, layers, pixel_art=True, **render_options)
-    styled = restore_halftones(rgb, styled)
-    restored, locked = preserve_photo_details(rgb, current, styled, probability)
-    return refine_texture(rgb, restored, locked)
+    if pixel_art:
+        styled = render_source(rgb, candidates, mode, layers, pixel_art=True, **render_options)
+        styled = restore_halftones(rgb, styled)
+        restored, locked = preserve_photo_details(rgb, current, styled, probability)
+        current = refine_texture(rgb, restored, locked)
+    return restore_inner_contours(rgb, current, probability) if pixel_art or render_options.get("floyd") else current
 
 
 def render_source(rgb, candidates, mode, layers, *, pixel_art=False, **render_options):
