@@ -51,6 +51,17 @@ See [contour measurements](evidence/inner-contours.json) for the
 initial comparison and [dark edge measurements](evidence/dark-edge-strokes.json)
 for the follow-up on thin boundaries.
 
+Use `--red-line-art` to extract red objects as a black and red drawing.
+The converter finds the silhouette from source color and optionally
+the subject model, traces internal edges and fills deep shadows in black.
+Add `--shade-line-art` for Floyd–Steinberg transitions inside the fill.
+The outer contour and deep shadows stay solid in both versions.
+The native screen uses a black background and a shared black/red pair.
+
+```powershell
+python -m toolkit.zx_neural input.jpg drawing.scr --preview drawing.png --red-line-art --shade-line-art --subject-model .tmp/neural-screen/u2netp.onnx
+```
+
 ```powershell
 python -m toolkit.zx_neural input.jpg art.scr --preview art.png --pixel-art --subject-model .tmp/neural-screen/u2netp.onnx
 ```

@@ -1,5 +1,25 @@
 # Changelog and optimization experiments
 
+## 2026-11-14 — Draw red subjects with solid contours and shaded fill
+
+- **Objective and baseline:** Produce a red-and-black drawing from the
+  same still life (BSDS500 157032) after the contour trials in `b1f54c04`.
+  Keep a flat fill and a shaded version, each as a native SCR.
+- **Trials and change:** Derive the silhouette from red color and the
+  optional subject model. Thin the source edges and drop short components.
+  Using all dark ridges produced speckle. Use connected local shadows for
+  the black areas. The final shaded version uses Floyd–Steinberg within
+  the lit fill and retains the full black outline and deep shadows.
+  The illustration sheet uses a light matte to show the outer contour.
+  Both native screens use a single bright red and black attribute pair.
+- **Results and verification:** Independently decoded both variants on
+  the same 20 BSDS500 and six CLIC holdout photos. The automatic mask
+  extracts red on 16 photos. Both still-life variants match the CLI
+  outputs byte for byte. The shaded variant adds dark dots inside the
+  red fill. The style extracts red regions and can omit small or muted
+  details. Keep both versions as opt-in render modes. All 17 tests pass.
+  [Measurements](toolkit/zx_neural/evidence/red-line-art.json).
+
 ## 2026-11-14 — Trace dark edges where shading loses part boundaries
 
 - **Objective and baseline:** Separate claws and shell in BSDS500 still

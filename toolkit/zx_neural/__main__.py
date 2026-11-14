@@ -10,6 +10,7 @@ from .brightness import repair_brightness
 from .dither import DitherCandidates
 from .halftones import restore_halftones
 from .inner_contours import restore_inner_contours
+from .line_art import render_red_line_art
 from .model import CLIC_WIDE_WEIGHTS, DEFAULT_WEIGHTS, PIXEL_ART_WEIGHTS, load_weights, predict
 from .objective import Candidates, REFINE_SWEEPS, SHORTLIST, TEMPERATURE, features
 from .pixel_art import PixelArtCandidates, preserve_photo_details, refine_texture
@@ -124,13 +125,18 @@ def main():
     gradients.add_argument("--smooth", action="store_true", help="optimize gradient dithering across cells")
     gradients.add_argument("--floyd", action="store_true", help="diffuse color error across cell boundaries (default)")
     gradients.add_argument("--pixel-art", action="store_true", help="use the pixel-art palette and refine textures")
+    gradients.add_argument("--red-line-art", action="store_true", help="draw red subjects with black lines and shadows")
+    parser.add_argument("--shade-line-art", action="store_true",
+                        help="shade the red fill with Floyd–Steinberg (requires --red-line-art)")
     parser.add_argument("--mode", choices=("spatial", "hybrid", "neural", "spatial-full", "baseline"),
                         help="palette search mode (default: spatial, or hybrid with --pixel-art)")
     parser.add_argument("--weights", type=Path)
     args = parser.parse_args()
+    if args.shade_line_art and not args.red_line_art:
+        parser.error("--shade-line-art requires --red-line-art")
     args.mode = args.mode or ("hybrid" if args.pixel_art else "spatial")
     args.weights = args.weights or (PIXEL_ART_WEIGHTS if args.pixel_art else DEFAULT_WEIGHTS)
-    use_model = args.mode in ("neural", "hybrid")
+    use_model = not args.red_line_art and args.mode in ("neural", "hybrid")
     outputs = [path.resolve() for path in (args.screen, args.preview) if path is not None]
     inputs = {args.image.resolve()}
     if args.subject_model:
@@ -148,11 +154,14 @@ def main():
             rgb = prepare(image, args.crop)
             probability = (SubjectDetector(args.subject_model).predict(image, args.crop)
                            if args.subject_model else None)
-        floyd = not (args.solid or args.dither or args.smooth)
-        repair = args.dither or args.smooth or floyd or args.mode in ("spatial", "spatial-full", "hybrid")
-        screen, preview = convert(rgb, args.mode, layers, probability=probability, pixel_art=args.pixel_art,
-                                  photo_layers=photo_layers,
-                                  dither=args.dither, smooth=args.smooth, floyd=floyd, repair=repair)
+        if args.red_line_art:
+            screen, preview = render_red_line_art(rgb, probability, shaded=args.shade_line_art)
+        else:
+            floyd = not (args.solid or args.dither or args.smooth)
+            repair = args.dither or args.smooth or floyd or args.mode in ("spatial", "spatial-full", "hybrid")
+            screen, preview = convert(rgb, args.mode, layers, probability=probability, pixel_art=args.pixel_art,
+                                      photo_layers=photo_layers,
+                                      dither=args.dither, smooth=args.smooth, floyd=floyd, repair=repair)
         args.screen.write_bytes(screen)
         if args.preview:
             Image.fromarray(preview).save(args.preview, format="PNG")

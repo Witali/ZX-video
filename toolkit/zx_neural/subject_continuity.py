@@ -10,8 +10,8 @@ from .subject import (
 )
 
 
-def elongated_parts(mask):
-    """Find long components with 8-connected native pixels."""
+def connected_pixels(mask):
+    """Yield the coordinates of each 8-connected component of a mask."""
     pending = set(zip(*np.nonzero(mask), strict=True))
     for seed in sorted(pending):
         if seed not in pending:
@@ -25,12 +25,17 @@ def elongated_parts(mask):
                     if neighbor in pending:
                         pending.remove(neighbor)
                         component.append(neighbor)
-        if len(component) < 48:
+        yield np.asarray(component).T
+
+
+def elongated_parts(mask):
+    """Find long components with 8-connected native pixels."""
+    for coords in connected_pixels(mask):
+        if coords.shape[1] < 48:
             continue
-        coords = np.asarray(component)
-        variance = np.linalg.eigvalsh(np.cov(coords.T))
-        if variance[1] >= 3 * max(variance[0], 1) and np.ptp(coords, axis=0).max() >= 16:
-            yield coords.T
+        variance = np.linalg.eigvalsh(np.cov(coords))
+        if variance[1] >= 3 * max(variance[0], 1) and np.ptp(coords, axis=1).max() >= 16:
+            yield coords
 
 
 def fit_part(source, current, part, cells, edge, sign):

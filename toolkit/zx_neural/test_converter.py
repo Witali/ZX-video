@@ -22,6 +22,38 @@ from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
+    def test_red_line_art_extracts_shapes_and_fills_shadows_black(self):
+        from .line_art import red_shapes, render_red_line_art
+
+        source = np.full((HEIGHT, WIDTH, 3), (30, 82, 91), dtype=np.uint8)
+        source[48:108, 76:148] = (232, 60, 38)
+        source[63:91, 100:124] = (118, 30, 18)
+        source[26, 38] = (246, 50, 32)
+        fill, silhouette = red_shapes(source)
+        self.assertTrue(silhouette[70:84, 108:116].all())
+        self.assertFalse(fill[70:84, 101:104].any())
+        self.assertTrue(fill[54:58, 84:94].all())
+        self.assertFalse(fill[48, 76:148].any())
+        self.assertFalse(silhouette[26, 38])
+
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            source_path, screen, preview = (folder / name for name in ("in.png", "out.scr", "out.png"))
+            Image.fromarray(source).save(source_path)
+            subprocess.run([sys.executable, "-m", "toolkit.zx_neural", str(source_path), str(screen),
+                            "--red-line-art", "--preview", str(preview)], check=True)
+            data = screen.read_bytes()
+            self.assertEqual(set(data[6144:]), {66})
+            decoded = independent_decode(data)
+            self.assertEqual(set(map(tuple, decoded.reshape(-1, 3))), {(0, 0, 0), (255, 0, 0)})
+            with Image.open(preview) as image:
+                np.testing.assert_array_equal(decoded, np.asarray(image))
+            shaded_screen, shaded = render_red_line_art(source, shaded=True)
+            np.testing.assert_array_equal(shaded, independent_decode(shaded_screen))
+            self.assertEqual(shaded_screen[6144:], data[6144:])
+            self.assertTrue(np.all(shaded[..., 0] <= decoded[..., 0]))
+            self.assertLess(np.count_nonzero(shaded[..., 0]), np.count_nonzero(decoded[..., 0]))
+
     def test_cli_and_independent_screen_decoder(self):
         source = np.zeros((HEIGHT, WIDTH, 3), dtype=np.uint8)
         source[8:56, 48:128] = (255, 0, 0)
