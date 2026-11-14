@@ -26,7 +26,7 @@ class PixelArtCandidates(SmoothCandidates):
 
 
 def preserve_photo_details(source, photo, styled, probability):
-    """Keep accurate subject and accent cells from the photograph render."""
+    """Keep subject details and smooth gradients from the photograph render."""
     old_screen, old = photo
     new_screen, new = styled
     accents = color_accents(source, old)
@@ -35,6 +35,13 @@ def preserve_photo_details(source, photo, styled, probability):
         foreground = probability >= .5
         lock |= box_mean(foreground.astype(np.float32), 5) >= .12
     cells = to_cells(lock).any(axis=(2, 3))
+    # A local mean follows shallow ramps. Measure the remaining source
+    # texture to protect gradients whose fine diffusion would otherwise
+    # acquire visible clusters or bands. Lock both palette and bitmap.
+    channels = source.astype(np.float32).transpose(2, 0, 1)
+    residual = np.stack([channel - box_mean(channel, 5) for channel in channels], axis=-1)
+    texture = box_mean(residual ** 2 @ COLOR_WEIGHT, 7)
+    cells |= (to_cells(texture) <= 3 ** 2).mean(axis=(2, 3)) >= .65
     # Reject large local color errors on the background as well. Compare
     # pooled colors to ignore shifts in the positions of individual dots.
     target = pool4(source)

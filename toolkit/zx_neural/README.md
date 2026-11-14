@@ -29,6 +29,9 @@ Floyd–Steinberg sets the shading, and local pixel swaps group fine dots
 while preserving the average color of each 2×2 block. The converter
 retains accurately represented color accents and can keep details
 inside the detected silhouette when `--subject-model` is supplied.
+Smooth gradients retain the photo renderer's palette and fine diffusion.
+The converter detects these regions by measuring source texture after
+subtracting a local average, so shallow ramps can keep their shading.
 
 ```powershell
 python -m toolkit.zx_neural input.jpg art.scr --preview art.png --pixel-art --subject-model .tmp/neural-screen/u2netp.onnx
@@ -44,8 +47,9 @@ photo converter are used for comparison.
 python -m toolkit.zx_neural.train --pixel-art --channels 64 --epochs 60 --device cuda --workers 4 --clic-root $clic --bsds-archive $archive --weights .tmp/neural-screen/pixel-art-trained.npz --report .tmp/neural-screen/pixel-art-training.json --cache .tmp/neural-screen/pixel-art-teacher.npz
 ```
 
-See [measurements](evidence/pixel-art.json) for the full-pipeline comparison
-and the separate effect of using the newly trained weights.
+See [training measurements](evidence/pixel-art.json) for the effect of
+the newly trained weights and [gradient measurements](evidence/pixel-art-gradients.json)
+for the comparison after adding the smooth-gradient guard.
 
 ```powershell
 python -m toolkit.zx_neural.compare_pixel_art .tmp/neural-screen/pixel-art-evaluation.json --clic-root $clic --bsds-archive $archive --subject-model .tmp/neural-screen/u2netp.onnx

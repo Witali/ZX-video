@@ -57,6 +57,26 @@ class ConverterTests(unittest.TestCase):
                                       preview.reshape(HEIGHT // 2, 2, WIDTH // 2, 2, 3).sum(axis=(1, 3)))
         self.assertLess(np.count_nonzero(np.diff(preview, axis=0)), np.count_nonzero(np.diff(before, axis=0)))
 
+    def test_pixel_art_protects_smooth_ramp_and_keeps_texture_eligible(self):
+        from .pixel_art import preserve_photo_details
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        checker = (x + y) % 2 == 0
+        shade = np.where(y < 96, 40 + x // 2, np.where(checker, 65, 165))
+        source = np.broadcast_to(shade[..., None], (HEIGHT, WIDTH, 3)).astype(np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        photo = pack(checker, attrs)
+        style = pack(~checker, attrs)
+        original, stylized = independent_decode(photo), independent_decode(style)
+        (screen, preview), locked = preserve_photo_details(
+            source, (photo, original), (style, stylized), probability=None,
+        )
+        np.testing.assert_array_equal(preview, independent_decode(screen))
+        np.testing.assert_array_equal(preview[:80], original[:80])
+        np.testing.assert_array_equal(preview[112:], stylized[112:])
+        self.assertTrue(locked[:80].all())
+        self.assertFalse(locked[112:].any())
+
     def test_smooth_ramp_seams_and_real_edges(self):
         y, x = np.indices((HEIGHT, WIDTH))
         source = np.stack([60 + x // 2, 40 + x // 2 + y // 4, 50 + y // 2], axis=-1).astype(np.uint8)

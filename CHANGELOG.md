@@ -1,5 +1,29 @@
 # Changelog and optimization experiments
 
+## 2026-11-14 — Keep fine dithering on smooth gradients in pixel-art mode
+
+- **Objective and baseline:** The still life looks smoother in the photo
+  render than in the pixel-art mode from `66d2d2f2`. The latter clusters
+  dots on the water and introduces a cyan patch. Compare the same 20
+  BSDS500 and six CLIC photos with the same model weights.
+- **Change:** Subtract a centered 5×5 RGB mean from the source and pool
+  the weighted squared residual over 7×7 neighborhoods. When at least
+  65% of a cell measures at or below 3 levels RMS, keep the photo
+  palette and bitmap. The rule applies locally, including within a
+  photo that also contains textured regions.
+- **Results:** Two water crops totaling 13,440 pixels had 2,059 pixel
+  differences from the photo render before the change and zero after.
+  All 389 green bottle pixels match and the shell luma error stays at
+  19.06. Compared with the photo render, pixel-art mode lowers adjacent
+  color transitions by 5.5% across the corpus. Pooled grid RMSE is
+  19.768 on BSDS and 16.541 on CLIC, versus 19.749 and 16.512 in the
+  previous pixel-art mode. The coarser pattern can still occur in
+  textured areas. Keep the local guard for the smoother gradients.
+- **Verification:** Independently decoded all 26 revised screens. The
+  CLI reproduces the pictured still life and elephant screens byte for
+  byte. All 14 converter tests pass, including a smooth ramp beside a
+  textured region. [Measurements](toolkit/zx_neural/evidence/pixel-art-gradients.json).
+
 ## 2026-11-14 — Train and compare a pixel-art rendering option
 
 - **Objective and baseline:** Compare the Floyd–Steinberg hybrid render
