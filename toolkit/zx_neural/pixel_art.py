@@ -7,6 +7,18 @@ from .screen import COLS, ROWS, pack, to_cells
 from .smooth import SmoothCandidates
 from .subject import box_mean, color_accents, pool4, screen_pixels
 
+TILE_Y = np.array([0, 0, 1, 1])
+TILE_X = np.array([0, 1, 0, 1])
+WINDOW_Y, WINDOW_X = np.indices((4, 4)).reshape(2, -1) - 1
+POOL_KERNEL = ((abs(WINDOW_Y[:, None] - TILE_Y) <= 1)
+               & (abs(WINDOW_X[:, None] - TILE_X) <= 1)).astype(np.float32) / 9
+PATTERNS = ((np.arange(16)[:, None] >> np.arange(4)) & 1).astype(np.float32)
+POOLED_PATTERNS = PATTERNS @ POOL_KERNEL.T
+
+
+def mean_rgb(rgb, size):
+    return np.stack([box_mean(channel, size) for channel in rgb.transpose(2, 0, 1)], axis=-1)
+
 
 class PixelArtCandidates(SmoothCandidates):
     """Charge more for pairs whose endpoints create chromatic grain."""
@@ -38,8 +50,7 @@ def preserve_photo_details(source, photo, styled, probability):
     # A local mean follows shallow ramps. Measure the remaining source
     # texture to protect gradients whose fine diffusion would otherwise
     # acquire visible clusters or bands. Lock both palette and bitmap.
-    channels = source.astype(np.float32).transpose(2, 0, 1)
-    residual = np.stack([channel - box_mean(channel, 5) for channel in channels], axis=-1)
+    residual = source - mean_rgb(source, 5)
     texture = box_mean(residual ** 2 @ COLOR_WEIGHT, 7)
     cells |= (to_cells(texture) <= 3 ** 2).mean(axis=(2, 3)) >= .65
     # Reject large local color errors on the background as well. Compare
@@ -56,58 +67,61 @@ def preserve_photo_details(source, photo, styled, probability):
     return (pack(bits, attrs), np.where(pixels[..., None], old, new)), pixels | accents
 
 
-def cluster_pixels(source, current, locked):
-    """Join small dither marks by swapping colors between nearby pixels."""
+def refine_texture(source, current, locked):
+    """Fit unlocked 2×2 patterns to source detail while keeping their mean colors."""
     screen, preview = current
-    attrs, bits, _, _ = screen_pixels(screen, preview)
-    color = preview.copy()
-    source = source.astype(np.float32)
+    attrs, bits, paper, ink = screen_pixels(screen, preview)
+    target = source.astype(np.float32)
     locked = locked | (source == preview).all(axis=-1)
-    height, width = bits.shape
-    changed = False
-    for dy, dx in ((0, 1), (1, 0), (1, 1), (1, -1)):
-        rows = np.arange(max(1, 1 - dy), min(height - 1, height - dy - 1))
-        cols = np.arange(max(1, 1 - dx), min(width - 1, width - dx - 1))
-        a = np.s_[rows[:, None], cols]
-        b = np.s_[rows[:, None] + dy, cols + dx]
-        same_tile = ((rows[:, None] // 2 == (rows[:, None] + dy) // 2)
-                     & (cols // 2 == (cols + dx) // 2))
-        period = abs(dx) + dy + 2
-        phase_index = (rows[:, None] if dy else cols) % period
-        # In each phase, trades are disjoint and separated by enough
-        # space that their immediate neighbors cannot also be traded.
-        for phase in range(period):
-            eligible = (phase_index == phase) & same_tile & ~locked[a] & ~locked[b] & (bits[a] != bits[b])
-            yy, xx = np.nonzero(eligible)
-            y, x = rows[yy], cols[xx]
-            # Filter the other dimension so neighbor comparisons in a
-            # phase use the current state rather than contested pixels.
-            for offset in range(2):
-                allowed = ((x if dy else y) % 2) == offset
-                ay, ax = y[allowed], x[allowed]
-                by, bx = ay + dy, ax + dx
-                before_a, before_b = color[ay, ax], color[by, bx]
-                delta = before_b.astype(np.float32) - before_a
-                # Preserve genuine source contrast between trade sites.
-                source_delta = source[by, bx] - source[ay, ax]
-                eligible_swap = (source_delta ** 2 @ COLOR_WEIGHT) <= 28 ** 2
-                trade_cost = 2 * ((delta * source_delta) @ COLOR_WEIGHT)
-                gain = np.zeros(len(ay), dtype=np.int8)
-                for oy, ox in ((0, 1), (1, 0), (0, -1), (-1, 0)):
-                    neighbor_a = color[ay + oy, ax + ox]
-                    neighbor_b = color[by + oy, bx + ox]
-                    gain += (neighbor_a == before_b).all(axis=-1)
-                    gain -= (neighbor_a == before_a).all(axis=-1)
-                    gain += (neighbor_b == before_a).all(axis=-1)
-                    gain -= (neighbor_b == before_b).all(axis=-1)
-                if abs(dx) + dy == 1:
-                    gain -= 2  # The edge joining the two pixels is unchanged.
-                swap = eligible_swap & (gain >= 3) & (trade_cost <= 560. * gain)
-                if swap.any():
-                    changed = True
-                    color[ay[swap], ax[swap]] = before_b[swap]
-                    color[by[swap], bx[swap]] = before_a[swap]
-                    bits[ay[swap], ax[swap]] ^= True
-                    bits[by[swap], bx[swap]] ^= True
+    # Keep both sides of strong source edges in the current render.
+    horizontal = np.abs(np.diff(target, axis=1)).max(axis=-1) >= 76.5
+    vertical = np.abs(np.diff(target, axis=0)).max(axis=-1) >= 76.5
+    locked[:, :-1] |= horizontal
+    locked[:, 1:] |= horizontal
+    locked[:-1] |= vertical
+    locked[1:] |= vertical
 
-    return (pack(bits, attrs), color) if changed else current
+    result = preview.copy()
+    directions = ink.astype(np.float32) - paper
+    height, width = bits.shape
+    tiles = []
+    for dy, dx in ((0, 0), (2, 2), (0, 2), (2, 0)):
+        rows, cols = np.meshgrid(np.arange(4 + dy, height - 3, 4),
+                                 np.arange(4 + dx, width - 3, 4), indexing="ij")
+        y, x = rows.ravel(), cols.ravel()
+        pixels = (y[:, None] + TILE_Y, x[:, None] + TILE_X)
+        count = bits[pixels].sum(axis=-1)
+        active = ~locked[pixels].all(axis=-1) & (count > 0) & (count < 4)
+        y, x = y[active], x[active]
+        if y.size:
+            tiles.append((y, x))
+    if not tiles:
+        return current
+
+    for _ in range(2):
+        for y, x in tiles:
+            pixels = (y[:, None] + TILE_Y, x[:, None] + TILE_X)
+            window = (y[:, None] + WINDOW_Y, x[:, None] + WINDOW_X)
+            weights = directions[y, x] * COLOR_WEIGHT
+            norm = (directions[y, x] * weights).sum(axis=-1)
+            state = bits[pixels].astype(np.float32)
+            delta = PATTERNS - state[:, None, :]
+            legal = (delta.sum(axis=-1) == 0) & ((delta == 0) | ~locked[pixels][:, None]).all(axis=-1)
+
+            # Each phase has disjoint 4×4 windows of affected 3×3 averages.
+            # Reject added error in those averages, then use the native
+            # pixel error to favor fine details among the remaining patterns.
+            residual = result - target
+            pooled = (mean_rgb(residual, 3)[window] * weights[:, None]).sum(axis=-1)
+            shift = POOLED_PATTERNS - (state @ POOL_KERNEL.T)[:, None, :]
+            pooled_cost = (shift * (2 * pooled[:, None] + shift * norm[:, None, None])).sum(axis=-1)
+            native = (residual[pixels] * weights[:, None]).sum(axis=-1)
+            native_cost = (delta * (2 * native[:, None] + delta * norm[:, None, None])).sum(axis=-1)
+            cost = np.where(legal & (pooled_cost <= 1e-3), pooled_cost + .26 * native_cost, np.inf)
+            selected = cost.argmin(axis=-1)
+            improved = cost[np.arange(len(y)), selected] < -1e-3
+            state = np.where(improved[:, None], PATTERNS[selected], state).astype(bool)
+            bits[pixels] = state
+            result[pixels] = np.where(state[..., None], ink[pixels], paper[pixels])
+
+    return pack(bits, attrs), result

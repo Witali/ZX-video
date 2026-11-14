@@ -1,5 +1,31 @@
 # Changelog and optimization experiments
 
+## 2026-11-14 — Match fine source textures in pixel-art mode
+
+- **Objective and baseline:** Reduce coarse dither patterns on textured
+  areas in `ec19b086`. Compare 20 BSDS500 and six CLIC photos with the
+  existing palette weights and subject detector.
+- **Trials and change:** Skipping dot clustering removed much of the
+  striping in foliage and coastal water. Fitting the bitmap using only a
+  weak native-pixel term degraded strong-edge error on the coast and
+  jellyfish. Replace neighbor-based clustering with a search over the
+  legal layouts of each 2×2 tile. Preserve its color counts, and reject
+  candidates that increase the surrounding 3×3 color error. Use the
+  weighted native-pixel error to favor details and lock both pixels at
+  strong source edges alongside the existing photo protections.
+- **Results:** The 3×3 RGB RMSE decreases on all 26 photos, with means
+  of 37.51 to 36.48 on BSDS and 33.64 to 32.81 on CLIC. Strong-edge
+  RMSE differs by less than 0.003 in either group. The pooled 8×8 grid
+  error is stable. All 389 measured green bottle pixels and the tested
+  smooth water crop match exactly. The shell luma RMSE stays at 19.06
+  to two decimal places. Some steps from the original palette selection
+  remain visible. Keep the texture fit for the reduced striping.
+- **Verification:** Replayed the prior version and matched all 26 prior
+  hashes. Independently decoded both versions and checked identical
+  attributes on all 26 pairs. The CLI reproduces the elephant and still
+  life screens byte for byte. All 14 tests pass.
+  [Measurements](toolkit/zx_neural/evidence/pixel-art-texture.json).
+
 ## 2026-11-14 — Keep fine dithering on smooth gradients in pixel-art mode
 
 - **Objective and baseline:** The still life looks smoother in the photo

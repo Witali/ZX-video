@@ -11,7 +11,7 @@ from .dither import DitherCandidates
 from .halftones import restore_halftones
 from .model import CLIC_WIDE_WEIGHTS, DEFAULT_WEIGHTS, PIXEL_ART_WEIGHTS, load_weights, predict
 from .objective import Candidates, REFINE_SWEEPS, SHORTLIST, TEMPERATURE, features
-from .pixel_art import PixelArtCandidates, cluster_pixels, preserve_photo_details
+from .pixel_art import PixelArtCandidates, preserve_photo_details, refine_texture
 from .screen import ATTRIBUTES, PALETTE, from_cells, pack, prepare
 from .smooth import SmoothCandidates, floyd_bitmap
 from .subject import (
@@ -73,7 +73,7 @@ def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layer
     styled = render_source(rgb, candidates, mode, layers, pixel_art=True, **render_options)
     styled = restore_halftones(rgb, styled)
     restored, locked = preserve_photo_details(rgb, current, styled, probability)
-    return cluster_pixels(rgb, restored, locked)
+    return refine_texture(rgb, restored, locked)
 
 
 def render_source(rgb, candidates, mode, layers, *, pixel_art=False, **render_options):
@@ -122,7 +122,7 @@ def main():
     gradients.add_argument("--dither", action="store_true", help="apply ordered dithering in smooth regions")
     gradients.add_argument("--smooth", action="store_true", help="optimize gradient dithering across cells")
     gradients.add_argument("--floyd", action="store_true", help="diffuse color error across cell boundaries (default)")
-    gradients.add_argument("--pixel-art", action="store_true", help="use the pixel-art palette and group dither marks")
+    gradients.add_argument("--pixel-art", action="store_true", help="use the pixel-art palette and refine textures")
     parser.add_argument("--mode", choices=("spatial", "hybrid", "neural", "spatial-full", "baseline"),
                         help="palette search mode (default: spatial, or hybrid with --pixel-art)")
     parser.add_argument("--weights", type=Path)

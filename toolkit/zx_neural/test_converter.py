@@ -41,21 +41,30 @@ class ConverterTests(unittest.TestCase):
                     with Image.open(preview) as image:
                         np.testing.assert_array_equal(decoded, np.asarray(image))
 
-    def test_pixel_art_groups_dots_without_changing_tile_tone(self):
-        from .pixel_art import cluster_pixels
+    def test_pixel_art_fits_texture_without_changing_tile_tone(self):
+        from .pixel_art import mean_rgb, refine_texture
 
         y, x = np.indices((HEIGHT, WIDTH))
-        source = np.full((HEIGHT, WIDTH, 3), 102, dtype=np.uint8)
+        shade = np.where((x + y) % 2 == 0, 71, 134).astype(np.uint8)
+        source = np.repeat(shade[..., None], 3, axis=-1)
         attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
-        screen = pack((x + y) % 2 == 0, attrs)
+        screen = pack(y % 2 == 0, attrs)
         before = independent_decode(screen)
         lock = (x < 32)
-        changed, preview = cluster_pixels(source, (screen, before), lock)
+        changed, preview = refine_texture(source, (screen, before), lock)
         np.testing.assert_array_equal(preview, independent_decode(changed))
         np.testing.assert_array_equal(before[lock], preview[lock])
+        self.assertEqual(screen[6144:], changed[6144:])
         np.testing.assert_array_equal(before.reshape(HEIGHT // 2, 2, WIDTH // 2, 2, 3).sum(axis=(1, 3)),
                                       preview.reshape(HEIGHT // 2, 2, WIDTH // 2, 2, 3).sum(axis=(1, 3)))
-        self.assertLess(np.count_nonzero(np.diff(preview, axis=0)), np.count_nonzero(np.diff(before, axis=0)))
+        target = mean_rgb(source, 3)
+        old_error = np.mean((mean_rgb(before, 3) - target) ** 2)
+        new_error = np.mean((mean_rgb(preview, 3) - target) ** 2)
+        self.assertLess(new_error, .85 * old_error)
+
+        source[10:30, 48:64] = 255
+        _, edge_preview = refine_texture(source, (screen, before), lock)
+        np.testing.assert_array_equal(edge_preview[10:30, 47:49], before[10:30, 47:49])
 
     def test_pixel_art_protects_smooth_ramp_and_keeps_texture_eligible(self):
         from .pixel_art import preserve_photo_details

@@ -25,9 +25,11 @@ without dithering, `--dither` for the previous ordered mode, or
 Use `--pixel-art` for a more graphic rendering. It uses a 64-channel
 CNN trained in FP32 on a palette objective that penalizes chromatic
 grain. Joint palette search still enforces the Spectrum constraints.
-Floyd–Steinberg sets the shading, and local pixel swaps group fine dots
-while preserving the average color of each 2×2 block. The converter
-retains accurately represented color accents and can keep details
+Floyd–Steinberg sets the shading. The final pass fits the pattern of
+each 2×2 tile to the source texture while preserving its average color.
+It scores both the native pixels and nearby 3×3 averages and protects
+strong source edges. The converter retains accurately represented color
+accents and can keep details
 inside the detected silhouette when `--subject-model` is supplied.
 Smooth gradients retain the photo renderer's palette and fine diffusion.
 The converter detects these regions by measuring source texture after
@@ -50,6 +52,8 @@ python -m toolkit.zx_neural.train --pixel-art --channels 64 --epochs 60 --device
 See [training measurements](evidence/pixel-art.json) for the effect of
 the newly trained weights and [gradient measurements](evidence/pixel-art-gradients.json)
 for the comparison after adding the smooth-gradient guard.
+See [texture measurements](evidence/pixel-art-texture.json) for the
+comparison after replacing dot clustering with source-aware pattern fitting.
 
 ```powershell
 python -m toolkit.zx_neural.compare_pixel_art .tmp/neural-screen/pixel-art-evaluation.json --clic-root $clic --bsds-archive $archive --subject-model .tmp/neural-screen/u2netp.onnx
