@@ -10,8 +10,8 @@ from .brightness import repair_brightness
 from .dither import DitherCandidates
 from .halftones import restore_halftones
 from .inner_contours import restore_inner_contours
-from .line_art import render_red_line_art
-from .model import CLIC_WIDE_WEIGHTS, DEFAULT_WEIGHTS, PIXEL_ART_WEIGHTS, load_weights, predict
+from .line_art import outline_subjects, render_red_line_art
+from .model import CLIC_WIDE_WEIGHTS, DEFAULT_WEIGHTS, OUTLINE_WEIGHTS, PIXEL_ART_WEIGHTS, load_weights, predict
 from .objective import Candidates, REFINE_SWEEPS, SHORTLIST, TEMPERATURE, features
 from .pixel_art import PixelArtCandidates, preserve_photo_details, refine_texture
 from .screen import ATTRIBUTES, PALETTE, from_cells, pack, prepare
@@ -63,7 +63,8 @@ def render(candidates, labels, *, dither=False, smooth=False, floyd=False, repai
     return screen, from_cells(PALETTE[np.where(bits, ink, paper)])
 
 
-def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layers=None, **render_options):
+def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layers=None,
+            automatic_outline=True, outline_layers=None, **render_options):
     candidates = Candidates(rgb)
     reference_layers = photo_layers if pixel_art and photo_layers is not None else layers
     baseline = render_source(rgb, candidates, mode, reference_layers, **render_options)
@@ -75,7 +76,14 @@ def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layer
         styled = restore_halftones(rgb, styled)
         restored, locked = preserve_photo_details(rgb, current, styled, probability)
         current = refine_texture(rgb, restored, locked)
-    return restore_inner_contours(rgb, current, probability) if pixel_art or render_options.get("floyd") else current
+    if pixel_art or render_options.get("floyd"):
+        current = restore_inner_contours(rgb, current, probability)
+        if automatic_outline:
+            preference = None
+            if outline_layers is not None:
+                preference = -.003 * np.tanh(predict(features(rgb, candidates), outline_layers))
+            current = outline_subjects(rgb, current, probability, preference=preference)
+    return current
 
 
 def render_source(rgb, candidates, mode, layers, *, pixel_art=False, **render_options):
@@ -145,11 +153,13 @@ def main():
         inputs.add(args.weights.resolve())
         if args.pixel_art:
             inputs.add(CLIC_WIDE_WEIGHTS.resolve())
+            inputs.add(OUTLINE_WEIGHTS.resolve())
     if inputs.intersection(outputs) or len(set(outputs)) != len(outputs):
         parser.error("outputs must use separate paths from each other and from the inputs")
     try:
         layers = load_weights(args.weights) if use_model else None
         photo_layers = load_weights(CLIC_WIDE_WEIGHTS) if args.pixel_art and use_model else None
+        outline_layers = load_weights(OUTLINE_WEIGHTS) if args.pixel_art and use_model else None
         with Image.open(args.image) as image:
             rgb = prepare(image, args.crop)
             probability = (SubjectDetector(args.subject_model).predict(image, args.crop)
@@ -160,7 +170,7 @@ def main():
             floyd = not (args.solid or args.dither or args.smooth)
             repair = args.dither or args.smooth or floyd or args.mode in ("spatial", "spatial-full", "hybrid")
             screen, preview = convert(rgb, args.mode, layers, probability=probability, pixel_art=args.pixel_art,
-                                      photo_layers=photo_layers,
+                                      photo_layers=photo_layers, outline_layers=outline_layers,
                                       dither=args.dither, smooth=args.smooth, floyd=floyd, repair=repair)
         args.screen.write_bytes(screen)
         if args.preview:

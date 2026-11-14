@@ -1,5 +1,36 @@
 # Changelog and optimization experiments
 
+## 2026-11-14 — Apply outlined shading automatically and fine-tune its palette model
+
+- **Objective and baseline:** Use the red and black outlined shading
+  from `6ae01f9a` as a reference for suitable colors in full photographs.
+  Keep the surrounding scene and prevent new color beyond the contour.
+- **Trials and change:** In an early trial, letting mixed cells replace
+  incompatible surrounding colors visibly recolored the background.
+  Require exact background colors and reject results that raise pooled
+  grid RMSE by over 0.8. Use a connected silhouette and keep the original
+  color support as a separate fill mask at diffusion and writeback.
+  Use a stricter saturation threshold when saliency is unavailable.
+- **Training:** Fine-tune the existing 64-channel network in FP32 for
+  50 epochs on the RTX 5060 Ti. Use the same 120 source photos and 312
+  training screens, with 16 validation and 26 held-out test photos.
+  The final teacher with bounded fill changed 121 palette targets in
+  33 training screens and one in validation. The validation objective
+  improves from 2.77393 to 2.73094 at epoch 44. Keep the regular palette
+  model for the scene and use the new weights to give a bounded palette
+  preference in the automatic outline step.
+- **Results:** Three of 26 held-out screens receive outlined shading.
+  No newly colored pixel falls outside the source support mask, and all
+  389 green bottle pixels match. The fine-tuned preference changes 16
+  pixels on one test photo compared with the script alone. The still-life
+  output matches the script-only result. Mean pooled grid RMSE moves from
+  19.775 to 19.810 on BSDS and from 16.544 to 16.623 on CLIC.
+- **Verification:** Decoded all 26 native test screens independently.
+  The still-life CLI output matches the test and the default conversion
+  also activates without the optional subject model. All 18 tests pass,
+  including colored objects with a narrow gap and incompatible cells.
+  [Measurements](toolkit/zx_neural/evidence/adaptive-line-art.json).
+
 ## 2026-11-14 — Draw red subjects with solid contours and shaded fill
 
 - **Objective and baseline:** Produce a red-and-black drawing from the

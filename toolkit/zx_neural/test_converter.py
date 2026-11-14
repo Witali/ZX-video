@@ -22,6 +22,37 @@ from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
+    def test_outline_subjects_uses_source_hues_and_keeps_incompatible_cells(self):
+        from .line_art import outline_subjects
+
+        source = np.full((HEIGHT, WIDTH, 3), 205, dtype=np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        for x, hue, channels in ((32, 2, (1, .25, .12)), (112, 4, (.10, 1, .18)), (184, 1, (.12, .18, 1))):
+            color = np.asarray(channels)
+            source[48:112, x:x + 40] = np.arange(145, 241, 1.5)[:, None, None] * color
+            source[68:91, x + 12:x + 24] = color * 100
+            attrs[6:14, x // 8:x // 8 + 5] = hue
+            source[48:56, x:x + 3] = 205
+            source[93:103, x + 18:x + 19] = 205
+            attrs[6, x // 8] = (hue << 3) | 7
+        bits = np.ones((HEIGHT, WIDTH), dtype=bool)
+        bits[:, :8] = False
+        bits[96:, 8:16] = False
+        bits[48:56, 35:40] = False
+        bits[48:56, 115:120] = False
+        bits[48:56, 187:192] = False
+        bits[93:103, (50, 130, 202)] = False
+        screen = pack(bits, attrs)
+        prior = independent_decode(screen)
+        outlined, preview = outline_subjects(source, (screen, prior))
+        np.testing.assert_array_equal(preview, independent_decode(outlined))
+        for x, channel in ((32, 0), (112, 1), (184, 2)):
+            np.testing.assert_array_equal(preview[48:56, x:x + 8], prior[48:56, x:x + 8])
+            self.assertGreater(np.count_nonzero((preview[74:84, x + 14:x + 21] == 0).all(axis=-1)), 45)
+            self.assertGreater(np.count_nonzero(preview[93:105, x + 8:x + 32, channel]), 150)
+            self.assertTrue((preview[94:102, x + 18] == 0).all())
+        np.testing.assert_array_equal(preview[:48], prior[:48])
+
     def test_red_line_art_extracts_shapes_and_fills_shadows_black(self):
         from .line_art import red_shapes, render_red_line_art
 

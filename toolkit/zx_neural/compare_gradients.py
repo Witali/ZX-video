@@ -14,6 +14,7 @@ from .__main__ import add_subject, choose, render
 from .evaluate import independent_decode, quality
 from .halftones import restore_halftones
 from .inner_contours import restore_inner_contours
+from .line_art import outline_subjects
 from .model import CLIC_WIDE_WEIGHTS, load_weights
 from .objective import Candidates
 from .photo_corpus import clic_split, read_clic, read_evaluation_photos
@@ -59,6 +60,7 @@ def compare(sources, destination, weights, subject_model=None):
                 baseline = screen, preview
                 screen, preview = restore_halftones(source, (screen, preview))
                 screen, preview = restore_inner_contours(source, (screen, preview))
+                screen, preview = outline_subjects(source, (screen, preview))
             elapsed = (perf_counter() - start) * 1000
             decoded = independent_decode(screen)
             np.testing.assert_array_equal(preview, decoded)
@@ -75,6 +77,7 @@ def compare(sources, destination, weights, subject_model=None):
                                                       probability, floyd=True, repair=True)
             after_screen, after_preview = restore_halftones(source, (after_screen, after_preview))
             after_screen, after_preview = restore_inner_contours(source, (after_screen, after_preview), probability)
+            after_screen, after_preview = outline_subjects(source, (after_screen, after_preview), probability)
             elapsed = (perf_counter() - start) * 1000
             decoded = independent_decode(after_screen)
             np.testing.assert_array_equal(after_preview, decoded)

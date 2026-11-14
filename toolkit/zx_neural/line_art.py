@@ -1,11 +1,11 @@
-"""Extract and draw saturated red subjects as two-color Spectrum artwork."""
+"""Draw colored subjects with solid contours and shaded Spectrum fills."""
 
 import numpy as np
 from PIL import Image, ImageFilter
 
-from .screen import COLS, HEIGHT, PALETTE, ROWS, WIDTH, pack
+from .screen import ATTRIBUTES, COLS, HEIGHT, PALETTE, ROWS, WIDTH, from_cells, pack, to_cells
 from .smooth import diffuse_coverage
-from .subject import LUMA, box_mean
+from .subject import LUMA, box_mean, screen_pixels, subject_scores
 from .subject_continuity import connected_pixels
 
 
@@ -53,7 +53,7 @@ def red_shapes(source, probability=None):
     # between parts when closing small holes in the color mask.
     silhouette = ~remove_specks(~silhouette, 10)
     padded = np.pad(silhouette, 1)
-    interior = (silhouette & padded[:-2, 1:-1] & padded[2:, 1:-1]
+    interior = (material & silhouette & padded[:-2, 1:-1] & padded[2:, 1:-1]
                 & padded[1:-1, :-2] & padded[1:-1, 2:])
     light = rgb @ LUMA
     tone = .8 * light + .27 * warmth.clip(0)
@@ -91,3 +91,111 @@ def render_red_line_art(source, probability=None, *, shaded=False):
     attrs = np.full((ROWS, COLS), 64 | 2, dtype=np.uint8)
     preview = PALETTE[np.where(canvas, 10, 8)]
     return pack(canvas, attrs), preview
+
+
+def outline_subjects(source, current, probability=None, *, preference=None, unmasked_chroma=.44):
+    """Shade suitable colored objects in place using black and their own hue."""
+    screen, preview = current
+    rgb = source.astype(np.float32)
+    chroma = np.ptp(rgb, axis=-1)
+    relative_chroma = unmasked_chroma if probability is None else .29
+    color = (chroma >= 29) & (chroma >= relative_chroma * rgb.max(axis=-1))
+    if probability is not None:
+        color &= box_mean(probability, 5) > .23
+    if np.count_nonzero(color) < 140:
+        return current
+
+    # Compare normalized chroma, so the same hue can span light and shade.
+    hues = PALETTE[1:7].astype(np.float32) / 205
+    normalized = (rgb - rgb.min(axis=-1, keepdims=True)) / np.maximum(chroma[..., None], 1)
+    source_hue = ((normalized[..., None, :] - hues) ** 2).sum(axis=-1).argmin(axis=-1) + 1
+    preview_hue = (preview > 0) @ np.array([2, 4, 1], dtype=np.uint8)
+    light = rgb @ LUMA
+    smooth = box_mean(light, 3)
+    edges = thin_edges(.8 * light + .27 * chroma)
+    attrs, bits, _, _ = screen_pixels(screen, preview)
+    bright = ((attrs & 64) != 0).astype(np.uint8) * 8
+    original = to_cells(preview)
+    black = (original == 0).all(axis=-1)
+    new_attrs, new_bits = attrs.copy(), to_cells(bits).copy()
+    output = original.copy()
+    reserved = np.zeros_like(attrs, dtype=bool)
+
+    for hue in range(1, 7):
+        material = color & (source_hue == hue)
+        mask = material.copy()
+        if mask.sum() < 140:
+            continue
+        image = Image.fromarray(mask.astype(np.uint8) * 255)
+        closed = image.filter(ImageFilter.MaxFilter(3)).filter(ImageFilter.MinFilter(3))
+        mask |= (np.asarray(closed) > 0) & (source_hue == hue)
+        fill = np.zeros_like(mask)
+        shape = np.zeros_like(mask)
+        coverage = np.zeros_like(light)
+        for ys, xs in connected_pixels(mask):
+            if not 140 <= len(ys) <= 6500 or min(np.ptp(ys), np.ptp(xs)) < 9:
+                continue
+            if (preview_hue[ys, xs] == hue).mean() < .35:
+                continue
+            low, high = np.percentile(smooth[ys, xs], (15, 85))
+            if high - low < 13:
+                continue
+            # Work in a padded region so morphology and local averages
+            # retain their normal support around the object's boundary.
+            y, x = max(0, ys.min() - 7), max(0, xs.min() - 7)
+            region = np.s_[y:ys.max() + 8, x:xs.max() + 8]
+            part = np.zeros_like(mask[region])
+            part[ys - y, xs - x] = True
+            part = ~remove_specks(~part, 10)
+            padded = np.pad(part, 1)
+            inside = (part & padded[:-2, 1:-1] & padded[2:, 1:-1]
+                      & padded[1:-1, :-2] & padded[1:-1, 2:])
+            lines = remove_specks(edges[region] & inside, 13)
+            local = box_mean(light[region] * part, 13) / box_mean(part, 13).clip(.05)
+            dark = (smooth[region] < np.maximum(.85 * local, .65 * high))
+            shadows = remove_specks(part & dark & (smooth[region] < np.median(smooth[region][part])), 12)
+            # The closed shape can bridge small breaks in an outline, but
+            # only original color evidence may receive any new colored fill.
+            visible = inside & material[region] & ~lines & ~shadows
+            if np.count_nonzero(lines | shadows) < 13 or not visible.any():
+                continue
+            shape[region] |= part
+            fill[region] |= visible
+            local_coverage = coverage[region]
+            local_coverage[visible] = .72 + .28 * np.clip(
+                (smooth[region][visible] - low) / (high - low), 0, 1,
+            )
+
+        foreground = PALETTE[bright + hue][..., None, None, :]
+        same_color = (original == foreground).all(axis=-1)
+        part_cells = to_cells(shape)
+        outside_compatible = (part_cells | black | same_color).all(axis=(2, 3))
+        minimum_coverage = .62
+        if preference is not None:
+            pair = np.searchsorted(ATTRIBUTES, (attrs & 64) | hue)
+            minimum_coverage = .62 + 20 * np.take_along_axis(preference, pair[..., None], axis=-1)[..., 0]
+        cells = (part_cells.mean(axis=(2, 3)) >= minimum_coverage) & outside_compatible & ~reserved
+        cells &= (to_cells(fill).any(axis=(2, 3)) | (black | part_cells).all(axis=(2, 3)))
+        if not cells.any():
+            continue
+        active = from_cells(np.broadcast_to(cells[..., None, None], part_cells.shape))
+        strength = (active & fill).astype(np.float32)
+        level = np.where(shape, np.where(fill, coverage, 0), from_cells(same_color))
+        direction = np.broadcast_to(hues[hue - 1], rgb.shape)
+        shaded = to_cells(diffuse_coverage(level, strength, direction))
+        # Reapply the mask at writeback, even if diffusion changes later.
+        shaded = np.where(part_cells, shaded & to_cells(fill), same_color)
+        new_attrs[cells] = (attrs[cells] & 64) | hue
+        new_bits[cells] = shaded[cells]
+        output[cells] = np.where(shaded[cells][..., None], foreground[cells], 0)
+        reserved |= cells
+
+    if not reserved.any():
+        return current
+    result = from_cells(output)
+    mask = np.zeros(source.shape[:2], dtype=np.float32)
+    original_seams = subject_scores(source, preview, mask)["seam_rmse"]
+    styled_seams = subject_scores(source, result, mask)["seam_rmse"]
+    if styled_seams > original_seams + .8:
+        return current
+    return pack(from_cells(new_bits), new_attrs), result

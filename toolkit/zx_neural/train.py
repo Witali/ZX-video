@@ -64,7 +64,7 @@ def synthetic(rng):
     return rgb.astype(np.uint8)
 
 
-def teacher_screen(image, pixel_art=False):
+def teacher_screen(image, pixel_art=False, outline=False):
     candidates = Candidates(image)
     prior = np.where(candidates.allowed, -candidates.regret / TEMPERATURE, -100.)
     if pixel_art:
@@ -73,10 +73,30 @@ def teacher_screen(image, pixel_art=False):
         target, weight = PixelArtCandidates(candidates).training_target(candidates)
     else:
         target, weight = candidates.training_target()
+    if outline:
+        from .__main__ import convert
+        from .line_art import outline_subjects
+        from .screen import ATTRIBUTES, COLS, ROWS
+
+        # Use the same black outline, filled shadows and shaded interiors
+        # on independent training images as on the visual reference.
+        before = convert(image, "spatial", None, floyd=True, repair=True, automatic_outline=False)
+        after, _ = outline_subjects(image, before, unmasked_chroma=.29)
+        attrs = np.frombuffer(after[6144:], dtype=np.uint8).reshape(ROWS, COLS)
+        original = np.frombuffer(before[0][6144:], dtype=np.uint8).reshape(ROWS, COLS)
+        cy, cx = np.nonzero(attrs != original)
+        labels = np.searchsorted(ATTRIBUTES, attrs[cy, cx])
+        if len(labels):
+            # A style pair can be outside the photo-only prior. Let the
+            # teacher nominate that pair without a -100 logit penalty.
+            prior[cy, cx, labels] = np.maximum(prior[cy, cx, labels], -2.)
+            target[cy, cx] *= .25
+            target[cy, cx, labels] += .75
+            weight[cy, cx] = np.maximum(weight[cy, cx], 4.)
     return features(image, candidates), prior, target, weight
 
 
-def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False):
+def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False, outline=False):
     rng = np.random.default_rng(SEED)
     train_images = []
     source_hashes = {}
@@ -127,6 +147,9 @@ def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False
     if pixel_art:
         cache_key = f"pixel-art-v1:{cache_key}"
         metadata["teacher_objective"] = "pixel art"
+    if outline:
+        cache_key = f"outline-v2:{cache_key}"
+        metadata["teacher_objective"] = "pixel art with black outlines and shaded fill"
     if cache and cache.exists():
         with np.load(cache, allow_pickle=False) as data:
             if data["signature"].item() == cache_key:
@@ -136,7 +159,7 @@ def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False
     with pool as executor:
         # map preserves corpus order even when the workers finish out of order.
         process = executor.map if executor else map
-        make_teacher = partial(teacher_screen, pixel_art=pixel_art)
+        make_teacher = partial(teacher_screen, pixel_art=pixel_art, outline=outline)
         for i, screen in enumerate(process(make_teacher, images), 1):
             screens.append(screen)
             if i % 32 == 0:
@@ -163,7 +186,7 @@ def teacher_distribution(path, inputs, prior):
 
 
 def train(output, cache, epochs, channels=32, bsds_archive=None, teacher=None, clic_root=None,
-          device="cpu", workers=1, threads=4, pixel_art=False):
+          device="cpu", workers=1, threads=4, pixel_art=False, outline=False, initialize=None):
     device = torch.device(device)
     if device.type == "cuda":
         # cuBLAS requires a workspace configuration for deterministic FP32.
@@ -178,7 +201,7 @@ def train(output, cache, epochs, channels=32, bsds_archive=None, teacher=None, c
         torch.backends.cudnn.conv.fp32_precision = "ieee"
     generator = torch.Generator().manual_seed(SEED)
     prepared = perf_counter()
-    inputs, base, targets, importance, metadata = dataset(cache, bsds_archive, clic_root, workers, pixel_art)
+    inputs, base, targets, importance, metadata = dataset(cache, bsds_archive, clic_root, workers, pixel_art, outline)
     preparation_seconds = perf_counter() - prepared
     x = torch.from_numpy(inputs).permute(0, 3, 1, 2).contiguous()
     y = torch.from_numpy(targets).permute(0, 3, 1, 2).contiguous()
@@ -191,8 +214,18 @@ def train(output, cache, epochs, channels=32, bsds_archive=None, teacher=None, c
         soft_targets = soft_targets.to(device)
     layers = [nn.Conv2d(i, o, k, padding=k // 2, dtype=torch.float32)
               for i, o, k in architecture(channels)]
+    if initialize:
+        with torch.no_grad():
+            for layer, (weight, bias) in zip(layers, load_weights(initialize), strict=True):
+                layer.weight.copy_(torch.from_numpy(weight))
+                layer.bias.copy_(torch.from_numpy(bias))
+        metadata["initial_weights_sha256"] = sha256(initialize.read_bytes()).hexdigest()
     model = nn.Sequential(layers[0], nn.ReLU(), layers[1], nn.ReLU(), layers[2]).to(device)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=.003)
+    if initialize:
+        with torch.no_grad():
+            initial = -((model(x[count:]) + prior[count:]).log_softmax(1) * y[count:]).sum(1)
+            metadata["initial_validation_loss"] = (initial * importance[count:]).mean().item()
+    optimizer = torch.optim.AdamW(model.parameters(), lr=.00045 if initialize else .003)
     schedule = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, eta_min=.0002)
     best_loss = float("inf")
     best_epoch = None
@@ -268,11 +301,15 @@ def main():
     parser.add_argument("--bsds-archive", type=Path, help="BSDS500 archive to extend training to 100 photos")
     parser.add_argument("--clic-root", type=Path, help="use 100 crops from the block-palette CLIC corpus")
     parser.add_argument("--pixel-art", action="store_true", help="train on the pixel-art palette objective")
+    parser.add_argument("--outline", action="store_true", help="include outlined subjects in pixel-art teacher targets")
+    parser.add_argument("--initialize", type=Path, help="fine-tune an existing model of the same width")
     parser.add_argument("--teacher", type=Path, help="distill the pair scores of a trained .npz model")
     parser.add_argument("--cache", type=Path, help="optional teacher cache (.npz)")
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--epochs", type=int, default=EPOCHS)
     args = parser.parse_args()
+    if args.outline and not args.pixel_art:
+        parser.error("--outline requires --pixel-art")
     if args.pixel_art and not args.weights:
         parser.error("--pixel-art requires an explicit --weights output")
     if min(args.epochs, args.workers, args.threads) < 1:
@@ -281,10 +318,13 @@ def main():
     if (args.clic_root or args.bsds_archive) and args.channels == 32 and not args.weights:
         parser.error("expanded-corpus training with 32 channels requires an explicit --weights output")
     output = args.weights or (default if args.channels == 64 else DEFAULT_WEIGHTS)
+    if args.initialize and (not args.weights or output.resolve() == args.initialize.resolve()):
+        parser.error("--initialize requires a distinct, explicit --weights output")
     if args.teacher and (not args.weights or output.resolve() == args.teacher.resolve()):
         parser.error("--teacher requires a distinct, explicit --weights output")
     report = train(output, args.cache, args.epochs, args.channels, args.bsds_archive,
-                   args.teacher, args.clic_root, args.device, args.workers, args.threads, args.pixel_art)
+                   args.teacher, args.clic_root, args.device, args.workers, args.threads,
+                   args.pixel_art, args.outline, args.initialize)
     args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf8")
 
 

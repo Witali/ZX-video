@@ -10,13 +10,13 @@ import numpy as np
 
 from .__main__ import convert
 from .evaluate import independent_decode, quality
-from .model import CLIC_WIDE_WEIGHTS, PIXEL_ART_WEIGHTS, load_weights
+from .model import CLIC_WIDE_WEIGHTS, OUTLINE_WEIGHTS, PIXEL_ART_WEIGHTS, load_weights
 from .photo_corpus import clic_split, read_clic, read_evaluation_photos
 from .screen import prepare
 from .subject import SubjectDetector
 
 
-def compare(photos, old_layers, new_layers, detector):
+def compare(photos, old_layers, new_layers, detector, outline_layers=None):
     variants = (
         ("before", False, "hybrid", old_layers),
         ("search", True, "spatial", None),
@@ -30,7 +30,8 @@ def compare(photos, old_layers, new_layers, detector):
         results = {}
         for label, style, mode, layers in variants:
             screen, preview = convert(source, mode, layers, pixel_art=style, photo_layers=old_layers,
-                                      probability=probability, floyd=True, repair=True)
+                                      probability=probability, floyd=True, repair=True,
+                                      outline_layers=outline_layers if label == "after" else None)
             np.testing.assert_array_equal(independent_decode(screen), preview)
             transitions = sum((np.diff(preview, axis=axis) != 0).any(axis=-1).sum() for axis in (0, 1))
             metrics = quality(source, preview)
@@ -52,14 +53,16 @@ def main():
     parser.add_argument("--subject-model", type=Path)
     parser.add_argument("--weights", type=Path, default=PIXEL_ART_WEIGHTS)
     args = parser.parse_args()
-    paths = [args.bsds_archive, args.weights, CLIC_WIDE_WEIGHTS, args.subject_model]
+    paths = [args.bsds_archive, args.weights, CLIC_WIDE_WEIGHTS, OUTLINE_WEIGHTS, args.subject_model]
     if args.report.resolve() in {path.resolve() for path in paths if path is not None}:
         parser.error("the report must use a separate path from the inputs")
     old_layers, new_layers = load_weights(CLIC_WIDE_WEIGHTS), load_weights(args.weights)
+    outline_layers = load_weights(OUTLINE_WEIGHTS)
     detector = SubjectDetector(args.subject_model) if args.subject_model else None
     groups = {"bsds": read_evaluation_photos(args.bsds_archive),
               "clic": read_clic(clic_split(args.clic_root)[2])}
-    results = {name: compare(photos, old_layers, new_layers, detector) for name, photos in groups.items()}
+    results = {name: compare(photos, old_layers, new_layers, detector, outline_layers)
+               for name, photos in groups.items()}
     args.report.write_text(json.dumps(results, indent=2) + "\n", encoding="utf8")
 
 

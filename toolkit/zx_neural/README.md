@@ -58,6 +58,22 @@ Add `--shade-line-art` for Floyd–Steinberg transitions inside the fill.
 The outer contour and deep shadows stay solid in both versions.
 The native screen uses a black background and a shared black/red pair.
 
+The standard Floyd–Steinberg and `--pixel-art` modes apply a related
+treatment in place when a colored object has a supported outline and
+clear shadows. The converter checks for a compatible color in the
+existing render. It keeps surrounding pixels exact when changing the
+cell's pair and rejects a result that adds too much grid error. It
+can use the optional subject mask and accepts all six Spectrum hues.
+With `--pixel-art`, a fine-tuned 64-channel model provides a bounded
+preference for the outline palette. The pixel mask and neighboring
+color checks still determine where the selected pair can be used.
+Closing gaps in the detected outline never extends the color fill.
+Only pixels with matching source color evidence receive new color.
+
+```powershell
+python -m toolkit.zx_neural.train --pixel-art --outline --initialize toolkit/zx_neural/weights64-pixel-art.npz --channels 64 --epochs 50 --device cuda --workers 4 --clic-root $clic --bsds-archive $archive --weights .tmp/neural-screen/outline-trained.npz --report .tmp/neural-screen/outline-training.json
+```
+
 ```powershell
 python -m toolkit.zx_neural input.jpg drawing.scr --preview drawing.png --red-line-art --shade-line-art --subject-model .tmp/neural-screen/u2netp.onnx
 ```
