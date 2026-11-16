@@ -23,6 +23,7 @@ from .subject import (
 )
 from .subject_continuity import continue_thin_parts
 from .subject_gaps import keep_open_gaps
+from .tonal_repair import restore_pale_highlights, restore_warm_shadows
 
 
 def choose(rgb, candidates, mode, layers=None, *, correction=None):
@@ -85,6 +86,8 @@ def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layer
                 preference = -.003 * np.tanh(predict(features(rgb, candidates), outline_layers))
             current = outline_subjects(rgb, current, probability, preference=preference)
         current = restore_dark_ramps(rgb, current)
+        current = restore_pale_highlights(rgb, current)
+        current = restore_warm_shadows(rgb, current)
     return current
 
 

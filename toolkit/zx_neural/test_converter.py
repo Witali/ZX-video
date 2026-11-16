@@ -27,7 +27,7 @@ class ConverterTests(unittest.TestCase):
         from .dark_ramps import quiet_seam_error, restore_dark_ramps
 
         shades = np.arange(30, 80, 50 / WIDTH)
-        gradient = shades[:, None] * np.array([.45, .68, 1])
+        gradient = shades[:, None] * np.array([.08, .18, 1])
         source = np.broadcast_to(gradient, (HEIGHT, WIDTH, 3)).astype(np.uint8)
         source[72:120, 120:128] = 205
         attrs = np.full((ROWS, COLS), 1, dtype=np.uint8)
@@ -47,6 +47,37 @@ class ConverterTests(unittest.TestCase):
         self.assertGreater(preview[:64, 224:, 2].mean(), preview[:64, :32, 2].mean())
         all_cells = np.ones((ROWS, COLS), dtype=bool)
         self.assertLess(quiet_seam_error(source, preview, all_cells), .65 * quiet_seam_error(source, old, all_cells))
+
+    def test_muting_a_pale_cool_ramp_improves_color_without_stronger_seams(self):
+        from .dark_ramps import mute_cool_shadows, quiet_seam_error
+        from .subject import pool4
+
+        shades = np.linspace(46, 118, HEIGHT, dtype=np.float32)[:, None]
+        source = np.broadcast_to((shades * [.52, .67, 1])[:, None], (HEIGHT, WIDTH, 3)).astype(np.float32)
+        y, x = np.indices(source.shape[:2])
+        bits = (x + y) % 5 < (source[..., 2] / 41).astype(int)
+        cells = np.ones((ROWS, COLS), dtype=np.uint8)
+        baseline = pack(bits, cells)
+        old = independent_decode(baseline)
+        screen, preview = mute_cool_shadows(source, (baseline, old), cells, np.ones(bits.shape, dtype=np.uint8))
+
+        np.testing.assert_array_equal(independent_decode(screen), preview)
+        target = pool4(source)
+        self.assertLess(np.mean((pool4(preview) - target) ** 2), np.mean((pool4(old) - target) ** 2))
+        self.assertLess(quiet_seam_error(source, preview, cells != 0), quiet_seam_error(source, old, cells != 0))
+
+    def test_pale_highlight_removes_an_artificial_bright_boundary(self):
+        from .tonal_repair import restore_pale_highlights
+
+        ramp = np.linspace(194, 219, WIDTH, dtype=np.uint8)
+        source = np.broadcast_to(ramp[None, :, None], (HEIGHT, WIDTH, 3))
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        attrs[:, COLS // 2:] |= 64
+        baseline = pack(np.ones((HEIGHT, WIDTH), dtype=bool), attrs)
+        screen, preview = restore_pale_highlights(source, (baseline, independent_decode(baseline)))
+
+        np.testing.assert_array_equal(independent_decode(screen), preview)
+        self.assertLess(np.abs(np.diff(preview.astype(int), axis=1)).max(), 50)
 
     def test_outline_palette_keeps_black_where_a_stroke_is_required(self):
         from .line_art import fit_outline_palette

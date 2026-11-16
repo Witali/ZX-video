@@ -41,6 +41,12 @@ source hue is consistent and the existing palette creates visible steps.
 It measures the change at quiet 8×8 boundaries and checks strong source
 edges before retaining the new render. This can render muted shades with
 more saturated ink because the Spectrum has only two colors per cell.
+Pale cool ramps also get a neutral-ink candidate with balanced 4×4 dot
+coverage. It is retained when it improves color fit and quiet seams.
+Pale highlights can share one BRIGHT level when the source is continuous.
+For warm shadows that are much darker in the render, the converter uses
+source luminance and local contrast to recover small details. These
+passes check the source and the existing render before changing pixels.
 
 The default Floyd–Steinberg and `--pixel-art` modes automatically recover
 dark interior contours in saturated objects. The converter finds narrow

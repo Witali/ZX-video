@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from .dither import DitherCandidates, THRESHOLDS
+from .dither import BAYER, DitherCandidates, THRESHOLDS, tiles
 from .objective import COLOR_WEIGHT, GRID_X, GRID_Y, TOP, BOTTOM, LEFT, RIGHT
 from .screen import COLS, ROWS, INK, PAPER, PALETTE, from_cells, to_cells
 
@@ -59,6 +59,19 @@ def diffuse_coverage(projection, strength, direction):
                     similarity = down_left[y][target] if target < x else down_right[y][x]
                     coverage[y + 1][target] += weight * error * similarity * strength[y + 1][target] / length[y + 1][target]
     return bits
+
+
+def balance_coverage(projection, bits):
+    """Match each 4×4 mean while retaining as much of the Floyd pattern as possible."""
+    levels = tiles(to_cells(projection.clip(0, 1))).reshape(ROWS, COLS, 2, 2, 16)
+    original = tiles(to_cells(bits)).reshape(levels.shape)
+    # Prefer the Floyd choice first, then the best fit to the source.
+    # A fixed subpixel tie-break avoids ranking identical pixels in rows.
+    priority = 2 * original + levels - .003 * BAYER.ravel()
+    rank = np.argsort(np.argsort(-priority, axis=-1), axis=-1)
+    count = np.rint(levels.sum(axis=-1, keepdims=True))
+    pattern = (rank < count).reshape(ROWS, COLS, 2, 2, 4, 4)
+    return from_cells(pattern.swapaxes(3, 4).reshape(ROWS, COLS, 8, 8))
 
 
 class SmoothCandidates(DitherCandidates):

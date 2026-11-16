@@ -1,5 +1,37 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Fit pale gradients and recover warm shadow detail
+
+- Compare against `2f3ea66e` on the 88-image comparison set in both
+  Floyd–Steinberg and neural pixel-art modes with U²-NetP. Inspect the
+  rocket sky, the rocks behind the birds, and the shirt and face in the
+  musician portrait.
+- Tested dispersed blue, cyan and white attributes in the rocket sky.
+  They improved pooled RGB fit at some settings and introduced visible
+  8×8 texture. Extending the neutral ramp through neighboring blue cells
+  failed its quality checks. Keep neutral dots within the qualified ramp
+  and balance 4×4 coverage to the source while retaining Floyd dot positions
+  where possible. The sky becomes neutral gray, with higher native
+  strong-edge RMSE in the rocket scene by 2.06 in pixel-art mode.
+- Fit pale surfaces with one white intensity where switching BRIGHT makes
+  a false step. Qualify connected warm shadows using source color and a
+  tone deficit. Restore local contrast within the supported area. Extend
+  the yellow ink across miscolored cells only when compatible source
+  details outside the shadow are preserved. The first yellow-only
+  trial left the standard Floyd portrait unchanged. The connected
+  candidate with 0.80 coverage scaling improves both modes.
+- The rocket's pixel-art pooled RGB RMSE drops from 44.19 to 36.36 and
+  large false steps fall from 54 to 31. In pixel-art mode the count on the
+  bird photo drops from 9 to 4. In the portrait crop, luminance RMSE
+  drops from 50.16 to 21.75 in photo mode and from 40.26 to 16.69 in
+  pixel-art mode. Fourteen screens change in photo mode and thirteen in
+  pixel-art mode. The still-life bottle remains identical.
+- Independently decoded the native previews and matched all six CLI
+  outputs of the focus scenes to the benchmark. Checked the 88 source
+  panels and 352 SCRs packed into the comparison gallery. All 23
+  converter tests pass.
+  [Measurements](toolkit/zx_neural/evidence/tonal-repair.json).
+
 ## 2026-11-16 — Suppress false color steps in connected dark gradients
 
 - Traced the rectangular gray and cyan areas in the rocket photograph
