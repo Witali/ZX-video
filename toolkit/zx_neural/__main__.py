@@ -23,6 +23,7 @@ from .subject import (
     protect_thin_parts, restore_color_accents, subject_scores, trace_contour,
 )
 from .subject_continuity import continue_thin_parts
+from .subject_edges import restore_weak_subject_edges
 from .subject_gaps import keep_open_gaps
 from .tonal_repair import restore_pale_highlights, restore_subject_tones, restore_warm_shadows
 
@@ -90,6 +91,7 @@ def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layer
         current = restore_pale_highlights(rgb, current)
         current = restore_warm_shadows(rgb, current)
         current = restore_subject_tones(rgb, current, probability)
+        current = restore_weak_subject_edges(rgb, current, probability)
     return current
 
 

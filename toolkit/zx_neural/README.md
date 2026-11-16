@@ -79,6 +79,15 @@ color and luminance, then checks quiet and edge-weighted 8×8 boundaries.
 Strong source edges and all screen attribute bytes are preserved by
 this pass. The [88-image replay](evidence/subject-tone-recovery.json)
 covers both rendering modes.
+The converter also checks the weak silhouette along the same subject
+mask. It traces a line only where a source contrast transition follows
+the mask and is missing in the render. The pass first rearranges dots
+inside 4×4 tiles with their mean colors fixed. It can add a single dot
+when the tone gets closer to the original without increasing seam
+error. It protects strong source edges and matching color accents, and
+keeps the old render if pixel color or silhouette fit worsens.
+[Silhouette measurements](evidence/weak-subject-contours.json) cover
+the same 88 images in both modes.
 
 The default Floyd–Steinberg and `--pixel-art` modes automatically recover
 dark interior contours in saturated objects. The converter finds narrow

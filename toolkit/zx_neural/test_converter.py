@@ -162,6 +162,29 @@ class ConverterTests(unittest.TestCase):
         self.assertLess(after['pooled_rgb_rmse'], before['pooled_rgb_rmse'])
         self.assertLessEqual(after['pooled_seam_rmse'], before['pooled_seam_rmse'])
 
+    def test_weak_subject_edge_follows_source_and_preserves_cell_colors(self):
+        from .subject_edges import restore_weak_subject_edges
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        mask = (y >= 48) & (y < 144) & (x >= 62) & (x < 194)
+        light = np.where(mask, 104, 147).astype(np.uint8)
+        source = np.repeat(light[..., None], 3, axis=-1)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        bits = (x + y) % 3 != 1
+        baseline = pack(bits, attrs)
+        before = independent_decode(baseline)
+        original = baseline, before
+
+        repaired, after = restore_weak_subject_edges(source, original, mask.astype(np.float32))
+        np.testing.assert_array_equal(independent_decode(repaired), after)
+        self.assertEqual(repaired[6144:], baseline[6144:])
+        np.testing.assert_array_equal(after[~mask], before[~mask])
+        self.assertLess(after[52:140, 62].mean(), before[52:140, 62].mean() - 10)
+        self.assertLessEqual(quality(source, after)['pooled_seam_rmse'], quality(source, before)['pooled_seam_rmse'])
+        flat = np.full_like(source, 135)
+        self.assertIs(restore_weak_subject_edges(flat, original, mask.astype(np.float32)), original)
+        self.assertIs(restore_weak_subject_edges(source, original, None), original)
+
     def test_outline_palette_keeps_black_where_a_stroke_is_required(self):
         from .line_art import fit_outline_palette
         from .screen import to_cells

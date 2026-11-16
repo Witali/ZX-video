@@ -1,5 +1,34 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Recover weak source-supported silhouettes
+
+- Start from `d8fe011b` and BSDS500 `226033.jpg`. Use the existing
+  U²-NetP mask to estimate the silhouette normal. Require a weak source
+  transition in that direction and a corresponding loss in the rendered
+  screen. Test narrower in-mask exchanges, wider exchanges and a local
+  palette refit. The narrow exchanges recover little of the right
+  runner. The unconstrained refit increases pooled seam error. Refitting
+  with a per-cell seam veto produces too few visible gains to justify
+  changing the attribute search.
+- Shift the existing shade within 4×4 tiles. Permit a single extra dot
+  only when the tile's color and luminance improve without larger
+  false 8×8 steps or worse seam error. Require better agreement with
+  the source across the silhouette with no increase in native RGB error.
+  Protect strong edges. The first replay moved one green dot in the
+  still life. Extend protection to primary colors with a matching
+  dominant source channel, including low separation from the next
+  channel. All 450 green pixels in that scene survive in both modes.
+- Replay 88 images in Floyd–Steinberg and pixel-art modes. In each mode
+  25 screens change and 63 match byte for byte. All attribute bytes
+  match across the 176 screens. No case records a rise in native or
+  pooled RGB error, pooled seam error, strong-edge error, or the count
+  of large false steps. The upper right runner's weak-edge luminance
+  RMSE decreases from 39.95 to 38.42 in both modes. Parts of the arm
+  still blend into the crowd.
+- Verify all previews with an independent SCR decode, replay both CLI
+  renders of the runners, and pass all 29 converter tests.
+  [Measurements](toolkit/zx_neural/evidence/weak-subject-contours.json).
+
 ## 2026-11-16 — Recover flattened subject midtones
 
 - Start from the Floyd–Steinberg and pixel-art screens in `0fe9dc80`.
