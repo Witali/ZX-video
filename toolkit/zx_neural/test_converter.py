@@ -205,6 +205,26 @@ class ConverterTests(unittest.TestCase):
         self.assertLessEqual(quality(source, after)['pooled_seam_rmse'], quality(source, before)['pooled_seam_rmse'])
         self.assertIs(restore_subject_strokes(np.full_like(source, 166), original, mask.astype(np.float32)), original)
 
+    def test_bright_whites_keep_highlights_and_shade_dark_parts_by_density(self):
+        from .subject_contrast import shade_bright_whites
+
+        source = np.zeros((HEIGHT, WIDTH, 3), dtype=np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        bits = np.zeros((HEIGHT, WIDTH), dtype=bool)
+        attrs[8, 10] |= 64
+        bits[64:72, 80:88] = True
+        source[64:68, 80:88] = 255
+        source[68:72, 80:88] = 106
+        screen = pack(bits, attrs)
+        before = independent_decode(screen)
+        repaired, after = shade_bright_whites(source, (screen, before))
+
+        self.assertEqual(repaired[6144:], screen[6144:])
+        np.testing.assert_array_equal(after, independent_decode(repaired))
+        self.assertTrue((after[64:68, 80:88] == 255).all())
+        self.assertAlmostEqual(after[68:72, 80:88].mean(), 106, delta=16)
+        self.assertLess(quality(source, after)['pooled_rgb_rmse'], quality(source, before)['pooled_rgb_rmse'])
+
     def test_outline_palette_keeps_black_where_a_stroke_is_required(self):
         from .line_art import fit_outline_palette
         from .screen import to_cells

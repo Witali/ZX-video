@@ -1,5 +1,32 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Offer a stronger subject silhouette and fit BRIGHT shadows
+
+- Start with `91ab7250` and BSDS500 `226033.jpg`. A stage-by-stage replay
+  places the lost arm contrast in the original palette fit. Trial
+  background smoothing, small tile edits and a source-supported
+  silhouette prepared before palette selection. The first two do
+  little for the arm under the previous error limits. The stronger
+  silhouette makes the bend readable. Its signed luma step across
+  source-selected arm edges rises from 13.28 to 42.86 in both modes.
+  The step RMSE rises from 20.30 to 42.15, so expose this rendering
+  as the optional `--subject-contrast` mode.
+- Trial isolated BRIGHT changes, connected white groups and joint
+  black-dot density fits around the runner's uniform. The promoted
+  cells create visible rectangular boundaries in that scene. Retain
+  the ordinary white level there. On existing black and BRIGHT white
+  cells, fit the darker part's average luminance with Floyd–Steinberg
+  diffusion and balanced 4×4 density. Require better pooled color and
+  protect source edges and quiet attribute boundaries. Verify the
+  fitted density and retained bright highlight on a synthetic screen.
+- Replay the 88 images in both styles. All 176 ordinary renders are
+  byte-identical to the baseline. The optional style changes 63 per
+  renderer. Pooled seam RMSE rises on 48 Floyd–Steinberg and 47
+  pixel-art screens, which confirms the reason to keep it opt-in.
+  Independently decode all optional previews and match both of the
+  runner's CLI outputs. All 31 converter tests pass.
+  [Measurements](toolkit/zx_neural/evidence/strong-subject-contrast.json).
+
 ## 2026-11-16 — Accentuate thin source-backed shadow strokes
 
 - Start with the two `9b48c0ab` renders of BSDS500 `226033.jpg`.
