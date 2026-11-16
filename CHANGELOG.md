@@ -1,5 +1,34 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Accentuate thin source-backed shadow strokes
+
+- Start with the two `9b48c0ab` renders of BSDS500 `226033.jpg`.
+  Compare a grayscale palette refit, individual dark-dot replacements
+  and exchanges within a 4×4 tile. The grayscale refit breaks the
+  warm arm colors or increases seam error. Use the existing darker
+  color and prefer the narrow source shadow to scattered dark dots.
+  Its brighter side can receive a displaced light dot when supported
+  by the original. Keep the previous render when native RGB error,
+  strong-edge error or either scale of seam error would increase.
+- The first broad replay disturbed green dots in the still life.
+  Protect primaries whose original hue and luminance already agree,
+  including moderately saturated shades. Confirm that all 454 green
+  pixels in the still life survive in both modes.
+- Compare BRIGHT flips, grouped whites, and exact 4×4 dot counts for
+  the runner's white kit. A direct switch on two cells raises pooled
+  seam RMSE by 0.10. The best matched dot counts pass aggregate
+  metrics and still show a visible cell-aligned white rectangle.
+  This experiment keeps the existing BRIGHT values.
+- Replay all 88 images in both modes. Each changes 35 screens and
+  keeps 53 byte-identical. All 176 keep their attribute bytes. No case
+  has worse RGB error, strong-edge error, seam error, or large false
+  steps on quiet attribute borders. In the bent arm crop, five
+  source-supported stroke pixels darken and 13 pixels change in total.
+  The arm remains partly obscured by the crowd.
+- Independently decode every preview, match the runner's two CLI
+  screens to the replay, and pass all 30 converter tests.
+  [Measurements](toolkit/zx_neural/evidence/subject-stroke-recovery.json).
+
 ## 2026-11-16 — Recover weak source-supported silhouettes
 
 - Start from `d8fe011b` and BSDS500 `226033.jpg`. Use the existing

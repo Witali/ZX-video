@@ -185,6 +185,26 @@ class ConverterTests(unittest.TestCase):
         self.assertIs(restore_weak_subject_edges(flat, original, mask.astype(np.float32)), original)
         self.assertIs(restore_weak_subject_edges(source, original, None), original)
 
+    def test_subject_strokes_recover_a_narrow_diagonal_inside_the_subject(self):
+        from .subject_strokes import restore_subject_strokes
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        mask = (x > 60) & (x < 130) & (y > 30) & (y < 145)
+        line = (x == 62 + y // 3) & (y >= 38) & (y < 134)
+        source = np.repeat(np.where(line, 95, 166)[..., None], 3, axis=-1).astype(np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        screen = pack((x + y) % 5 != 0, attrs)
+        before = independent_decode(screen)
+        original = screen, before
+
+        repaired, after = restore_subject_strokes(source, original, mask.astype(np.float32))
+        np.testing.assert_array_equal(independent_decode(repaired), after)
+        np.testing.assert_array_equal(after[~mask], before[~mask])
+        self.assertEqual(repaired[6144:], screen[6144:])
+        self.assertLess(after[line].mean(), before[line].mean() - 20)
+        self.assertLessEqual(quality(source, after)['pooled_seam_rmse'], quality(source, before)['pooled_seam_rmse'])
+        self.assertIs(restore_subject_strokes(np.full_like(source, 166), original, mask.astype(np.float32)), original)
+
     def test_outline_palette_keeps_black_where_a_stroke_is_required(self):
         from .line_art import fit_outline_palette
         from .screen import to_cells

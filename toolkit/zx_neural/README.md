@@ -89,6 +89,14 @@ keeps the old render if pixel color or silhouette fit worsens.
 [Silhouette measurements](evidence/weak-subject-contours.json) cover
 the same 88 images in both modes.
 
+The subject mask also limits a pass for narrow dark ridges such as
+folds, small gaps or shadows along a limb. It follows the source
+contrast and uses the existing darker color, moving a nearby dot
+within its 4×4 tile when possible. It retains an additional dot only
+when the local tone and measured grid boundaries permit it. The
+pass checks native color, source edges and seam error before accepting
+a render. See the [stroke comparison](evidence/subject-stroke-recovery.json).
+
 The default Floyd–Steinberg and `--pixel-art` modes automatically recover
 dark interior contours in saturated objects. The converter finds narrow
 dark lines in the source, puts the darker palette endpoint along them,
