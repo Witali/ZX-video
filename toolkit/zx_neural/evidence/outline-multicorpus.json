@@ -1,0 +1,175 @@
+{
+  "baseline_commit": "40d10afc",
+  "training": {
+    "seed": 433,
+    "channels": 64,
+    "dtype": "float32",
+    "epochs": 60,
+    "best_epoch": 39,
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5060 Ti",
+    "workers": 6,
+    "threads": 4,
+    "training_screens": 438,
+    "validation_screens": 71,
+    "prepared_corpus_sha256": "7b3b0bd351bf588384c2cc0f2aad75481214464b136eed944b4063c661ecd29f",
+    "parameters": 118968,
+    "weights_bytes": 442541,
+    "weights_sha256": "40b3efee604dfe5463f7fe9146fbfb776a0544f6e1ae3f54a6db06862bf43aed",
+    "initial_weights_sha256": "80caf340ec8ca5ce3ca9cc1ed4a381dfd1518571c0070a1c45f3b0eaa4958ccb",
+    "initial_validation_loss": 2.3452744483947754,
+    "validation_loss": 2.3239614963531494,
+    "preparation_seconds": 286.326442199992,
+    "optimization_seconds": 11.67792090002331,
+    "max_numpy_logit_error": 0.0001964569091796875,
+    "max_device_logit_error": 0.000225067138671875,
+    "unique_sources": 246,
+    "sources_by_dataset": {
+      "clic": 30,
+      "bsds": 90,
+      "dtd": 94,
+      "kylberg": 32
+    }
+  },
+  "validation": {
+    "previous": {
+      "all": 2.3452744483947754,
+      "clic": {
+        "images": 6,
+        "loss": 2.4122931957244873,
+        "teacher_pair_match": 0.6534288194444444
+      },
+      "bsds": {
+        "images": 10,
+        "loss": 2.9221298694610596,
+        "teacher_pair_match": 0.600390625
+      },
+      "dtd": {
+        "images": 47,
+        "loss": 2.5273051261901855,
+        "teacher_pair_match": 0.6425919769503546
+      },
+      "kylberg": {
+        "images": 8,
+        "loss": 0.5045092701911926,
+        "teacher_pair_match": 0.9479166666666666
+      }
+    },
+    "candidate": {
+      "all": 2.3239617347717285,
+      "clic": {
+        "images": 6,
+        "loss": 2.380061626434326,
+        "teacher_pair_match": 0.6651475694444444
+      },
+      "bsds": {
+        "images": 10,
+        "loss": 2.9103102684020996,
+        "teacher_pair_match": 0.5786458333333333
+      },
+      "dtd": {
+        "images": 47,
+        "loss": 2.510051727294922,
+        "teacher_pair_match": 0.6439494680851063
+      },
+      "kylberg": {
+        "images": 8,
+        "loss": 0.4556715488433838,
+        "teacher_pair_match": 0.9588216145833334
+      }
+    }
+  },
+  "test": {
+    "bsds": {
+      "images": 20,
+      "changed": 1,
+      "means": {
+        "previous": {
+          "pooled_rgb_rmse": 35.58840270526707,
+          "pooled_seam_rmse": 19.809623401279477,
+          "outlined_pixels": 120.4
+        },
+        "candidate": {
+          "pooled_rgb_rmse": 35.58823684416711,
+          "pooled_seam_rmse": 19.811692311627645,
+          "outlined_pixels": 119.7
+        }
+      },
+      "changed_scenes": [
+        {
+          "source": "157032.jpg",
+          "previous": {
+            "pooled_rgb_rmse": 35.14611527323723,
+            "pooled_seam_rmse": 21.760178416424143,
+            "screen_sha256": "5d2d16502d745768bee1e1931444a33377d0903ec5db3facb158af63e077dd74",
+            "outlined_pixels": 1935
+          },
+          "candidate": {
+            "pooled_rgb_rmse": 35.14279805123806,
+            "pooled_seam_rmse": 21.801556623387455,
+            "screen_sha256": "cae1342ee7f1e51be6195474039864aa7aeaf4185518c0ba91a952a59c7f6fc0",
+            "outlined_pixels": 1921
+          },
+          "changed_pixels": 24
+        }
+      ]
+    },
+    "clic": {
+      "images": 6,
+      "changed": 0,
+      "means": {
+        "previous": {
+          "pooled_rgb_rmse": 32.04790845513344,
+          "pooled_seam_rmse": 16.623085037879207,
+          "outlined_pixels": 60.666666666666664
+        },
+        "candidate": {
+          "pooled_rgb_rmse": 32.04790845513344,
+          "pooled_seam_rmse": 16.623085037879207,
+          "outlined_pixels": 60.666666666666664
+        }
+      },
+      "changed_scenes": []
+    },
+    "dtd": {
+      "images": 47,
+      "changed": 0,
+      "means": {
+        "previous": {
+          "pooled_rgb_rmse": 37.48640470167107,
+          "pooled_seam_rmse": 19.869143527869184,
+          "outlined_pixels": 0
+        },
+        "candidate": {
+          "pooled_rgb_rmse": 37.48640470167107,
+          "pooled_seam_rmse": 19.869143527869184,
+          "outlined_pixels": 0
+        }
+      },
+      "changed_scenes": []
+    },
+    "kylberg": {
+      "images": 8,
+      "changed": 0,
+      "means": {
+        "previous": {
+          "pooled_rgb_rmse": 37.24401120096445,
+          "pooled_seam_rmse": 27.91460205459497,
+          "outlined_pixels": 0
+        },
+        "candidate": {
+          "pooled_rgb_rmse": 37.24401120096445,
+          "pooled_seam_rmse": 27.91460205459497,
+          "outlined_pixels": 0
+        }
+      },
+      "changed_scenes": []
+    }
+  },
+  "still_life": {
+    "source": "157032.jpg",
+    "bottle_area_changed_pixels": 0,
+    "cli_replay_matches_test": true
+  },
+  "default_checkpoint": "previous"
+}

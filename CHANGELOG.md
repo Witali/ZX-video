@@ -1,5 +1,27 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Continue outline training on four corpora
+
+- **Objective and scope:** Continue from the 64-channel outline weights in
+  `40d10afc`. Retain the 90 BSDS500 and 30 CLIC source photographs and add
+  94 DTD photographs and 32 Kylberg texture patches from the local benchmark
+  corpus. Use the official first DTD split and hold Kylberg materials apart
+  by class. The result has 438 training screens, including 32 synthetic
+  screens, 71 validation screens, and 81 held-out samples.
+- **Training:** Run 60 FP32 epochs on an RTX 5060 Ti. Select epoch 39 using
+  validation loss, which falls from 2.34527 to 2.32396 on the same 71
+  screens. The checkpoint has 118,968 parameters and occupies 442,541 bytes.
+- **Results:** Switching only outline weights changes 24 pixels of the still
+  life and none on the other 80 test images. Its pooled seam RMSE rises from
+  21.760 to 21.802 and its pooled RGB RMSE falls from 35.146 to 35.143. Keep
+  the existing default weights and retain the trained checkpoint for an
+  explicit `--outline-weights` comparison.
+- **Verification:** Checked decoded source hashes for overlap with the
+  training and validation splits. Independently decoded both versions of
+  each native test screen. Both CLI renders of the still life match the
+  evaluator and the bottle pixels are identical. All 18 converter tests pass.
+  [Measurements](toolkit/zx_neural/evidence/outline-multicorpus.json).
+
 ## 2026-11-14 — Apply outlined shading automatically and fine-tune its palette model
 
 - **Objective and baseline:** Use the red and black outlined shading

@@ -139,12 +139,17 @@ def main():
     parser.add_argument("--mode", choices=("spatial", "hybrid", "neural", "spatial-full", "baseline"),
                         help="palette search mode (default: spatial, or hybrid with --pixel-art)")
     parser.add_argument("--weights", type=Path)
+    parser.add_argument("--outline-weights", type=Path,
+                        help="override the outline palette model used by neural pixel-art modes")
     args = parser.parse_args()
     if args.shade_line_art and not args.red_line_art:
         parser.error("--shade-line-art requires --red-line-art")
     args.mode = args.mode or ("hybrid" if args.pixel_art else "spatial")
     args.weights = args.weights or (PIXEL_ART_WEIGHTS if args.pixel_art else DEFAULT_WEIGHTS)
     use_model = not args.red_line_art and args.mode in ("neural", "hybrid")
+    if args.outline_weights and not (args.pixel_art and use_model):
+        parser.error("--outline-weights requires --pixel-art in hybrid or neural mode")
+    outline_weights = (args.outline_weights or OUTLINE_WEIGHTS) if args.pixel_art and use_model else None
     outputs = [path.resolve() for path in (args.screen, args.preview) if path is not None]
     inputs = {args.image.resolve()}
     if args.subject_model:
@@ -153,13 +158,13 @@ def main():
         inputs.add(args.weights.resolve())
         if args.pixel_art:
             inputs.add(CLIC_WIDE_WEIGHTS.resolve())
-            inputs.add(OUTLINE_WEIGHTS.resolve())
+            inputs.add(outline_weights.resolve())
     if inputs.intersection(outputs) or len(set(outputs)) != len(outputs):
         parser.error("outputs must use separate paths from each other and from the inputs")
     try:
         layers = load_weights(args.weights) if use_model else None
         photo_layers = load_weights(CLIC_WIDE_WEIGHTS) if args.pixel_art and use_model else None
-        outline_layers = load_weights(OUTLINE_WEIGHTS) if args.pixel_art and use_model else None
+        outline_layers = load_weights(outline_weights) if outline_weights else None
         with Image.open(args.image) as image:
             rgb = prepare(image, args.crop)
             probability = (SubjectDetector(args.subject_model).predict(image, args.crop)

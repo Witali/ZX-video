@@ -96,7 +96,7 @@ def teacher_screen(image, pixel_art=False, outline=False):
     return features(image, candidates), prior, target, weight
 
 
-def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False, outline=False):
+def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False, outline=False, texture_root=None):
     rng = np.random.default_rng(SEED)
     train_images = []
     source_hashes = {}
@@ -135,10 +135,31 @@ def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False
             train_images.append(prepare(image))
             train_images.extend(augment(image, rng) for _ in range(views - 1))
     train_images.extend(synthetic(rng) for _ in range(32))
+    if texture_root is not None:
+        from .texture_corpus import read_textures, texture_splits
+
+        extra["texture_splits"] = {}
+        for name, (training, selection, holdout) in texture_splits(texture_root):
+            train = list(read_textures(training))
+            val = list(read_textures(selection))
+            test_hashes = {key: sha256(image.tobytes()).hexdigest() for key, image in read_textures(holdout)}
+            source_hashes.update({key: sha256(image.tobytes()).hexdigest() for key, image in train})
+            validation.extend(val)
+            train_images.extend(prepare(image, crop=True) for _, image in train)
+            extra["texture_splits"][name] = dict(training=len(train), validation=len(val),
+                                                 evaluation_pixel_sha256=test_hashes)
     validation_hashes = {name: sha256(image.tobytes()).hexdigest() for name, image in validation}
-    if set(source_hashes.values()) & set(validation_hashes.values()):
+    training_hashes = set(source_hashes.values())
+    selection_hashes = set(validation_hashes.values())
+    if training_hashes & selection_hashes:
         raise ValueError("training and validation photos overlap")
-    images = np.stack(train_images + [prepare(image) for _, image in validation])
+    holdout_hashes = set(extra.get("evaluation_pixel_sha256", {}).values())
+    for part in extra.get("texture_splits", {}).values():
+        holdout_hashes.update(part["evaluation_pixel_sha256"].values())
+    if holdout_hashes & (training_hashes | selection_hashes):
+        raise ValueError("holdout images overlap training or validation")
+    images = np.stack(train_images + [prepare(image, crop=name.startswith(("dtd/", "kylberg/")))
+                                     for name, image in validation])
     signature = sha256(images.tobytes()).hexdigest()
     metadata = dict(source_pixel_sha256=source_hashes, validation_pixel_sha256=validation_hashes,
                     prepared_corpus_sha256=signature, training_screens=len(train_images),
@@ -186,7 +207,7 @@ def teacher_distribution(path, inputs, prior):
 
 
 def train(output, cache, epochs, channels=32, bsds_archive=None, teacher=None, clic_root=None,
-          device="cpu", workers=1, threads=4, pixel_art=False, outline=False, initialize=None):
+          device="cpu", workers=1, threads=4, pixel_art=False, outline=False, initialize=None, texture_root=None):
     device = torch.device(device)
     if device.type == "cuda":
         # cuBLAS requires a workspace configuration for deterministic FP32.
@@ -201,7 +222,9 @@ def train(output, cache, epochs, channels=32, bsds_archive=None, teacher=None, c
         torch.backends.cudnn.conv.fp32_precision = "ieee"
     generator = torch.Generator().manual_seed(SEED)
     prepared = perf_counter()
-    inputs, base, targets, importance, metadata = dataset(cache, bsds_archive, clic_root, workers, pixel_art, outline)
+    inputs, base, targets, importance, metadata = dataset(
+        cache, bsds_archive, clic_root, workers, pixel_art, outline, texture_root,
+    )
     preparation_seconds = perf_counter() - prepared
     x = torch.from_numpy(inputs).permute(0, 3, 1, 2).contiguous()
     y = torch.from_numpy(targets).permute(0, 3, 1, 2).contiguous()
@@ -300,6 +323,7 @@ def main():
     parser.add_argument("--threads", type=int, default=4, help="PyTorch CPU thread count")
     parser.add_argument("--bsds-archive", type=Path, help="BSDS500 archive to extend training to 100 photos")
     parser.add_argument("--clic-root", type=Path, help="use 100 crops from the block-palette CLIC corpus")
+    parser.add_argument("--texture-root", type=Path, help="add sampled DTD and Kylberg textures from the benchmark corpus")
     parser.add_argument("--pixel-art", action="store_true", help="train on the pixel-art palette objective")
     parser.add_argument("--outline", action="store_true", help="include outlined subjects in pixel-art teacher targets")
     parser.add_argument("--initialize", type=Path, help="fine-tune an existing model of the same width")
@@ -310,6 +334,8 @@ def main():
     args = parser.parse_args()
     if args.outline and not args.pixel_art:
         parser.error("--outline requires --pixel-art")
+    if args.texture_root and not args.weights:
+        parser.error("--texture-root requires an explicit --weights output")
     if args.pixel_art and not args.weights:
         parser.error("--pixel-art requires an explicit --weights output")
     if min(args.epochs, args.workers, args.threads) < 1:
@@ -324,7 +350,7 @@ def main():
         parser.error("--teacher requires a distinct, explicit --weights output")
     report = train(output, args.cache, args.epochs, args.channels, args.bsds_archive,
                    args.teacher, args.clic_root, args.device, args.workers, args.threads,
-                   args.pixel_art, args.outline, args.initialize)
+                   args.pixel_art, args.outline, args.initialize, args.texture_root)
     args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf8")
 
 

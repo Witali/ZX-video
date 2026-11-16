@@ -74,6 +74,25 @@ Only pixels with matching source color evidence receive new color.
 python -m toolkit.zx_neural.train --pixel-art --outline --initialize toolkit/zx_neural/weights64-pixel-art.npz --channels 64 --epochs 50 --device cuda --workers 4 --clic-root $clic --bsds-archive $archive --weights .tmp/neural-screen/outline-trained.npz --report .tmp/neural-screen/outline-training.json
 ```
 
+To continue from the outline checkpoint with textures, set `$corpus` to
+the block-palette-compression `.benchmark-corpus` directory. The sampler
+uses two training images and one validation and test image per class
+from the official first split of the [Describable Textures Dataset](https://www.robots.ox.ac.uk/~vgg/data/dtd/)
+by Cimpoi et al. The six-class [Kylberg Texture Dataset v. 1.0](https://kylberg.org/kylberg-texture-dataset-v-1-0/)
+subset uses eight patches per material and holds out whole material
+classes. Reference: G. Kylberg, *The Kylberg Texture Dataset v. 1.0*,
+Centre for Image Analysis, SLU and Uppsala University, External report
+(Blue series) No. 35.
+
+```powershell
+python -m toolkit.zx_neural.train --pixel-art --outline --initialize toolkit/zx_neural/weights64-outline.npz --channels 64 --epochs 60 --device cuda --workers 6 --clic-root $clic --bsds-archive $archive --texture-root $corpus --weights .tmp/neural-screen/outline-multicorpus.npz --report .tmp/neural-screen/outline-multicorpus-training.json
+python -m toolkit.zx_neural.compare_outline_models .tmp/neural-screen/outline-multicorpus-comparison.json --candidate .tmp/neural-screen/outline-multicorpus.npz --training-report .tmp/neural-screen/outline-multicorpus-training.json --clic-root $clic --bsds-archive $archive --texture-root $corpus --subject-model .tmp/neural-screen/u2netp.onnx
+```
+
+Use `--pixel-art --outline-weights toolkit/zx_neural/weights64-outline-multicorpus.npz`
+to try the trained checkpoint. See [the multi-corpus comparison](evidence/outline-multicorpus.json)
+for validation and held-out rendering results.
+
 ```powershell
 python -m toolkit.zx_neural input.jpg drawing.scr --preview drawing.png --red-line-art --shade-line-art --subject-model .tmp/neural-screen/u2netp.onnx
 ```
