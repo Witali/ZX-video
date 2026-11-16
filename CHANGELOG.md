@@ -1,5 +1,29 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Keep blue in dark cool ramps
+
+- Compared muted-blue candidates against the neutral sky from `e06fd109`
+  in the ordinary two-color 8×8 SCR format. Spatially regularized color
+  mixtures still showed mottling at the attribute scale. A uniform blue
+  paper with white dots gave a mean blue level of 193 in the sky crop
+  versus 106 in the source. Sparse blue replacement below the strongest
+  seam threshold produced only a faint tint and visible local mottling.
+- The user selected the continuous blue render from `2f3ea66e`. Keep the
+  source-derived ink hue for connected dark ramps and vary dot density
+  with tone. Remove the cool-ramp neutral replacement. Retain the pale
+  highlight and warm shadow passes.
+- Replayed 88 photos, textures and examples in both modes. Only the
+  rocket changes, and both SCRs match the selected blue render byte for
+  byte. Against the gray baseline, pixel-art pooled RGB RMSE increases
+  from 36.36 to 44.19 and its count of large false steps from 31 to 54.
+  The selected blue is visibly more saturated than the original. Source
+  pixels above 167 in any channel are unchanged on the rocket frame.
+  The portrait, birds and still life stay byte-identical in both modes.
+- Matched both rocket CLI outputs and independently decoded the previews.
+  Checked all 88 sources and 352 SCRs packed into the gallery. All 23
+  converter tests pass, including the new pale-blue gradient case.
+  [Measurements](toolkit/zx_neural/evidence/blue-ramp-reference.json).
+
 ## 2026-11-16 — Fit pale gradients and recover warm shadow detail
 
 - Compare against `2f3ea66e` on the 88-image comparison set in both

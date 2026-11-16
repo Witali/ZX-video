@@ -48,23 +48,24 @@ class ConverterTests(unittest.TestCase):
         all_cells = np.ones((ROWS, COLS), dtype=bool)
         self.assertLess(quiet_seam_error(source, preview, all_cells), .65 * quiet_seam_error(source, old, all_cells))
 
-    def test_muting_a_pale_cool_ramp_improves_color_without_stronger_seams(self):
-        from .dark_ramps import mute_cool_shadows, quiet_seam_error
-        from .subject import pool4
+    def test_pale_blue_ramp_keeps_blue_and_uses_density_for_the_gradient(self):
+        from .dark_ramps import quiet_seam_error, restore_dark_ramps
 
         shades = np.linspace(46, 118, HEIGHT, dtype=np.float32)[:, None]
-        source = np.broadcast_to((shades * [.52, .67, 1])[:, None], (HEIGHT, WIDTH, 3)).astype(np.float32)
+        source = np.broadcast_to((shades * [.52, .67, 1])[:, None], (HEIGHT, WIDTH, 3)).astype(np.uint8)
         y, x = np.indices(source.shape[:2])
         bits = (x + y) % 5 < (source[..., 2] / 41).astype(int)
-        cells = np.ones((ROWS, COLS), dtype=np.uint8)
-        baseline = pack(bits, cells)
+        attrs = np.ones((ROWS, COLS), dtype=np.uint8)
+        attrs[:, COLS // 2:] = 7
+        baseline = pack(bits, attrs)
         old = independent_decode(baseline)
-        screen, preview = mute_cool_shadows(source, (baseline, old), cells, np.ones(bits.shape, dtype=np.uint8))
+        screen, preview = restore_dark_ramps(source, (baseline, old))
 
         np.testing.assert_array_equal(independent_decode(screen), preview)
-        target = pool4(source)
-        self.assertLess(np.mean((pool4(preview) - target) ** 2), np.mean((pool4(old) - target) ** 2))
-        self.assertLess(quiet_seam_error(source, preview, cells != 0), quiet_seam_error(source, old, cells != 0))
+        self.assertTrue((preview[..., :2] == 0).all())
+        self.assertGreater(preview[-24:, :, 2].mean(), preview[:24, :, 2].mean())
+        cells = np.ones((ROWS, COLS), dtype=bool)
+        self.assertLess(quiet_seam_error(source, preview, cells), quiet_seam_error(source, old, cells))
 
     def test_pale_highlight_removes_an_artificial_bright_boundary(self):
         from .tonal_repair import restore_pale_highlights

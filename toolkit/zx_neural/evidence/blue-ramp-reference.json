@@ -1,0 +1,97 @@
+{
+  "baseline": "e06fd109",
+  "blue_reference_commit": "2f3ea66e",
+  "images": 88,
+  "modes": {
+    "photo": {
+      "changed": 1,
+      "unchanged_byte_exact": 87,
+      "rocket": {
+        "before_sha256": "68e9096f4affceb12a9e48d21e38272805a52c8e62a93cdaf7a63c67533d3abf",
+        "after_sha256": "5bbea2f2ac27c754f2694decadcacaad634d1c89e095114c4ae03ced9a6a9e08",
+        "changed_pixels": 13351,
+        "before": {
+          "pooled_rgb_rmse": 36.37240827083588,
+          "pooled_seam_rmse": 14.914311914554759,
+          "strong_edge_rmse": 100.0564570500781
+        },
+        "after": {
+          "pooled_rgb_rmse": 44.2033738642931,
+          "pooled_seam_rmse": 16.218151545661023,
+          "strong_edge_rmse": 98.04943285580333
+        },
+        "local_quiet_seam_rmse": [
+          12.569923206934957,
+          14.53259569500638
+        ],
+        "bright_source_pixels_changed": 0,
+        "cli_matches_benchmark": true,
+        "matches_selected_blue_reference": true,
+        "large_false_steps": [
+          32,
+          55
+        ]
+      },
+      "means": {
+        "before": {
+          "pooled_rgb_rmse": 36.37376688145609,
+          "pooled_seam_rmse": 19.8975895404613,
+          "strong_edge_rmse": 99.02810836427565
+        },
+        "after": {
+          "pooled_rgb_rmse": 36.462755126836285,
+          "pooled_seam_rmse": 19.91240589990569,
+          "strong_edge_rmse": 99.00421521910572
+        }
+      }
+    },
+    "pixel_art": {
+      "changed": 1,
+      "unchanged_byte_exact": 87,
+      "rocket": {
+        "before_sha256": "5663f9b3b6482d967fef40bd4c0c8b08d1e3b5b97f236f70594a0060990efd4c",
+        "after_sha256": "48bfe73219d156e8dae26fe354d7bad7df9570111f641c65093c1d5eb5a8e475",
+        "changed_pixels": 13351,
+        "before": {
+          "pooled_rgb_rmse": 36.35803744196892,
+          "pooled_seam_rmse": 14.772980871661227,
+          "strong_edge_rmse": 97.5308353280366
+        },
+        "after": {
+          "pooled_rgb_rmse": 44.191545099020004,
+          "pooled_seam_rmse": 16.17193095634093,
+          "strong_edge_rmse": 95.47072930393412
+        },
+        "local_quiet_seam_rmse": [
+          12.50529043972825,
+          14.611462492724597
+        ],
+        "bright_source_pixels_changed": 0,
+        "cli_matches_benchmark": true,
+        "matches_selected_blue_reference": true,
+        "large_false_steps": [
+          31,
+          54
+        ]
+      },
+      "means": {
+        "before": {
+          "pooled_rgb_rmse": 36.02644109950316,
+          "pooled_seam_rmse": 20.087652462385254,
+          "strong_edge_rmse": 98.9596836422757
+        },
+        "after": {
+          "pooled_rgb_rmse": 36.115458231969654,
+          "pooled_seam_rmse": 20.103549622438432,
+          "strong_edge_rmse": 98.9351585705602
+        }
+      }
+    }
+  },
+  "false_steps_measurement": "Affected 8x8 boundaries per 4-pixel segment where the largest source RGB step is at most 12 and the largest channel error in the rendered step is at least 48.",
+  "unchanged_examples": [
+    "189029.jpg",
+    "160006.jpg",
+    "157032.jpg"
+  ]
+}

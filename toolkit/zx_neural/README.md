@@ -39,10 +39,9 @@ In both modes, a connected dark gradient can use a shared ink hue and
 vary the Floyd–Steinberg dot density. The converter uses this when the
 source hue is consistent and the existing palette creates visible steps.
 It measures the change at quiet 8×8 boundaries and checks strong source
-edges before retaining the new render. This can render muted shades with
-more saturated ink because the Spectrum has only two colors per cell.
-Pale cool ramps also get a neutral-ink candidate with balanced 4×4 dot
-coverage. It is retained when it improves color fit and quiet seams.
+edges before retaining the new render. The pass keeps the source hue
+when choosing the ink. A muted blue ramp can use more saturated blue
+dots because the Spectrum has only two colors per cell.
 Pale highlights can share one BRIGHT level when the source is continuous.
 For warm shadows that are much darker in the render, the converter uses
 source luminance and local contrast to recover small details. These
