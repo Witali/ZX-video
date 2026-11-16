@@ -11,11 +11,12 @@ def ordered(names, salt):
     return sorted(names, key=lambda name: sha256(f"zx-texture-v1:{salt}:{name}".encode()).digest())
 
 
-def dtd_split(root):
+def dtd_split(root, *, next_sample=False):
     """Sample every DTD class, retaining the official first partition."""
     groups = []
     seen = set()
     for split, count in (("train", 2), ("val", 1), ("test", 1)):
+        offset = count if next_sample and split == "train" else 0
         by_class = defaultdict(list)
         for name in (root / "labels" / f"{split}1.txt").read_text(encoding="utf8").splitlines():
             relative = PurePosixPath(name)
@@ -25,25 +26,27 @@ def dtd_split(root):
                 raise ValueError("invalid or overlapping DTD split entries")
             seen.add(name)
             by_class[relative.parts[0]].append(name)
-        if len(by_class) != 47 or any(len(names) < count for names in by_class.values()):
+        if len(by_class) != 47 or any(len(names) < offset + count for names in by_class.values()):
             raise ValueError("expected all 47 DTD classes in each split")
         groups.append([(f"dtd/{name}", root / "images" / name)
                        for category in sorted(by_class)
-                       for name in ordered(by_class[category], split)[:count]])
+                       for name in ordered(by_class[category], split)[offset:offset + count]])
     return tuple(groups)
 
 
-def kylberg_split(root):
+def kylberg_split(root, *, next_sample=False):
     """Keep whole Kylberg material classes disjoint in the six-class subset."""
     classes = ordered([path.name for path in root.iterdir() if path.is_dir()], "kylberg-classes")
     if len(classes) != 6:
         raise ValueError("expected the six-class Kylberg subset")
     groups = []
     count = 8
-    for partition in (classes[:4], classes[4:5], classes[5:]):
+    for index, partition in enumerate((classes[:4], classes[4:5], classes[5:])):
+        offset = count if next_sample and index == 0 else 0
         groups.append([(f"kylberg/{category}/{name}", root / category / name)
                        for category in partition
-                       for name in ordered([path.name for path in (root / category).glob("*.png")], category)[:count]])
+                       for name in ordered([path.name for path in (root / category).glob("*.png")],
+                                           category)[offset:offset + count]])
         if len(groups[-1]) != len(partition) * count:
             raise ValueError("incomplete Kylberg material class")
     return tuple(groups)
@@ -55,6 +58,6 @@ def read_textures(group):
             yield name, image.convert("RGB")
 
 
-def texture_splits(root):
-    yield "dtd", dtd_split(root / "dtd-r1.0.1" / "dtd")
-    yield "kylberg", kylberg_split(root / "kylberg-v1-small")
+def texture_splits(root, *, next_sample=False):
+    yield "dtd", dtd_split(root / "dtd-r1.0.1" / "dtd", next_sample=next_sample)
+    yield "kylberg", kylberg_split(root / "kylberg-v1-small", next_sample=next_sample)

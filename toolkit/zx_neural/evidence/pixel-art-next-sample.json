@@ -1,0 +1,267 @@
+{
+  "baseline": "cc6ca0f5",
+  "training": {
+    "torch": "2.15.0+cu132",
+    "numpy": "2.5.4",
+    "seed": 433,
+    "dtype": "float32",
+    "channels": 64,
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5060 Ti",
+    "epochs": 60,
+    "best_epoch": 52,
+    "workers": 8,
+    "threads": 4,
+    "training_screens": 378,
+    "validation_screens": 65,
+    "initial_validation_loss": 2.403087615966797,
+    "validation_loss": 2.296382427215576,
+    "training_sample": "next",
+    "teacher_objective": "pixel art",
+    "preparation_seconds": 104.55139050001162,
+    "optimization_seconds": 10.007213000033516,
+    "parameters": 118968,
+    "weights_bytes": 442494,
+    "weights_sha256": "d5af6c6ee25b5243fa7f887c970f435839026d74ba585fae43f4f03664c20ffb",
+    "initial_weights_sha256": "7d717a82c80d448bbc50c5452655bb98927282dba831470ded931c233228acda",
+    "prepared_corpus_sha256": "6cb0956b4866faaeecdb106870f3b791da7ff243dbf92b898bd3936e5cf6da80",
+    "max_numpy_logit_error": 0.000301361083984375,
+    "max_device_logit_error": 0.00023651123046875
+  },
+  "sources": {
+    "BSDS500": 110,
+    "DTD": 94,
+    "Kylberg": 32,
+    "synthetic_screens": 32
+  },
+  "decoded_source_hashes_disjoint_from_previous_training_validation_and_holdout": true,
+  "heldout": {
+    "images": 88,
+    "groups": {
+      "bsds": {
+        "images": 20,
+        "changed": 18,
+        "means": {
+          "previous": {
+            "pooled_rgb_rmse": 35.33189167454839,
+            "pooled_seam_rmse": 19.68275817127718,
+            "strong_edge_rmse": 96.77527783266552
+          },
+          "trained": {
+            "pooled_rgb_rmse": 35.335771361365914,
+            "pooled_seam_rmse": 19.691484152296244,
+            "strong_edge_rmse": 96.77585092159448
+          }
+        }
+      },
+      "clic": {
+        "images": 6,
+        "changed": 6,
+        "means": {
+          "previous": {
+            "pooled_rgb_rmse": 32.02323226258159,
+            "pooled_seam_rmse": 16.543828685791773,
+            "strong_edge_rmse": 96.96560033542623
+          },
+          "trained": {
+            "pooled_rgb_rmse": 32.01449178159237,
+            "pooled_seam_rmse": 16.557623858024808,
+            "strong_edge_rmse": 97.08689582435247
+          }
+        }
+      },
+      "dtd": {
+        "images": 47,
+        "changed": 37,
+        "means": {
+          "previous": {
+            "pooled_rgb_rmse": 37.461949294789676,
+            "pooled_seam_rmse": 19.853816423857594,
+            "strong_edge_rmse": 101.5100080444804
+          },
+          "trained": {
+            "pooled_rgb_rmse": 37.45614284253184,
+            "pooled_seam_rmse": 19.851957213974117,
+            "strong_edge_rmse": 101.46265306534629
+          }
+        }
+      },
+      "kylberg": {
+        "images": 8,
+        "changed": 6,
+        "means": {
+          "previous": {
+            "pooled_rgb_rmse": 37.24401120096445,
+            "pooled_seam_rmse": 27.91460205459497,
+            "strong_edge_rmse": 104.32687275896185
+          },
+          "trained": {
+            "pooled_rgb_rmse": 37.28854101151228,
+            "pooled_seam_rmse": 27.907775492884163,
+            "strong_edge_rmse": 104.31509138753366
+          }
+        }
+      },
+      "examples": {
+        "images": 7,
+        "changed": 6,
+        "means": {
+          "previous": {
+            "pooled_rgb_rmse": 31.53134155486311,
+            "pooled_seam_rmse": 17.106863268031606,
+            "strong_edge_rmse": 84.81554761097674
+          },
+          "trained": {
+            "pooled_rgb_rmse": 31.51679742815239,
+            "pooled_seam_rmse": 17.132274424397643,
+            "strong_edge_rmse": 85.14294185743498
+          }
+        }
+      }
+    },
+    "changed": 73,
+    "current_baseline_cli_screens_match": true
+  },
+  "heldout_means": {
+    "previous": {
+      "pooled_rgb_rmse": 36.115458231969654,
+      "pooled_seam_rmse": 20.103549622438432,
+      "strong_edge_rmse": 98.9351585705602
+    },
+    "trained": {
+      "pooled_rgb_rmse": 36.115534109148115,
+      "pooled_seam_rmse": 20.106881138235387,
+      "strong_edge_rmse": 98.94587856297868
+    }
+  },
+  "focus_scenes": [
+    {
+      "group": "bsds",
+      "source": "107014.jpg",
+      "changed": true,
+      "previous": {
+        "pooled_rgb_rmse": 49.197483882308006,
+        "pooled_seam_rmse": 22.20285929230212,
+        "strong_edge_rmse": 86.49475638860093,
+        "sha256": "22728c16bb38ac1047f5d87a5da029b1ca6f53f87fd7c94ea1461fbc86356a51"
+      },
+      "trained": {
+        "pooled_rgb_rmse": 49.41208876669407,
+        "pooled_seam_rmse": 22.17109278679976,
+        "strong_edge_rmse": 86.49475638860093,
+        "sha256": "6f9481db6662b55e5725ef4d0f198d511907fc8176546f39019f44e92240bf85"
+      },
+      "changed_pixels": 543
+    },
+    {
+      "group": "bsds",
+      "source": "189029.jpg",
+      "changed": false,
+      "previous": {
+        "pooled_rgb_rmse": 22.592139914631844,
+        "pooled_seam_rmse": 10.03943754454645,
+        "strong_edge_rmse": 95.4379273650488,
+        "sha256": "c76deed8894f2e53562659f98384afa76fd83a68ed78dcb13c87df5f4af8e784"
+      },
+      "trained": {
+        "pooled_rgb_rmse": 22.592139914631844,
+        "pooled_seam_rmse": 10.03943754454645,
+        "strong_edge_rmse": 95.4379273650488,
+        "sha256": "c76deed8894f2e53562659f98384afa76fd83a68ed78dcb13c87df5f4af8e784"
+      },
+      "changed_pixels": 0
+    },
+    {
+      "group": "bsds",
+      "source": "160006.jpg",
+      "changed": true,
+      "previous": {
+        "pooled_rgb_rmse": 32.66504980623722,
+        "pooled_seam_rmse": 22.131489017575664,
+        "strong_edge_rmse": 95.57359345209571,
+        "sha256": "8fea93f6a29d1f6813f1f25199df0147d7bc00fb28a182c4b3f700328ec5f570"
+      },
+      "trained": {
+        "pooled_rgb_rmse": 32.68349401652813,
+        "pooled_seam_rmse": 22.20696189443883,
+        "strong_edge_rmse": 95.57359345209571,
+        "sha256": "790b774506c403803b4f87873f8cd40cdff426da4dd16f3edc8f177fa36c3215"
+      },
+      "changed_pixels": 111
+    },
+    {
+      "group": "bsds",
+      "source": "157032.jpg",
+      "changed": true,
+      "previous": {
+        "pooled_rgb_rmse": 33.26979495584965,
+        "pooled_seam_rmse": 21.661162221091686,
+        "strong_edge_rmse": 85.51392391609583,
+        "sha256": "d6501b60622c2ea28b4925a9604a747d46a800c91c2acf5b280414b86ed8264d"
+      },
+      "trained": {
+        "pooled_rgb_rmse": 33.275616243481636,
+        "pooled_seam_rmse": 21.651478904842453,
+        "strong_edge_rmse": 85.51392391609583,
+        "sha256": "e2e1d183a7ca90230ebd83ba5f6fd8f271d71c4f32d55cfa8817ddf53e73fe59"
+      },
+      "green_bottle_pixels_changed": 0,
+      "changed_pixels": 567
+    },
+    {
+      "group": "clic",
+      "source": "clic-3510902dc65b",
+      "changed": true,
+      "previous": {
+        "pooled_rgb_rmse": 33.121545910835266,
+        "pooled_seam_rmse": 20.00214094666641,
+        "strong_edge_rmse": 102.85864695723693,
+        "sha256": "5e360f5f9bf834cbbf5959b33b4b3efdd5cd7fb17a7e8d78cc0dad02240e7d11"
+      },
+      "trained": {
+        "pooled_rgb_rmse": 33.14484626054764,
+        "pooled_seam_rmse": 20.014855323397757,
+        "strong_edge_rmse": 102.85864695723693,
+        "sha256": "d39000f755e8d84762241a3dc175473de32912388bfd705021549a57bca46a3e"
+      },
+      "changed_pixels": 273
+    },
+    {
+      "group": "examples",
+      "source": "rocket.jpg",
+      "changed": true,
+      "previous": {
+        "pooled_rgb_rmse": 44.191545099020004,
+        "pooled_seam_rmse": 16.17193095634093,
+        "strong_edge_rmse": 95.47072930393412,
+        "sha256": "48bfe73219d156e8dae26fe354d7bad7df9570111f641c65093c1d5eb5a8e475"
+      },
+      "trained": {
+        "pooled_rgb_rmse": 44.13030758500099,
+        "pooled_seam_rmse": 16.36328380098185,
+        "strong_edge_rmse": 97.77529064832709,
+        "sha256": "3f789f34fd70033e7e9d1d5952f521c0647218d518e07331279459a02170f859"
+      },
+      "changed_pixels": 325
+    },
+    {
+      "group": "examples",
+      "source": "maelle",
+      "changed": true,
+      "previous": {
+        "pooled_rgb_rmse": 14.45337563753128,
+        "pooled_seam_rmse": 8.604124411907941,
+        "strong_edge_rmse": 76.10214248166903,
+        "sha256": "cf0f450472a92499877c9a78e42d638aae8069d21bd07efcf0af55c206c0b323"
+      },
+      "trained": {
+        "pooled_rgb_rmse": 14.440953154116869,
+        "pooled_seam_rmse": 8.59426849542156,
+        "strong_edge_rmse": 76.09529031430993,
+        "sha256": "43c1aa616d4e9838181022e7923a23e88fc95d742784cdbb18a00a0fb64582e9"
+      },
+      "changed_pixels": 17
+    }
+  ],
+  "default_model": "weights64-pixel-art.npz"
+}

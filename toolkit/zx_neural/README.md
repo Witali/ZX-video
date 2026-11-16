@@ -130,6 +130,21 @@ photo converter are used for comparison.
 python -m toolkit.zx_neural.train --pixel-art --channels 64 --epochs 60 --device cuda --workers 4 --clic-root $clic --bsds-archive $archive --weights .tmp/neural-screen/pixel-art-trained.npz --report .tmp/neural-screen/pixel-art-training.json --cache .tmp/neural-screen/pixel-art-teacher.npz
 ```
 
+### Next training sample
+
+`--next-training-sample` selects previously unused official BSDS500
+training photos and the next DTD and Kylberg samples in the existing
+deterministic ordering. It keeps the same validation and holdout splits.
+The optional weights file uses the normal `--pixel-art --weights` path.
+
+```powershell
+python -m toolkit.zx_neural.train --pixel-art --channels 64 --epochs 60 --device cuda --workers 8 --next-training-sample --bsds-archive $archive --texture-root $corpus --initialize toolkit/zx_neural/weights64-pixel-art.npz --weights .tmp/neural-screen/pixel-art-next-sample.npz --report .tmp/neural-screen/pixel-art-next-sample-training.json
+python -m toolkit.zx_neural input.jpg output.scr --pixel-art --weights toolkit/zx_neural/weights64-pixel-art-next-sample.npz --preview output.png
+```
+
+The [next-sample report](evidence/pixel-art-next-sample.json) compares
+this checkpoint with the default on 88 held-out inputs.
+
 See [training measurements](evidence/pixel-art.json) for the effect of
 the newly trained weights and [gradient measurements](evidence/pixel-art-gradients.json)
 for the comparison after adding the smooth-gradient guard.

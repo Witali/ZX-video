@@ -16,7 +16,7 @@ VALIDATION_PHOTOS = 10
 CLIC_TRAIN_PATCHES = 100
 
 
-def read_photos(archive, split, count):
+def read_photos(archive, split, count, *, offset=0):
     """Sample by a fixed hash of each image name, before viewing any outputs."""
     with ZipFile(archive) as source:
         prefix = f"/BSDS500/data/images/{split}/"
@@ -25,12 +25,14 @@ def read_photos(archive, split, count):
         if len(paths) != expected:
             raise ValueError(f"expected {expected} BSDS500 {split} photos, got {len(paths)}")
         paths.sort(key=lambda path: sha256(f"zx-neural-v2:{PurePosixPath(path).name}".encode()).digest())
-        for path in paths[:count]:
+        for path in paths[offset:offset + count]:
             with Image.open(BytesIO(source.read(path))) as image:
                 yield PurePosixPath(path).name, image.convert("RGB")
 
 
-def read_training_photos(archive):
+def read_training_photos(archive, *, next_sample=False):
+    if next_sample:
+        return read_photos(archive, "train", 200 - ADDITIONAL_TRAIN_PHOTOS, offset=ADDITIONAL_TRAIN_PHOTOS)
     return read_photos(archive, "train", ADDITIONAL_TRAIN_PHOTOS)
 
 

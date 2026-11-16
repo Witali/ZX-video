@@ -1,5 +1,28 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Fine-tune the pixel-art model on the next source sample
+
+- Continue the 64-channel pixel-art model from `cc6ca0f5`. Use the 110
+  remaining official BSDS500 training photographs, the next two official
+  DTD training images per class, and the next eight Kylberg patches per
+  training material. The decoded hashes of all 236 sources are disjoint
+  from the prior training, checkpoint-selection and 88-image evaluation
+  sets. Train on 378 screens including crops and 32 synthetic scenes.
+- Run 60 FP32 epochs with eight teacher workers on an RTX 5060 Ti. The
+  first launch loaded a CPU-only PyTorch build, so rerun with the local
+  CUDA build. Select epoch 52 as validation loss falls from 2.40309 to
+  2.29638 on 65 screens. The checkpoint contains 118,968 parameters and
+  occupies 442,494 bytes.
+- Replay 88 held-out images using the same converter for the old and new
+  models. The overall pooled RGB RMSE is 36.11546 versus 36.11553. The
+  pooled seam RMSE is 20.10355 versus 20.10688. The CLIC background
+  square remains visible with the new weights. Keep the checkpoint
+  available through the existing `--weights` option.
+- Independently decode both variants and verify all 88 baseline SCRs
+  against the previous gallery.
+  [Training and evaluation](toolkit/zx_neural/evidence/pixel-art-next-sample.json).
+  [Reproduction command](toolkit/zx_neural/README.md#next-training-sample).
+
 ## 2026-11-16 — Keep blue in dark cool ramps
 
 - Compared muted-blue candidates against the neutral sky from `e06fd109`

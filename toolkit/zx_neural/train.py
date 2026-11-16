@@ -96,7 +96,8 @@ def teacher_screen(image, pixel_art=False, outline=False):
     return features(image, candidates), prior, target, weight
 
 
-def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False, outline=False, texture_root=None):
+def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False, outline=False, texture_root=None,
+            next_sample=False):
     rng = np.random.default_rng(SEED)
     train_images = []
     source_hashes = {}
@@ -116,18 +117,18 @@ def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False
             from .photo_corpus import read_training_photos, read_validation_photos
 
             extra["corpus"] = "CLIC 2020 Professional Validation and BSDS500"
-            for name, image in read_training_photos(bsds_archive):
+            for name, image in read_training_photos(bsds_archive, next_sample=next_sample):
                 source_hashes[name] = sha256(image.tobytes()).hexdigest()
                 train_images.extend((prepare(image), augment(image, rng)))
             validation.extend(read_validation_photos(bsds_archive))
     elif bsds_archive is None:
-        sources = [(name, read_source(kind, name), VIEWS) for kind, name in training_sources()]
+        sources = [(name, read_source(kind, name), VIEWS) for kind, name in training_sources()] if not next_sample else []
         validation = [(name, read_source(kind, name)) for kind, name in VALIDATION]
     else:
         from .photo_corpus import read_training_photos, read_validation_photos
 
-        sources = [(name, read_source("photo", name), 2) for name in TRAIN_PHOTOS]
-        sources.extend((name, image, 2) for name, image in read_training_photos(bsds_archive))
+        sources = [(name, read_source("photo", name), 2) for name in TRAIN_PHOTOS] if not next_sample else []
+        sources.extend((name, image, 2) for name, image in read_training_photos(bsds_archive, next_sample=next_sample))
         validation = list(read_validation_photos(bsds_archive))
     if clic_root is None:
         for name, image, views in sources:
@@ -139,7 +140,7 @@ def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False
         from .texture_corpus import read_textures, texture_splits
 
         extra["texture_splits"] = {}
-        for name, (training, selection, holdout) in texture_splits(texture_root):
+        for name, (training, selection, holdout) in texture_splits(texture_root, next_sample=next_sample):
             train = list(read_textures(training))
             val = list(read_textures(selection))
             test_hashes = {key: sha256(image.tobytes()).hexdigest() for key, image in read_textures(holdout)}
@@ -148,6 +149,14 @@ def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False
             train_images.extend(prepare(image, crop=True) for _, image in train)
             extra["texture_splits"][name] = dict(training=len(train), validation=len(val),
                                                  evaluation_pixel_sha256=test_hashes)
+    if next_sample:
+        extra["training_sample"] = "next"
+        if bsds_archive is not None:
+            from .photo_corpus import read_evaluation_photos
+
+            extra.setdefault("evaluation_pixel_sha256", {}).update(
+                (name, sha256(image.tobytes()).hexdigest()) for name, image in read_evaluation_photos(bsds_archive)
+            )
     validation_hashes = {name: sha256(image.tobytes()).hexdigest() for name, image in validation}
     training_hashes = set(source_hashes.values())
     selection_hashes = set(validation_hashes.values())
@@ -207,7 +216,8 @@ def teacher_distribution(path, inputs, prior):
 
 
 def train(output, cache, epochs, channels=32, bsds_archive=None, teacher=None, clic_root=None,
-          device="cpu", workers=1, threads=4, pixel_art=False, outline=False, initialize=None, texture_root=None):
+          device="cpu", workers=1, threads=4, pixel_art=False, outline=False, initialize=None, texture_root=None,
+          next_sample=False):
     device = torch.device(device)
     if device.type == "cuda":
         # cuBLAS requires a workspace configuration for deterministic FP32.
@@ -223,7 +233,7 @@ def train(output, cache, epochs, channels=32, bsds_archive=None, teacher=None, c
     generator = torch.Generator().manual_seed(SEED)
     prepared = perf_counter()
     inputs, base, targets, importance, metadata = dataset(
-        cache, bsds_archive, clic_root, workers, pixel_art, outline, texture_root,
+        cache, bsds_archive, clic_root, workers, pixel_art, outline, texture_root, next_sample,
     )
     preparation_seconds = perf_counter() - prepared
     x = torch.from_numpy(inputs).permute(0, 3, 1, 2).contiguous()
@@ -324,6 +334,8 @@ def main():
     parser.add_argument("--bsds-archive", type=Path, help="BSDS500 archive to extend training to 100 photos")
     parser.add_argument("--clic-root", type=Path, help="use 100 crops from the block-palette CLIC corpus")
     parser.add_argument("--texture-root", type=Path, help="add sampled DTD and Kylberg textures from the benchmark corpus")
+    parser.add_argument("--next-training-sample", action="store_true",
+                        help="train on the next disjoint BSDS500, DTD and Kylberg samples using the same validation splits")
     parser.add_argument("--pixel-art", action="store_true", help="train on the pixel-art palette objective")
     parser.add_argument("--outline", action="store_true", help="include outlined subjects in pixel-art teacher targets")
     parser.add_argument("--initialize", type=Path, help="fine-tune an existing model of the same width")
@@ -334,6 +346,8 @@ def main():
     args = parser.parse_args()
     if args.outline and not args.pixel_art:
         parser.error("--outline requires --pixel-art")
+    if args.next_training_sample and (not args.weights or not (args.bsds_archive or args.texture_root)):
+        parser.error("--next-training-sample requires a BSDS500 archive or texture corpus and explicit --weights")
     if args.texture_root and not args.weights:
         parser.error("--texture-root requires an explicit --weights output")
     if args.pixel_art and not args.weights:
@@ -350,7 +364,7 @@ def main():
         parser.error("--teacher requires a distinct, explicit --weights output")
     report = train(output, args.cache, args.epochs, args.channels, args.bsds_archive,
                    args.teacher, args.clic_root, args.device, args.workers, args.threads,
-                   args.pixel_art, args.outline, args.initialize, args.texture_root)
+                   args.pixel_art, args.outline, args.initialize, args.texture_root, args.next_training_sample)
     args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf8")
 
 
