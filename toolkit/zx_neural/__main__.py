@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image
 
 from .brightness import repair_brightness
+from .dark_ramps import restore_dark_ramps
 from .dither import DitherCandidates
 from .halftones import restore_halftones
 from .inner_contours import restore_inner_contours
@@ -83,6 +84,7 @@ def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layer
             if outline_layers is not None:
                 preference = -.003 * np.tanh(predict(features(rgb, candidates), outline_layers))
             current = outline_subjects(rgb, current, probability, preference=preference)
+        current = restore_dark_ramps(rgb, current)
     return current
 
 

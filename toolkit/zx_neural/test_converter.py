@@ -23,6 +23,31 @@ from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
+    def test_dark_ramp_removes_false_palette_steps_and_keeps_a_real_highlight(self):
+        from .dark_ramps import quiet_seam_error, restore_dark_ramps
+
+        shades = np.arange(30, 80, 50 / WIDTH)
+        gradient = shades[:, None] * np.array([.45, .68, 1])
+        source = np.broadcast_to(gradient, (HEIGHT, WIDTH, 3)).astype(np.uint8)
+        source[72:120, 120:128] = 205
+        attrs = np.full((ROWS, COLS), 1, dtype=np.uint8)
+        attrs[:, 8:15] = 5
+        attrs[:, 16:24] = 7
+        attrs[9:15, 15] = 7
+        y, x = np.indices(source.shape[:2])
+        bits = (x + y) % 3 == 0
+        bits[72:120, 120:128] = True
+        baseline = pack(bits, attrs)
+        old = independent_decode(baseline)
+        screen, preview = restore_dark_ramps(source, (baseline, old))
+
+        np.testing.assert_array_equal(independent_decode(screen), preview)
+        np.testing.assert_array_equal(preview[72:120, 120:128], old[72:120, 120:128])
+        self.assertTrue((preview[:64, :, :2] == 0).all())
+        self.assertGreater(preview[:64, 224:, 2].mean(), preview[:64, :32, 2].mean())
+        all_cells = np.ones((ROWS, COLS), dtype=bool)
+        self.assertLess(quiet_seam_error(source, preview, all_cells), .65 * quiet_seam_error(source, old, all_cells))
+
     def test_outline_palette_keeps_black_where_a_stroke_is_required(self):
         from .line_art import fit_outline_palette
         from .screen import to_cells

@@ -31,9 +31,16 @@ It scores both the native pixels and nearby 3×3 averages and protects
 strong source edges. The converter retains accurately represented color
 accents and can keep details
 inside the detected silhouette when `--subject-model` is supplied.
-Smooth gradients retain the photo renderer's palette and fine diffusion.
+The pixel-art stage retains the photo palette and fine diffusion in
+smooth gradients.
 The converter detects these regions by measuring source texture after
 subtracting a local average, so shallow ramps can keep their shading.
+In both modes, a connected dark gradient can use a shared ink hue and
+vary the Floyd–Steinberg dot density. The converter uses this when the
+source hue is consistent and the existing palette creates visible steps.
+It measures the change at quiet 8×8 boundaries and checks strong source
+edges before retaining the new render. This can render muted shades with
+more saturated ink because the Spectrum has only two colors per cell.
 
 The default Floyd–Steinberg and `--pixel-art` modes automatically recover
 dark interior contours in saturated objects. The converter finds narrow

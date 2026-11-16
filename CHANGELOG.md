@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Suppress false color steps in connected dark gradients
+
+- Traced the rectangular gray and cyan areas in the rocket photograph
+  to the first palette selection and Floyd–Steinberg pass in `55122545`.
+  Increasing the pair transition weight from 0.025 to 0.13–3 left the
+  false regions visible. A uniform cyan trial shifted the entire sky
+  toward green. An initial blue trial reduced the blocks but increased
+  whole-screen pooled seam RMSE from 16.48 to 18.87 in photo mode.
+- Use a common black and ink pair for a connected, similarly tinted dark
+  gradient and derive coverage from the source. Retain the candidate
+  when quiet-border RMSE improves by more than 3% and strong-edge RMSE
+  increases by at most 0.5. Keep high-intensity cells outside the pass.
+- Replayed all 88 sources from the previous comparison in both modes
+  with U²-NetP. Three images change in each mode. The other 85 SCRs in
+  each mode are byte-identical, including the still life. On the rocket
+  photo, large false steps drop from 75 to 55 in photo mode and from 77
+  to 54 in pixel-art mode. The pixel-art pooled seam RMSE drops from
+  16.63 to 16.17. Its pooled RGB RMSE rises from 38.61 to 44.19 as the
+  dark sky takes on a more saturated, consistent blue.
+- Inspected both versions of the three changed scenes. Independently
+  decoded the native screens and matched both rocket CLI outputs to the
+  benchmark bytes. No source pixels with a channel above 167 changed
+  on the rocket screen. All 21 converter tests pass.
+  [Measurements](toolkit/zx_neural/evidence/dark-ramp-seams.json).
+
 ## 2026-11-16 — Preserve source edges and halftones in automatic outlines
 
 - Compare the claw and shell contours on the
