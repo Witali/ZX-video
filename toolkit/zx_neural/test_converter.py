@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 from PIL import Image
@@ -40,7 +41,24 @@ class ConverterTests(unittest.TestCase):
         np.testing.assert_array_equal(paper[4, 6], (0, 0, 0))
         np.testing.assert_array_equal(paper[4, 7], (255, 0, 0))
         self.assertTrue(np.all(ink[4, 7] >= paper[4, 7]))
-        self.assertTrue(np.all((coverage[32:40, 56:64] > 0) & (coverage[32:40, 56:64] <= .16)))
+        tint = coverage[32:40, 56:64]
+        self.assertTrue(np.all((tint > 0) & (tint <= .20)))
+        self.assertLess(tint[4, 0], tint[4, 4])
+
+    def test_softer_outline_keeps_the_previous_render_if_a_strong_edge_degrades(self):
+        from . import line_art
+
+        middle = WIDTH // 2
+        source = np.full((HEIGHT, WIDTH, 3), 60, dtype=np.uint8)
+        source[:, middle:] = 190
+        reference = (b"reference", np.zeros_like(source))
+        previous = (b"previous", source - 60)
+        softened_image = source.copy()
+        softened_image[:, middle - 1:middle + 1] = 125
+        softened = (b"softened", softened_image)
+
+        with patch.object(line_art, "draw_outline_subjects", side_effect=(reference, previous, softened)):
+            self.assertIs(line_art.outline_subjects(source, reference), previous)
 
     def test_outline_subjects_uses_source_hues_and_keeps_incompatible_cells(self):
         from .line_art import outline_subjects

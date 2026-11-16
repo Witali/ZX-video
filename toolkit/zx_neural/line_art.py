@@ -94,7 +94,7 @@ def render_red_line_art(source, probability=None, *, shaded=False):
     return pack(canvas, attrs), preview
 
 
-def fit_outline_palette(rgb, hue, bright, shape_cells, fill, black, cells, coverage):
+def fit_outline_palette(rgb, hue, bright, shape_cells, fill, black, cells, coverage, *, soft_contours=True):
     """Fit BRIGHT and allow a highlight endpoint only in wholly lit cells."""
     source = to_cells(rgb)
     lit = to_cells(fill)
@@ -128,7 +128,7 @@ def fit_outline_palette(rgb, hue, bright, shape_cells, fill, black, cells, cover
             highlight = PALETTE[brightness[interior] + tint].astype(np.float32)[:, None, None, :]
             delta = highlight - base
             amount = (((pixels - base) * delta) @ COLOR_WEIGHT) / ((delta ** 2) @ COLOR_WEIGHT)
-            amount = np.clip(amount, 0, .16)
+            amount = np.clip(amount, 0, .20 if soft_contours else .16)
             blended = base + amount[..., None] * delta
             cost = (((blended - pixels) ** 2) @ COLOR_WEIGHT).mean(axis=(1, 2)) + 200
             better = cost < error
@@ -136,6 +136,12 @@ def fit_outline_palette(rgb, hue, bright, shape_cells, fill, black, cells, cover
         ink_hues[interior] = chosen
         paper_hues[interior] = np.where(chosen != hue, hue, 0)
         balance[interior] = levels
+        if soft_contours:
+            # Ease off the tint where the neighboring pair cannot represent it.
+            highlight_cells = paper_hues != 0
+            highlight_area = from_cells(np.broadcast_to(highlight_cells[..., None, None], lit.shape))
+            tint_strength = .4 + .6 * box_mean(highlight_area, 5)
+            balance = np.where(highlight_cells[..., None, None], balance * to_cells(tint_strength), balance)
     attrs = (brightness << 3) | (paper_hues << 3) | ink_hues
     return attrs, from_cells(balance), PALETTE[brightness + paper_hues], PALETTE[brightness + ink_hues]
 
@@ -143,6 +149,43 @@ def fit_outline_palette(rgb, hue, bright, shape_cells, fill, black, cells, cover
 def outline_subjects(source, current, probability=None, *, preference=None, unmasked_chroma=.44,
                      fit_palette=True):
     """Shade suitable colored objects while keeping source-supported contours."""
+    options = dict(probability=probability, preference=preference, unmasked_chroma=unmasked_chroma)
+    reference = draw_outline_subjects(source, current, **options, fit_palette=False, soft_contours=False)
+    if not fit_palette:
+        return reference
+
+    target = pool4(source)
+    previous = draw_outline_subjects(source, current, **options, fit_palette=True, soft_contours=False)
+    reference_error = np.mean((pool4(reference[1]) - target) ** 2)
+    previous_error = np.mean((pool4(previous[1]) - target) ** 2)
+    if previous is current or previous_error >= reference_error:
+        previous, previous_error = reference, reference_error
+
+    softened = draw_outline_subjects(source, current, **options, fit_palette=True, soft_contours=True)
+    if softened is current or np.mean((pool4(softened[1]) - target) ** 2) >= previous_error:
+        return previous
+    errors = strong_edge_errors(source, (previous[1], softened[1]))
+    return softened if errors[1] <= errors[0] + .5 else previous
+
+
+def strong_edge_errors(source, previews):
+    """Measure RGB step error on high-contrast source edges in both directions."""
+    source = source.astype(np.float32)
+    totals = np.zeros(len(previews), dtype=np.float64)
+    count = 0
+    for axis in (0, 1):
+        delta = np.diff(source, axis=axis)
+        important = np.abs(delta).max(axis=-1) >= .30 * 255
+        count += int(important.sum())
+        for i, preview in enumerate(previews):
+            steps = np.diff(preview.astype(np.float32), axis=axis)
+            totals[i] += np.square((steps - delta)[important]).sum(dtype=np.float64)
+    return np.sqrt(totals / max(1, 3 * count))
+
+
+def draw_outline_subjects(source, current, probability, *, preference, unmasked_chroma,
+                          fit_palette, soft_contours):
+    """Propose a legal rendering inside the existing outline and seam limits."""
     screen, preview = current
     rgb = source.astype(np.float32)
     chroma = np.ptp(rgb, axis=-1)
@@ -161,7 +204,11 @@ def outline_subjects(source, current, probability=None, *, preference=None, unma
     light = rgb @ LUMA
     smooth = box_mean(light, 3)
     edges = thin_edges(.8 * light + .27 * chroma)
-    shadow_ratio = .79 if fit_palette else .85
+    if soft_contours:
+        # Unsigned gradient peaks can sit on a bright rim. Keep an inner
+        # stroke only where the source is darker than its neighborhood.
+        edges &= light < box_mean(light, 9) - 6
+    shadow_ratio = .72 if soft_contours else (.79 if fit_palette else .85)
     attrs, bits, _, _ = screen_pixels(screen, preview)
     bright = ((attrs & 64) != 0).astype(np.uint8) * 8
     original = to_cells(preview)
@@ -229,7 +276,8 @@ def outline_subjects(source, current, probability=None, *, preference=None, unma
             continue
         if fit_palette:
             fitted, coverage, paper, ink = fit_outline_palette(rgb, hue, bright, part_cells,
-                                                               fill, black, cells, coverage)
+                                                               fill, black, cells, coverage,
+                                                               soft_contours=soft_contours)
             delta = (ink.astype(np.float32) - paper) / 255
             direction = from_cells(np.broadcast_to(delta[..., None, None, :], (*part_cells.shape, 3)))
         else:
@@ -249,22 +297,11 @@ def outline_subjects(source, current, probability=None, *, preference=None, unma
         reserved |= cells
 
     if not reserved.any():
-        if fit_palette:
-            return outline_subjects(source, current, probability, preference=preference,
-                                    unmasked_chroma=unmasked_chroma, fit_palette=False)
         return current
     result = from_cells(output)
     mask = np.zeros(source.shape[:2], dtype=np.float32)
     original_seams = subject_scores(source, preview, mask)["seam_rmse"]
     styled_seams = subject_scores(source, result, mask)["seam_rmse"]
-    if fit_palette:
-        reference = outline_subjects(source, current, probability, preference=preference,
-                                     unmasked_chroma=unmasked_chroma, fit_palette=False)
-        target = pool4(source)
-        reference_error = np.mean((pool4(reference[1]) - target) ** 2)
-        fitted_error = np.mean((pool4(result) - target) ** 2)
-        if styled_seams > original_seams + .8 or fitted_error >= reference_error:
-            return reference
     if styled_seams > original_seams + .8:
         return current
     return pack(from_cells(new_bits), new_attrs), result

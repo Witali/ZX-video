@@ -1,5 +1,33 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Preserve source edges and halftones in automatic outlines
+
+- Compare the claw and shell contours on the
+  still life against the source and replay the full 81-image held-out
+  suite and seven project examples against `b998bd91`. Run both the
+  standard Floyd–Steinberg and neural pixel-art modes with U²-NetP.
+- Tested a thinner contour with the existing tint
+  limit and a softer contour with graduated highlights. The thinner and
+  unguarded softer trials raised strong-edge RMSE on `41085.jpg` from
+  112.49 to 122.60 and 123.31, respectively. The unguarded pass also
+  slightly raised pooled RGB error on the cat example. Keep dark strokes
+  on the darker side of source edges and reduce the shadow threshold
+  from 0.79 to 0.72. Allow up to 20% tint coverage and taper it near
+  cells using black. Select this rendering only when it lowers pooled
+  RGB error and increases strong-edge RMSE by at most 0.5 on the 0–255
+  scale. Retain the existing seam limit and source fill mask.
+- The same three images change in both modes. Each improves
+  in pooled RGB, pooled seam and strong-edge RMSE. The other 85 native
+  screens are byte-identical in each mode. The still-life claw crop
+  improves from 46.30 to 40.27 pooled RGB RMSE and from 39.94 to 31.26
+  local luma RMSE in pixel-art mode. The bottle crop is pixel-identical
+  in both modes.
+- Examined source and before/after previews for each
+  changed scene. Independently decoded 352 SCR outputs and verified the
+  byte hashes of both CLI renders for the final still life. All 20
+  converter tests pass.
+  [Measurements and source list](toolkit/zx_neural/evidence/outline-source-likeness.json).
+
 ## 2026-11-16 — Fit claw highlights and shadows to the source colors
 
 - **Objective and baseline:** Improve the separation of claws and shell in
