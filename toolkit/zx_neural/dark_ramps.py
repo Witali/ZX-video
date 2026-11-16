@@ -62,6 +62,29 @@ def fit_ramp_coverage(level, rgb, preview, cells, ink):
     return level + (coverage - initial).repeat(4, axis=0).repeat(4, axis=1)
 
 
+def safe_ramp_tiles(source, before, after):
+    """Protect quiet 8×8 borders when substituting individual 4×4 dot counts."""
+    target, previous, candidate = map(pool4, (source, before, after))
+    safe = np.ones(target.shape[:2], dtype=bool)
+    for axis in (0, 1):
+        ref, old, new = (np.moveaxis(values, axis, 0) for values in (target, previous, candidate))
+        step = ref[2::2] - ref[1:-1:2]
+        old_error = np.abs(old[2::2] - old[1:-1:2] - step).max(axis=-1)
+        quiet = np.abs(step).max(axis=-1) <= 12
+
+        def sharper(head, tail):
+            error = np.abs(tail - head - step).max(axis=-1)
+            return quiet & (error >= 48) & ((old_error < 48) | (error > old_error))
+
+        # Check both edits together and either edit alone so the result
+        # stays safe if a neighbor is kept for a different border.
+        both = sharper(new[1:-1:2], new[2::2])
+        keep = np.moveaxis(safe, axis, 0)
+        keep[1:-1:2] &= ~(both | sharper(new[1:-1:2], old[2::2]))
+        keep[2::2] &= ~(both | sharper(old[1:-1:2], new[2::2]))
+    return safe.repeat(4, axis=0).repeat(4, axis=1)
+
+
 def restore_dark_ramps(source, current):
     """Keep a common black/ink pair across a smooth, similarly tinted shadow."""
     screen, preview = current
@@ -131,6 +154,24 @@ def restore_dark_ramps(source, current):
     old_edges, new_edges = strong_edge_errors(rgb, (preview, result))
     if new_edges > old_edges + .5:
         return current
+
+    if new_seam < .97 * old_seam:
+        # Keep the accepted ink and brightness ramp. Correct local dot
+        # counts only where Floyd's dot placement adds visible steps.
+        balanced = balance_coverage(level, shaded)
+        candidate = np.where(active[..., None], np.where(balanced[..., None], ink, 0), preview).astype(np.uint8)
+        safe = safe_ramp_tiles(rgb, result, candidate)
+        balanced = np.where(safe, balanced, shaded)
+        candidate = np.where(safe[..., None], candidate, result)
+        candidate_seam = quiet_seam_error(rgb, candidate, cells)
+        if candidate_seam < new_seam - max(.25, .06 * new_seam):
+            target = pool4(rgb)
+            color_error = np.mean((pool4(result) - target) ** 2)
+            balanced_error = np.mean((pool4(candidate) - target) ** 2)
+            if balanced_error <= color_error:
+                candidate_edges, = strong_edge_errors(rgb, (candidate,))
+                if candidate_edges <= min(new_edges + .1, old_edges + .5):
+                    shaded, result = balanced, candidate
 
     attrs, bits, _, _ = screen_pixels(screen, preview)
     return pack(np.where(active, shaded, bits), np.where(cells, selected, attrs)), result

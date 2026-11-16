@@ -64,6 +64,9 @@ dots because the Spectrum has only two colors per cell.
 If the uniform ink still leaves a step against nearby fixed cells, a
 second pass fits dot density across quiet borders while limiting edits
 near strong source edges.
+Accepted ramps can also rebalance their 4×4 dot counts with the same
+ink. The converter protects tiles where that change would introduce or
+sharpen a step across a quiet 8×8 border.
 Pale highlights can share one BRIGHT level when the source is continuous.
 For warm shadows that are much darker in the render, the converter uses
 source luminance and local contrast to recover small details. These

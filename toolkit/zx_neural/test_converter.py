@@ -114,6 +114,17 @@ class ConverterTests(unittest.TestCase):
         self.assertAlmostEqual(adjusted[64, 64], .4, delta=.01)
         self.assertLess(adjusted[64, 100], .36)
 
+    def test_balanced_ramp_tiles_preserve_quiet_borders(self):
+        from .dark_ramps import safe_ramp_tiles
+
+        source = np.full((HEIGHT, WIDTH, 3), (12, 34, 60), dtype=np.uint8)
+        before = np.full_like(source, (0, 0, 52))
+        candidate = before.copy()
+        candidate[0:4, 4:8, 2] = 104
+        self.assertFalse(safe_ramp_tiles(source, before, candidate)[0, 4])
+        source[:, :8, 2] = 112
+        self.assertTrue(safe_ramp_tiles(source, before, candidate)[0, 4])
+
     def test_pale_highlight_removes_an_artificial_bright_boundary(self):
         from .tonal_repair import restore_pale_highlights
 

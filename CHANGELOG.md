@@ -1,5 +1,26 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Balance dot density within accepted dark ramps
+
+- Start with the approved hue and existing Floyd render from `3f2de428`.
+  The first pass balanced all 4×4 dot counts. It reduced average seam
+  error on the rocket and increased large steps at some quiet borders.
+  Preserve the old tile whenever changing either side or both sides
+  would introduce or worsen a sharp 8×8 step on a quiet source border.
+- Use the refined dots only when the measured quiet seam error falls
+  by at least 6% and 0.25 points, pooled color error improves or holds,
+  and the strong-edge checks pass. Keep the existing ramp ink and
+  attribute layout.
+- Replay all 88 images in both modes. The wildcat, bubble texture and
+  rocket change in each mode. All attribute bytes match the baseline.
+  In pixel-art mode the rocket's pooled seam RMSE drops from 16.17 to
+  15.23. Large false steps across its quiet borders fall from 73 to 71.
+  The tally does not rise on any tested screen.
+- Independently decode the previews and verify both rocket CLI renders.
+  The cardinal's `--align-cells` output still matches its accepted
+  alignment. All 27 tests pass.
+  [Measurements](toolkit/zx_neural/evidence/ramp-density-balance.json).
+
 ## 2026-11-16 — Search small framing changes for attribute alignment
 
 - Add the optional `--align-cells` mode. Test translations up to three
