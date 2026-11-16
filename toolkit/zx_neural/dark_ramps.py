@@ -5,7 +5,7 @@ import numpy as np
 from .line_art import strong_edge_errors
 from .objective import COLOR_WEIGHT
 from .screen import PALETTE, from_cells, pack, to_cells
-from .smooth import diffuse_coverage
+from .smooth import balance_coverage, diffuse_coverage
 from .subject import LUMA, box_mean, pool4, screen_pixels
 from .subject_continuity import connected_pixels
 
@@ -27,6 +27,39 @@ def quiet_seam_error(source, preview, changed):
         error += np.square((output_step - original_step)[quiet]).sum(dtype=np.float64)
         count += int(quiet.sum())
     return float(np.sqrt(error / max(1, 3 * count)))
+
+
+def fit_ramp_coverage(level, rgb, preview, cells, ink):
+    """Fit each 4×4 mean to the ramp and to the render outside its boundary."""
+    initial = pool4(level.clip(0, 1))
+    coverage = initial.copy()
+    axis = pool4(ink)
+    source = pool4(rgb)
+    fixed = pool4(preview)
+    active = cells.repeat(2, axis=0).repeat(2, axis=1)
+    source_x = np.abs(np.diff(source, axis=1)).max(axis=-1)
+    source_y = np.abs(np.diff(source, axis=0)).max(axis=-1)
+    # Real source edges limit how much adjacent targets can influence one
+    # another. Give additional weight to quiet seams against fixed cells.
+    horizontal = np.exp(-(source_x / 24) ** 2) * np.where(active[:, 1:] & active[:, :-1], .9, 1.8)
+    vertical = np.exp(-(source_y / 24) ** 2) * np.where(active[1:] & active[:-1], .9, 1.8)
+    neighbor_weight = np.zeros_like(initial)
+    neighbor_weight[:, 1:] += horizontal
+    neighbor_weight[:, :-1] += horizontal
+    neighbor_weight[1:] += vertical
+    neighbor_weight[:-1] += vertical
+    residual = axis * initial[..., None] - source
+    norm = (axis ** 2 @ COLOR_WEIGHT).clip(1) * (1 + neighbor_weight)
+    for _ in range(8):
+        error = np.where(active[..., None], axis * coverage[..., None], fixed) - source
+        neighbors = np.zeros_like(error)
+        neighbors[:, 1:] += horizontal[..., None] * error[:, :-1]
+        neighbors[:, :-1] += horizontal[..., None] * error[:, 1:]
+        neighbors[1:] += vertical[..., None] * error[:-1]
+        neighbors[:-1] += vertical[..., None] * error[1:]
+        projected = ((neighbors - neighbor_weight[..., None] * residual) * axis) @ COLOR_WEIGHT
+        coverage = .4 * coverage + .6 * (initial + projected / norm).clip(0, 1)
+    return level + (coverage - initial).repeat(4, axis=0).repeat(4, axis=1)
 
 
 def restore_dark_ramps(source, current):
@@ -84,7 +117,17 @@ def restore_dark_ramps(source, current):
     old_seam = quiet_seam_error(rgb, preview, cells)
     new_seam = quiet_seam_error(rgb, result, cells)
     if new_seam >= .97 * old_seam:
-        return current
+        # A uniform ink can remove a false hue boundary and still leave a
+        # density step against nearby cells whose attributes must stay put.
+        fitted = fit_ramp_coverage(level, rgb, preview, cells, ink)
+        shaded = balance_coverage(fitted, diffuse_coverage(fitted, active.astype(np.float32), directions))
+        result = np.where(active[..., None], np.where(shaded[..., None], ink, 0), preview).astype(np.uint8)
+        if quiet_seam_error(rgb, result, cells) >= .90 * old_seam:
+            return current
+        target = pool4(rgb)
+        initial_error = np.mean((pool4(preview) - target) ** 2)
+        if np.mean((pool4(result) - target) ** 2) > 1.06 * initial_error:
+            return current
     old_edges, new_edges = strong_edge_errors(rgb, (preview, result))
     if new_edges > old_edges + .5:
         return current

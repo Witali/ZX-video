@@ -67,6 +67,21 @@ class ConverterTests(unittest.TestCase):
         cells = np.ones((ROWS, COLS), dtype=bool)
         self.assertLess(quiet_seam_error(source, preview, cells), quiet_seam_error(source, old, cells))
 
+    def test_ramp_coverage_fits_quiet_neighbors_and_keeps_a_source_edge(self):
+        from .dark_ramps import fit_ramp_coverage
+
+        source = np.full((HEIGHT, WIDTH, 3), (25, 45, 80), dtype=np.float32)
+        source[:, :64, 2] = 160
+        preview = np.full_like(source, (0, 0, 50))
+        ink = np.full_like(source, (0, 0, 205))
+        level = np.full((HEIGHT, WIDTH), .4, dtype=np.float32)
+        cells = np.zeros((ROWS, COLS), dtype=bool)
+        cells[:, 8:13] = True
+        adjusted = fit_ramp_coverage(level, source, preview, cells, ink)
+
+        self.assertAlmostEqual(adjusted[64, 64], .4, delta=.01)
+        self.assertLess(adjusted[64, 100], .36)
+
     def test_pale_highlight_removes_an_artificial_bright_boundary(self):
         from .tonal_repair import restore_pale_highlights
 

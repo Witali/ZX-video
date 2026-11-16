@@ -1,5 +1,28 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Fit dark ramp density across quiet attribute boundaries
+
+- Traced the square in CLIC `clic-3510902dc65b` to palette selection and
+  Floyd–Steinberg in `cc6ca0f5`. A common blue ink alone left excessive
+  quiet-border error. Balancing 4×4 dot counts alone lowered some error
+  but raised the count of the largest source-inconsistent steps.
+- When the existing ramp fails the seam check, fit 4×4 coverage against
+  neighboring cells and quantize the resulting dot counts. Weight quiet
+  borders more strongly and limit coupling across actual source edges.
+  Accept the fallback when quiet seam RMSE improves by more than 10%,
+  pooled RGB squared error rises by at most 6% and the existing strong
+  edge check passes.
+- Tested the full 88-image set in both modes. The union of changed
+  scenes contains seven images. Six screens change in each mode. The
+  jellyfish count of large false steps drops from 135 to 89 with
+  Floyd–Steinberg and from 149 to 85 in pixel-art mode. The latter pooled
+  seam RMSE drops from 20.00 to 17.42 and pooled RGB RMSE rises by 0.78.
+  The rocket, portrait, birds and still life remain byte-identical.
+- Verified both jellyfish CLI screens against the benchmark. Inspected
+  the changed scenes, independently decoded both modes and checked
+  352 SCRs in the gallery. All 24 tests pass.
+  [Measurements](toolkit/zx_neural/evidence/dark-ramp-boundary-fit.json).
+
 ## 2026-11-16 — Fine-tune the pixel-art model on the next source sample
 
 - Continue the 64-channel pixel-art model from `cc6ca0f5`. Use the 110
