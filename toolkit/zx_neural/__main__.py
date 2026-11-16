@@ -8,7 +8,7 @@ from PIL import Image
 
 from .alignment import align_cells
 from .brightness import repair_brightness
-from .dark_ramps import restore_dark_ramps
+from .dark_ramps import restore_dark_ramps, restore_neutral_shadow_blocks
 from .dither import DitherCandidates
 from .halftones import restore_halftones
 from .inner_contours import restore_inner_contours
@@ -23,7 +23,7 @@ from .subject import (
     protect_thin_parts, restore_color_accents, subject_scores, trace_contour,
 )
 from .subject_continuity import continue_thin_parts
-from .subject_contrast import emphasize_subject, shade_bright_whites
+from .subject_contrast import emphasize_subject, promote_white_details, protect_dim_details, shade_bright_whites
 from .subject_edges import restore_weak_subject_edges
 from .subject_gaps import keep_open_gaps
 from .subject_strokes import restore_subject_strokes
@@ -100,6 +100,16 @@ def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layer
         current = restore_subject_strokes(rgb, current, probability)
     if subject_contrast:
         current = shade_bright_whites(source, current)
+        current = protect_dim_details(
+            source, current, probability,
+            lambda: convert(source, mode, layers, probability=probability, pixel_art=pixel_art,
+                            photo_layers=photo_layers, automatic_outline=automatic_outline,
+                            outline_layers=outline_layers, **render_options),
+        )
+    if pixel_art or render_options.get("floyd"):
+        current = restore_neutral_shadow_blocks(source, current)
+    if subject_contrast:
+        current = promote_white_details(source, current, probability)
     return current
 
 

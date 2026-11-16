@@ -100,10 +100,11 @@ a render. See the [stroke comparison](evidence/subject-stroke-recovery.json).
 Use `--subject-contrast` with `--subject-model` for a stronger
 silhouette on busy backgrounds. This mode gives faint, source-supported
 edges and folds more contrast before fitting the two colors per cell.
-For black and BRIGHT white cells, it can fit the darker areas to the
-original average luminance with Floyd–Steinberg dots and balanced 4×4
-coverage. It keeps the existing highlight palette and rejects a new
-density pattern if the original edges or quiet 8×8 boundaries suffer.
+It can promote connected white details to BRIGHT and use Floyd–Steinberg
+dots to fit the shadows to the original average luminance. It fits the
+density across adjoining 8×8 boundaries and checks the original edges.
+When enhancement loses warm midtones, such as shaded facial features,
+the converter can recover the affected cells from the ordinary render.
 The stronger silhouette is an optional stylization and can increase
 color or seam error relative to the photograph.
 
@@ -111,8 +112,11 @@ color or seam error relative to the photograph.
 python -m toolkit.zx_neural input.jpg output.scr --subject-model .tmp/neural-screen/u2netp.onnx --subject-contrast --preview output.png
 ```
 
-The default Floyd–Steinberg and `--pixel-art` modes automatically recover
-dark interior contours in saturated objects. The converter finds narrow
+The default Floyd–Steinberg and `--pixel-art` modes also check for blocks of
+unsupported color in low-chroma shadows. They can replace an incorrect
+palette pair with a neutral halftone where this reduces the seam error.
+These modes automatically recover dark interior contours in saturated
+objects. The converter finds narrow
 dark lines in the source, puts the darker palette endpoint along them,
 and moves the displaced highlight to a brighter pixel of the same hue
 within the 4×4 tile. This preserves the palette and local color balance.

@@ -2,14 +2,29 @@
 
 import numpy as np
 
+from .alignment import frame_errors
 from .line_art import strong_edge_errors
 from .objective import COLOR_WEIGHT
-from .screen import PALETTE, from_cells, pack, to_cells
+from .screen import HEIGHT, PALETTE, WIDTH, from_cells, pack, to_cells
 from .smooth import balance_coverage, diffuse_coverage
 from .subject import LUMA, box_mean, pool4, screen_pixels
 from .subject_continuity import connected_pixels
 
 HUE_BITS = np.array([2, 4, 1])
+
+
+def false_seam_count(source, preview):
+    """Count large spurious steps along 8×8 borders with quiet source color."""
+    return sum(int(border.sum()) for border in false_border_steps(pool4(source), pool4(preview)))
+
+
+def false_border_steps(target, preview):
+    """Locate large spurious 8×8 border steps in 4×4 RGB averages."""
+    residual = preview - target
+    for axis, borders in ((0, np.s_[1::2, :]), (1, np.s_[:, 1::2])):
+        quiet = np.abs(np.diff(target, axis=axis)[borders]).max(axis=-1) <= 12
+        error = np.abs(np.diff(residual, axis=axis)[borders]).max(axis=-1)
+        yield quiet & (error >= 48)
 
 
 def quiet_seam_error(source, preview, changed):
@@ -29,11 +44,12 @@ def quiet_seam_error(source, preview, changed):
     return float(np.sqrt(error / max(1, 3 * count)))
 
 
-def fit_ramp_coverage(level, rgb, preview, cells, ink):
+def fit_ramp_coverage(level, rgb, preview, cells, ink, *, paper=None, seam_strength=1.):
     """Fit each 4×4 mean to the ramp and to the render outside its boundary."""
     initial = pool4(level.clip(0, 1))
     coverage = initial.copy()
-    axis = pool4(ink)
+    axis = pool4(ink if paper is None else ink - paper)
+    base = 0. if paper is None else pool4(paper)
     source = pool4(rgb)
     fixed = pool4(preview)
     active = cells.repeat(2, axis=0).repeat(2, axis=1)
@@ -41,17 +57,24 @@ def fit_ramp_coverage(level, rgb, preview, cells, ink):
     source_y = np.abs(np.diff(source, axis=0)).max(axis=-1)
     # Real source edges limit how much adjacent targets can influence one
     # another. Give additional weight to quiet seams against fixed cells.
-    horizontal = np.exp(-(source_x / 24) ** 2) * np.where(active[:, 1:] & active[:, :-1], .9, 1.8)
-    vertical = np.exp(-(source_y / 24) ** 2) * np.where(active[1:] & active[:-1], .9, 1.8)
+    reach = 24 if paper is None else 35
+    horizontal = np.exp(-(source_x / reach) ** 2)
+    vertical = np.exp(-(source_y / reach) ** 2)
+    if paper is None:
+        horizontal *= np.where(active[:, 1:] & active[:, :-1], .9, 1.8)
+        vertical *= np.where(active[1:] & active[:-1], .9, 1.8)
+    else:
+        horizontal *= seam_strength
+        vertical *= seam_strength
     neighbor_weight = np.zeros_like(initial)
     neighbor_weight[:, 1:] += horizontal
     neighbor_weight[:, :-1] += horizontal
     neighbor_weight[1:] += vertical
     neighbor_weight[:-1] += vertical
-    residual = axis * initial[..., None] - source
+    residual = base + axis * initial[..., None] - source
     norm = (axis ** 2 @ COLOR_WEIGHT).clip(1) * (1 + neighbor_weight)
-    for _ in range(8):
-        error = np.where(active[..., None], axis * coverage[..., None], fixed) - source
+    for _ in range(8 if paper is None else 18):
+        error = np.where(active[..., None], base + axis * coverage[..., None], fixed) - source
         neighbors = np.zeros_like(error)
         neighbors[:, 1:] += horizontal[..., None] * error[:, :-1]
         neighbors[:, :-1] += horizontal[..., None] * error[:, 1:]
@@ -175,3 +198,67 @@ def restore_dark_ramps(source, current):
 
     attrs, bits, _, _ = screen_pixels(screen, preview)
     return pack(np.where(active, shaded, bits), np.where(cells, selected, attrs)), result
+
+
+def restore_neutral_shadow_blocks(source, current):
+    """Remove compact runs of unsupported saturated ink from muted shadows."""
+    screen, preview = current
+    attrs, bits, _, _ = screen_pixels(screen, preview)
+    paper, ink = (attrs >> 3) & 7, attrs & 7
+    hue = np.where(paper == 0, ink, paper)
+    colored = ((ink == 0) | (paper == 0)) & (hue > 0) & (hue < 7)
+    if not colored.any():
+        return current
+
+    rgb = source.astype(np.float32)
+    light = rgb @ LUMA
+    peak = rgb.max(axis=-1)
+    # Leave padding black while still fitting the visible part of a cell
+    # that straddles the edge of a letterboxed photo.
+    content = peak > 14
+    count = to_cells(content).sum(axis=(2, 3))
+    divisor = count.clip(1)
+    mean = to_cells(rgb * content[..., None]).sum(axis=(2, 3)) / divisor[..., None]
+    tone = mean @ LUMA
+    offset = np.abs(light - tone.repeat(8, axis=0).repeat(8, axis=1))
+    uniform = to_cells((offset <= 17) | ~content).mean(axis=(2, 3)) >= .77
+    chroma = to_cells(np.ptp(rgb, axis=-1) * content).sum(axis=(2, 3)) / divisor
+    muted = ((count >= 26) & (tone >= 30) & (tone <= 110) & (chroma <= 32) & uniform
+             & (to_cells(peak).max(axis=(2, 3)) <= 146))
+    ink_axis = PALETTE[hue].astype(np.float32) / 205
+    density = (mean * ink_axis).sum(axis=-1) / (ink_axis ** 2).sum(axis=-1).clip(1)
+    color_fit = np.mean((mean - density[..., None] * ink_axis) ** 2, axis=-1)
+    neutral_fit = np.mean((mean - mean.mean(axis=-1, keepdims=True)) ** 2, axis=-1)
+    tint = np.ptp(to_cells(preview).mean(axis=(2, 3)), axis=-1)
+    seeds = muted & colored & (tint >= 10) & (color_fit > neutral_fit + 70)
+    if not seeds.any():
+        return current
+
+    # Keep a small region together so its new halftone can follow the
+    # original brightness across adjacent cells.
+    shades = (.75 * light + .25 * rgb.mean(axis=-1)) / 205
+    neutral = np.full_like(rgb, 205)
+    bounds = (0, 0, WIDTH, HEIGHT)
+    output = preview
+    for y, x in connected_pixels(seeds):
+        if len(y) < 3:
+            continue
+        cells = np.zeros_like(seeds)
+        cells[y, x] = True
+        area = cells.repeat(8, axis=0).repeat(8, axis=1)
+        fitted = np.where(content, fit_ramp_coverage(shades, rgb, output, cells, neutral), 0)
+        dots = balance_coverage(fitted, diffuse_coverage(fitted, area.astype(np.float32), neutral))
+        trial = np.where(area[..., None], (205 * dots)[..., None], output).astype(np.uint8)
+        if quiet_seam_error(rgb, trial, cells) >= quiet_seam_error(rgb, output, cells) - .5:
+            continue
+        old, new = (frame_errors(rgb, image, bounds) for image in (output, trial))
+        if new[0] > old[0] or new[1] >= old[1] or new[2] > old[2] + .15:
+            continue
+        if false_seam_count(rgb, trial) > false_seam_count(rgb, output):
+            continue
+        attrs = np.where(cells, 7, attrs)
+        bits = np.where(area, dots, bits)
+        output = trial
+    if output is preview:
+        return current
+    return pack(bits, attrs), output

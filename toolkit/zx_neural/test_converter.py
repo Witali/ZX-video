@@ -23,6 +23,65 @@ from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
+    def test_neutral_shadow_repairs_an_unsupported_palette_block(self):
+        from .dark_ramps import false_seam_count, restore_neutral_shadow_blocks
+
+        source = np.full((HEIGHT, WIDTH, 3), (45, 65, 63), dtype=np.uint8)
+        y, x = np.indices(source.shape[:2])
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        attrs[4:8, 10:14] = 3
+        baseline = pack((x + 2 * y) % 7 < 2, attrs)
+        old = independent_decode(baseline)
+
+        screen, preview = restore_neutral_shadow_blocks(source, (baseline, old))
+
+        np.testing.assert_array_equal(preview, independent_decode(screen))
+        np.testing.assert_array_equal(preview[32:64, 80:112, 0], preview[32:64, 80:112, 2])
+        self.assertLess(false_seam_count(source, preview), false_seam_count(source, old))
+
+    def test_strong_contrast_recovers_source_supported_warm_midtones(self):
+        from .subject_contrast import protect_dim_details
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        detail = (y >= 48) & (y < 80) & (x >= 80) & (x < 112)
+        source = np.where(detail[..., None], (75, 54, 41), 0).astype(np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        attrs[6:10, 10:14] = 6
+        baseline = pack(np.zeros_like(detail), attrs)
+        ordinary = pack(detail & (x % 2 == 0) & (y % 2 == 0), attrs)
+        reference = ordinary, independent_decode(ordinary)
+
+        screen, preview = protect_dim_details(source, (baseline, independent_decode(baseline)),
+                                              detail.astype(np.float32), lambda: reference)
+
+        self.assertEqual(screen, ordinary)
+        np.testing.assert_array_equal(preview, independent_decode(screen))
+
+    def test_white_details_use_bright_with_shading_and_no_new_grid_step(self):
+        from .dark_ramps import false_border_steps
+        from .subject import pool4
+        from .subject_contrast import promote_white_details
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        detail = (x >= 88) & (x < 128) & (y >= 64) & (y < 104)
+        light = np.where(detail, 247 - 4 * abs(y - 82), 35)
+        source = np.repeat(light[..., None], 3, axis=-1).astype(np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        baseline = pack((light > 145) | ((x + 2 * y) % 9 < 2), attrs)
+        old = independent_decode(baseline)
+
+        screen, preview = promote_white_details(source, (baseline, old), detail.astype(np.float32))
+
+        np.testing.assert_array_equal(preview, independent_decode(screen))
+        bright = (np.frombuffer(screen[6144:], np.uint8).reshape(ROWS, COLS) & 64) != 0
+        area = bright.repeat(8, axis=0).repeat(8, axis=1)
+        self.assertGreater(((preview == 255).all(axis=-1) & area).sum(), 12)
+        self.assertGreater(((preview == 0).all(axis=-1) & area).sum(), 12)
+        target = pool4(source)
+        for before, after in zip(false_border_steps(target, pool4(old)),
+                                 false_border_steps(target, pool4(preview)), strict=True):
+            self.assertFalse(np.any(after & ~before))
+
     def test_cell_alignment_corrects_a_grid_offset_and_moves_its_subject_mask(self):
         from .alignment import align_cells
         from .screen import Framing, PALETTE

@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Fit BRIGHT details and keep source midtones
+
+- Start with `0c75f813` and the same 88 prepared evaluation images.
+  For the runner in BSDS500 `226033.jpg`, test isolated promotion and
+  connected white-palette fits. Isolated cells leave a visible step.
+  The first connected fit adds 405 white pixels in the crop but
+  introduces one large quiet-border step where a red-and-white pair
+  cannot match the neighbor. Use source-supported white groups, fit
+  both ramp endpoints and balance Floyd–Steinberg density across
+  adjoining cells. Retain saturated accent pairs where the original
+  supports them and use black for muted shadows. Reject any promotion
+  that introduces a new large false step.
+- The chosen fit adds 403 true 255-white pixels in the uniform crop.
+  The 4×4 luminance RMSE in shadows of newly BRIGHT cells falls from
+  41.21 to 14.04. No new large false 8×8-border step appears in either
+  runner render. In `189029.jpg`, recover missing warm midtones from the
+  ordinary render where the source and silhouette mask support them.
+  The face-crop luminance RMSE falls from 52.68 to 30.18 in the photo
+  mode and to 28.10 in pixel art. In `130066.jpg`, neutralize the
+  unsupported saturated block above the zebra. The marked area drops
+  from 201 blue or magenta pixels to zero in both enhanced renders.
+- Replay the terminal passes on the ordinary and enhanced baselines
+  for all 88 images in both renderers. Independently decode all 352
+  outputs and match eight direct CLI screens and previews. Ordinary
+  photo and pixel art change 8 and 9 images. Enhanced photo and pixel
+  art change 27 and 28. Pooled RGB error falls on every changed output,
+  and the large false-step count never increases. Native pixel error
+  rises on some new halftones. The enhanced portrait's photo-mode
+  pooled seam RMSE rises by 0.052, and the enhanced zebra's strong-edge
+  RMSE rises by 0.088 in both renderers. Accept those local trade-offs
+  for the recovered midtones and the removed false color block.
+  All 34 converter tests pass. Retain the network weights.
+  [Measurements](toolkit/zx_neural/evidence/white-details-and-shadows.json).
+
 ## 2026-11-16 — Offer a stronger subject silhouette and fit BRIGHT shadows
 
 - Start with `91ab7250` and BSDS500 `226033.jpg`. A stage-by-stage replay
