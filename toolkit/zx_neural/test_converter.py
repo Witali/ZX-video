@@ -22,6 +22,26 @@ from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
+    def test_outline_palette_keeps_black_where_a_stroke_is_required(self):
+        from .line_art import fit_outline_palette
+        from .screen import to_cells
+
+        rgb = np.full((HEIGHT, WIDTH, 3), (240, 45, 45), dtype=np.float32)
+        shape = np.zeros((HEIGHT, WIDTH), dtype=bool)
+        shape[32:40, 48:64] = True
+        fill = shape.copy()
+        fill[32:40, 55] = False
+        bright = np.zeros((ROWS, COLS), dtype=np.uint8)
+        cells = to_cells(shape).any(axis=(2, 3))
+        attrs, coverage, paper, ink = fit_outline_palette(
+            rgb, 2, bright, to_cells(shape), fill, to_cells(~shape), cells, np.full(shape.shape, .94),
+        )
+        self.assertEqual(attrs[4, 6], 64 | 2)
+        np.testing.assert_array_equal(paper[4, 6], (0, 0, 0))
+        np.testing.assert_array_equal(paper[4, 7], (255, 0, 0))
+        self.assertTrue(np.all(ink[4, 7] >= paper[4, 7]))
+        self.assertTrue(np.all((coverage[32:40, 56:64] > 0) & (coverage[32:40, 56:64] <= .16)))
+
     def test_outline_subjects_uses_source_hues_and_keeps_incompatible_cells(self):
         from .line_art import outline_subjects
 

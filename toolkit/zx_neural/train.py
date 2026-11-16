@@ -81,7 +81,7 @@ def teacher_screen(image, pixel_art=False, outline=False):
         # Use the same black outline, filled shadows and shaded interiors
         # on independent training images as on the visual reference.
         before = convert(image, "spatial", None, floyd=True, repair=True, automatic_outline=False)
-        after, _ = outline_subjects(image, before, unmasked_chroma=.29)
+        after, _ = outline_subjects(image, before, unmasked_chroma=.29, fit_palette=False)
         attrs = np.frombuffer(after[6144:], dtype=np.uint8).reshape(ROWS, COLS)
         original = np.frombuffer(before[0][6144:], dtype=np.uint8).reshape(ROWS, COLS)
         cy, cx = np.nonzero(attrs != original)

@@ -69,6 +69,11 @@ preference for the outline palette. The pixel mask and neighboring
 color checks still determine where the selected pair can be used.
 Closing gaps in the detected outline never extends the color fill.
 Only pixels with matching source color evidence receive new color.
+Within the outline, the converter fits brightness to the source and can
+use a lighter tint in cells that contain only lit fill. Cells with any
+outline or deep shadow use black. The fitter keeps the earlier outline
+when the proposed colors worsen pooled RGB error or exceed the existing
+8×8 seam limit.
 
 ```powershell
 python -m toolkit.zx_neural.train --pixel-art --outline --initialize toolkit/zx_neural/weights64-pixel-art.npz --channels 64 --epochs 50 --device cuda --workers 4 --clic-root $clic --bsds-archive $archive --weights .tmp/neural-screen/outline-trained.npz --report .tmp/neural-screen/outline-training.json

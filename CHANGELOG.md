@@ -1,5 +1,29 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Fit claw highlights and shadows to the source colors
+
+- **Objective and baseline:** Improve the separation of claws and shell in
+  the still life using the outline renderer from `0c8836f5`. Compare
+  the same 20 BSDS500 and six CLIC photos using the default weights.
+- **Trials and change:** Tested changing BRIGHT alone and allowing several
+  highlight strengths. Fit normal or bright intensity against the source
+  in the fill. Keep black in any cell with a stroke or shadow. Allow a
+  light tint at up to 16% nominal coverage in fully lit cells where it
+  improves the color fit. Narrow the deep-shadow mask with a lower local
+  brightness ratio. Reject the fitted palette if pooled RGB error rises
+  compared with the previous outline or the existing seam limit is exceeded.
+  Without this comparison one other photograph gained visible color error.
+- **Results:** Three of 26 photos change. On the claw crop, 4×4-pooled RGB
+  RMSE drops from 50.50 to 46.30. The bottle area remains pixel-identical.
+  Whole-screen seam RMSE for the still life rises from 21.76 to 21.90,
+  while the group means move from 19.810 to 19.808 on BSDS500 and
+  16.623 to 16.589 on CLIC. The strong black strokes still share a cell
+  with only one fill endpoint, which limits highlights at those strokes.
+- **Verification:** Independently decoded both SCR variants for all photos.
+  The still life matches the actual CLI byte for byte. The test suite
+  passes all 19 tests, including the black endpoint requirement.
+  [Measurements](toolkit/zx_neural/evidence/claw-palette-fit.json).
+
 ## 2026-11-16 — Continue outline training on four corpora
 
 - **Objective and scope:** Continue from the 64-channel outline weights in

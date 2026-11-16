@@ -3,9 +3,10 @@
 import numpy as np
 from PIL import Image, ImageFilter
 
+from .objective import COLOR_WEIGHT
 from .screen import ATTRIBUTES, COLS, HEIGHT, PALETTE, ROWS, WIDTH, from_cells, pack, to_cells
 from .smooth import diffuse_coverage
-from .subject import LUMA, box_mean, screen_pixels, subject_scores
+from .subject import LUMA, box_mean, pool4, screen_pixels, subject_scores
 from .subject_continuity import connected_pixels
 
 
@@ -93,8 +94,55 @@ def render_red_line_art(source, probability=None, *, shaded=False):
     return pack(canvas, attrs), preview
 
 
-def outline_subjects(source, current, probability=None, *, preference=None, unmasked_chroma=.44):
-    """Shade suitable colored objects in place using black and their own hue."""
+def fit_outline_palette(rgb, hue, bright, shape_cells, fill, black, cells, coverage):
+    """Fit BRIGHT and allow a highlight endpoint only in wholly lit cells."""
+    source = to_cells(rgb)
+    lit = to_cells(fill)
+    weights = (PALETTE[hue] > 0) * COLOR_WEIGHT
+    signal = source @ weights / weights.sum()
+    density = to_cells(coverage)
+    normal_cost = (((signal - 205 * density) ** 2) * lit).sum(axis=(2, 3))
+    bright_cost = (((signal - 255 * density) ** 2) * lit).sum(axis=(2, 3))
+    # Leave enough margin to avoid isolated BRIGHT toggles on flat areas.
+    useful = np.abs(bright_cost - normal_cost) > 400 * lit.sum(axis=(2, 3))
+    flexible = (shape_cells | black).all(axis=(2, 3))
+    brightness = np.where(useful & flexible, np.where(bright_cost < normal_cost, 8, 0), bright).astype(np.uint8)
+    intensity = np.where(brightness > 0, 255, 205)[..., None, None]
+    balance = .6 * density + .4 * np.clip(signal / intensity, .48, 1)
+    paper_hues = np.zeros_like(bright)
+    ink_hues = np.full_like(bright, hue)
+    foreground = PALETTE[brightness + hue].astype(np.float32)
+
+    # All pixels in a highlight cell belong to the lit fill. If even one
+    # pixel needs a black stroke or an external color, black stays in the pair.
+    interior = cells & lit.all(axis=(2, 3))
+    if interior.any():
+        pixels = source[interior]
+        base = foreground[interior][:, None, None, :]
+        error = (((base * balance[interior][..., None] - pixels) ** 2) @ COLOR_WEIGHT).mean(axis=(1, 2))
+        chosen = ink_hues[interior]
+        levels = balance[interior].copy()
+        for tint in range(hue + 1, 8):
+            if (tint & hue) != hue:
+                continue
+            highlight = PALETTE[brightness[interior] + tint].astype(np.float32)[:, None, None, :]
+            delta = highlight - base
+            amount = (((pixels - base) * delta) @ COLOR_WEIGHT) / ((delta ** 2) @ COLOR_WEIGHT)
+            amount = np.clip(amount, 0, .16)
+            blended = base + amount[..., None] * delta
+            cost = (((blended - pixels) ** 2) @ COLOR_WEIGHT).mean(axis=(1, 2)) + 200
+            better = cost < error
+            chosen[better], levels[better], error[better] = tint, amount[better], cost[better]
+        ink_hues[interior] = chosen
+        paper_hues[interior] = np.where(chosen != hue, hue, 0)
+        balance[interior] = levels
+    attrs = (brightness << 3) | (paper_hues << 3) | ink_hues
+    return attrs, from_cells(balance), PALETTE[brightness + paper_hues], PALETTE[brightness + ink_hues]
+
+
+def outline_subjects(source, current, probability=None, *, preference=None, unmasked_chroma=.44,
+                     fit_palette=True):
+    """Shade suitable colored objects while keeping source-supported contours."""
     screen, preview = current
     rgb = source.astype(np.float32)
     chroma = np.ptp(rgb, axis=-1)
@@ -113,6 +161,7 @@ def outline_subjects(source, current, probability=None, *, preference=None, unma
     light = rgb @ LUMA
     smooth = box_mean(light, 3)
     edges = thin_edges(.8 * light + .27 * chroma)
+    shadow_ratio = .79 if fit_palette else .85
     attrs, bits, _, _ = screen_pixels(screen, preview)
     bright = ((attrs & 64) != 0).astype(np.uint8) * 8
     original = to_cells(preview)
@@ -152,7 +201,7 @@ def outline_subjects(source, current, probability=None, *, preference=None, unma
                       & padded[1:-1, :-2] & padded[1:-1, 2:])
             lines = remove_specks(edges[region] & inside, 13)
             local = box_mean(light[region] * part, 13) / box_mean(part, 13).clip(.05)
-            dark = (smooth[region] < np.maximum(.85 * local, .65 * high))
+            dark = smooth[region] < np.maximum(shadow_ratio * local, .65 * high)
             shadows = remove_specks(part & dark & (smooth[region] < np.median(smooth[region][part])), 12)
             # The closed shape can bridge small breaks in an outline, but
             # only original color evidence may receive any new colored fill.
@@ -178,24 +227,44 @@ def outline_subjects(source, current, probability=None, *, preference=None, unma
         cells &= (to_cells(fill).any(axis=(2, 3)) | (black | part_cells).all(axis=(2, 3)))
         if not cells.any():
             continue
+        if fit_palette:
+            fitted, coverage, paper, ink = fit_outline_palette(rgb, hue, bright, part_cells,
+                                                               fill, black, cells, coverage)
+            delta = (ink.astype(np.float32) - paper) / 255
+            direction = from_cells(np.broadcast_to(delta[..., None, None, :], (*part_cells.shape, 3)))
+        else:
+            fitted = (attrs & 64) | hue
+            ink = foreground[:, :, 0, 0]
+            paper = np.zeros_like(ink)
+            direction = np.broadcast_to(hues[hue - 1], rgb.shape)
         active = from_cells(np.broadcast_to(cells[..., None, None], part_cells.shape))
         strength = (active & fill).astype(np.float32)
         level = np.where(shape, np.where(fill, coverage, 0), from_cells(same_color))
-        direction = np.broadcast_to(hues[hue - 1], rgb.shape)
         shaded = to_cells(diffuse_coverage(level, strength, direction))
         # Reapply the mask at writeback, even if diffusion changes later.
         shaded = np.where(part_cells, shaded & to_cells(fill), same_color)
-        new_attrs[cells] = (attrs[cells] & 64) | hue
+        new_attrs[cells] = fitted[cells]
         new_bits[cells] = shaded[cells]
-        output[cells] = np.where(shaded[cells][..., None], foreground[cells], 0)
+        output[cells] = np.where(shaded[cells][..., None], ink[cells, None, None], paper[cells, None, None])
         reserved |= cells
 
     if not reserved.any():
+        if fit_palette:
+            return outline_subjects(source, current, probability, preference=preference,
+                                    unmasked_chroma=unmasked_chroma, fit_palette=False)
         return current
     result = from_cells(output)
     mask = np.zeros(source.shape[:2], dtype=np.float32)
     original_seams = subject_scores(source, preview, mask)["seam_rmse"]
     styled_seams = subject_scores(source, result, mask)["seam_rmse"]
+    if fit_palette:
+        reference = outline_subjects(source, current, probability, preference=preference,
+                                     unmasked_chroma=unmasked_chroma, fit_palette=False)
+        target = pool4(source)
+        reference_error = np.mean((pool4(reference[1]) - target) ** 2)
+        fitted_error = np.mean((pool4(result) - target) ** 2)
+        if styled_seams > original_seams + .8 or fitted_error >= reference_error:
+            return reference
     if styled_seams > original_seams + .8:
         return current
     return pack(from_cells(new_bits), new_attrs), result

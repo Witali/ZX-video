@@ -44,7 +44,8 @@ def compare(groups, previous, candidate, detector, training_report=None):
             scene = {"source": name}
             for label, weights in layers.items():
                 preference = -.003 * np.tanh(predict(inputs, weights))
-                screen, preview = outline_subjects(source, base, probability, preference=preference)
+                # Use the palette fit from checkpoint training for this comparison.
+                screen, preview = outline_subjects(source, base, probability, preference=preference, fit_palette=False)
                 np.testing.assert_array_equal(independent_decode(screen), preview)
                 outputs[label] = preview
                 metrics = quality(source, preview)
