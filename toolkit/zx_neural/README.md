@@ -17,6 +17,25 @@ whole image on a black canvas. Use `--crop` to fill the 4:3 screen. Alpha
 is composited on black and EXIF orientation is honored. The checked-in
 weights are loaded automatically. PyTorch is only used when training.
 
+Use `--align-cells` to try small framing changes before conversion.
+The search considers shifts of up to three pixels on either axis and
+scale changes up to 3.125%. In fit mode it can shrink the image to make
+room for a shift, keeping the entire source inside the screen. With
+`--crop` it can zoom in slightly while keeping the screen filled. The
+optional subject mask follows the same placement.
+
+```powershell
+python -m toolkit.zx_neural input.jpg output.scr --pixel-art --align-cells --preview output.png
+```
+
+The source edge pattern shortlists up to two alternative frames. The
+converter renders them and checks the result for quiet 8×8 seam error,
+pooled color error and preservation of source edges. Letterbox pixels
+are excluded from the comparison. It retains the original frame when
+there is no sufficient improvement.
+[Alignment measurements](evidence/cell-alignment.json) cover 88 inputs
+in Floyd–Steinberg and pixel-art modes.
+
 By default the renderer uses edge-aware Floyd–Steinberg error diffusion
 after a joint palette search. Use `--solid` for the previous output
 without dithering, `--dither` for the previous ordered mode, or

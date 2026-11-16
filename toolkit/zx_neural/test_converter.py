@@ -23,6 +23,38 @@ from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
+    def test_cell_alignment_corrects_a_grid_offset_and_moves_its_subject_mask(self):
+        from .alignment import align_cells
+        from .screen import Framing, PALETTE
+
+        y, x = np.indices((160, WIDTH))
+        pattern = ((x + 3) // 8) % 2 + 2 * (((y + 3) // 8) % 2)
+        source = PALETTE[np.array([2, 4, 1, 7])[pattern]]
+        image = Image.fromarray(source)
+        mask = Image.fromarray(source[..., 0])
+
+        def render_input(rgb, probability):
+            np.testing.assert_array_equal(probability, rgb[..., 0].astype(np.float32) / 255)
+            return convert(rgb, "spatial", None, floyd=True, repair=True)
+
+        framing, (screen, preview) = align_cells(image, False, render_input, mask)
+        self.assertEqual(framing, Framing(dy=3))
+        np.testing.assert_array_equal(independent_decode(screen), preview)
+
+    def test_cell_alignment_respects_fit_and_crop_boundaries(self):
+        from .screen import Framing, placement
+
+        self.assertIsNone(placement((256, 192), False, Framing(dx=1)))
+        self.assertIsNone(placement((256, 192), True, Framing(dx=1)))
+        box, rect = placement((256, 192), True, Framing(scale=1.03125, dx=3, dy=-3))
+        self.assertEqual(rect, (0, 0, WIDTH, HEIGHT))
+        self.assertGreaterEqual(min(box), 0)
+        self.assertLessEqual(box[2], WIDTH)
+        self.assertLessEqual(box[3], HEIGHT)
+        # This height yields a crop origin just below zero in floating point.
+        crop = prepare(Image.new("RGB", (256, 94), (12, 34, 56)), True, framing=Framing(dx=1))
+        self.assertTrue((crop == (12, 34, 56)).all())
+
     def test_dark_ramp_removes_false_palette_steps_and_keeps_a_real_highlight(self):
         from .dark_ramps import quiet_seam_error, restore_dark_ramps
 

@@ -1,0 +1,82 @@
+{
+  "baseline": "94dc579d",
+  "images": 88,
+  "changed_images": 1,
+  "modes": {
+    "photo": {
+      "changed": 0,
+      "unchanged_byte_exact": 88,
+      "scenes": []
+    },
+    "pixel_art": {
+      "changed": 1,
+      "unchanged_byte_exact": 87,
+      "scenes": [
+        {
+          "source": "196027.jpg",
+          "group": "bsds",
+          "crop": false,
+          "framing": {
+            "scale": 1.0,
+            "dx": -1,
+            "dy": 0
+          },
+          "changed": true,
+          "before": {
+            "pooled_seam_rmse": 20.975816648581244,
+            "pooled_rgb_rmse": 33.7795524597168,
+            "strong_edge_rmse": 123.18401170907181,
+            "source_detail_energy": 41.21231979030144,
+            "sha256": "034c1ebc602d3962a3f3d89539cc3e0b75ed399e54f91319393140c792a9684c"
+          },
+          "after": {
+            "pooled_seam_rmse": 19.41440679170034,
+            "pooled_rgb_rmse": 32.991050720214844,
+            "strong_edge_rmse": 113.57968649888582,
+            "source_detail_energy": 41.21231979030144,
+            "sha256": "e14ea9ddfa0c8d91f85586db751d03678501a2fc68f607a3d06930dcceda8642"
+          }
+        }
+      ]
+    }
+  },
+  "cli_replays": [
+    {
+      "source": "196027.jpg",
+      "mode": "pixel_art",
+      "matches": true
+    }
+  ],
+  "gallery_start": 12,
+  "synthetic_checks": [
+    {
+      "case": "fit",
+      "framing": {
+        "scale": 1,
+        "dx": 0,
+        "dy": 3
+      },
+      "pooled_seam_rmse": [
+        47.72476416244604,
+        4.738064086433915
+      ]
+    },
+    {
+      "case": "crop",
+      "framing": {
+        "scale": 1.03125,
+        "dx": 0,
+        "dy": 0
+      },
+      "pooled_seam_rmse": [
+        25.913299006541237,
+        0.00014725777143493246
+      ]
+    }
+  ],
+  "proxy_score_max_abs_diff": {
+    "fit": 0,
+    "crop": 8.441350816679183e-06
+  },
+  "tests_passed": 26
+}

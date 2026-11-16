@@ -1,5 +1,7 @@
 """Prepare source pixels and encode legal ZX Spectrum screen bytes."""
 
+from dataclasses import dataclass
+
 import numpy as np
 from PIL import Image, ImageOps
 
@@ -18,17 +20,51 @@ INK = (ATTRIBUTES & 7) | ((ATTRIBUTES >> 3) & 8)
 PAIR_COUNT = len(ATTRIBUTES)
 
 
-def prepare(image, crop=False):
+@dataclass(frozen=True)
+class Framing:
+    scale: float = 1.
+    dx: int = 0
+    dy: int = 0
+
+
+def placement(size, crop, framing=Framing()):
+    """Return the source window and destination rectangle, or reject clipping."""
+    width, height = size
+    if min(size) <= 0 or not np.isfinite(framing.scale) or framing.scale <= 0:
+        return None
+    ratios = WIDTH / width, HEIGHT / height
+    if crop:
+        scale = max(ratios) * framing.scale
+        box = (width / 2 - (WIDTH / 2 + framing.dx) / scale,
+               height / 2 - (HEIGHT / 2 + framing.dy) / scale,
+               width / 2 + (WIDTH / 2 - framing.dx) / scale,
+               height / 2 + (HEIGHT / 2 - framing.dy) / scale)
+        if min(box[:2]) < -1e-8 or box[2] > width + 1e-8 or box[3] > height + 1e-8:
+            return None
+        box = max(0, box[0]), max(0, box[1]), min(width, box[2]), min(height, box[3])
+        return box, (0, 0, WIDTH, HEIGHT)
+    scale = min(ratios) * framing.scale
+    w, h = max(1, round(width * scale)), max(1, round(height * scale))
+    x, y = (WIDTH - w) // 2 + framing.dx, (HEIGHT - h) // 2 + framing.dy
+    if x < 0 or y < 0 or x + w > WIDTH or y + h > HEIGHT:
+        return None
+    return None, (x, y, x + w, y + h)
+
+
+def prepare(image, crop=False, *, framing=Framing()):
     """Honor EXIF orientation and preserve aspect ratio on a black canvas."""
     source = ImageOps.exif_transpose(image).convert("RGBA")
-    if crop:
+    if crop and framing == Framing():
         source = ImageOps.fit(source, (WIDTH, HEIGHT), Image.Resampling.LANCZOS)
+        x = y = 0
     else:
-        scale = min(WIDTH / source.width, HEIGHT / source.height)
-        size = max(1, round(source.width * scale)), max(1, round(source.height * scale))
-        source = source.resize(size, Image.Resampling.LANCZOS)
+        layout = placement(source.size, crop, framing)
+        if layout is None:
+            raise ValueError("framing clips the fitted image or leaves a gap in the crop")
+        box, (x, y, right, bottom) = layout
+        source = source.resize((right - x, bottom - y), Image.Resampling.LANCZOS, box=box)
     canvas = Image.new("RGB", (WIDTH, HEIGHT))
-    canvas.paste(source, ((WIDTH - source.width) // 2, (HEIGHT - source.height) // 2), source)
+    canvas.paste(source, (x, y), source)
     return np.asarray(canvas)
 
 

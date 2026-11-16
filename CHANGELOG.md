@@ -1,5 +1,33 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Search small framing changes for attribute alignment
+
+- Add the optional `--align-cells` mode. Test translations up to three
+  pixels on either axis and scales within 3.125% of the original
+  framing. Fit mode keeps the whole source, and crop mode keeps the
+  canvas filled. The subject mask uses the same transform.
+- The initial replay stopped on a slightly negative crop-box origin
+  from floating-point rounding. Clamp at the exact image boundaries
+  and verify the affected size. Stop the slower per-shift proxy replay
+  after 48 inputs and reuse resampling and gradients at each scale.
+  The optimized proxy agrees with the original fit scores on the spot
+  check. The maximum crop-score difference there is 0.000009.
+- Shortlist up to two frames with better source edge placement. Require
+  the final render to improve masked seam RMSE by at least 7% and 0.5
+  points, with color, strong-edge and source-detail checks. Exclude the
+  letterbox from measurements. Reuse the byte-verified `94dc579d`
+  renders as the 88-image baseline.
+- The cardinal photo `196027.jpg` shifts one pixel left in pixel-art
+  mode. Pooled seam RMSE drops from 20.98 to 19.41, and pooled RGB RMSE
+  from 33.78 to 32.99. The other 87 pixel-art screens and all 88
+  Floyd–Steinberg screens match the baseline byte for byte. Synthetic
+  checks select a three-pixel shift and a 3.125% crop zoom on separate
+  regular color grids.
+- Independently decode all screens and replay the accepted real photo
+  through the CLI with its subject model. Check all 88 sources and
+  352 screens in the gallery. All 26 tests pass.
+  [Measurements](toolkit/zx_neural/evidence/cell-alignment.json).
+
 ## 2026-11-16 — Fit dark ramp density across quiet attribute boundaries
 
 - Traced the square in CLIC `clic-3510902dc65b` to palette selection and

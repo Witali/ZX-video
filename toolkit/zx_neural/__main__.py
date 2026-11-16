@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+from .alignment import align_cells
 from .brightness import repair_brightness
 from .dark_ramps import restore_dark_ramps
 from .dither import DitherCandidates
@@ -130,6 +131,8 @@ def main():
     parser.add_argument("screen", type=Path, help="output 6912-byte .scr")
     parser.add_argument("--preview", type=Path, help="optional native RGB preview PNG")
     parser.add_argument("--crop", action="store_true", help="center crop to fill the 4:3 screen")
+    parser.add_argument("--align-cells", action="store_true",
+                        help="try small framing changes and keep them only if they reduce attribute clashes")
     parser.add_argument("--subject-model", type=Path,
                         help="local U²-NetP ONNX file for automatic subject contrast")
     gradients = parser.add_mutually_exclusive_group()
@@ -170,18 +173,24 @@ def main():
         layers = load_weights(args.weights) if use_model else None
         photo_layers = load_weights(CLIC_WIDE_WEIGHTS) if args.pixel_art and use_model else None
         outline_layers = load_weights(outline_weights) if outline_weights else None
-        with Image.open(args.image) as image:
-            rgb = prepare(image, args.crop)
-            probability = (SubjectDetector(args.subject_model).predict(image, args.crop)
-                           if args.subject_model else None)
-        if args.red_line_art:
-            screen, preview = render_red_line_art(rgb, probability, shaded=args.shade_line_art)
-        else:
+
+        def render_input(rgb, probability):
+            if args.red_line_art:
+                return render_red_line_art(rgb, probability, shaded=args.shade_line_art)
             floyd = not (args.solid or args.dither or args.smooth)
             repair = args.dither or args.smooth or floyd or args.mode in ("spatial", "spatial-full", "hybrid")
-            screen, preview = convert(rgb, args.mode, layers, probability=probability, pixel_art=args.pixel_art,
-                                      photo_layers=photo_layers, outline_layers=outline_layers,
-                                      dither=args.dither, smooth=args.smooth, floyd=floyd, repair=repair)
+            return convert(rgb, args.mode, layers, probability=probability, pixel_art=args.pixel_art,
+                           photo_layers=photo_layers, outline_layers=outline_layers,
+                           dither=args.dither, smooth=args.smooth, floyd=floyd, repair=repair)
+
+        with Image.open(args.image) as image:
+            detector = SubjectDetector(args.subject_model) if args.subject_model else None
+            if args.align_cells:
+                mask = detector.predict_mask(image) if detector else None
+                _, (screen, preview) = align_cells(image, args.crop, render_input, mask)
+            else:
+                probability = detector.predict(image, args.crop) if detector else None
+                screen, preview = render_input(prepare(image, args.crop), probability)
         args.screen.write_bytes(screen)
         if args.preview:
             Image.fromarray(preview).save(args.preview, format="PNG")

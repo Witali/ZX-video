@@ -36,6 +36,10 @@ class SubjectDetector:
         self.output = self.session.get_outputs()[0].name
 
     def predict(self, image, crop=False):
+        return prepare(self.predict_mask(image), crop)[..., 0].astype(np.float32) / 255
+
+    def predict_mask(self, image):
+        """Return the subject mask at the oriented source size for reframing."""
         source = ImageOps.exif_transpose(image).convert("RGB")
         pixels = np.asarray(source.resize((320, 320), Image.Resampling.LANCZOS), dtype=np.float32)
         pixels /= max(float(pixels.max()), 1)
@@ -46,8 +50,7 @@ class SubjectDetector:
         # Keep absolute confidence so an uncertain prediction does not
         # become a strong mask through per-image normalization.
         mask = Image.fromarray(prediction).resize(source.size, Image.Resampling.BILINEAR)
-        mask = Image.fromarray(np.rint(np.clip(np.asarray(mask), 0, 1) * 255).astype(np.uint8))
-        return prepare(mask, crop)[..., 0].astype(np.float32) / 255
+        return Image.fromarray(np.rint(np.clip(np.asarray(mask), 0, 1) * 255).astype(np.uint8))
 
 
 def has_subject(source, probability):
