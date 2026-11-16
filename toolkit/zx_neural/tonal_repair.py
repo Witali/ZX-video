@@ -1,10 +1,11 @@
-"""Keep pale highlights and under-rendered warm shadows readable."""
+"""Keep highlights, warm shadows, and flattened subject tones readable."""
 
 import numpy as np
 
-from .dark_ramps import quiet_seam_error
+from .alignment import frame_errors
+from .dark_ramps import quiet_seam_error, safe_ramp_tiles
 from .line_art import strong_edge_errors
-from .screen import PALETTE, pack, to_cells
+from .screen import HEIGHT, PALETTE, WIDTH, pack, to_cells
 from .smooth import balance_coverage, diffuse_coverage
 from .subject import LUMA, box_mean, color_accents, pool4, screen_pixels
 from .subject_continuity import connected_pixels
@@ -103,3 +104,61 @@ def restore_warm_shadows(source, current):
     if new_edges > old_edges + .5:
         return current
     return pack(np.where(active, dots, bits & ~replaced), attrs), output
+
+
+def restore_subject_tones(source, current, probability):
+    """Recover shadow detail where pale dots flattened the subject's midtones."""
+    if probability is None or not (probability >= .45).any():
+        return current
+
+    screen, preview = current
+    rgb = source.astype(np.float32)
+    light = rgb @ LUMA
+    shown = preview @ LUMA
+    attrs, bits, paper, ink = screen_pixels(screen, preview)
+    shadow = np.where(((ink @ LUMA) > (paper @ LUMA))[..., None], paper, ink)
+    gap = shown - shadow @ LUMA
+    pale = preview.min(axis=-1) >= 205
+
+    # Existing dark colors can describe the lost tone if they are neutral
+    # or point in the same chroma direction as the source.
+    chroma = rgb - rgb.mean(axis=-1, keepdims=True)
+    shadow_chroma = shadow - shadow.mean(axis=-1, keepdims=True)
+    hue_support = (shadow_chroma * chroma).sum(axis=-1)
+    required = np.linalg.norm(shadow_chroma, axis=-1) * np.maximum(12, .56 * np.linalg.norm(chroma, axis=-1))
+    active = (pale & (box_mean(pale, 5) >= .48) & (probability >= .45)
+              & (hue_support >= required) & (gap >= 45) & (light > 25) & (light < 192))
+    # Leave both sides of strong source edges as rendered. In the remaining
+    # areas, follow small dark features when deciding where to put the dots.
+    horizontal = np.abs(np.diff(rgb, axis=1)).max(axis=-1) >= 76.5
+    vertical = np.abs(np.diff(rgb, axis=0)).max(axis=-1) >= 76.5
+    active[:, :-1] &= ~horizontal
+    active[:, 1:] &= ~horizontal
+    active[:-1] &= ~vertical
+    active[1:] &= ~vertical
+    tone = light + .55 * (light - box_mean(light, 5))
+    coverage = np.clip(.9 * (box_mean(shown, 3) - tone - 5) / gap.clip(1), 0, .88) * active
+    dots = balance_coverage(coverage, np.zeros_like(active))
+    if not dots.any():
+        return current
+
+    candidate = np.where(dots[..., None], shadow, preview)
+    # An edit must improve both average color and luminance in its tile.
+    # Then protect the boundary against either possible decision next door.
+    before_error = pool4(preview) - pool4(rgb)
+    after_error = pool4(candidate) - pool4(rgb)
+    improves = ((np.square(after_error).sum(axis=-1) < np.square(before_error).sum(axis=-1))
+                & (np.abs(after_error @ LUMA) < np.abs(before_error @ LUMA)))
+    dots &= improves.repeat(4, axis=0).repeat(4, axis=1)
+    candidate = np.where(dots[..., None], shadow, preview)
+    dots &= safe_ramp_tiles(rgb, preview, candidate)
+    if not dots.any():
+        return current
+    output = np.where(dots[..., None], shadow, preview)
+    changed = to_cells(dots).any(axis=(2, 3))
+    if quiet_seam_error(rgb, output, changed) > quiet_seam_error(rgb, preview, changed):
+        return current
+    bounds = (0, 0, WIDTH, HEIGHT)
+    if frame_errors(rgb, output, bounds)[0] > frame_errors(rgb, preview, bounds)[0]:
+        return current
+    return pack(bits ^ dots, attrs), output

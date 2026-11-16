@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-11-16 — Recover flattened subject midtones
+
+- Start from the Floyd–Steinberg and pixel-art screens in `0fe9dc80`.
+  On BSDS500 `103006.jpg` and `226033.jpg`, parts of the shell and of the
+  runners lose their midtones in nearly solid gray. Direct error
+  diffusion within the pale pixels makes a modest difference. Larger
+  dot counts recover more tone but raise pooled seam error on both
+  images. Use conservative 4×4 dot counts, source-guided placement
+  and the existing U²-NetP subject probability in both modes.
+- Keep the existing attribute pairs and hold both sides of strong
+  source edges. Retain only tiles that improve pooled color and
+  luminance. Reject edits that introduce or worsen a sharp step along a
+  quiet 8×8 border or raise the render's quiet or weighted seam error.
+- Replay 88 images in both modes. Each mode changes 40 images and keeps
+  the other 48 byte-identical. Across 176 screens, all attributes and
+  all pixels outside the selected subject remain unchanged. No screen
+  records an increase in pooled RGB or seam RMSE, strong-edge error, or
+  large false step count. Large false steps fall from 5,459 to 5,351 in
+  Floyd–Steinberg and from 5,642 to 5,534 in pixel-art mode.
+- Pooled subject luminance RMSE drops from 34.08 to 29.85 on the turtle
+  and from 32.04 to 27.94 on the runners in both modes. Independently
+  decode all previews and match all four of the two scenes' CLI output
+  files to the replay. All 28 converter tests pass.
+  [Measurements](toolkit/zx_neural/evidence/subject-tone-recovery.json).
+
 ## 2026-11-16 — Balance dot density within accepted dark ramps
 
 - Start with the approved hue and existing Floyd render from `3f2de428`.

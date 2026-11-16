@@ -71,6 +71,14 @@ Pale highlights can share one BRIGHT level when the source is continuous.
 For warm shadows that are much darker in the render, the converter uses
 source luminance and local contrast to recover small details. These
 passes check the source and the existing render before changing pixels.
+With `--subject-model`, one more pass recovers midtones inside detected
+subjects where the first render flattened them into pale pixels. It
+uses the existing dark color in the cell and follows the local shading
+in the source. It keeps each edit only if the tile gets closer in both
+color and luminance, then checks quiet and edge-weighted 8×8 boundaries.
+Strong source edges and all screen attribute bytes are preserved by
+this pass. The [88-image replay](evidence/subject-tone-recovery.json)
+covers both rendering modes.
 
 The default Floyd–Steinberg and `--pixel-art` modes automatically recover
 dark interior contours in saturated objects. The converter finds narrow

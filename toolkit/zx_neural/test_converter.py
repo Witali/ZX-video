@@ -138,6 +138,30 @@ class ConverterTests(unittest.TestCase):
         np.testing.assert_array_equal(independent_decode(screen), preview)
         self.assertLess(np.abs(np.diff(preview.astype(int), axis=1)).max(), 50)
 
+    def test_subject_tones_recover_clipped_midtone_detail_inside_the_mask(self):
+        from .tonal_repair import restore_subject_tones
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        mask = (y >= 40) & (y < 136) & (x >= 56) & (x < 184)
+        tone = np.where(mask, np.where((x >= 112) & (x < 128), 155, 182), 205)
+        source = np.repeat(tone[..., None], 3, axis=-1).astype(np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        baseline = pack(np.ones((HEIGHT, WIDTH), dtype=bool), attrs)
+        prior = independent_decode(baseline)
+        current = baseline, prior
+        screen, preview = restore_subject_tones(source, current, mask.astype(np.float32))
+
+        self.assertIs(restore_subject_tones(source, current, None), current)
+        self.assertIs(restore_subject_tones(prior, current, mask.astype(np.float32)), current)
+        self.assertEqual(screen[6144:], baseline[6144:])
+        np.testing.assert_array_equal(independent_decode(screen), preview)
+        np.testing.assert_array_equal(preview[~mask], prior[~mask])
+        self.assertLess(preview[48:128, 116:124].mean(), preview[48:128, 132:140].mean() - 12)
+        before = quality(source, prior)
+        after = quality(source, preview)
+        self.assertLess(after['pooled_rgb_rmse'], before['pooled_rgb_rmse'])
+        self.assertLessEqual(after['pooled_seam_rmse'], before['pooled_seam_rmse'])
+
     def test_outline_palette_keeps_black_where_a_stroke_is_required(self):
         from .line_art import fit_outline_palette
         from .screen import to_cells
