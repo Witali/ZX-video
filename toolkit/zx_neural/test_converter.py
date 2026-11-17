@@ -23,6 +23,51 @@ from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
+    def test_clash_strip_refits_different_palettes_across_a_long_quiet_border(self):
+        from .clash_strip import reduce_clash_strips
+        from .dark_ramps import false_seam_count
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        source = np.full((HEIGHT, WIDTH, 3), (78, 124, 76), dtype=np.uint8)
+        attrs = np.full((ROWS, COLS), 28, dtype=np.uint8)
+        attrs[12, 12:22] = 20
+        attrs[13, 12:22] = 4
+        baseline = pack((x + 2 * y) % 8 < 5, attrs)
+        before = independent_decode(baseline)
+
+        screen, preview = reduce_clash_strips(source, (baseline, before))
+
+        np.testing.assert_array_equal(preview, independent_decode(screen))
+        self.assertEqual(false_seam_count(source, before), 68)
+        self.assertEqual(false_seam_count(source, preview), 0)
+        self.assertLess(quality(source, preview)["pooled_rgb_rmse"], quality(source, before)["pooled_rgb_rmse"])
+
+    def test_joint_clash_recalculates_both_sides_of_a_quiet_seam(self):
+        from .clash_joint import reduce_joint_clash
+        from .dark_ramps import false_border_steps
+        from .subject import pool4
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        source = np.full((HEIGHT, WIDTH, 3), 102, dtype=np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        dots = (x + y) % 2 == 0
+        sides = (np.s_[80:88, 104:112], np.s_[80:88, 112:120])
+        dots[sides[0]] = False
+        dots[sides[1]] = True
+        baseline = pack(dots, attrs)
+        before = independent_decode(baseline)
+
+        screen, preview = reduce_joint_clash(source, (baseline, before))
+
+        np.testing.assert_array_equal(preview, independent_decode(screen))
+        for side in sides:
+            self.assertTrue(np.any(preview[side] != before[side]))
+        target = pool4(source.astype(np.float32))
+        old = tuple(false_border_steps(target, pool4(before.astype(np.float32))))
+        new = tuple(false_border_steps(target, pool4(preview.astype(np.float32))))
+        self.assertTrue(any(mask.any() for mask in old))
+        self.assertFalse(any(mask.any() for mask in new))
+
     def test_clash_model_removes_an_isolated_bright_cell_on_a_quiet_surface(self):
         from .clash import load_clash_weights, reduce_clash
         from .dark_ramps import false_seam_count

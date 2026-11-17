@@ -240,6 +240,12 @@ only when it removes a large step, preserves protected pixels, and
 passes the pooled color and seam checks. The chosen 4×4 densities use
 Floyd–Steinberg dots on the native bitmap.
 
+If seams remain, the converter jointly assigns palettes and dot counts
+to the two neighboring cells. A second search can refit a strip around
+a longer seam. Both keep protected pixels and reject new false steps.
+The [joint-search replay](evidence/joint-clash-suppression.json) reduces
+large false steps from 3,828 after the learned pass to 2,907.
+
 ```powershell
 python -m toolkit.zx_neural input.jpg output.scr --pixel-art --clash-model --preview output.png
 $work = ".tmp/neural-screen"

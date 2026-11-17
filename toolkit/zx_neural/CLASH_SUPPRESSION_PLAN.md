@@ -38,12 +38,14 @@ halftones. The option is available through `--clash-model`.
 - Keep the same safeguards and measure the extra host runtime. Add
   support only where a single-cell repair leaves a visible grid.
 
-Initial probe: neither fixed palettes nor alternatives that preserve
-the other three tiles permit a two-sided edit on the longest remaining
-seams of `226033.jpg` (68 pixels), `rocket.jpg` (32 pixels), or
-`clic-3510902dc65b` (16 pixels). One rocket segment permits a one-sided
-edit. Continue with a joint search that can refit all four tiles on
-each side, using the same protected-pixel and pooled-error checks.
+Status: implemented and checked on 188 screens in the
+[joint-search replay](evidence/joint-clash-suppression.json). The initial
+four-pixel-only search could not move both sides of the focused runs.
+The whole-cell search reduces large false steps from 3,828 to 3,104.
+Fitting the neighbors along longer runs reduces them further to 2,907.
+The runners' original 68-pixel run disappears and a 32-pixel run
+remains elsewhere. The rocket and jellyfish longest runs also shorten.
+Native pixel error and extra host runtime are recorded in the replay.
 
 ## 3. Improve interior shading and train from the accepted repairs
 

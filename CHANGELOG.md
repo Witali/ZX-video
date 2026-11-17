@@ -1,5 +1,37 @@
 # Changelog and optimization experiments
 
+## 2026-11-17 — Fit neighboring palettes along residual 8×8 seams
+
+- Start with `57726447` and the 188 existing independently decoded
+  learned screens. Along runs of at least eight pixels, search legal
+  palettes and quantized 4×4 dot counts across both whole 8×8 cells.
+  Solve the two shared edges jointly and evaluate the outer edges
+  against the current neighbors. Retain an existing tile when its
+  palette represents the selected density exactly. The pair-only
+  replay reduces 3,828 large false steps to 3,104.
+- For longer runs, test a shared palette for the surrounding strip.
+  On the runners, the best color fit with a common palette removes
+  16 segments and adds eight, moving part of the seam. The trial
+  fails the guard. Allow distinct pairs in neighboring cells and
+  optimize the strip from the existing screen. An initialization
+  based only on source color creates four new segments on the
+  runners. The accepted initialization preserves the starting
+  screen as the first state and keeps the combined edit only when
+  it improves color and seam fit without adding a large false step.
+- Replay all 188 screens with both passes. Large false steps fall
+  from 3,828 to 2,907. Ninety-six screens change, including 17 where
+  the strip pass accepts a change. Mean pooled seam RMSE falls from
+  18.455 to 18.311. Every protected pixel and strong-edge score is
+  unchanged. Native RGB RMSE rises from 62.137 to 62.198. The
+  runners' 68-pixel run disappears and the longest remaining run
+  is 32 pixels. The rocket's longest run changes from 32 to 12.
+- Independently decode 376 screens and match three direct CLI
+  screens and previews. Median added single-process time on the
+  rocket, jellyfish and runners is 64, 172 and 269 ms, respectively.
+  All 38 converter tests pass. Integrate the paired and strip search
+  into `--clash-model`.
+  [Measurements](toolkit/zx_neural/evidence/joint-clash-suppression.json).
+
 ## 2026-11-17 — Probe joint density changes on residual seams
 
 - Start with the learned pixel-art renders from `f063dd5c`. Take the

@@ -158,7 +158,7 @@ class ClashCells:
         counts = np.take_along_axis(count, best[..., None, None], axis=2)[:, :, 0]
         return scalar, counts.astype(np.uint8)
 
-    def fit(self, source, old, locked, pair, counts):
+    def fit(self, source, old, locked, pair, counts, *, keep_balanced=False):
         """Place the selected number of dots without altering protected pixels."""
         paper, ink = COLORS[PAPER[pair]], COLORS[INK[pair]]
         direction = ink - paper
@@ -175,6 +175,13 @@ class ClashCells:
         priority = priority.reshape(2, 4, 2, 4).swapaxes(1, 2).reshape(4, 16)
         rank = np.argsort(np.argsort(-priority, axis=-1), axis=-1)
         bits = (rank < counts[:, None]).reshape(2, 2, 4, 4).swapaxes(1, 2).reshape(8, 8)
+        if keep_balanced:
+            # Preserve interior detail when the new pair already represents
+            # the old tile with exactly the desired number of ink pixels.
+            old_ink = (old == ink).all(axis=-1)
+            representable = old_ink | (old == paper).all(axis=-1)
+            retain = ((pool4(old_ink) * 16 == counts.reshape(2, 2)) & (pool4(representable) == 1))
+            bits = np.where(retain.repeat(4, axis=0).repeat(4, axis=1), old_ink, bits)
         return bits, np.where(bits[..., None], ink, paper).astype(np.uint8)
 
 
