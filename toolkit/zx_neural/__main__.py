@@ -27,7 +27,7 @@ from .subject_contrast import emphasize_subject, promote_white_details, protect_
 from .subject_edges import restore_weak_subject_edges
 from .subject_gaps import keep_open_gaps
 from .subject_strokes import restore_subject_strokes
-from .tonal_repair import restore_pale_highlights, restore_subject_tones, restore_warm_shadows
+from .tonal_repair import restore_cool_pale_tones, restore_pale_highlights, restore_subject_tones, restore_warm_shadows
 
 
 def choose(rgb, candidates, mode, layers=None, *, correction=None):
@@ -110,6 +110,8 @@ def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layer
         current = restore_neutral_shadow_blocks(source, current)
     if subject_contrast:
         current = promote_white_details(source, current, probability)
+    if pixel_art or render_options.get("floyd"):
+        current = restore_cool_pale_tones(source, current, probability)
     return current
 
 

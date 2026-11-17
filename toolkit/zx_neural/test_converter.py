@@ -23,6 +23,34 @@ from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
+    def test_pale_cool_subject_recovers_shading_without_changing_its_boundary(self):
+        from .dark_ramps import false_border_steps
+        from .subject import pool4
+        from .tonal_repair import restore_cool_pale_tones
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        region = (y >= 48) & (y < 104) & (x >= 80) & (x < 144)
+        tone = 144 + np.clip(3 * (x - 80), 0, 55)
+        rgb = np.stack((tone, tone + 10, tone + 41), axis=-1)
+        source = np.where(region[..., None], rgb, 0).astype(np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        attrs[6:13, 10:18] = 55  # White with an unused, incompatible yellow endpoint.
+        baseline = pack(region, attrs)
+        before = independent_decode(baseline)
+
+        screen, preview = restore_cool_pale_tones(source, (baseline, before), region.astype(np.float32))
+
+        np.testing.assert_array_equal(preview, independent_decode(screen))
+        changed = np.any(preview != before, axis=-1)
+        self.assertGreater(changed.sum(), 25)
+        protected = ~region | (x == 80) | (x == 143) | (y == 48) | (y == 103)
+        self.assertFalse(changed[protected].any())
+        self.assertLess(quality(source, preview)["pooled_rgb_rmse"], quality(source, before)["pooled_rgb_rmse"])
+        target = pool4(source)
+        for old, new in zip(false_border_steps(target, pool4(before)),
+                            false_border_steps(target, pool4(preview)), strict=True):
+            self.assertFalse(np.any(new & ~old))
+
     def test_neutral_shadow_repairs_an_unsupported_palette_block(self):
         from .dark_ramps import false_seam_count, restore_neutral_shadow_blocks
 

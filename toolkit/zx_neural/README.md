@@ -115,6 +115,9 @@ python -m toolkit.zx_neural input.jpg output.scr --subject-model .tmp/neural-scr
 The default Floyd–Steinberg and `--pixel-art` modes also check for blocks of
 unsupported color in low-chroma shadows. They can replace an incorrect
 palette pair with a neutral halftone where this reduces the seam error.
+With `--subject-model`, flat pale areas can gain blue or black shade
+dots based on the cool tones inside the original silhouette. Matching
+4×4 densities across cells protects quiet boundaries and strong edges.
 These modes automatically recover dark interior contours in saturated
 objects. The converter finds narrow
 dark lines in the source, puts the darker palette endpoint along them,

@@ -1,5 +1,27 @@
 # Changelog and optimization experiments
 
+## 2026-11-17 — Recover cool halftones inside pale subjects
+
+- Start with `cd3edeaf` and the CLIC jellyfish `clic-3510902dc65b`.
+  White cells often have an unused yellow or magenta endpoint, so
+  switching to the existing second color cannot recover cool shadows.
+  A direct black or blue dot fit improves pooled color but raises quiet
+  seam error. Coupling 4×4 densities across neighboring cells removes
+  that trade-off. Compare black, blue and a mixed assignment that uses
+  blue in the cooler cells when the original bitmap can keep its other
+  pixels. Accept the lowest pooled color error with the source edges
+  and quiet seams protected.
+- In both ordinary renders, add 123 blue and 45 black shade dots and
+  lower the jellyfish body luma RMSE from 23.80 to 17.02 at 4×4 scale.
+  Both stronger renders improve from 19.24 to 16.71. All 14 changed
+  outputs across the 88-image, four-mode terminal replay improve pooled
+  color and seam RMSE. Strong source edges stay exact and no new large
+  false 8×8 step appears. Native pixel RGB error increases on the 14
+  changed screens due to the added shade dots.
+- Independently decode 352 replayed outputs, match the four direct
+  jellyfish CLI screens and previews, and pass all 35 converter tests.
+  [Measurements](toolkit/zx_neural/evidence/cool-pale-halftones.json).
+
 ## 2026-11-16 — Fit BRIGHT details and keep source midtones
 
 - Start with `0c75f813` and the same 88 prepared evaluation images.
