@@ -231,6 +231,26 @@ python -m toolkit.zx_neural.train --pixel-art --channels 64 --epochs 60 --device
 python -m toolkit.zx_neural input.jpg output.scr --pixel-art --weights toolkit/zx_neural/weights64-pixel-art-div2k100.npz --preview output.png
 ```
 
+### Learned clash suppression
+
+`--clash-model` applies the bundled 64-channel FP32 model after the other
+rendering passes. It ranks legal Spectrum pairs on cells that touch a
+large false border step. The renderer tests five pairs and keeps an edit
+only when it removes a large step, preserves protected pixels, and
+passes the pooled color and seam checks. The chosen 4×4 densities use
+Floyd–Steinberg dots on the native bitmap.
+
+```powershell
+python -m toolkit.zx_neural input.jpg output.scr --pixel-art --clash-model --preview output.png
+$work = ".tmp/neural-screen"
+python -m toolkit.zx_neural.train_clash --baselines "$work/clash-teacher-screens.zip" --div2k-archives "$work/DIV2K_train_LR_bicubic_X3.zip" "$work/DIV2K_valid_LR_bicubic_X3.zip" --subject-model "$work/u2netp.onnx" --device cuda --epochs 60 --workers 5 --weights "$work/clash-candidate.npz" --report "$work/clash-training.json"
+```
+
+The 188-screen comparison measures a fall from 11,146 to 3,828 large
+false steps. The additional halftones increase native pixel error.
+See the [measurements](evidence/learned-clash-suppression.json) and the
+[clash suppression plan](CLASH_SUPPRESSION_PLAN.md).
+
 See [training measurements](evidence/pixel-art.json) for the effect of
 the newly trained weights and [gradient measurements](evidence/pixel-art-gradients.json)
 for the comparison after adding the smooth-gradient guard.

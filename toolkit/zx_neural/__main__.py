@@ -8,6 +8,7 @@ from PIL import Image
 
 from .alignment import align_cells
 from .brightness import repair_brightness
+from .clash import CLASH_WEIGHTS, load_clash_weights, reduce_clash
 from .dark_ramps import restore_dark_ramps, restore_neutral_shadow_blocks
 from .dither import DitherCandidates
 from .halftones import restore_halftones
@@ -70,7 +71,7 @@ def render(candidates, labels, *, dither=False, smooth=False, floyd=False, repai
 
 
 def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layers=None,
-            automatic_outline=True, outline_layers=None, subject_contrast=False, **render_options):
+            automatic_outline=True, outline_layers=None, subject_contrast=False, clash_layers=None, **render_options):
     source = rgb
     if subject_contrast:
         rgb = emphasize_subject(rgb, probability)
@@ -112,6 +113,8 @@ def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layer
         current = promote_white_details(source, current, probability)
     if pixel_art or render_options.get("floyd"):
         current = restore_cool_pale_tones(source, current, probability)
+    if clash_layers is not None:
+        current = reduce_clash(source, current, clash_layers, probability)
     return current
 
 
@@ -174,11 +177,15 @@ def main():
     parser.add_argument("--weights", type=Path)
     parser.add_argument("--outline-weights", type=Path,
                         help="override the outline palette model used by neural pixel-art modes")
+    parser.add_argument("--clash-model", type=Path, nargs="?", const=CLASH_WEIGHTS,
+                        help="repair false 8×8 borders with the bundled or specified clash weights")
     args = parser.parse_args()
     if args.shade_line_art and not args.red_line_art:
         parser.error("--shade-line-art requires --red-line-art")
     if args.subject_contrast and (args.subject_model is None or args.red_line_art or args.solid):
         parser.error("--subject-contrast requires --subject-model and a dithered photo or pixel-art mode")
+    if args.clash_model and (args.red_line_art or args.solid):
+        parser.error("--clash-model adds dithering and is unavailable with --red-line-art or --solid")
     args.mode = args.mode or ("hybrid" if args.pixel_art else "spatial")
     args.weights = args.weights or (PIXEL_ART_WEIGHTS if args.pixel_art else DEFAULT_WEIGHTS)
     use_model = not args.red_line_art and args.mode in ("neural", "hybrid")
@@ -189,6 +196,8 @@ def main():
     inputs = {args.image.resolve()}
     if args.subject_model:
         inputs.add(args.subject_model.resolve())
+    if args.clash_model:
+        inputs.add(args.clash_model.resolve())
     if use_model:
         inputs.add(args.weights.resolve())
         if args.pixel_art:
@@ -200,6 +209,7 @@ def main():
         layers = load_weights(args.weights) if use_model else None
         photo_layers = load_weights(CLIC_WIDE_WEIGHTS) if args.pixel_art and use_model else None
         outline_layers = load_weights(outline_weights) if outline_weights else None
+        clash_layers = load_clash_weights(args.clash_model) if args.clash_model else None
 
         def render_input(rgb, probability):
             if args.red_line_art:
@@ -208,7 +218,7 @@ def main():
             repair = args.dither or args.smooth or floyd or args.mode in ("spatial", "spatial-full", "hybrid")
             return convert(rgb, args.mode, layers, probability=probability, pixel_art=args.pixel_art,
                            photo_layers=photo_layers, outline_layers=outline_layers,
-                           subject_contrast=args.subject_contrast, dither=args.dither,
+                           subject_contrast=args.subject_contrast, clash_layers=clash_layers, dither=args.dither,
                            smooth=args.smooth, floyd=floyd, repair=repair)
 
         with Image.open(args.image) as image:

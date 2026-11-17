@@ -23,6 +23,30 @@ from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
+    def test_clash_model_removes_an_isolated_bright_cell_on_a_quiet_surface(self):
+        from .clash import load_clash_weights, reduce_clash
+        from .dark_ramps import false_seam_count
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        source = np.full((HEIGHT, WIDTH, 3), 100, dtype=np.uint8)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        attrs[10, 13] = 71
+        dots = (x + y) % 2 == 0
+        artifact = np.s_[80:88, 104:112]
+        dots[artifact] = True
+        baseline = pack(dots, attrs)
+        old = independent_decode(baseline)
+        layers = load_clash_weights()
+
+        screen, preview = reduce_clash(source, (baseline, old), layers)
+
+        np.testing.assert_array_equal(preview, independent_decode(screen))
+        self.assertEqual(false_seam_count(source, old), 8)
+        self.assertEqual(false_seam_count(source, preview), 0)
+        outside = np.ones((HEIGHT, WIDTH), dtype=bool)
+        outside[artifact] = False
+        np.testing.assert_array_equal(preview[outside], old[outside])
+
     def test_pale_cool_subject_recovers_shading_without_changing_its_boundary(self):
         from .dark_ramps import false_border_steps
         from .subject import pool4

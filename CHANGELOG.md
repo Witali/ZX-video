@@ -1,5 +1,29 @@
 # Changelog and optimization experiments
 
+## 2026-11-17 — Train a model to suppress false 8×8 seams
+
+- Start with the finished SCRs from `2f1065b7`. Evaluate all legal
+  pairs and four density fits in affected cells. A target removes at
+  least one large false step, introduces none, respects frozen pixels,
+  and improves the weighted seam fit without raising pooled RGB error.
+  The color-fit shortlist is the non-learned control. Record subsequent
+  work in the [clash suppression plan](toolkit/zx_neural/CLASH_SUPPRESSION_PLAN.md).
+- Train a 64-channel, 60,216-parameter FP32 CNN for 60 epochs on an
+  RTX 5060 Ti. Teach 3,472 correctable cells from 100 DIV2K photos.
+  Twelve separate photos supply 324 validation cells. Validation loss
+  drops from 4.0643 to 1.0873 at epoch 54. Export 224,852 bytes and
+  match the NumPy scorer with PyTorch on CPU and CUDA.
+- Replay 88 existing images in photo and pixel-art modes plus 12
+  disjoint DIV2K photos in pixel-art mode. Large false steps fall
+  from 11,146 to 3,828. The five-pair color-fit control leaves 4,335.
+  No new large step appears. Mean pooled seam RMSE falls from 19.661
+  to 18.455 and strong-edge RMSE stays exact. Native RGB RMSE rises
+  from 61.791 to 62.137. The pass adds 71–93 ms on three single-process
+  examples without subject masking. Keep the correction opt-in.
+- Independently decode 564 screens, match two direct CLI screens and
+  previews, and pass all 36 converter tests.
+  [Measurements](toolkit/zx_neural/evidence/learned-clash-suppression.json).
+
 ## 2026-11-17 — Fine-tune the pixel-art CNN on 100 DIV2K photos
 
 - Start with the 64-channel default pixel-art checkpoint in `cd3edeaf`.

@@ -21,13 +21,13 @@ def architecture(channels):
             (channels, PAIR_COUNT, 1))
 
 
-def load_weights(path=DEFAULT_WEIGHTS):
+def load_weights(path=DEFAULT_WEIGHTS, *, layout=architecture):
     layers = []
     with np.load(path, allow_pickle=False) as arrays:
         first = arrays["weight0"]
         if first.ndim != 4:
             raise ValueError("invalid first CNN layer")
-        for i, (inputs, outputs, kernel) in enumerate(architecture(first.shape[0])):
+        for i, (inputs, outputs, kernel) in enumerate(layout(first.shape[0])):
             weight = arrays[f"weight{i}"]
             bias = arrays[f"bias{i}"]
             if (weight.shape != (outputs, inputs, kernel, kernel)
