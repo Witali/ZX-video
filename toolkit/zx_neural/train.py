@@ -97,12 +97,21 @@ def teacher_screen(image, pixel_art=False, outline=False):
 
 
 def dataset(cache, bsds_archive=None, clic_root=None, workers=1, pixel_art=False, outline=False, texture_root=None,
-            next_sample=False):
+            next_sample=False, div2k_archives=None):
     rng = np.random.default_rng(SEED)
     train_images = []
     source_hashes = {}
     extra = {}
-    if clic_root is not None:
+    if div2k_archives is not None:
+        from .photo_corpus import read_div2k
+
+        train_archive, validation_archive = div2k_archives
+        sources = [(name, image, 3) for name, image in read_div2k(train_archive, "train")]
+        validation = list(read_div2k(validation_archive, "validation"))
+        extra = dict(corpus="DIV2K bicubic x3",
+                     evaluation_pixel_sha256={name: sha256(image.tobytes()).hexdigest()
+                                              for name, image in read_div2k(validation_archive, "holdout")})
+    elif clic_root is not None:
         from .photo_corpus import clic_patches, clic_split, read_clic
 
         training, validation_group, evaluation_group = clic_split(clic_root)
@@ -217,7 +226,7 @@ def teacher_distribution(path, inputs, prior):
 
 def train(output, cache, epochs, channels=32, bsds_archive=None, teacher=None, clic_root=None,
           device="cpu", workers=1, threads=4, pixel_art=False, outline=False, initialize=None, texture_root=None,
-          next_sample=False):
+          next_sample=False, div2k_archives=None):
     device = torch.device(device)
     if device.type == "cuda":
         # cuBLAS requires a workspace configuration for deterministic FP32.
@@ -234,6 +243,7 @@ def train(output, cache, epochs, channels=32, bsds_archive=None, teacher=None, c
     prepared = perf_counter()
     inputs, base, targets, importance, metadata = dataset(
         cache, bsds_archive, clic_root, workers, pixel_art, outline, texture_root, next_sample,
+        div2k_archives,
     )
     preparation_seconds = perf_counter() - prepared
     x = torch.from_numpy(inputs).permute(0, 3, 1, 2).contiguous()
@@ -334,6 +344,8 @@ def main():
     parser.add_argument("--bsds-archive", type=Path, help="BSDS500 archive to extend training to 100 photos")
     parser.add_argument("--clic-root", type=Path, help="use 100 crops from the block-palette CLIC corpus")
     parser.add_argument("--texture-root", type=Path, help="add sampled DTD and Kylberg textures from the benchmark corpus")
+    parser.add_argument("--div2k-archives", type=Path, nargs=2, metavar=("TRAIN", "VALID"),
+                        help="train on 100 sampled DIV2K photos from the official bicubic x3 ZIP archives")
     parser.add_argument("--next-training-sample", action="store_true",
                         help="train on the next disjoint BSDS500, DTD and Kylberg samples using the same validation splits")
     parser.add_argument("--pixel-art", action="store_true", help="train on the pixel-art palette objective")
@@ -350,6 +362,11 @@ def main():
         parser.error("--next-training-sample requires a BSDS500 archive or texture corpus and explicit --weights")
     if args.texture_root and not args.weights:
         parser.error("--texture-root requires an explicit --weights output")
+    if args.div2k_archives:
+        if any((args.bsds_archive, args.clic_root, args.texture_root, args.next_training_sample)):
+            parser.error("--div2k-archives defines its own training and validation split")
+        if not args.weights:
+            parser.error("--div2k-archives requires an explicit --weights output")
     if args.pixel_art and not args.weights:
         parser.error("--pixel-art requires an explicit --weights output")
     if min(args.epochs, args.workers, args.threads) < 1:
@@ -364,7 +381,8 @@ def main():
         parser.error("--teacher requires a distinct, explicit --weights output")
     report = train(output, args.cache, args.epochs, args.channels, args.bsds_archive,
                    args.teacher, args.clic_root, args.device, args.workers, args.threads,
-                   args.pixel_art, args.outline, args.initialize, args.texture_root, args.next_training_sample)
+                   args.pixel_art, args.outline, args.initialize, args.texture_root, args.next_training_sample,
+                   args.div2k_archives)
     args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf8")
 
 

@@ -216,6 +216,21 @@ python -m toolkit.zx_neural input.jpg output.scr --pixel-art --weights toolkit/z
 The [next-sample report](evidence/pixel-art-next-sample.json) compares
 this checkpoint with the default on 88 held-out inputs.
 
+### DIV2K fine-tuning
+
+The [DIV2K bicubic x3 archives](https://data.vision.ee.ethz.ch/cvl/DIV2K/)
+add 100 training photos with three views each. The official validation
+archive supplies two disjoint 12-photo samples for checkpoint selection
+and final conversion. The new weights improve validation loss, with
+mixed results on finished SCRs, so they are available as an override.
+See the [source hashes and measurements](evidence/pixel-art-div2k100.json).
+
+```powershell
+$work = ".tmp/neural-screen"
+python -m toolkit.zx_neural.train --pixel-art --channels 64 --epochs 60 --device cuda --workers 6 --div2k-archives "$work/DIV2K_train_LR_bicubic_X3.zip" "$work/DIV2K_valid_LR_bicubic_X3.zip" --initialize toolkit/zx_neural/weights64-pixel-art.npz --weights "$work/pixel-art-div2k100.npz" --report "$work/pixel-art-div2k100-training.json" --cache "$work/pixel-art-div2k100-teacher.npz"
+python -m toolkit.zx_neural input.jpg output.scr --pixel-art --weights toolkit/zx_neural/weights64-pixel-art-div2k100.npz --preview output.png
+```
+
 See [training measurements](evidence/pixel-art.json) for the effect of
 the newly trained weights and [gradient measurements](evidence/pixel-art-gradients.json)
 for the comparison after adding the smooth-gradient guard.

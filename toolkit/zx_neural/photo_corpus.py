@@ -1,4 +1,4 @@
-"""Read a reproducible photo split from the BIDS mirror of Berkeley BSDS500."""
+"""Read reproducible source-level photo splits for training and evaluation."""
 
 from hashlib import sha256
 from io import BytesIO
@@ -14,6 +14,9 @@ ADDITIONAL_TRAIN_PHOTOS = 90
 EVALUATION_PHOTOS = 20
 VALIDATION_PHOTOS = 10
 CLIC_TRAIN_PATCHES = 100
+DIV2K_TRAIN_PHOTOS = 100
+DIV2K_VALIDATION_PHOTOS = 12
+DIV2K_HOLDOUT_PHOTOS = 12
 
 
 def read_photos(archive, split, count, *, offset=0):
@@ -42,6 +45,27 @@ def read_evaluation_photos(archive):
 
 def read_validation_photos(archive):
     return read_photos(archive, "val", VALIDATION_PHOTOS)
+
+
+def read_div2k(archive, split):
+    """Read raw RGB from the official DIV2K bicubic x3 partition."""
+    spans = {
+        "train": slice(DIV2K_TRAIN_PHOTOS),
+        "validation": slice(DIV2K_VALIDATION_PHOTOS),
+        "holdout": slice(DIV2K_VALIDATION_PHOTOS, DIV2K_VALIDATION_PHOTOS + DIV2K_HOLDOUT_PHOTOS),
+    }
+    span = spans[split]
+    folder, ids = ("train", range(1, 801)) if split == "train" else ("valid", range(801, 901))
+    names = sorted((f"{number:04d}" for number in ids),
+                   key=lambda name: sha256(f"zx-neural-div2k-v1:{name}".encode()).digest())
+    prefix = f"DIV2K_{folder}_LR_bicubic/X3/"
+    with ZipFile(archive) as source:
+        entries = [path for path in source.namelist() if path.startswith(prefix) and path.endswith(".png")]
+        if len(entries) != len(ids) or set(entries) != {f"{prefix}{name}x3.png" for name in names}:
+            raise ValueError(f"expected the official DIV2K {folder} x3 partition")
+        for name in names[span]:
+            with Image.open(BytesIO(source.read(f"{prefix}{name}x3.png"))) as image:
+                yield f"div2k-{name}", image.convert("RGB")
 
 
 def clic_split(root):

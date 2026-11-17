@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-11-17 — Fine-tune the pixel-art CNN on 100 DIV2K photos
+
+- Start with the 64-channel default pixel-art checkpoint in `cd3edeaf`.
+  Sample 100 previously unused photos from official DIV2K bicubic x3
+  training data by a fixed hash of each ID. Use one fitted view and two
+  augmented crops per photo plus 32 synthetic screens. Check source
+  hashes against 573 distinct hashes from 15 previous training reports
+  and against the evaluation images. Twelve separate DIV2K photos
+  select the checkpoint. Twelve more are held out for final conversion.
+- Train in FP32 for 60 epochs on an RTX 5060 Ti with six CPU preparation
+  workers. Preparation takes 88.15 s and optimization 9.64 s. The best
+  checkpoint is epoch 55, with validation loss 2.2942 versus 2.3691
+  before fine-tuning. Export all 118,968 parameters in a 442,557-byte
+  NPZ and verify logits across CUDA, PyTorch CPU and NumPy inference.
+  A second run using cached targets reproduces every epoch loss and
+  the exported checkpoint byte for byte.
+- Compare the two palette scorers in the same pixel-art pipeline.
+  Independently decode all 200 screens from the existing 88-image set
+  and 12 new holdouts. Mean pooled seam RMSE changes from 19.81427 to
+  19.81472 on the 88 and from 18.76297 to 18.76111 on the new photos.
+  Mean pooled RGB error rises slightly on both sets and the large
+  false-step count rises on 14 of the 100 inputs. Keep the current
+  default and save the trained weights as an explicit override.
+  Verify both CLI runs on a DIV2K holdout. [Measurements](toolkit/zx_neural/evidence/pixel-art-div2k100.json).
+
 ## 2026-11-17 — Recover cool halftones inside pale subjects
 
 - Start with `cd3edeaf` and the CLIC jellyfish `clic-3510902dc65b`.
