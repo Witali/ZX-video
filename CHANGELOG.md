@@ -1,5 +1,20 @@
 # Changelog and optimization experiments
 
+## 2026-11-17 — Probe joint density changes on residual seams
+
+- Start with the learned pixel-art renders from `f063dd5c`. Take the
+  longest remaining false seam on the runners, rocket and jellyfish.
+  Enumerate all 0–16 dot counts on each side of its 29 four-pixel
+  border segments, respecting strong edges and known source colors.
+  Try the current pair and also all legal pairs that preserve the
+  other three tiles in each affected cell.
+- Both searches find zero viable two-sided edits. One of the eight
+  segments on the rocket admits a one-sided density change. The
+  runners' 68-pixel run and the jellyfish's 16-pixel run admit no edits
+  under those guards. This is a three-image feasibility check in
+  pooled RGB, prior to bitmap placement. Retain the learned pass and
+  investigate refitting both whole cells for this class of seam.
+
 ## 2026-11-17 — Train a model to suppress false 8×8 seams
 
 - Start with the finished SCRs from `2f1065b7`. Evaluate all legal

@@ -38,8 +38,12 @@ halftones. The option is available through `--clash-model`.
 - Keep the same safeguards and measure the extra host runtime. Add
   support only where a single-cell repair leaves a visible grid.
 
-Start with the 68-pixel residual seam on BSDS500 `226033.jpg` and the
-32-pixel residual seam on `rocket.jpg`.
+Initial probe: neither fixed palettes nor alternatives that preserve
+the other three tiles permit a two-sided edit on the longest remaining
+seams of `226033.jpg` (68 pixels), `rocket.jpg` (32 pixels), or
+`clic-3510902dc65b` (16 pixels). One rocket segment permits a one-sided
+edit. Continue with a joint search that can refit all four tiles on
+each side, using the same protected-pixel and pooled-error checks.
 
 ## 3. Improve interior shading and train from the accepted repairs
 
