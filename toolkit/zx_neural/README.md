@@ -246,6 +246,14 @@ a longer seam. Both keep protected pixels and reject new false steps.
 The [joint-search replay](evidence/joint-clash-suppression.json) reduces
 large false steps from 3,828 after the learned pass to 2,907.
 
+A final search ranks up to eight residual joins by added contrast.
+Its fourth-power penalty gives a doubled false step sixteen times the
+cost. With `--subject-model`, the converter also exchanges dots within
+4×4 tiles to recover weak interior contours. The exchanges preserve
+the palette, the exact 4×4 colors and protected pixels. In the
+[contrast and detail replay](evidence/clash-contrast-and-details.json),
+steps of at least 96 RGB levels fall from 495 to 229.
+
 ```powershell
 python -m toolkit.zx_neural input.jpg output.scr --pixel-art --clash-model --preview output.png
 $work = ".tmp/neural-screen"

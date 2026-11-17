@@ -23,6 +23,50 @@ from .subject_gaps import keep_open_gaps
 
 
 class ConverterTests(unittest.TestCase):
+    def test_clash_detail_improves_a_weak_fold_without_changing_tile_density(self):
+        from .clash_detail import refine_clash_details, weak_edges
+        from .subject import LUMA, box_mean, pool4
+
+        y, x = np.indices((HEIGHT, WIDTH))
+        gray = np.clip(75 + 12 * (x - 97), 65, 175).astype(np.uint8)
+        source = np.repeat(gray[..., None], 3, axis=-1)
+        probability = ((x >= 92) & (x < 112) & (y >= 64) & (y < 112)).astype(np.float32)
+        attrs = np.full((ROWS, COLS), 7, dtype=np.uint8)
+        baseline = pack(x % 4 < 2, attrs)
+        before = independent_decode(baseline)
+
+        screen, preview = refine_clash_details(source, (baseline, before), probability)
+
+        weights = weak_edges(gray.astype(np.float32), probability >= .65)
+
+        def error(image):
+            residual = box_mean(image.astype(np.float32) @ LUMA - gray, 3)
+            return sum((w * np.square(np.diff(residual, axis=i))).sum() for i, w in enumerate(weights))
+
+        np.testing.assert_array_equal(preview, independent_decode(screen))
+        np.testing.assert_array_equal(pool4(before), pool4(preview))
+        np.testing.assert_array_equal(preview[probability == 0], before[probability == 0])
+        self.assertEqual(screen[6144:], baseline[6144:])
+        self.assertLess(error(preview), error(before))
+
+    def test_contrast_cost_prioritizes_the_strongest_false_step(self):
+        from .clash_joint import highest_contrast_pairs
+        from .dark_ramps import false_border_contrast, false_contrast_cost
+
+        target = np.full((ROWS * 2, COLS * 2, 3), 100., dtype=np.float32)
+        residual = np.zeros_like(target)
+        residual[3, 8] = 48
+        residual[9, 14] = 96
+        horizontal, _ = false_border_contrast(target, target + residual)
+        self.assertEqual(horizontal[1, 8], 48)
+        self.assertEqual(horizontal[4, 14], 96)
+        self.assertEqual(false_contrast_cost(96), 16 * false_contrast_cost(48))
+        pair = highest_contrast_pairs(target, residual)[0]
+        self.assertIn((4, 7), pair)
+        target[:, 14:] += 20
+        _, vertical = false_border_contrast(target, target + residual)
+        self.assertEqual(vertical[9, 6], 0)
+
     def test_clash_strip_refits_different_palettes_across_a_long_quiet_border(self):
         from .clash_strip import reduce_clash_strips
         from .dark_ramps import false_seam_count

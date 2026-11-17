@@ -1,5 +1,36 @@
 # Changelog and optimization experiments
 
+## 2026-11-17 — Penalize high-contrast false steps and refine interior detail
+
+- Start with the 188 screens from `013518d5`. Measure the largest
+  channel of the added RGB step in the two 4×4 means across each
+  quiet 8×8 border. Prioritize the eight strongest remaining cell
+  joins, including isolated steps. Add a fourth-power contrast
+  penalty to the existing color and seam fit. Retain an edit only
+  if the joined border's peak and the affected contrast penalty
+  fall, with no rise in peak contrast around the affected cells or
+  new large step.
+- Large false steps drop from 2,907 to 2,571. Those at 96 RGB levels
+  or stronger drop from 495 to 229. Summed contrast penalty falls
+  from 116,981,088 to 75,064,934, or 35.8%. The strongest residual
+  step falls from 200.19 to 194.88 levels. No screen has an increase
+  in step count, peak contrast, pooled color or pooled seam error.
+- Exchange one ink and paper pixel within each affected 4×4 tile
+  when it improves a weak source-backed interior step, with guards
+  for native and 3×3 color error. This preserves exact attributes
+  and 4×4 colors. The interior pass changes 122 screens and reduces
+  mean weighted weak-edge RMSE from 18.45 to 17.83 after the contrast
+  pass. Isolated replay against `013518d5` also improves that measure
+  from 18.45 to 17.84. Inspect white clothes, the jellyfish, a face,
+  and the saturated still life. The strong-edge score and protected
+  pixels stay exact in the full replay. Native RGB RMSE for both new
+  passes changes from 62.198 to 62.230.
+- Independently decode 376 screens and match direct CLI screens and
+  previews on the four focus images. The measured median added time
+  across those examples ranges from 17–25 ms for contrast and
+  26–31 ms for interior detail. All 40 converter tests pass.
+  [Measurements](toolkit/zx_neural/evidence/clash-contrast-and-details.json).
+
 ## 2026-11-17 — Fit neighboring palettes along residual 8×8 seams
 
 - Start with `57726447` and the 188 existing independently decoded

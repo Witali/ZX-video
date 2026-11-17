@@ -9,6 +9,7 @@ from PIL import Image
 from .alignment import align_cells
 from .brightness import repair_brightness
 from .clash import CLASH_WEIGHTS, load_clash_weights, reduce_clash
+from .clash_detail import refine_clash_details
 from .clash_joint import reduce_joint_clash
 from .clash_strip import reduce_clash_strips
 from .dark_ramps import restore_dark_ramps, restore_neutral_shadow_blocks
@@ -119,6 +120,8 @@ def convert(rgb, mode, layers, *, probability=None, pixel_art=False, photo_layer
         current = reduce_clash(source, current, clash_layers, probability)
         current = reduce_joint_clash(source, current, probability)
         current = reduce_clash_strips(source, current, probability)
+        current = reduce_joint_clash(source, current, probability, contrast=True)
+        current = refine_clash_details(source, current, probability)
     return current
 
 

@@ -20,11 +20,21 @@ def false_seam_count(source, preview):
 
 def false_border_steps(target, preview):
     """Locate large spurious 8×8 border steps in 4×4 RGB averages."""
+    return (strength >= 48 for strength in false_border_contrast(target, preview))
+
+
+def false_border_contrast(target, preview):
+    """Measure RGB contrast added at a border where the source is quiet."""
     residual = preview - target
     for axis, borders in ((0, np.s_[1::2, :]), (1, np.s_[:, 1::2])):
         quiet = np.abs(np.diff(target, axis=axis)[borders]).max(axis=-1) <= 12
         error = np.abs(np.diff(residual, axis=axis)[borders]).max(axis=-1)
-        yield quiet & (error >= 48)
+        yield np.where(quiet, error, 0)
+
+
+def false_contrast_cost(level):
+    """A doubled false step incurs sixteen times the contrast penalty."""
+    return np.square(np.square(np.asarray(level, dtype=np.float32)) / 48)
 
 
 def quiet_seam_error(source, preview, changed):

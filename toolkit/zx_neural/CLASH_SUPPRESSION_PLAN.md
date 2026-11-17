@@ -47,6 +47,11 @@ The runners' original 68-pixel run disappears and a 32-pixel run
 remains elsewhere. The rocket and jellyfish longest runs also shorten.
 Native pixel error and extra host runtime are recorded in the replay.
 
+The follow-up [contrast replay](evidence/clash-contrast-and-details.json)
+penalizes false step contrast with a fourth-power cost and searches
+the strongest remaining joins first. Strong steps of at least 96 RGB
+levels fall from 495 to 229, with no new large false steps.
+
 ## 3. Improve interior shading and train from the accepted repairs
 
 - Preserve weak folds, gaps and highlights by shaping the dot pattern
@@ -56,3 +61,10 @@ Native pixel error and extra host runtime are recorded in the replay.
   and compare another 64-channel training run against the first stage.
   Keep the existing 88-image regression set and disjoint new photos
   for the final quality check. Record each stage in the project changelog.
+
+Interior shading is implemented and checked on the same 188 decoded
+screens. The [contrast and detail replay](evidence/clash-contrast-and-details.json)
+shows a decrease in weak-edge error. Attribute bytes and all 4×4
+average colors stay exact through the dot exchanges. Direct CLI
+comparisons cover white clothes, translucent jellyfish, a face and a
+still life with saturated colors.
