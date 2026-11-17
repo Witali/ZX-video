@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .dark_ramps import false_border_steps
+from .dark_ramps import false_border_steps, false_contrast_cost
 from .dither import BAYER, tiles
 from .model import load_weights, predict
 from .objective import COLOR_WEIGHT, edge_weight
@@ -101,7 +101,7 @@ class ClashCells:
             score = np.square(delta - coverage[..., None] * direction[:, None]).sum(axis=(2, 3))
         return np.argsort(np.where(allowed, score, np.inf), axis=-1, kind="stable")[:, :SHORTLIST]
 
-    def candidates(self, preview, locked, y, x, pairs):
+    def candidates(self, preview, locked, y, x, pairs, *, contrast=False):
         """Return the best verified four dot counts for each proposed pair."""
         paper, ink = COLORS[PAPER[pairs]], COLORS[INK[pairs]]
         direction = ink - paper
@@ -141,7 +141,8 @@ class ClashCells:
         new_error = paper[:, :, None, None] + count[..., None] * (direction[:, :, None, None] / 16)
         new_error -= source_tile[:, None, None]
         seam = new_error[..., None, :] - neighbor[:, None, None]
-        large = quiet[:, None, None] & (np.abs(seam).max(axis=-1) >= 48)
+        level = np.abs(seam).max(axis=-1)
+        large = quiet[:, None, None] & (level >= 48)
         no_new = ~(large & ~old_large[:, None, None]).any(axis=(3, 4))
         removed = old_large.sum(axis=(1, 2))[:, None, None] - large.sum(axis=(3, 4))
         color_error = np.square(new_error).sum(axis=(3, 4))
@@ -152,6 +153,11 @@ class ClashCells:
                   & (color_error <= old_color_error[:, None, None])
                   & (seam_error < old_seam_error[:, None, None]))
         score = (color_error + 2 * seam_error) / (255 ** 2) - .15 * removed
+        if contrast:
+            penalty = (false_contrast_cost(level) * quiet[:, None, None]).sum(axis=(3, 4))
+            prior_penalty = (false_contrast_cost(np.abs(old_seam).max(axis=-1)) * quiet).sum(axis=(1, 2))
+            accept &= penalty <= prior_penalty[:, None, None]
+            score += penalty / 255 ** 2
         score = np.where(accept, score, np.inf)
         best = score.argmin(axis=2)
         scalar = np.take_along_axis(score, best[..., None], axis=2)[..., 0]

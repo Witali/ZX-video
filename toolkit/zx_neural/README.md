@@ -264,6 +264,23 @@ the first checkpoint for the bundled renderer.
 python -m toolkit.zx_neural.train_clash --baselines "$work/clash-corrected-teacher-screens.zip" --div2k-archives "$work/DIV2K_train_LR_bicubic_X3.zip" "$work/DIV2K_valid_LR_bicubic_X3.zip" --subject-model "$work/u2netp.onnx" --fine-tune-from toolkit/zx_neural/weights64-clash.npz --device cuda --epochs 40 --workers 4 --weights "$work/clash-repaired.npz" --report "$work/clash-repaired.json"
 ```
 
+To train on a local photo collection, pass `--photo-manifest`. Each
+entry in its `images` array supplies `id` or `page_id`, the relative
+`file` path, `decoded_sha256` for the RGB raster, and a `split`
+of `train`, `validation` or `holdout`. The trainer opens the first
+two splits. `--replay-baselines` adds earlier teacher screens to the
+training and validation splits with their original membership.
+`--contrast-targets` ranks proposed repairs with the fourth-power
+false-step cost. An example using a local Wikimedia Commons selection
+and the earlier DIV2K teacher archive follows.
+
+```powershell
+python -m toolkit.zx_neural.train_clash --baselines "$work/clash-commons-teacher-screens.zip" --photo-manifest "$work/commons-photo-corpus/manifest.json" --subject-model "$work/u2netp.onnx" --fine-tune-from toolkit/zx_neural/weights64-clash.npz --contrast-targets --replay-baselines "$work/clash-corrected-teacher-screens.zip" --device cuda --epochs 40 --workers 5 --weights "$work/weights64-clash-commons-candidate.npz" --report "$work/clash-commons-training.json"
+```
+
+The [Commons fine-tune](evidence/clash-commons-training.json) records
+the local split counts and decoded-screen comparison.
+
 ```powershell
 python -m toolkit.zx_neural input.jpg output.scr --pixel-art --clash-model --preview output.png
 $work = ".tmp/neural-screen"

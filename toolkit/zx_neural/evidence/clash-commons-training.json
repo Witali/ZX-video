@@ -1,0 +1,944 @@
+{
+  "baseline_commit": "aade6cda",
+  "training": {
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5060 Ti",
+    "torch": "2.15.0+cu132",
+    "seed": 773,
+    "epochs": 40,
+    "channels": 64,
+    "dtype": "float32",
+    "workers": 5,
+    "train_images": 200,
+    "validation_images": 22,
+    "train_cells": 6129,
+    "validation_cells": 644,
+    "best_epoch": 40,
+    "initial_loss": 1.1743665933609009,
+    "base_loss": 1.076090931892395,
+    "initial_joint_loss": 2.449533462524414,
+    "joint_loss": 1.6326364278793335,
+    "best_loss": 1.4842500388622284,
+    "preparation_seconds": 21.33156440005405,
+    "optimization_seconds": 5.226842299976852,
+    "parameters": 60216,
+    "bytes": 225094,
+    "sha256": "3c115e4a26fb17681af8792668b1bd70ca9c32f95cdf5a397d296f481044a9b1",
+    "joint_cells": {
+      "train": 457,
+      "validation": 52
+    },
+    "rehearsal_images": {
+      "train": 100,
+      "validation": 12
+    },
+    "quartic_contrast_targets": true,
+    "initialized_sha256": "2f62839c64c4a874c1897357fae0c0517a092a538fe2fb9c7e8062768dac8910"
+  },
+  "commons_splits": {
+    "train": 100,
+    "validation": 10,
+    "holdout": 10
+  },
+  "primary_training_source_hash": "74bb66fcc5a550aadcc8d9bc0758a66564e6443ac05e48c9d97ecf1cb7d5ee9a",
+  "cached_repeat_weights_byte_identical": true,
+  "validation": {
+    "0.25": {
+      "commons": {
+        "screens": 20,
+        "changed": 2,
+        "steps": [
+          399,
+          399
+        ],
+        "above96": [
+          31,
+          31
+        ],
+        "penalty": [
+          10186024.76052799,
+          10188700.814252505
+        ],
+        "peak": [
+          182.4375,
+          182.4375
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 1,
+        "worse_peak": 0,
+        "rgb": [
+          31.291998328641057,
+          31.29169282503426
+        ],
+        "seam": [
+          14.231195611855124,
+          14.231371683055489
+        ],
+        "worse_rgb": 0,
+        "worse_seam": 1,
+        "worse_strong_edges": 0
+      },
+      "previous": {
+        "screens": 24,
+        "changed": 3,
+        "steps": [
+          302,
+          302
+        ],
+        "above96": [
+          50,
+          50
+        ],
+        "penalty": [
+          8593326.233209154,
+          8595348.294309339
+        ],
+        "peak": [
+          158.5625,
+          158.5625
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 3,
+        "worse_peak": 0,
+        "rgb": [
+          31.607691547833383,
+          31.607232405804098
+        ],
+        "seam": [
+          15.882064330849818,
+          15.882629687641984
+        ],
+        "worse_rgb": 1,
+        "worse_seam": 2,
+        "worse_strong_edges": 0
+      },
+      "all": {
+        "screens": 44,
+        "changed": 5,
+        "steps": [
+          701,
+          701
+        ],
+        "above96": [
+          81,
+          81
+        ],
+        "penalty": [
+          18779350.993737143,
+          18784049.108561844
+        ],
+        "peak": [
+          182.4375,
+          182.4375
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 4,
+        "worse_peak": 0,
+        "rgb": [
+          31.46419463001869,
+          31.46380532363599
+        ],
+        "seam": [
+          15.131669458579502,
+          15.132057867375396
+        ],
+        "worse_rgb": 1,
+        "worse_seam": 3,
+        "worse_strong_edges": 0
+      }
+    },
+    "0.5": {
+      "commons": {
+        "screens": 20,
+        "changed": 6,
+        "steps": [
+          399,
+          399
+        ],
+        "above96": [
+          31,
+          31
+        ],
+        "penalty": [
+          10186024.76052799,
+          10192588.143865714
+        ],
+        "peak": [
+          182.4375,
+          182.4375
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 4,
+        "worse_peak": 0,
+        "rgb": [
+          31.291998328641057,
+          31.290372490882874
+        ],
+        "seam": [
+          14.231195611855124,
+          14.234164451220273
+        ],
+        "worse_rgb": 2,
+        "worse_seam": 5,
+        "worse_strong_edges": 0
+      },
+      "previous": {
+        "screens": 24,
+        "changed": 7,
+        "steps": [
+          302,
+          302
+        ],
+        "above96": [
+          50,
+          50
+        ],
+        "penalty": [
+          8593326.233209154,
+          8561081.207389325
+        ],
+        "peak": [
+          158.5625,
+          158.5625
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 5,
+        "worse_peak": 0,
+        "rgb": [
+          31.607691547833383,
+          31.608457919210196
+        ],
+        "seam": [
+          15.882064330849818,
+          15.88710199828701
+        ],
+        "worse_rgb": 3,
+        "worse_seam": 4,
+        "worse_strong_edges": 0
+      },
+      "all": {
+        "screens": 44,
+        "changed": 13,
+        "steps": [
+          701,
+          701
+        ],
+        "above96": [
+          81,
+          81
+        ],
+        "penalty": [
+          18779350.993737143,
+          18753669.351255037
+        ],
+        "peak": [
+          182.4375,
+          182.4375
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 9,
+        "worse_peak": 0,
+        "rgb": [
+          31.46419463001869,
+          31.463873633606866
+        ],
+        "seam": [
+          15.131669458579502,
+          15.135766749620311
+        ],
+        "worse_rgb": 5,
+        "worse_seam": 9,
+        "worse_strong_edges": 0
+      }
+    },
+    "1.0": {
+      "commons": {
+        "screens": 20,
+        "changed": 9,
+        "steps": [
+          399,
+          399
+        ],
+        "above96": [
+          31,
+          31
+        ],
+        "penalty": [
+          10186024.76052799,
+          10213653.960151589
+        ],
+        "peak": [
+          182.4375,
+          182.4375
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 8,
+        "worse_peak": 0,
+        "rgb": [
+          31.291998328641057,
+          31.286328367888927
+        ],
+        "seam": [
+          14.231195611855124,
+          14.234186820934507
+        ],
+        "worse_rgb": 3,
+        "worse_seam": 6,
+        "worse_strong_edges": 0
+      },
+      "previous": {
+        "screens": 24,
+        "changed": 10,
+        "steps": [
+          302,
+          302
+        ],
+        "above96": [
+          50,
+          50
+        ],
+        "penalty": [
+          8593326.233209154,
+          8562263.383412302
+        ],
+        "peak": [
+          158.5625,
+          158.5625
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 6,
+        "worse_peak": 0,
+        "rgb": [
+          31.607691547833383,
+          31.609627781435847
+        ],
+        "seam": [
+          15.882064330849818,
+          15.884627763369814
+        ],
+        "worse_rgb": 4,
+        "worse_seam": 4,
+        "worse_strong_edges": 0
+      },
+      "all": {
+        "screens": 44,
+        "changed": 19,
+        "steps": [
+          701,
+          701
+        ],
+        "above96": [
+          81,
+          81
+        ],
+        "penalty": [
+          18779350.993737143,
+          18775917.343563892
+        ],
+        "peak": [
+          182.4375,
+          182.4375
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 14,
+        "worse_peak": 0,
+        "rgb": [
+          31.46419463001869,
+          31.462673502550885
+        ],
+        "seam": [
+          15.131669458579502,
+          15.134427334990129
+        ],
+        "worse_rgb": 7,
+        "worse_seam": 10,
+        "worse_strong_edges": 0
+      }
+    }
+  },
+  "selected": {
+    "scale": 0.5,
+    "sha256": "d075439ee51a3512b0269f504d70de8a672afa55ecabbb23111c7cde8f54558a",
+    "validation": {
+      "commons": {
+        "screens": 20,
+        "changed": 6,
+        "steps": [
+          399,
+          399
+        ],
+        "above96": [
+          31,
+          31
+        ],
+        "penalty": [
+          10186024.76052799,
+          10192588.143865714
+        ],
+        "peak": [
+          182.4375,
+          182.4375
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 4,
+        "worse_peak": 0,
+        "rgb": [
+          31.291998328641057,
+          31.290372490882874
+        ],
+        "seam": [
+          14.231195611855124,
+          14.234164451220273
+        ],
+        "worse_rgb": 2,
+        "worse_seam": 5,
+        "worse_strong_edges": 0
+      },
+      "previous": {
+        "screens": 24,
+        "changed": 7,
+        "steps": [
+          302,
+          302
+        ],
+        "above96": [
+          50,
+          50
+        ],
+        "penalty": [
+          8593326.233209154,
+          8561081.207389325
+        ],
+        "peak": [
+          158.5625,
+          158.5625
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 5,
+        "worse_peak": 0,
+        "rgb": [
+          31.607691547833383,
+          31.608457919210196
+        ],
+        "seam": [
+          15.882064330849818,
+          15.88710199828701
+        ],
+        "worse_rgb": 3,
+        "worse_seam": 4,
+        "worse_strong_edges": 0
+      },
+      "all": {
+        "screens": 44,
+        "changed": 13,
+        "steps": [
+          701,
+          701
+        ],
+        "above96": [
+          81,
+          81
+        ],
+        "penalty": [
+          18779350.993737143,
+          18753669.351255037
+        ],
+        "peak": [
+          182.4375,
+          182.4375
+        ],
+        "new": 0,
+        "worse_steps": 0,
+        "worse_penalty": 9,
+        "worse_peak": 0,
+        "rgb": [
+          31.46419463001869,
+          31.463873633606866
+        ],
+        "seam": [
+          15.131669458579502,
+          15.135766749620311
+        ],
+        "worse_rgb": 5,
+        "worse_seam": 9,
+        "worse_strong_edges": 0
+      }
+    },
+    "rule": "Require no strong-edge regression, prefer no new steps or stronger peaks, then minimize the total quartic contrast penalty across the validation splits."
+  },
+  "evaluation": {
+    "commons": {
+      "screens": 20,
+      "changed": 4,
+      "steps": [
+        254,
+        255
+      ],
+      "above96": [
+        21,
+        21
+      ],
+      "penalty": [
+        6081329.428639692,
+        6084844.386787784
+      ],
+      "peak": [
+        144.875,
+        144.875
+      ],
+      "new": 2,
+      "worse_steps": 2,
+      "worse_penalty": 2,
+      "worse_peak": 0,
+      "rgb": [
+        27.78369303792715,
+        27.77891526930034
+      ],
+      "seam": [
+        13.695587427282325,
+        13.69335626990575
+      ],
+      "worse_rgb": 1,
+      "worse_seam": 2,
+      "worse_strong_edges": 0
+    },
+    "previous": {
+      "screens": 188,
+      "changed": 33,
+      "steps": [
+        2571,
+        2576
+      ],
+      "above96": [
+        229,
+        229
+      ],
+      "penalty": [
+        75064934.2052864,
+        75108643.1962484
+      ],
+      "peak": [
+        194.875,
+        194.875
+      ],
+      "new": 9,
+      "worse_steps": 5,
+      "worse_penalty": 14,
+      "worse_peak": 0,
+      "rgb": [
+        35.22254615070972,
+        35.2233727478442
+      ],
+      "seam": [
+        18.174711092664882,
+        18.175699664716294
+      ],
+      "worse_rgb": 16,
+      "worse_seam": 18,
+      "worse_strong_edges": 0
+    },
+    "all": {
+      "screens": 208,
+      "changed": 37,
+      "steps": [
+        2825,
+        2831
+      ],
+      "above96": [
+        250,
+        250
+      ],
+      "penalty": [
+        81146263.6339261,
+        81193487.58303618
+      ],
+      "peak": [
+        194.875,
+        194.875
+      ],
+      "new": 11,
+      "worse_steps": 7,
+      "worse_penalty": 16,
+      "worse_peak": 0,
+      "rgb": [
+        34.507271812942165,
+        34.50755952875345
+      ],
+      "seam": [
+        17.744026124839635,
+        17.744705107522975
+      ],
+      "worse_rgb": 17,
+      "worse_seam": 20,
+      "worse_strong_edges": 0
+    }
+  },
+  "focus": [
+    {
+      "genre": "water-and-sky",
+      "modes": {
+        "photo": {
+          "steps": [
+            38,
+            39
+          ],
+          "above96": [
+            5,
+            5
+          ],
+          "penalty": [
+            723264.2136496296,
+            728070.1099761119
+          ],
+          "new": 1,
+          "peak": [
+            115.4375,
+            115.4375
+          ],
+          "pooled_rgb": [
+            30.244722180068493,
+            30.243042670190334
+          ],
+          "pooled_seam": [
+            12.47919409376867,
+            12.49026283724206
+          ],
+          "strong_edges": [
+            81.82134661731969,
+            81.82134661731969
+          ],
+          "changed": true
+        },
+        "pixel_art": {
+          "steps": [
+            42,
+            43
+          ],
+          "above96": [
+            5,
+            5
+          ],
+          "penalty": [
+            778161.9520864238,
+            782967.848412906
+          ],
+          "new": 1,
+          "peak": [
+            115.4375,
+            115.4375
+          ],
+          "pooled_rgb": [
+            30.092375054955482,
+            30.090687945485115
+          ],
+          "pooled_seam": [
+            12.609664808996829,
+            12.620619013777688
+          ],
+          "strong_edges": [
+            81.82134661731969,
+            81.82134661731969
+          ],
+          "changed": true
+        }
+      }
+    },
+    {
+      "genre": "low-light",
+      "modes": {
+        "photo": {
+          "steps": [
+            2,
+            2
+          ],
+          "above96": [
+            0,
+            0
+          ],
+          "penalty": [
+            64964.2270062533,
+            64964.2270062533
+          ],
+          "new": 0,
+          "peak": [
+            57.0625,
+            57.0625
+          ],
+          "pooled_rgb": [
+            17.762080393731594,
+            17.762080393731594
+          ],
+          "pooled_seam": [
+            8.62486191422499,
+            8.62486191422499
+          ],
+          "strong_edges": [
+            71.42616517390596,
+            71.42616517390596
+          ],
+          "changed": false
+        },
+        "pixel_art": {
+          "steps": [
+            2,
+            2
+          ],
+          "above96": [
+            0,
+            0
+          ],
+          "penalty": [
+            64584.75022569134,
+            63217.80191606119
+          ],
+          "new": 0,
+          "peak": [
+            57.0625,
+            57.0625
+          ],
+          "pooled_rgb": [
+            17.76274535804987,
+            17.7718173712492
+          ],
+          "pooled_seam": [
+            8.631667307634581,
+            8.61517602734808
+          ],
+          "strong_edges": [
+            71.87237033935129,
+            71.87237033935129
+          ],
+          "changed": true
+        }
+      }
+    },
+    {
+      "genre": "translucency",
+      "modes": {
+        "photo": {
+          "steps": [
+            0,
+            0
+          ],
+          "above96": [
+            0,
+            0
+          ],
+          "penalty": [
+            106811.47512514147,
+            106811.47512514147
+          ],
+          "new": 0,
+          "peak": [
+            47.75,
+            47.75
+          ],
+          "pooled_rgb": [
+            23.26773226261139,
+            23.26773226261139
+          ],
+          "pooled_seam": [
+            11.923973620389052,
+            11.923973620389052
+          ],
+          "strong_edges": [
+            69.14210899213072,
+            69.14210899213072
+          ],
+          "changed": false
+        },
+        "pixel_art": {
+          "steps": [
+            0,
+            0
+          ],
+          "above96": [
+            0,
+            0
+          ],
+          "penalty": [
+            111561.93514096059,
+            111561.93514096059
+          ],
+          "new": 0,
+          "peak": [
+            47.75,
+            47.75
+          ],
+          "pooled_rgb": [
+            23.258878737688065,
+            23.258878737688065
+          ],
+          "pooled_seam": [
+            11.952445586083654,
+            11.952445586083654
+          ],
+          "strong_edges": [
+            69.10235999621837,
+            69.10235999621837
+          ],
+          "changed": false
+        }
+      }
+    },
+    {
+      "genre": "pale-details",
+      "modes": {
+        "photo": {
+          "steps": [
+            1,
+            1
+          ],
+          "above96": [
+            0,
+            0
+          ],
+          "penalty": [
+            184185.21185778294,
+            184185.21185778294
+          ],
+          "new": 0,
+          "peak": [
+            90.6875,
+            90.6875
+          ],
+          "pooled_rgb": [
+            37.4709103256464,
+            37.4709103256464
+          ],
+          "pooled_seam": [
+            22.354286401775866,
+            22.354286401775866
+          ],
+          "strong_edges": [
+            97.359242614588,
+            97.359242614588
+          ],
+          "changed": false
+        },
+        "pixel_art": {
+          "steps": [
+            1,
+            1
+          ],
+          "above96": [
+            0,
+            0
+          ],
+          "penalty": [
+            183100.73419609637,
+            183100.73419609637
+          ],
+          "new": 0,
+          "peak": [
+            90.6875,
+            90.6875
+          ],
+          "pooled_rgb": [
+            37.44629144668579,
+            37.44629144668579
+          ],
+          "pooled_seam": [
+            22.630800576292298,
+            22.630800576292298
+          ],
+          "strong_edges": [
+            97.28168315218925,
+            97.28168315218925
+          ],
+          "changed": false
+        }
+      }
+    },
+    {
+      "genre": "saturated-objects",
+      "modes": {
+        "photo": {
+          "steps": [
+            0,
+            0
+          ],
+          "above96": [
+            0,
+            0
+          ],
+          "penalty": [
+            39713.188959911655,
+            39713.188959911655
+          ],
+          "new": 0,
+          "peak": [
+            47.9375,
+            47.9375
+          ],
+          "pooled_rgb": [
+            27.78390772640705,
+            27.78390772640705
+          ],
+          "pooled_seam": [
+            11.468353780481845,
+            11.468353780481845
+          ],
+          "strong_edges": [
+            89.25817413900617,
+            89.25817413900617
+          ],
+          "changed": false
+        },
+        "pixel_art": {
+          "steps": [
+            0,
+            0
+          ],
+          "above96": [
+            0,
+            0
+          ],
+          "penalty": [
+            39010.75590606763,
+            39010.75590606763
+          ],
+          "new": 0,
+          "peak": [
+            47.9375,
+            47.9375
+          ],
+          "pooled_rgb": [
+            27.79833175241947,
+            27.79833175241947
+          ],
+          "pooled_seam": [
+            11.481630671407434,
+            11.481630671407434
+          ],
+          "strong_edges": [
+            89.25817413900617,
+            89.25817413900617
+          ],
+          "changed": false
+        }
+      }
+    }
+  ],
+  "promotable": false,
+  "decision": "Keep the current bundled checkpoint. Keep the trained weights as a local comparison artifact.",
+  "cli_fixture": {
+    "id": "commons-10390364",
+    "index": 1,
+    "mode": "pixel_art"
+  },
+  "cli_screen_and_preview_matches": 2,
+  "regression_and_holdout_screens": 208,
+  "independent_decodes": 416
+}

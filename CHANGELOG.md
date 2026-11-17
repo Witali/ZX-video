@@ -1,5 +1,35 @@
 # Changelog and optimization experiments
 
+## 2026-11-17 — Fine-tune clash suppression on Wikimedia Commons photos
+
+- Start with the bundled checkpoint at `aade6cda`. Use 100 new
+  training photos and 10 validation photos from five Commons scene
+  groups. Keep 10 new photos for the final test. The local manifest
+  verifies decoded hashes and excludes the holdout when building the
+  teacher archive. Rehearse 100 training and 12 validation photos
+  from the existing DIV2K archive with their original splits.
+- Fine-tune 64 channels for 40 FP32 epochs on an RTX 5060 Ti. The
+  teacher adds the fourth-power false-contrast penalty and uses
+  accepted joint palette targets. Train on 6,129 ordinary and 457
+  joint cells. The validation terms fall from 1.1744 to 1.0761
+  and from 2.4495 to 1.6326. Repeating the cached run reproduces
+  the checkpoint byte for byte.
+- On 44 rendered validation screens, compare the full update and
+  weight interpolations of 0.25 and 0.5. The 0.5 update yields the
+  lowest total false-step contrast penalty while preserving the
+  count of large steps and peak contrast. Freeze that update before
+  opening the holdout photos.
+- Independently decode both variants across 208 comparison screens.
+  On 20 Commons holdout screens, large false steps change from
+  254 to 255 and the count at 96 RGB levels or higher stays at 21.
+  On the 188 earlier screens, large false steps change from 2,571
+  to 2,576. The combined contrast penalty grows by 0.058%.
+  Strong-edge error and peak contrast stay exact. Keep the current
+  bundled weights. The local candidate and the source photographs
+  remain outside Git. Match both direct CLI screens and previews
+  on a Commons holdout and pass all 40 converter tests.
+  [Measurements](toolkit/zx_neural/evidence/clash-commons-training.json).
+
 ## 2026-11-17 — Compare training on accepted joint palette repairs
 
 - Start with the 64-channel checkpoint from `f063dd5c` and render the

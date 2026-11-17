@@ -2,6 +2,7 @@
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import ExitStack
 from hashlib import sha256
 from io import BytesIO
 import json
@@ -29,7 +30,35 @@ SEED = 773
 JOINT_TARGET_WEIGHT = .25
 
 
-def create_baselines(path, archives, detector_path, workers, *, initial=None):
+def manifest_entries(manifest_path):
+    """Select the training splits before opening any photo."""
+    manifest = json.loads(manifest_path.read_text(encoding="utf8"))
+    for record in manifest["images"]:
+        split = record["split"]
+        if split == "holdout":
+            continue
+        if split not in ("train", "validation"):
+            raise ValueError("unknown photo manifest split")
+        name = str(record["id"]) if "id" in record else f"commons-{record['page_id']}"
+        yield split, name, record
+
+
+def read_manifest_photos(manifest_path):
+    """Read local source photos without including the held-out split."""
+    directory = manifest_path.parent.resolve()
+    for split, name, record in manifest_entries(manifest_path):
+        path = (directory / record["file"]).resolve()
+        if not path.is_relative_to(directory):
+            raise ValueError("photo manifest paths must stay inside its directory")
+        with Image.open(path) as opened:
+            image = opened.convert("RGB")
+        if sha256(image.tobytes()).hexdigest() != record["decoded_sha256"]:
+            raise ValueError(f"photo differs from its manifest hash: {name}")
+        yield split, name, image
+
+
+def create_baselines(path, archives, detector_path, workers, *, initial=None, photo_manifest=None,
+                     contrast=False):
     """Write the source and existing SCR before teaching any correction."""
     detector = SubjectDetector(detector_path)
     photo, art, outline = map(load_weights, (CLIC_WIDE_WEIGHTS, PIXEL_ART_WEIGHTS, OUTLINE_WEIGHTS))
@@ -53,11 +82,14 @@ def create_baselines(path, archives, detector_path, workers, *, initial=None):
             single = reduce_clash(source, baseline, initial, probability)
             paired = reduce_joint_clash(source, single, probability)
             corrected = reduce_clash_strips(source, paired, probability)
+            if contrast:
+                corrected = reduce_joint_clash(source, corrected, probability, contrast=True)
             screens.update(single=single[0], corrected=corrected[0])
         return info, png.getvalue(), screens
 
-    samples = ((split, name, image) for split, archive in zip(("train", "validation"), archives, strict=True)
-               for name, image in read_div2k(archive, split))
+    samples = (read_manifest_photos(photo_manifest) if photo_manifest else
+               ((split, name, image) for split, archive in zip(("train", "validation"), archives, strict=True)
+                for name, image in read_div2k(archive, split)))
     with ZipFile(path, "w", ZIP_DEFLATED) as archive, ThreadPoolExecutor(workers) as pool:
         manifest = []
         for i, (info, png, screens) in enumerate(pool.map(make, enumerate(samples))):
@@ -65,10 +97,12 @@ def create_baselines(path, archives, detector_path, workers, *, initial=None):
             archive.writestr(f"{i}/source.png", png)
             for label, screen in screens.items():
                 archive.writestr(f"{i}/{label}.scr", screen)
+            if (i + 1) % 20 == 0:
+                print(f"Prepared {i + 1} teacher screens", flush=True)
         archive.writestr("manifest.json", json.dumps(manifest))
 
 
-def targets(source, screen):
+def targets(source, screen, *, contrast=False):
     preview = independent_decode(screen)
     geometry = ClashCells(source)
     attrs = np.frombuffer(screen[6144:], np.uint8).reshape(ROWS, COLS)
@@ -76,7 +110,7 @@ def targets(source, screen):
     labels = np.zeros((ROWS, COLS, PAIR_COUNT), dtype=np.float32)
     if len(y):
         pairs = np.broadcast_to(np.arange(PAIR_COUNT), (len(y), PAIR_COUNT))
-        scores, _ = geometry.candidates(preview, geometry.locks(preview, None), y, x, pairs)
+        scores, _ = geometry.candidates(preview, geometry.locks(preview, None), y, x, pairs, contrast=contrast)
         legal = np.isfinite(scores).any(axis=-1)
         costs = scores[legal]
         probability = np.exp(-(costs - costs.min(axis=-1, keepdims=True)) / .10)
@@ -100,9 +134,16 @@ def corrected_targets(source, baseline, single, corrected):
     return labels
 
 
-def training_data(path, workers, *, fine_tune=False):
-    with ZipFile(path) as archive, ThreadPoolExecutor(workers) as pool:
-        manifest = json.loads(archive.read("manifest.json"))
+def training_data(path, workers, *, fine_tune=False, replay=None, contrast=False):
+    with ExitStack() as files, ThreadPoolExecutor(workers) as pool:
+        paths = (path, replay) if replay is not None else (path,)
+        samples = []
+        manifest = []
+        for corpus_index, archive_path in enumerate(paths):
+            archive = files.enter_context(ZipFile(archive_path))
+            entries = json.loads(archive.read("manifest.json"))
+            samples.extend((archive, i) for i in range(len(entries)))
+            manifest.extend({**item, "rehearsal": bool(corpus_index)} if replay else item for item in entries)
         if (len({item["source_sha256"] for item in manifest}) != len(manifest)
                 or len({item["id"] for item in manifest}) != len(manifest)):
             raise ValueError("training and checkpoint selection must contain distinct photos")
@@ -110,11 +151,12 @@ def training_data(path, workers, *, fine_tune=False):
         if not any(parts) or all(parts) or any(item["split"] not in ("train", "validation") for item in manifest):
             raise ValueError("expected a training and a validation split")
 
-        def read(i):
+        def read(item):
+            archive, i = item
             with Image.open(BytesIO(archive.read(f"{i}/source.png"))) as image:
                 source = np.asarray(image.convert("RGB"))
             baseline = archive.read(f"{i}/baseline.scr")
-            x, y = targets(source, baseline)
+            x, y = targets(source, baseline, contrast=contrast)
             if not fine_tune:
                 return x, y
             try:
@@ -124,11 +166,11 @@ def training_data(path, workers, *, fine_tune=False):
                 raise ValueError("fine-tuning requires an archive generated with corrected screens") from error
             return x, y, extra
 
-        arrays = tuple(map(np.stack, zip(*pool.map(read, range(len(manifest))), strict=True)))
+        arrays = tuple(map(np.stack, zip(*pool.map(read, samples), strict=True)))
     return arrays, np.asarray(parts), manifest
 
 
-def train(path, output, device, epochs, workers, *, initialize=None):
+def train(path, output, device, epochs, workers, *, initialize=None, replay=None, contrast=False):
     if device == "cuda":
         os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
         torch.backends.cuda.matmul.fp32_precision = "ieee"
@@ -138,7 +180,8 @@ def train(path, output, device, epochs, workers, *, initialize=None):
     torch.manual_seed(SEED)
     generator = torch.Generator().manual_seed(SEED)
     started = perf_counter()
-    arrays, training, manifest = training_data(path, workers, fine_tune=initialize is not None)
+    arrays, training, manifest = training_data(
+        path, workers, fine_tune=initialize is not None, replay=replay, contrast=contrast)
     inputs, targets_, *_ = arrays
     x, y, *extras = (torch.from_numpy(a).permute(0, 3, 1, 2).contiguous().to(device) for a in arrays)
     layers = [nn.Conv2d(i, o, k, padding=k // 2, dtype=torch.float32)
@@ -223,13 +266,22 @@ def train(path, output, device, epochs, workers, *, initialize=None):
                       initial_joint_loss=initial_loss[1], joint_loss=best_components[1],
                       base_loss=best_components[0],
                       initialized_sha256=sha256(initialize.read_bytes()).hexdigest())
+    if contrast:
+        report["quartic_contrast_targets"] = True
+    if replay is not None:
+        report["rehearsal_images"] = {
+            split: sum(item["rehearsal"] and item["split"] == split for item in manifest)
+            for split in ("train", "validation")
+        }
     return report
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--baselines", type=Path, required=True)
-    parser.add_argument("--div2k-archives", type=Path, nargs=2, metavar=("TRAIN", "VALID"))
+    sources = parser.add_mutually_exclusive_group()
+    sources.add_argument("--div2k-archives", type=Path, nargs=2, metavar=("TRAIN", "VALID"))
+    sources.add_argument("--photo-manifest", type=Path, help="train and validation images with decoded hashes")
     parser.add_argument("--subject-model", type=Path)
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
     parser.add_argument("--epochs", type=int, default=60)
@@ -237,20 +289,33 @@ def main():
     parser.add_argument("--weights", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--fine-tune-from", type=Path, help="initialize weights and teach accepted joint corrections")
+    parser.add_argument("--replay-baselines", type=Path, help="include a disjoint earlier teacher archive")
+    parser.add_argument("--contrast-targets", action="store_true",
+                        help="rank targets by quartic false contrast and include the contrast pass in joint labels")
     args = parser.parse_args()
     if min(args.epochs, args.workers) < 1:
         parser.error("--epochs and --workers must be positive")
     inputs = {p.resolve() for p in (args.baselines, *(args.div2k_archives or ()),
-                                    args.subject_model, args.fine_tune_from) if p}
+                                    args.photo_manifest, args.subject_model, args.fine_tune_from,
+                                    args.replay_baselines) if p}
     outputs = {args.weights.resolve(), args.report.resolve()}
     if len(outputs) != 2 or inputs & outputs:
         parser.error("use separate paths for sources, weights and report")
     if not args.baselines.exists():
-        if not args.div2k_archives or not args.subject_model:
-            parser.error("provide DIV2K archives and a subject model to create the baseline archive")
+        if not (args.div2k_archives or args.photo_manifest) or not args.subject_model:
+            parser.error("provide source photos and a subject model to create the baseline archive")
         initial = load_clash_weights(args.fine_tune_from) if args.fine_tune_from else None
-        create_baselines(args.baselines, args.div2k_archives, args.subject_model, args.workers, initial=initial)
-    report = train(args.baselines, args.weights, args.device, args.epochs, args.workers, initialize=args.fine_tune_from)
+        create_baselines(args.baselines, args.div2k_archives, args.subject_model, args.workers, initial=initial,
+                         photo_manifest=args.photo_manifest, contrast=args.contrast_targets)
+    elif args.photo_manifest:
+        expected = [(split, name, record["decoded_sha256"])
+                    for split, name, record in manifest_entries(args.photo_manifest)]
+        with ZipFile(args.baselines) as archive:
+            cached = json.loads(archive.read("manifest.json"))
+        if [(item["split"], item["id"], item["source_sha256"]) for item in cached] != expected:
+            parser.error("cached teacher screens belong to a different photo manifest")
+    report = train(args.baselines, args.weights, args.device, args.epochs, args.workers, initialize=args.fine_tune_from,
+                   replay=args.replay_baselines, contrast=args.contrast_targets)
     args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf8")
 
 
