@@ -254,6 +254,16 @@ the palette, the exact 4×4 colors and protected pixels. In the
 [contrast and detail replay](evidence/clash-contrast-and-details.json),
 steps of at least 96 RGB levels fall from 495 to 229.
 
+Use `--fine-tune-from` to add palette targets from accepted joint
+repairs to a training run. Use a separate archive when generating
+these targets. The
+[held-out comparison](evidence/clash-joint-training.json) favors
+the first checkpoint for the bundled renderer.
+
+```powershell
+python -m toolkit.zx_neural.train_clash --baselines "$work/clash-corrected-teacher-screens.zip" --div2k-archives "$work/DIV2K_train_LR_bicubic_X3.zip" "$work/DIV2K_valid_LR_bicubic_X3.zip" --subject-model "$work/u2netp.onnx" --fine-tune-from toolkit/zx_neural/weights64-clash.npz --device cuda --epochs 40 --workers 4 --weights "$work/clash-repaired.npz" --report "$work/clash-repaired.json"
+```
+
 ```powershell
 python -m toolkit.zx_neural input.jpg output.scr --pixel-art --clash-model --preview output.png
 $work = ".tmp/neural-screen"

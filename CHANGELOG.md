@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-11-17 — Compare training on accepted joint palette repairs
+
+- Start with the 64-channel checkpoint from `f063dd5c` and render the
+  accepted joint fixes from `013518d5` on the existing 100 training
+  and 12 validation photos. The joint passes change 187 palettes in
+  training and 25 in validation. Among cells on which the learned
+  pass is active, 113 and 16 respectively become extra targets.
+- Run 40 FP32 epochs on the RTX 5060 Ti with the original loss and
+  a 0.25-weighted extra loss on joint palettes. Epoch 24 reduces the
+  joint validation loss from 3.0623 to 2.0748 while the original
+  validation term rises from 1.0873 to 1.1395. The training CLI
+  reproduces both the original and fine-tuned checkpoints byte for
+  byte from their cached teacher screens. Rebuilding the fine-tune
+  from the DIV2K archives also matches 112 source PNGs, 336 teacher
+  SCRs and the candidate checkpoint byte for byte.
+- Compare the checkpoints on 188 screens from 88 regression images
+  and 12 disjoint DIV2K photographs. With the paired and strip passes,
+  large false steps rise from 2,907 to 2,910. In the final renderer
+  from `8bed5c6e`, they rise from 2,571 to 2,577. Twelve new severe
+  positions appear and six screens have a higher count. The final
+  contrast penalty rises from 75,064,934 to 75,090,740. Keep the first
+  checkpoint bundled with `--clash-model` and record the reproducible
+  fine-tune for future experiments.
+  [Measurements](toolkit/zx_neural/evidence/clash-joint-training.json).
+
 ## 2026-11-17 — Penalize high-contrast false steps and refine interior detail
 
 - Start with the 188 screens from `013518d5`. Measure the largest

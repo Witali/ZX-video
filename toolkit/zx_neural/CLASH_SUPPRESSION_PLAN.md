@@ -68,3 +68,14 @@ shows a decrease in weak-edge error. Attribute bytes and all 4×4
 average colors stay exact through the dot exchanges. Direct CLI
 comparisons cover white clothes, translucent jellyfish, a face and a
 still life with saturated colors.
+
+The [joint-target training experiment](evidence/clash-joint-training.json)
+adds 113 labels on the 100 training photos and 16 on the separate
+12 validation photos. The second FP32 checkpoint fits the corrected
+palettes more closely, while the final contrast-aware renderer adds
+12 severe positions and increases the total contrast penalty. The
+188-screen comparison covers the 88 previous images in both modes
+and the 12 disjoint DIV2K holdouts in pixel-art mode. The first
+checkpoint remains bundled. The trained correction, joint search,
+contrast penalty and interior detail pass are available through
+`--clash-model`.

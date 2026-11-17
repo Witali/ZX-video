@@ -1,0 +1,181 @@
+{
+  "baseline": "f063dd5c",
+  "teacher_render_commit": "013518d5",
+  "final_renderer": "8bed5c6e",
+  "correction_archive": {
+    "repair_commit": "013518d5",
+    "items": 112,
+    "splits": {
+      "train": {
+        "images": 100,
+        "changed_images": 49,
+        "accepted_pair_changes": 187,
+        "accepted_changed_cells": 654
+      },
+      "validation": {
+        "images": 12,
+        "changed_images": 6,
+        "accepted_pair_changes": 25,
+        "accepted_changed_cells": 78
+      }
+    }
+  },
+  "training": {
+    "seed": 773,
+    "epochs": 40,
+    "best_epoch": 24,
+    "initialized_sha256": "2f62839c64c4a874c1897357fae0c0517a092a538fe2fb9c7e8062768dac8910",
+    "candidate_sha256": "f81ba97c1be2d924702b7c0f145c2076dff789de38dea345ee22e41cab955fa8",
+    "archive_bytes": 224982,
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 5060 Ti",
+    "channels": 64,
+    "parameters": 60216,
+    "dtype": "float32",
+    "added_labels": {
+      "train": 113,
+      "validation": 16
+    },
+    "joint_weight": 0.25,
+    "validation_base": [
+      1.0872832536697388,
+      1.1395477056503296
+    ],
+    "validation_joint": [
+      3.0623090267181396,
+      2.0747835636138916
+    ],
+    "reproduced_from_cached_screens": true,
+    "reproduced_from_div2k_archives": true,
+    "reproduced_teacher_rasters": 112,
+    "reproduced_teacher_scrs": 336,
+    "original_checkpoint_reproduced": true
+  },
+  "evaluation": {
+    "joint-pass": {
+      "total": {
+        "before": 2907,
+        "after": 2910,
+        "added": 12,
+        "worse_frames": 6,
+        "changed": 40
+      },
+      "scopes": {
+        "existing-88": {
+          "images": 88,
+          "screens": 176,
+          "changed": 37,
+          "new_severe_steps": 11,
+          "worse_screens": 5,
+          "large_steps": [
+            2798,
+            2800
+          ],
+          "weighted_before_after": {
+            "pooled_rgb_rmse": [
+              35.331432451917365,
+              35.331728361039
+            ],
+            "pooled_seam_rmse": [
+              18.33989089013606,
+              18.340839842066387
+            ],
+            "strong_edge_rmse": [
+              98.56909665193713,
+              98.56909665193713
+            ]
+          }
+        },
+        "div2k-holdout-12": {
+          "images": 12,
+          "screens": 12,
+          "changed": 3,
+          "new_severe_steps": 1,
+          "worse_screens": 1,
+          "large_steps": [
+            109,
+            110
+          ],
+          "weighted_before_after": {
+            "pooled_rgb_rmse": [
+              34.36641278676689,
+              34.366938108578324
+            ],
+            "pooled_seam_rmse": [
+              17.88769615383925,
+              17.887237353667093
+            ],
+            "strong_edge_rmse": [
+              96.69210554850014,
+              96.69210554850014
+            ]
+          }
+        }
+      }
+    },
+    "contrast-and-detail-pass": {
+      "total": {
+        "before": 2571,
+        "after": 2577,
+        "added": 12,
+        "worse_frames": 6,
+        "changed": 40,
+        "penalty_before": 75064934.20528643,
+        "penalty_after": 75090739.70851454
+      },
+      "scopes": {
+        "existing-88": {
+          "images": 88,
+          "screens": 176,
+          "changed": 37,
+          "new_severe_steps": 11,
+          "worse_screens": 5,
+          "large_steps": [
+            2485,
+            2490
+          ],
+          "weighted_before_after": {
+            "pooled_rgb_rmse": [
+              35.283493080007084,
+              35.28367520034821
+            ],
+            "pooled_seam_rmse": [
+              18.202782691780442,
+              18.203549659426262
+            ],
+            "strong_edge_rmse": [
+              98.56909665193713,
+              98.56909665193713
+            ]
+          }
+        },
+        "div2k-holdout-12": {
+          "images": 12,
+          "screens": 12,
+          "changed": 3,
+          "new_severe_steps": 1,
+          "worse_screens": 1,
+          "large_steps": [
+            86,
+            87
+          ],
+          "weighted_before_after": {
+            "pooled_rgb_rmse": [
+              34.32865785434842,
+              34.329183492809534
+            ],
+            "pooled_seam_rmse": [
+              17.762994305636678,
+              17.762526284924867
+            ],
+            "strong_edge_rmse": [
+              96.69210554850014,
+              96.69210554850014
+            ]
+          }
+        }
+      }
+    }
+  },
+  "decision": "Retain the first checkpoint for the bundled mode. The new scores add severe steps on the held-out comparisons and raise the total contrast penalty in the final renderer."
+}
